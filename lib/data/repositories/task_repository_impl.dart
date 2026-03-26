@@ -1,5 +1,5 @@
-import 'package:safini/features/tasks/model/task_model.dart';
-import 'package:safini/features/tasks/repository/task_repository.dart';
+import 'package:safini/features/child/tasks/model/task_model.dart';
+import 'package:safini/features/child/tasks/repository/task_repository.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
   final List<TaskModel> _tasks = [
