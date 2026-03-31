@@ -63,6 +63,8 @@ Every time a new page is created, split UI into separate widgets inside `present
 - Keep business logic out of `pages/widgets`; it belongs in `usecases` + `cubit`.
 - Repositories in `domain` are abstract; implementations live in `data`.
 - Each new feature should start with minimal scaffolding for all three layers.
+- Use global theme extension in UI: `context.textTheme` and `context.colorScheme`.
+- Use AutoRoute for navigation (`context.router`), not raw `Navigator`.
 
 ## New Feature Checklist
 

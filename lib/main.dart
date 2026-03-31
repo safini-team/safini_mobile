@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:safini/screens/common/core/app/app.dart';
-import 'package:safini/screens/common/core/di/injection.dart';
+import 'package:safini/core/app/app.dart';
+import 'package:safini/core/di/injection.dart';
 
 void main() {
   configureDependencies();
