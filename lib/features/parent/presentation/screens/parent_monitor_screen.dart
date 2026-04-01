@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
@@ -7,6 +8,7 @@ import 'package:safini/features/parent/presentation/widgets/cards/parent_progres
 import 'package:safini/features/parent/presentation/widgets/cards/parent_stat_card.dart';
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_app_limit_tile.dart';
+import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
 
 class ParentMonitorScreen extends StatelessWidget {
   const ParentMonitorScreen({super.key});
@@ -14,7 +16,7 @@ class ParentMonitorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => context.read<ParentMonitorCubit>()..loadMonitorData(),
+      create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
       child: Scaffold(
         body: Container(
           decoration: const BoxDecoration(
@@ -129,6 +131,46 @@ class ParentMonitorScreen extends StatelessWidget {
                           limitMinutes: app['limit'],
                           iconPath: app['icon'],
                         )),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Real-world Tasks",
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(Icons.add, size: 18),
+                              label: const Text("New Task"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: context.colorScheme.primary,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        const ParentTaskTile(
+                          title: "Clean the room",
+                          category: "Daily Chore",
+                          rewardCoins: 30,
+                        ),
+                        const ParentTaskTile(
+                          title: "Read for 20 mins",
+                          category: "Educational",
+                          rewardCoins: 50,
+                          isPending: true,
+                        ),
+                        const ParentTaskTile(
+                          title: "Do homework",
+                          category: "Educational",
+                          rewardCoins: 40,
+                          isCompleted: true,
+                        ),
                         const SizedBox(height: 100), // Bottom padding for navigation
                       ],
                     ),

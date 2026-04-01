@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
@@ -11,7 +12,7 @@ class ParentFamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => context.read<ParentFamilyCubit>()..loadFamilyData(),
+      create: (context) => getIt<ParentFamilyCubit>()..loadFamilyData(),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8F9FE),
         appBar: AppBar(
@@ -164,6 +165,8 @@ class ParentFamilyScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
                   _buildTipsSection(context),
+                  const SizedBox(height: 24),
+                  const _LogoutButton(),
                   const SizedBox(height: 100),
                 ],
               );
@@ -187,8 +190,9 @@ class ParentFamilyScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.amber[50], // Or light peach from theme
+        color: const Color(0xFFFFF9F9),
         borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.red.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +205,7 @@ class ParentFamilyScreen extends StatelessWidget {
                 "Tips for Parents",
                 style: context.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.amber[900],
+                  color: Colors.grey[800],
                 ),
               ),
             ],
@@ -212,17 +216,48 @@ class ParentFamilyScreen extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("•", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Icon(Icons.circle, size: 6, color: Color(0xFF8100D1)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     tip,
-                    style: context.textTheme.bodyMedium?.copyWith(color: Colors.black87),
+                    style: context.textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
                   ),
                 ),
               ],
             ),
           )),
+        ],
+      ),
+    );
+  }
+}
+
+class _LogoutButton extends StatelessWidget {
+  const _LogoutButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF9F9),
+        border: Border.all(color: Colors.red.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.logout, color: Colors.red),
+          const SizedBox(width: 12),
+          Text(
+            "Switch to Kid Mode / Logout",
+            style: context.textTheme.titleMedium?.copyWith(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

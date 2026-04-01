@@ -25,13 +25,10 @@ class ParentTaskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: isPending 
-            ? Border.all(color: Colors.amber.withOpacity(0.5), width: 2)
-            : null,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -43,9 +40,9 @@ class ParentTaskTile extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: const Color(0xFFF0E6FF),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -54,7 +51,7 @@ class ParentTaskTile extends StatelessWidget {
               size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +60,6 @@ class ParentTaskTile extends StatelessWidget {
                   title,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    decoration: isCompleted && !isPending ? TextDecoration.lineThrough : null,
                   ),
                 ),
                 Text(
@@ -72,41 +68,66 @@ class ParentTaskTile extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.monetization_on, color: Colors.amber, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      "$rewardCoins coins",
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
-          if (isPending)
-            ElevatedButton(
-              onPressed: onApprove,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.elliptical(8, 8),
+          _buildStatusBadge(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(BuildContext context) {
+    Color bgColor;
+    Color textColor;
+    String statusText;
+
+    if (isPending) {
+      bgColor = const Color(0xFFF0E6FF);
+      textColor = const Color(0xFF8100D1);
+      statusText = "PENDING";
+    } else if (isCompleted) {
+      bgColor = const Color(0xFFE6FFF0);
+      textColor = const Color(0xFF00B050);
+      statusText = "DONE";
+    } else {
+      bgColor = const Color(0xFFFFF9E6);
+      textColor = const Color(0xFFFFA800);
+      statusText = "ACTIVE";
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset('assets/icons/coin.png', width: 14, height: 14, 
+                errorBuilder: (_, __, ___) => const Icon(Icons.monetization_on, color: Colors.amber, size: 14)),
+              const SizedBox(width: 4),
+              Text(
+                rewardCoins.toString(),
+                style: context.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-              child: const Icon(Icons.check),
-            )
-          else if (!isCompleted && onDelete != null)
-            IconButton(
-              icon: const Icon(Icons.close, color: Colors.grey),
-              onPressed: onDelete,
-            )
-          else if (isCompleted)
-            const Icon(Icons.check_circle, color: Colors.green),
+            ],
+          ),
+          Text(
+            statusText,
+            style: context.textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: textColor,
+              letterSpacing: 0.5,
+              fontSize: 10,
+            ),
+          ),
         ],
       ),
     );

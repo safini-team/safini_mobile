@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
@@ -11,7 +12,7 @@ class ParentTasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => context.read<ParentTasksCubit>()..loadTasks(),
+      create: (context) => getIt<ParentTasksCubit>()..loadTasks(),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8F9FE),
         appBar: AppBar(
