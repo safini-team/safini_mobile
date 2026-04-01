@@ -39,19 +39,21 @@ Use SF Pro as the default font family across the app.
 
 ## Global Theme Extension (Mandatory)
 
-Use the shared extension in `lib/core/utils/theme_extensions.dart` for text and colors.
+Use the shared extension in `lib/core/utils/extension/theme_extension.dart` for text and colors.
 
-- Import: `package:safini/core/utils/theme_extensions.dart`
+- Import: `package:safini/core/utils/extension/theme_extension.dart`
 - Do not create raw `TextStyle` for standard typography in pages/widgets.
-- Use extension getters for typography:
-  - `context.headingXl`
-  - `context.headingMd`
-  - `context.bodyLg`
-  - `context.bodyMd`
-- Use `context.onPrimaryStyle(...)` when text is on top of primary/gradient backgrounds.
+- Access theme from anywhere with:
+  - `context.theme`
+  - `context.textTheme`
+  - `context.colorScheme`
+- Preferred usage in widgets:
+  - `context.textTheme.headlineSmall`
+  - `context.textTheme.bodyMedium`
+  - `context.colorScheme.primary`
 
 ### Implementation Rule
 
 - Prefer `context` theme extensions first.
-- If a one-off override is needed, start from extension style and use `copyWith(...)`.
+- If a one-off override is needed, start from `context.textTheme.*` and use `copyWith(...)`.
 - Keep font families centralized in `AppTheme`; UI files should consume theme styles, not redefine font families.

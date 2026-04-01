@@ -1,0 +1,4119 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Safini API",
+    "description": "Safini API powers the MVP for **earned screen time**. Parents create a family,\ndefine tasks and app-time rules, and children earn **Time Coins** by completing\nhealthy or educational actions.\n\n### What this backend covers\n\n- Parent onboarding and family setup\n- Child profiles, avatar state, and invite-code claiming\n- Daily tasks, manual proof submission, parent approval, and steps auto-approval\n- Controlled app rules, usage reporting, and app-time redemption\n- Wallet history, store items, and avatar purchases\n- Guarded MVP AI endpoints for task suggestions and the child AI friend\n\n### Main product flows\n\n1. **Parent onboarding**: create a family, add a child, and let the backend seed\n   starter tasks, app rules, and avatar items.\n2. **Kid daily loop**: load today's tasks, submit proof or steps, earn Time Coins,\n   then spend coins on app time or avatar cosmetics.\n3. **Parent review loop**: review pending tasks, approve or reject them, and watch\n   dashboards and wallet history update.\n\n### Supabase Auth for frontend and Flutter engineers\n\n- Public routes: `GET /ping`, `GET /v1/health/live`, `GET /v1/health/ready`,\n  and `GET /v1/system/info`\n- Protected routes: all other business endpoints\n- Sign in with a normal Supabase Auth client flow\n- Read the current session access token\n  - React Native / web: `session.access_token`\n  - Flutter: `supabase.auth.currentSession?.accessToken`\n- Send the token as `Authorization: Bearer <access_token>`\n- On `401`, refresh the Supabase session and retry once\n\n### Response conventions\n\n- IDs are UUID strings\n- Timestamps are ISO 8601 strings in UTC\n- Coins, XP, and minutes are integers\n- Proof uploads are represented by URLs or object keys; this API does not accept\n  raw binary uploads directly\n- The MVP tracks app-time grants and usage, but it does not yet enforce OS-level\n  app blocking",
+    "version": "0.1.1"
+  },
+  "paths": {
+    "/v1/health/live": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Liveness Check",
+        "description": "**Auth:** Public. No bearer token is required.\n\n**Business requirement:** Confirms that the API process is running and can serve requests.\n\n**Frontend note:** This endpoint is intentionally lightweight and does not check database connectivity.",
+        "operationId": "liveness_v1_health_live_get",
+        "responses": {
+          "200": {
+            "description": "The API process is alive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Liveness V1 Health Live Get"
+                },
+                "example": {
+                  "status": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/health/ready": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Readiness Check",
+        "description": "**Auth:** Public. No bearer token is required.\n\n**Business requirement:** Reports whether backing services such as Postgres or Redis are ready enough for normal traffic.\n\n**Frontend note:** Use this for deployment checks. A degraded response returns HTTP 503 with per-service status details.",
+        "operationId": "readiness_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "The service is ready to accept traffic.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Readiness V1 Health Ready Get"
+                },
+                "example": {
+                  "status": "ok",
+                  "checks": {
+                    "postgres": {
+                      "status": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The service started but at least one dependency is degraded.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": {
+                    "status": "degraded",
+                    "checks": {
+                      "postgres": {
+                        "status": "error",
+                        "detail": "OSError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me": {
+      "get": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Get My Profile",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads or lazily creates the profile row for the currently authenticated Supabase user.\n\n**Frontend note:** A good first protected call after sign-in. It confirms the token works and gives you the current user profile payload used in the app shell.",
+        "operationId": "get_my_profile_v1_me_get",
+        "responses": {
+          "200": {
+            "description": "Profile payload for the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                },
+                "example": {
+                  "user_id": "550e8400-e29b-41d4-a716-446655440000",
+                  "email": "tester@example.com",
+                  "display_name": "Safinio Parent",
+                  "avatar_url": "https://cdn.safini.fun/avatars/parent.png",
+                  "bio": "Parent account for the Safini family.",
+                  "timezone": "Asia/Bishkek",
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:05:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Update My Profile",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets the authenticated user edit their own profile settings used across parent or child-facing flows.\n\n**Frontend note:** Send only the fields you want to change. Missing fields are left untouched.",
+        "operationId": "update_my_profile_v1_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated profile payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                },
+                "example": {
+                  "user_id": "550e8400-e29b-41d4-a716-446655440000",
+                  "email": "tester@example.com",
+                  "display_name": "Safinio Parent",
+                  "avatar_url": "https://cdn.safini.fun/avatars/parent.png",
+                  "bio": "Parent account for the Safini family.",
+                  "timezone": "Asia/Bishkek",
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:05:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/system/info": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Get Service Info",
+        "description": "**Auth:** Public. No bearer token is required.\n\n**Business requirement:** Exposes public service metadata so frontend engineers can verify environment wiring and docs availability.\n\n**Frontend note:** Useful during onboarding because it shows whether auth, Postgres, docs, and metrics are configured in the current environment.",
+        "operationId": "service_info_v1_system_info_get",
+        "responses": {
+          "200": {
+            "description": "Basic service metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Service Info V1 System Info Get"
+                },
+                "example": {
+                  "name": "safini-api",
+                  "version": "0.1.0",
+                  "docs_enabled": true,
+                  "metrics_enabled": false,
+                  "auth_provider": "supabase",
+                  "supabase_url": "https://project.supabase.co",
+                  "supabase_auth_configured": true,
+                  "postgres_configured": true,
+                  "redis_configured": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/system/whoami": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Inspect Current Auth Context",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Shows how the backend interpreted the current Supabase JWT claims.\n\n**Frontend note:** Very helpful while integrating auth because you can confirm `sub`, `email`, `role`, and user metadata without touching business data.",
+        "operationId": "whoami_v1_system_whoami_get",
+        "responses": {
+          "200": {
+            "description": "Parsed auth context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Whoami V1 System Whoami Get"
+                },
+                "example": {
+                  "user_id": "550e8400-e29b-41d4-a716-446655440000",
+                  "email": "tester@example.com",
+                  "role": "authenticated",
+                  "issuer": "https://project.supabase.co/auth/v1",
+                  "audience": "authenticated",
+                  "session_id": "session-123",
+                  "aal": "aal1",
+                  "app_metadata": {
+                    "provider": "email"
+                  },
+                  "user_metadata": {
+                    "display_name": "Tester"
+                  },
+                  "source": "authorization"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/system/settings": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "List App Settings",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns lightweight app-level settings stored in the database, such as achievement milestones or AI prompt version labels.\n\n**Frontend note:** The payload is intentionally simple: an `items` array of key/value records. Use it for UI configuration, not secure secrets.",
+        "operationId": "app_settings_v1_system_settings_get",
+        "responses": {
+          "200": {
+            "description": "App settings list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response App Settings V1 System Settings Get"
+                },
+                "example": {
+                  "items": [
+                    {
+                      "key": "ai_prompt_version",
+                      "value": "safini-mvp-v1",
+                      "description": "Prompt version label used by the MVP AI endpoints.",
+                      "updated_at": "2026-03-26T12:00:00+00:00"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/families": {
+      "post": {
+        "tags": [
+          "families"
+        ],
+        "summary": "Create Family",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Parent onboarding. Creates the single MVP family owned by the authenticated parent account.\n\n**Frontend note:** Call this once after sign-up. The current MVP allows one family per parent user.",
+        "operationId": "create_family_v1_families_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FamilyCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Family created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Family V1 Families Post"
+                },
+                "example": {
+                  "id": "a5b03d4b-cf7d-4ea4-91cb-8c9237aa1111",
+                  "owner_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                  "name": "Safini Family",
+                  "timezone": "Asia/Bishkek",
+                  "children": [],
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task instance has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/families/current": {
+      "get": {
+        "tags": [
+          "families"
+        ],
+        "summary": "Get Current Family",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads the current parent-owned family together with all child profiles and their latest balances.\n\n**Frontend note:** Use this to hydrate the parent family screen after login.",
+        "operationId": "get_current_family_v1_families_current_get",
+        "responses": {
+          "200": {
+            "description": "Current family payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Current Family V1 Families Current Get"
+                },
+                "example": {
+                  "id": "a5b03d4b-cf7d-4ea4-91cb-8c9237aa1111",
+                  "owner_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                  "name": "Safini Family",
+                  "timezone": "Asia/Bishkek",
+                  "children": [
+                    {
+                      "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "nickname": "Alex",
+                      "age": 10,
+                      "coins_balance": 50,
+                      "level": 5
+                    }
+                  ],
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/families/current/children": {
+      "post": {
+        "tags": [
+          "families"
+        ],
+        "summary": "Create Child",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Adds a child profile under the current family and seeds starter tasks, app rules, and starter avatar items.\n\n**Frontend note:** This is the main parent setup step after the family exists. The response already contains progression and balance fields expected by the mobile UI.",
+        "operationId": "create_child_v1_families_current_children_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChildCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Child created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Child V1 Families Current Children Post"
+                },
+                "example": {
+                  "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "family_id": "a5b03d4b-cf7d-4ea4-91cb-8c9237aa1111",
+                  "nickname": "Alex",
+                  "age": 10,
+                  "gender": "boy",
+                  "avatar_state": {
+                    "equipped": {
+                      "hair": "starter-hair-01",
+                      "outfit": "starter-outfit-01"
+                    }
+                  },
+                  "level": 1,
+                  "xp": 0,
+                  "current_streak_days": 0,
+                  "longest_streak_days": 0,
+                  "tasks_completed_count": 0,
+                  "coins_balance": 0,
+                  "achievements_count": 0,
+                  "created_at": "2026-03-26T12:05:00Z",
+                  "updated_at": "2026-03-26T12:05:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/children/{child_id}": {
+      "patch": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Update Child Profile",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent update editable child profile fields such as nickname, age, or gender.\n\n**Frontend note:** Send only the fields that changed. This is not used for task progress or wallet changes.",
+        "operationId": "update_child_v1_children__child_id__patch",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChildUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Child profile updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Update Child V1 Children  Child Id  Patch"
+                },
+                "example": {
+                  "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "family_id": "a5b03d4b-cf7d-4ea4-91cb-8c9237aa1111",
+                  "nickname": "Explorer Leo",
+                  "age": 11,
+                  "gender": "boy",
+                  "avatar_state": {
+                    "equipped": {
+                      "hair": "starter-hair-01"
+                    }
+                  },
+                  "level": 1,
+                  "xp": 0,
+                  "current_streak_days": 0,
+                  "longest_streak_days": 0,
+                  "tasks_completed_count": 0,
+                  "coins_balance": 0,
+                  "achievements_count": 0,
+                  "created_at": "2026-03-26T12:05:00Z",
+                  "updated_at": "2026-03-26T12:10:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/claim": {
+      "post": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Claim Child By Invite Code",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Links an existing child profile to the currently authenticated Supabase user using a short invite code.\n\n**Frontend note:** Use this when a separate child login is introduced later. The child must already exist under a family.",
+        "operationId": "claim_child_v1_children_claim_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChildClaimRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Child successfully claimed by the current user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Claim Child V1 Children Claim Post"
+                },
+                "example": {
+                  "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "family_id": "a5b03d4b-cf7d-4ea4-91cb-8c9237aa1111",
+                  "nickname": "Alex",
+                  "age": 10,
+                  "gender": "boy",
+                  "claimed_by_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                  "avatar_state": {
+                    "equipped": {
+                      "hair": "starter-hair-01"
+                    }
+                  },
+                  "level": 1,
+                  "xp": 0,
+                  "current_streak_days": 0,
+                  "longest_streak_days": 0,
+                  "tasks_completed_count": 0,
+                  "coins_balance": 0,
+                  "achievements_count": 0,
+                  "created_at": "2026-03-26T12:05:00Z",
+                  "updated_at": "2026-03-26T12:10:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task instance has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/children/{child_id}/invite-code": {
+      "post": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Issue Child Invite Code",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Creates or rotates a short invite code so a child account can later claim the profile.\n\n**Frontend note:** Use this from the parent family screen. Share the returned code only with the intended child user.",
+        "operationId": "issue_invite_code_v1_children__child_id__invite_code_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invite code issued.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Issue Invite Code V1 Children  Child Id  Invite Code Post"
+                },
+                "example": {
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "invite_code": "SAFE2026",
+                  "invite_code_expires_at": "2026-04-02T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/dashboard": {
+      "get": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Get Child Dashboard",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the parent-facing child dashboard summary, including progression stats and app overview data.\n\n**Frontend note:** This is the best endpoint for the parent monitor screen because it combines child identity, KPI stats, and app section data.",
+        "operationId": "get_child_dashboard_v1_children__child_id__dashboard_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parent dashboard summary for the selected child.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Child Dashboard V1 Children  Child Id  Dashboard Get"
+                },
+                "example": {
+                  "child": {
+                    "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "family_id": "family-1",
+                    "nickname": "Alex",
+                    "age": 10,
+                    "gender": "boy",
+                    "avatar_state": {
+                      "equipped": {
+                        "hair": "starter-hair-01"
+                      }
+                    },
+                    "level": 2,
+                    "xp": 120,
+                    "current_streak_days": 3,
+                    "longest_streak_days": 3,
+                    "tasks_completed_count": 5,
+                    "coins_balance": 40,
+                    "achievements_count": 3,
+                    "created_at": "2026-03-26T12:00:00Z",
+                    "updated_at": "2026-03-26T12:00:00Z"
+                  },
+                  "stats": {
+                    "coins_balance": 40,
+                    "pending_approvals": 1,
+                    "completed_today": 2,
+                    "remaining_today": 3,
+                    "achievements_count": 3
+                  },
+                  "apps": []
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/home": {
+      "get": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Get Child Home",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads a lightweight home-screen payload for the kid experience with today's top summary information.\n\n**Frontend note:** Use this for the first kid tab where you want a fast greeting card plus short task progress summary.",
+        "operationId": "get_child_home_v1_children__child_id__home_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Child home payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Child Home V1 Children  Child Id  Home Get"
+                },
+                "example": {
+                  "child": {
+                    "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "nickname": "Alex"
+                  },
+                  "summary": {
+                    "done_today": 2
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/today": {
+      "get": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Get Today's Child Tasks",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the child-focused task feed for today, including daily summary counts and task instances.\n\n**Frontend note:** This is the main endpoint behind the kid task list screen. The backend may lazily generate today's recurring instances before responding.",
+        "operationId": "get_child_today_v1_children__child_id__today_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Today's child task feed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Child Today V1 Children  Child Id  Today Get"
+                },
+                "example": {
+                  "child": {
+                    "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "nickname": "Alex"
+                  },
+                  "summary": {
+                    "remaining_today": 3
+                  },
+                  "tasks": []
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/avatar": {
+      "patch": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Update Child Avatar",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Persists the child's equipped avatar items after the frontend store or profile screen changes the look.\n\n**Frontend note:** Send the full avatar state you want to save. The backend validates that equipped items are already owned by the child.",
+        "operationId": "update_child_avatar_v1_children__child_id__avatar_patch",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Update Child Avatar V1 Children  Child Id  Avatar Patch"
+                },
+                "example": {
+                  "id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "family_id": "family-1",
+                  "nickname": "Alex",
+                  "age": 10,
+                  "gender": "boy",
+                  "avatar_state": {
+                    "equipped": {
+                      "outfit": "cosmic-cape"
+                    }
+                  },
+                  "level": 2,
+                  "xp": 120,
+                  "current_streak_days": 3,
+                  "longest_streak_days": 3,
+                  "tasks_completed_count": 5,
+                  "coins_balance": 40,
+                  "achievements_count": 3,
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:30:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/tasks": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "List Child Task Templates And Today's Instances",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the full task management view: long-lived templates plus today's generated task instances.\n\n**Frontend note:** Use this for the parent tasks screen. The backend may create today's missing recurring instances before returning the payload.",
+        "operationId": "list_child_tasks_v1_children__child_id__tasks_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Child tasks payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Child Tasks V1 Children  Child Id  Tasks Get"
+                },
+                "example": {
+                  "templates": [],
+                  "today_instances": [
+                    {
+                      "id": "d6182ff9-7614-4434-b1fe-6468a9136ca8",
+                      "status": "available"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/task-templates": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Create Task Template",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent create a custom reusable task template for a child.\n\n**Frontend note:** Use this for chores, reading, piano practice, or other parent-defined missions. `once` and `manual` templates can generate a task instance immediately.",
+        "operationId": "create_task_template_v1_children__child_id__task_templates_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskTemplateCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task template created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Create Task Template V1 Children  Child Id  Task Templates Post"
+                },
+                "example": {
+                  "id": "9f3f7985-70a5-4e4c-a5dc-f3d0a3d88111",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "source": "custom",
+                  "task_type": "custom",
+                  "title": "Read for 20 mins",
+                  "description": "Independent reading before bedtime.",
+                  "category": "learn",
+                  "proof_mode": "text_image",
+                  "verification_mode": "parent_approval",
+                  "recurrence_rule": "daily",
+                  "coin_reward": 15,
+                  "xp_reward": 20,
+                  "target_value": 20,
+                  "target_unit": "minutes",
+                  "metadata": {
+                    "difficulty": "easy"
+                  },
+                  "status": "active",
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/task-templates/{template_id}": {
+      "patch": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Update Task Template",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent edit an existing task template without recreating it.\n\n**Frontend note:** Only send fields that changed. You can also soft-disable templates by updating `status`.",
+        "operationId": "update_task_template_v1_task_templates__template_id__patch",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskTemplateUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task template updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Update Task Template V1 Task Templates  Template Id  Patch"
+                },
+                "example": {
+                  "id": "9f3f7985-70a5-4e4c-a5dc-f3d0a3d88111",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "source": "custom",
+                  "task_type": "custom",
+                  "title": "Read for 30 mins",
+                  "category": "learn",
+                  "proof_mode": "text_image",
+                  "verification_mode": "parent_approval",
+                  "recurrence_rule": "daily",
+                  "coin_reward": 15,
+                  "xp_reward": 20,
+                  "status": "active",
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:05:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/task-instances/{task_instance_id}/submit": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Submit Task Instance",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets the child or an authorized actor submit proof for one concrete task instance.\n\n**Frontend note:** This is the proof-submission endpoint. For manual tasks you can send text notes, structured payload data, and optional image URL/object-key references.",
+        "operationId": "submit_task_instance_v1_task_instances__task_instance_id__submit_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_instance_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Task Instance Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskSubmissionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task instance submitted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Submit Task Instance V1 Task Instances  Task Instance Id  Submit Post"
+                },
+                "example": {
+                  "id": "d6182ff9-7614-4434-b1fe-6468a9136ca8",
+                  "template_id": "template-1",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "due_on": "2026-03-26",
+                  "status": "submitted",
+                  "reward_coin_amount": 15,
+                  "reward_xp_amount": 20,
+                  "submission_note": "Finished my reading before bed.",
+                  "submission_payload": {
+                    "minutes": 20
+                  },
+                  "submission_image_url": "https://cdn.safini.fun/proofs/read-20.jpg",
+                  "submission_image_object_key": "proofs/read-20.jpg",
+                  "submitted_at": "2026-03-26T12:05:00Z",
+                  "title": "Read for 20 mins",
+                  "category": "learn",
+                  "task_type": "custom",
+                  "proof_mode": "text_image",
+                  "verification_mode": "parent_approval",
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:05:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task instance has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/task-instances/{task_instance_id}/review": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Review Task Instance",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets the parent approve or reject a submitted task instance.\n\n**Frontend note:** Approval is the step that unlocks the reward flow for manual tasks. Rejections can include a note that the mobile app may show back to the user.",
+        "operationId": "review_task_instance_v1_task_instances__task_instance_id__review_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_instance_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Task Instance Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task instance reviewed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Review Task Instance V1 Task Instances  Task Instance Id  Review Post"
+                },
+                "example": {
+                  "task_instance": {
+                    "id": "d6182ff9-7614-4434-b1fe-6468a9136ca8",
+                    "status": "approved"
+                  },
+                  "decision": "approved"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/steps": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Report Steps",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Handles the movement/fitness loop by reporting step counts and auto-approving matching daily step tasks when goals are reached.\n\n**Frontend note:** Use this after reading steps from HealthKit, Google Fit, or a similar source. When the goal is met, the response comes back auto-approved and reward-ready.",
+        "operationId": "report_steps_v1_children__child_id__steps_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StepsReportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Steps processed and matching task updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Report Steps V1 Children  Child Id  Steps Post"
+                },
+                "example": {
+                  "id": "d6182ff9-7614-4434-b1fe-6468a9136ca8",
+                  "template_id": "steps-template",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "due_on": "2026-03-26",
+                  "status": "approved",
+                  "reward_coin_amount": 10,
+                  "reward_xp_amount": 15,
+                  "progress_payload": {
+                    "steps_count": 5200
+                  },
+                  "submission_payload": {
+                    "steps_count": 5200
+                  },
+                  "submitted_at": "2026-03-26T12:10:00Z",
+                  "review_note": "Auto-approved by steps goal",
+                  "reviewed_at": "2026-03-26T12:10:00Z",
+                  "completed_at": "2026-03-26T12:10:00Z",
+                  "title": "Walk 5,000 Steps",
+                  "category": "fitness",
+                  "task_type": "steps",
+                  "proof_mode": "reported_metric",
+                  "verification_mode": "auto",
+                  "target_value": 5000,
+                  "target_unit": "steps",
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:10:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/app-rules/{app_slug}": {
+      "put": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Upsert Child App Rule",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent configure how one entertainment app behaves for a child: enabled flag, daily limit, and coin-to-minutes exchange rate.\n\n**Frontend note:** This backs the parent app-limits screen. Use the `app_slug` path parameter to select which catalog app you are updating.",
+        "operationId": "upsert_child_app_rule_v1_children__child_id__app_rules__app_slug__put",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "app_slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppRuleUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Child app rule saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Upsert Child App Rule V1 Children  Child Id  App Rules  App Slug  Put"
+                },
+                "example": {
+                  "id": "rule-1",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "app_slug": "youtube-kids",
+                  "display_name": "YouTube Kids",
+                  "is_enabled": true,
+                  "daily_limit_minutes": 60,
+                  "redeem_coin_cost": 100,
+                  "redeem_reward_minutes": 30,
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:05:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/app-usage": {
+      "post": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Report App Usage",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Stores actual entertainment app usage so the backend can calculate how much granted time remains.\n\n**Frontend note:** In the MVP this is tracking only. The backend reduces remaining grant minutes, but it does not yet block apps at the OS level.",
+        "operationId": "report_app_usage_v1_children__child_id__app_usage_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppUsageReportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "App usage recorded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Report App Usage V1 Children  Child Id  App Usage Post"
+                },
+                "example": {
+                  "usage": {
+                    "id": "usage-1",
+                    "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "app_slug": "youtube-kids",
+                    "usage_date": "2026-03-26",
+                    "used_minutes": 48,
+                    "source": "client",
+                    "reported_by_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "created_at": "2026-03-26T12:00:00Z",
+                    "updated_at": "2026-03-26T12:05:00Z"
+                  },
+                  "grants": [
+                    {
+                      "id": "grant-1",
+                      "remaining_minutes": 12,
+                      "status": "active"
+                    }
+                  ],
+                  "child_owner_user_id": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Get Child App Usage",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns one-day entertainment app usage for a child, grouped by controlled app, so the app can show used minutes, remaining minutes, and today's rule state.\n\n**Frontend note:** Use this for parent or child screens that need a clean daily usage read endpoint. It returns usage plus derived remaining minutes, but it still does not block apps at the OS level.",
+        "operationId": "get_child_app_usage_v1_children__child_id__app_usage_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "usage_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Date to inspect in YYYY-MM-DD format. Defaults to today when omitted.",
+              "title": "Usage Date"
+            },
+            "description": "Date to inspect in YYYY-MM-DD format. Defaults to today when omitted."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Child app usage summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Child App Usage V1 Children  Child Id  App Usage Get"
+                },
+                "example": {
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "usage_date": "2026-03-27",
+                  "apps": [
+                    {
+                      "app_slug": "youtube-kids",
+                      "display_name": "YouTube Kids",
+                      "is_enabled": true,
+                      "daily_limit_minutes": 60,
+                      "redeem_coin_cost": 100,
+                      "redeem_reward_minutes": 30,
+                      "used_minutes": 48,
+                      "bonus_minutes_remaining": 12,
+                      "total_minutes_available": 72,
+                      "remaining_minutes_today": 24
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/wallet": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Get Child Wallet",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Shows the child's current Time Coin balance and the recent ledger history behind it.\n\n**Frontend note:** Use this for wallet drawers, profile stats, or reward confirmation screens. Ledger entries are returned newest first.",
+        "operationId": "get_wallet_v1_children__child_id__wallet_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Wallet V1 Children  Child Id  Wallet Get"
+                },
+                "example": {
+                  "balance": 50,
+                  "entries": [
+                    {
+                      "id": "ledger-1",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "entry_type": "task_reward",
+                      "amount": 20,
+                      "balance_after": 50,
+                      "reference_type": "task_instance",
+                      "reference_id": "d6182ff9-7614-4434-b1fe-6468a9136ca8",
+                      "description": "Reward for task: Complete Duolingo",
+                      "created_by_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                      "created_at": "2026-03-26T12:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/store": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Get Child Store",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads the rewards shop for a child, including current balance, app-time offers, and avatar item offers.\n\n**Frontend note:** This is the main backing endpoint for the store tab. The response already separates app-time offers and avatar items for easy UI rendering.",
+        "operationId": "get_store_v1_children__child_id__store_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Store payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Store V1 Children  Child Id  Store Get"
+                },
+                "example": {
+                  "balance": 50,
+                  "app_time_offers": [
+                    {
+                      "app_slug": "youtube-kids",
+                      "display_name": "YouTube Kids",
+                      "is_enabled": true,
+                      "daily_limit_minutes": 60,
+                      "redeem_coin_cost": 100,
+                      "redeem_reward_minutes": 30
+                    }
+                  ],
+                  "avatar_items": [
+                    {
+                      "item_key": "cosmic-cape",
+                      "coin_cost": 120,
+                      "is_owned": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/redemptions/app-time": {
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Redeem App Time",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Spends Time Coins to create a new app-time grant for one configured entertainment app.\n\n**Frontend note:** This is the key loop that turns productive behavior into extra minutes. The app must be enabled in child app rules for redemption to succeed.",
+        "operationId": "redeem_app_time_v1_children__child_id__redemptions_app_time_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppTimeRedemptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "App-time redemption completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Redeem App Time V1 Children  Child Id  Redemptions App Time Post"
+                },
+                "example": {
+                  "balance_after": 20,
+                  "grant": {
+                    "id": "grant-1",
+                    "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "app_slug": "youtube-kids",
+                    "granted_minutes": 30,
+                    "remaining_minutes": 30,
+                    "status": "active",
+                    "granted_by_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "granted_via": "redeem",
+                    "created_at": "2026-03-26T12:05:00Z",
+                    "updated_at": "2026-03-26T12:05:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task instance has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/redemptions/avatar-items": {
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Redeem Avatar Item",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Spends Time Coins to purchase an avatar item and add it to the child's inventory.\n\n**Frontend note:** After a successful purchase, call the avatar update endpoint if you want to equip the new item immediately.",
+        "operationId": "redeem_avatar_item_v1_children__child_id__redemptions_avatar_items_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarItemRedemptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar item purchased.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Redeem Avatar Item V1 Children  Child Id  Redemptions Avatar Items Post"
+                },
+                "example": {
+                  "balance_after": 20,
+                  "inventory_item": {
+                    "id": "inventory-1",
+                    "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "avatar_item_id": "avatar-1",
+                    "source": "purchase",
+                    "created_at": "2026-03-26T12:05:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task instance has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/families/current/ai/task-suggestions": {
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Create Parent Task Suggestions",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Generates editable AI task suggestions for a parent based on the chosen child and focus area.\n\n**Frontend note:** Treat these suggestions as drafts. The MVP does not let AI create tasks autonomously without parent review.",
+        "operationId": "create_task_suggestions_v1_families_current_ai_task_suggestions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParentTaskSuggestionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "AI task suggestions created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Task Suggestions V1 Families Current Ai Task Suggestions Post"
+                },
+                "example": {
+                  "conversation_id": "conversation-1",
+                  "suggestions": [
+                    {
+                      "title": "Walk 5,000 Steps",
+                      "category": "fitness"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/children/{child_id}/ai/conversations": {
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Create Child AI Conversation",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Starts a new conversation thread for the child-facing AI friend surface.\n\n**Frontend note:** Use this once before sending messages if your UI models conversations explicitly. If no title is sent, the backend may choose a default title.",
+        "operationId": "create_child_conversation_v1_children__child_id__ai_conversations_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConversationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI conversation created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Create Child Conversation V1 Children  Child Id  Ai Conversations Post"
+                },
+                "example": {
+                  "id": "conversation-1",
+                  "family_id": "family-1",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "created_by_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                  "surface": "child_friend",
+                  "status": "active",
+                  "title": "Buddy",
+                  "created_at": "2026-03-26T12:00:00Z",
+                  "updated_at": "2026-03-26T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/ai/conversations/{conversation_id}/messages": {
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Post AI Message",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Sends one message to an existing Safini AI conversation and returns the logged user plus assistant messages.\n\n**Frontend note:** This endpoint is meant for the guarded AI friend flow. The assistant response is deterministic in the current MVP and every message is stored for review.",
+        "operationId": "post_message_v1_ai_conversations__conversation_id__messages_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI conversation updated with new messages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Post Message V1 Ai Conversations  Conversation Id  Messages Post"
+                },
+                "example": {
+                  "messages": [
+                    {
+                      "id": "msg-1",
+                      "conversation_id": "conversation-1",
+                      "role": "user",
+                      "content": "What should I do today?",
+                      "safety_outcome": "allowed",
+                      "prompt_version": "safini-mvp-v1",
+                      "created_by_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                      "created_at": "2026-03-26T12:00:00Z"
+                    },
+                    {
+                      "id": "msg-2",
+                      "conversation_id": "conversation-1",
+                      "role": "assistant",
+                      "content": "Nice work. Finish one mission first.",
+                      "safety_outcome": "allowed",
+                      "prompt_version": "safini-mvp-v1",
+                      "created_by_user_id": "550e8400-e29b-41d4-a716-446655440000",
+                      "created_at": "2026-03-26T12:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/ai/logs": {
+      "get": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "Get Child AI Logs",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets parents or allowed actors inspect stored AI conversations and messages for a child.\n\n**Frontend note:** This is the review/audit endpoint for AI usage. It is especially useful when building parent-facing moderation or history screens.",
+        "operationId": "get_child_ai_logs_v1_children__child_id__ai_logs_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI log payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Child Ai Logs V1 Children  Child Id  Ai Logs Get"
+                },
+                "example": {
+                  "conversations": [
+                    {
+                      "id": "conversation-1",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "surface": "child_friend"
+                    }
+                  ],
+                  "messages": [
+                    {
+                      "id": "msg-2",
+                      "content": "Nice work. Finish one mission first."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Ping",
+        "description": "**Auth:** Public. No bearer token is required.\n\n**Business requirement:** Simple public connectivity check for load balancers, uptime monitors, or quick manual testing.\n\n**Frontend note:** Use this when you only need to know whether the HTTP process is reachable. It does not check Postgres or Redis.",
+        "operationId": "ping_ping_get",
+        "responses": {
+          "200": {
+            "description": "The API process is reachable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Ping Ping Get"
+                },
+                "example": {
+                  "message": "pong"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AIMessageRequest": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Content",
+            "description": "Single user message to send to the AI surface."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "AIMessageRequest",
+        "example": {
+          "content": "What should I do today?"
+        }
+      },
+      "AppRuleUpdateRequest": {
+        "properties": {
+          "is_enabled": {
+            "type": "boolean",
+            "title": "Is Enabled",
+            "description": "Whether the child can redeem Time Coins for this app."
+          },
+          "daily_limit_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Daily Limit Minutes",
+            "description": "Base daily limit before extra redeemed minutes are consumed."
+          },
+          "redeem_coin_cost": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Redeem Coin Cost",
+            "description": "How many Time Coins are spent for one redemption package."
+          },
+          "redeem_reward_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Redeem Reward Minutes",
+            "description": "How many extra minutes one redemption package grants."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "is_enabled",
+          "daily_limit_minutes",
+          "redeem_coin_cost",
+          "redeem_reward_minutes"
+        ],
+        "title": "AppRuleUpdateRequest",
+        "example": {
+          "daily_limit_minutes": 60,
+          "is_enabled": true,
+          "redeem_coin_cost": 100,
+          "redeem_reward_minutes": 30
+        }
+      },
+      "AppTimeRedemptionRequest": {
+        "properties": {
+          "app_slug": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "App Slug",
+            "description": "Controlled app slug to redeem extra minutes for."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "app_slug"
+        ],
+        "title": "AppTimeRedemptionRequest",
+        "example": {
+          "app_slug": "youtube-kids"
+        }
+      },
+      "AppUsageReportRequest": {
+        "properties": {
+          "app_slug": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "App Slug",
+            "description": "Controlled app key such as `youtube-kids` or `roblox`."
+          },
+          "used_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Used Minutes",
+            "description": "Total minutes used for the app on the selected day."
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source",
+            "description": "Where the usage reading came from.",
+            "default": "client"
+          },
+          "usage_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage Date",
+            "description": "Usage date. Defaults to the current day if omitted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "app_slug",
+          "used_minutes"
+        ],
+        "title": "AppUsageReportRequest",
+        "example": {
+          "app_slug": "youtube-kids",
+          "source": "client",
+          "usage_date": "2026-03-26",
+          "used_minutes": 48
+        }
+      },
+      "AvatarItemRedemptionRequest": {
+        "properties": {
+          "item_key": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Item Key",
+            "description": "Avatar item key to purchase for the child."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "item_key"
+        ],
+        "title": "AvatarItemRedemptionRequest",
+        "example": {
+          "item_key": "cosmic-cape"
+        }
+      },
+      "AvatarUpdateRequest": {
+        "properties": {
+          "avatar_state": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Avatar State",
+            "description": "Full avatar state to persist, usually including the equipped item keys by slot."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "avatar_state"
+        ],
+        "title": "AvatarUpdateRequest",
+        "example": {
+          "avatar_state": {
+            "equipped": {
+              "outfit": "cosmic-cape"
+            }
+          }
+        }
+      },
+      "ChildClaimRequest": {
+        "properties": {
+          "invite_code": {
+            "type": "string",
+            "maxLength": 16,
+            "minLength": 4,
+            "title": "Invite Code",
+            "description": "Short invite code created by the parent to link a child login later."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "invite_code"
+        ],
+        "title": "ChildClaimRequest",
+        "example": {
+          "invite_code": "SAFE2026"
+        }
+      },
+      "ChildCreateRequest": {
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Nickname",
+            "description": "Child-facing display name used in the app."
+          },
+          "age": {
+            "type": "integer",
+            "maximum": 18,
+            "minimum": 0,
+            "title": "Age",
+            "description": "Child age used for age-appropriate defaults and suggestions."
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gender",
+            "description": "Optional parent-provided gender label for the child profile."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "nickname",
+          "age"
+        ],
+        "title": "ChildCreateRequest",
+        "example": {
+          "age": 10,
+          "gender": "boy",
+          "nickname": "Alex"
+        }
+      },
+      "ChildUpdateRequest": {
+        "properties": {
+          "nickname": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nickname",
+            "description": "Updated child-facing nickname."
+          },
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 18,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age",
+            "description": "Updated child age."
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gender",
+            "description": "Optional gender label stored on the child profile."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ChildUpdateRequest",
+        "example": {
+          "age": 11,
+          "gender": "boy",
+          "nickname": "Explorer Leo"
+        }
+      },
+      "CreateConversationRequest": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Optional conversation title shown in logs or UI."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "CreateConversationRequest",
+        "example": {
+          "title": "Buddy"
+        }
+      },
+      "FamilyCreateRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Display name for the family group shown in parent-facing screens."
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone",
+            "description": "IANA timezone used for daily task generation and date-based summaries."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "FamilyCreateRequest",
+        "example": {
+          "name": "Safini Family",
+          "timezone": "Asia/Bishkek"
+        }
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ParentTaskSuggestionRequest": {
+        "properties": {
+          "child_id": {
+            "type": "string",
+            "title": "Child Id",
+            "description": "Child ID to tailor the suggestions for."
+          },
+          "focus_area": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Focus Area",
+            "description": "Optional theme such as `fitness`, `learn`, or `chores`."
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Optional free-text hint for the AI task generator."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "child_id"
+        ],
+        "title": "ParentTaskSuggestionRequest",
+        "example": {
+          "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+          "focus_area": "fitness",
+          "prompt": "Suggest 3 quick after-school tasks for a 10-year-old."
+        }
+      },
+      "ProfileResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "user_id",
+          "email",
+          "display_name",
+          "avatar_url",
+          "bio",
+          "timezone",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ProfileResponse",
+        "example": {
+          "avatar_url": "https://cdn.safini.fun/avatars/parent.png",
+          "bio": "Parent account for the Safini family.",
+          "created_at": "2026-03-26T12:00:00Z",
+          "display_name": "Safinio Parent",
+          "email": "tester@example.com",
+          "timezone": "Asia/Bishkek",
+          "updated_at": "2026-03-26T12:05:00Z",
+          "user_id": "550e8400-e29b-41d4-a716-446655440000"
+        }
+      },
+      "ProfileUpdateRequest": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name",
+            "description": "Name shown in the Safini UI for the authenticated user."
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio",
+            "description": "Optional profile bio or short description."
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone",
+            "description": "Preferred IANA timezone such as `Asia/Bishkek`."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ProfileUpdateRequest",
+        "example": {
+          "bio": "Building healthier habits with earned screen time.",
+          "display_name": "Safinio Parent",
+          "timezone": "Asia/Bishkek"
+        }
+      },
+      "StepsReportRequest": {
+        "properties": {
+          "steps_count": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Steps Count",
+            "description": "Number of steps completed for the current day."
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source",
+            "description": "Where the steps value came from, for example `client`, `healthkit`, or `google_fit`.",
+            "default": "client"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "steps_count"
+        ],
+        "title": "StepsReportRequest",
+        "example": {
+          "source": "healthkit",
+          "steps_count": 5200
+        }
+      },
+      "TaskReviewRequest": {
+        "properties": {
+          "decision": {
+            "type": "string",
+            "pattern": "^(approved|rejected)$",
+            "title": "Decision",
+            "description": "Parent decision for the submitted task instance."
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "Optional parent review note."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision"
+        ],
+        "title": "TaskReviewRequest",
+        "example": {
+          "decision": "approved",
+          "note": "Nice work."
+        }
+      },
+      "TaskSubmissionRequest": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "Optional free-text note from the child."
+          },
+          "payload": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload",
+            "description": "Structured task-specific submission payload."
+          },
+          "submission_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submission Image Url",
+            "description": "Optional public proof image URL."
+          },
+          "submission_image_object_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submission Image Object Key",
+            "description": "Optional storage object key for proof images."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TaskSubmissionRequest",
+        "example": {
+          "note": "Finished my reading before bed.",
+          "payload": {
+            "minutes": 20
+          },
+          "submission_image_object_key": "proofs/read-20.jpg",
+          "submission_image_url": "https://cdn.safini.fun/proofs/read-20.jpg"
+        }
+      },
+      "TaskTemplateCreateRequest": {
+        "properties": {
+          "task_type": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Task Type",
+            "description": "Task type key such as `custom`, `duolingo`, `steps`, `logic`, or `chess`."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "description": "Short task title shown in the task list."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Optional longer task explanation."
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Category",
+            "description": "High-level grouping such as `learn`, `fitness`, or `logic`."
+          },
+          "proof_mode": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 1,
+            "title": "Proof Mode",
+            "description": "How the child proves completion, for example `text_image`, `reported_metric`, or `none`."
+          },
+          "verification_mode": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 1,
+            "title": "Verification Mode",
+            "description": "How the task is approved, for example `parent_approval` or `auto`."
+          },
+          "recurrence_rule": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "title": "Recurrence Rule",
+            "description": "Template recurrence such as `daily`, `once`, or `manual`."
+          },
+          "coin_reward": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Coin Reward",
+            "description": "How many Time Coins the child earns when approved."
+          },
+          "xp_reward": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Xp Reward",
+            "description": "How much XP the child earns when approved."
+          },
+          "target_value": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Value",
+            "description": "Optional numeric target, such as 20 or 5000."
+          },
+          "target_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Unit",
+            "description": "Unit for the target, such as `minutes`, `steps`, or `lesson`."
+          },
+          "content_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Ref",
+            "description": "Optional content identifier for in-app logic or chess material."
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata",
+            "description": "Optional extra JSON metadata for the frontend."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "task_type",
+          "title",
+          "category",
+          "proof_mode",
+          "verification_mode",
+          "recurrence_rule",
+          "coin_reward",
+          "xp_reward"
+        ],
+        "title": "TaskTemplateCreateRequest",
+        "example": {
+          "category": "learn",
+          "coin_reward": 15,
+          "description": "Independent reading before bedtime.",
+          "metadata": {
+            "difficulty": "easy"
+          },
+          "proof_mode": "text_image",
+          "recurrence_rule": "daily",
+          "target_unit": "minutes",
+          "target_value": 20,
+          "task_type": "custom",
+          "title": "Read for 20 mins",
+          "verification_mode": "parent_approval",
+          "xp_reward": 20
+        }
+      },
+      "TaskTemplateUpdateRequest": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "proof_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proof Mode"
+          },
+          "verification_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification Mode"
+          },
+          "recurrence_rule": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recurrence Rule"
+          },
+          "coin_reward": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coin Reward"
+          },
+          "xp_reward": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Xp Reward"
+          },
+          "target_value": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Value"
+          },
+          "target_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Unit"
+          },
+          "content_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Ref"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TaskTemplateUpdateRequest",
+        "example": {
+          "coin_reward": 20,
+          "status": "active",
+          "title": "Read for 30 mins"
+        }
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "SupabaseAuth": {
+        "type": "http",
+        "description": "Use the Supabase access token via `Authorization: Bearer <access_token>`.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "health",
+      "description": "Public liveness and readiness checks used by hosting, CI, or uptime tools."
+    },
+    {
+      "name": "profiles",
+      "description": "Authenticated user profile endpoints. Useful right after Supabase sign-in."
+    },
+    {
+      "name": "system",
+      "description": "Service-level metadata, auth inspection, and low-volume app settings."
+    },
+    {
+      "name": "families",
+      "description": "Parent setup flows: create the family container and add child profiles."
+    },
+    {
+      "name": "children",
+      "description": "Child-facing and parent-view child endpoints such as dashboards, home, today, avatar, and invite-code flows."
+    },
+    {
+      "name": "tasks",
+      "description": "Task templates, today's task instances, proof submission, review, and steps reporting."
+    },
+    {
+      "name": "apps",
+      "description": "Controlled app rules and actual app-usage reports that consume granted minutes."
+    },
+    {
+      "name": "store",
+      "description": "Rewards shop, wallet history, app-time redemption, and avatar item purchases."
+    },
+    {
+      "name": "ai",
+      "description": "MVP AI helper endpoints for parent task suggestions and the child AI friend with logs."
+    }
+  ]
+}
