@@ -1,22 +1,13 @@
-import 'package:json_annotation/json_annotation.dart';
 import '../../domain/models/profile_model.dart';
 
-part 'profile_dto.g.dart';
-
-@JsonSerializable()
 class ProfileDto {
-  @JsonKey(name: 'user_id')
   final String userId;
   final String email;
-  @JsonKey(name: 'display_name')
   final String displayName;
-  @JsonKey(name: 'avatar_url')
   final String avatarUrl;
   final String bio;
   final String timezone;
-  @JsonKey(name: 'created_at')
   final DateTime createdAt;
-  @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
 
   ProfileDto({
@@ -30,8 +21,31 @@ class ProfileDto {
     required this.updatedAt,
   });
 
-  factory ProfileDto.fromJson(Map<String, dynamic> json) => _$ProfileDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$ProfileDtoToJson(this);
+  factory ProfileDto.fromJson(Map<String, dynamic> json) {
+    return ProfileDto(
+      userId: json['user_id'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      displayName: json['display_name'] as String? ?? '',
+      avatarUrl: json['avatar_url'] as String? ?? '',
+      bio: json['bio'] as String? ?? '',
+      timezone: json['timezone'] as String? ?? '',
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': userId,
+      'email': email,
+      'display_name': displayName,
+      'avatar_url': avatarUrl,
+      'bio': bio,
+      'timezone': timezone,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
 
   ProfileModel toDomain() {
     return ProfileModel(
@@ -60,11 +74,8 @@ class ProfileDto {
   }
 }
 
-@JsonSerializable()
 class ProfileUpdateDto {
-  @JsonKey(name: 'display_name')
   final String? displayName;
-  @JsonKey(name: 'avatar_url')
   final String? avatarUrl;
   final String? bio;
   final String? timezone;
@@ -76,6 +87,21 @@ class ProfileUpdateDto {
     this.timezone,
   });
 
-  factory ProfileUpdateDto.fromJson(Map<String, dynamic> json) => _$ProfileUpdateDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$ProfileUpdateDtoToJson(this);
+  factory ProfileUpdateDto.fromJson(Map<String, dynamic> json) {
+    return ProfileUpdateDto(
+      displayName: json['display_name'] as String?,
+      avatarUrl: json['avatar_url'] as String?,
+      bio: json['bio'] as String?,
+      timezone: json['timezone'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'display_name': displayName,
+      'avatar_url': avatarUrl,
+      'bio': bio,
+      'timezone': timezone,
+    };
+  }
 }

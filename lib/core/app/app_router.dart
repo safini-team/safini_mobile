@@ -1,27 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
 
 class AppRouter {
   late final RootStackRouter _router = RootStackRouter.build(
     routes: [
       NamedRouteDef(
-        name: 'home',
+        name: 'auth',
         path: '/',
-        builder: (context, data) => const _HomePage(),
+        builder: (context, data) => const AuthPage(),
       ),
     ],
   );
 
   RouterConfig<Object> config() {
     return _router.config();
-  }
-}
-
-class _HomePage extends StatelessWidget {
-  const _HomePage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('SAFINIO')));
   }
 }

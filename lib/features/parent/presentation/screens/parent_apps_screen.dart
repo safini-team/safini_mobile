@@ -53,7 +53,10 @@ class ParentAppsScreen extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.lightbulb_outline, color: Color(0xFF8100D1)),
+                        const Icon(
+                          Icons.lightbulb_outline,
+                          color: Color(0xFF8100D1),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -70,22 +73,26 @@ class ParentAppsScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   const _DailyLimitHeader(),
                   const SizedBox(height: 12),
-                  ...state.appLimits.map((app) => ParentAppLimitTile(
-                    appName: app['name'],
-                    usedMinutes: app['used'],
-                    limitMinutes: app['limit'],
-                    iconPath: app['icon'],
-                    isEnabled: app['isEnabled'],
-                    onToggle: (val) => context.read<ParentAppsCubit>().toggleApp(app['name'], val),
-                    onAdjust: () {},
-                  )),
+                  ...state.appLimits.map(
+                    (app) => ParentAppLimitTile(
+                      appName: app['name'],
+                      usedMinutes: app['used'],
+                      limitMinutes: app['limit'],
+                      iconPath: app['icon'],
+                      isEnabled: app['isEnabled'],
+                      onToggle: (val) => context
+                          .read<ParentAppsCubit>()
+                          .toggleApp(app['name'], val),
+                      onAdjust: () {},
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   const _AddAppButton(),
                   const SizedBox(height: 100),
                 ],
               );
             }
-            
+
             return const SizedBox.shrink();
           },
         ),
@@ -107,13 +114,35 @@ class _DailyLimitHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text("Daily Limit", style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            "Daily Limit",
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const Spacer(),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.remove_circle_outline, color: Colors.purple)),
-          Text("60m", style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.add_circle_outline, color: Colors.purple)),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.remove_circle_outline, color: Colors.purple),
+          ),
+          Text(
+            "60m",
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add_circle_outline, color: Colors.purple),
+          ),
           const SizedBox(width: 8),
-          Text("12m remaining", style: context.textTheme.bodySmall?.copyWith(color: Colors.red, fontWeight: FontWeight.bold)),
+          Text(
+            "12m remaining",
+            style: context.textTheme.bodySmall?.copyWith(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
@@ -129,9 +158,13 @@ class _AddAppButton extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF8100D1), style: BorderStyle.solid, width: 1.5),
+        border: Border.all(
+          color: const Color(0xFF8100D1),
+          style: BorderStyle.solid,
+          width: 1.5,
+        ),
         borderRadius: BorderRadius.circular(20),
-        // Dashed border effect would need a custom painter or a package, 
+        // Dashed border effect would need a custom painter or a package,
         // using solid for now to match style closely.
       ),
       child: Row(

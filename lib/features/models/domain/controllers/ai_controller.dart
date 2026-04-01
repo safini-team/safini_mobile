@@ -1,10 +1,8 @@
-import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../models/ai_model.dart';
 import '../repositories/i_ai_repository.dart';
 import '../../../../core/error/failures.dart';
 
-@lazySingleton
 class AiController {
   final IAiRepository _repository;
 
