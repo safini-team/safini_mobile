@@ -5,6 +5,7 @@ import '../../domain/repositories/i_child_repository.dart';
 import '../../../../core/error/failures.dart';
 
 @Injectable(as: IChildRepository)
+
 class ChildRepositoryImpl implements IChildRepository {
   @override
   Future<Either<Failure, ChildModel>> createChild(String nickname, int age, String gender) async {

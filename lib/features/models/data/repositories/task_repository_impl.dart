@@ -4,6 +4,7 @@ import '../../domain/models/task_model.dart';
 import '../../domain/repositories/i_task_repository.dart';
 import '../../../../core/error/failures.dart';
 
+
 @Injectable(as: ITaskRepository)
 class TaskRepositoryImpl implements ITaskRepository {
   @override

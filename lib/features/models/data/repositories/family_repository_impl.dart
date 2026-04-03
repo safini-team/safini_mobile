@@ -5,6 +5,7 @@ import '../../domain/repositories/i_family_repository.dart';
 import '../../../../core/error/failures.dart';
 
 @Injectable(as: IFamilyRepository)
+
 class FamilyRepositoryImpl implements IFamilyRepository {
   @override
   Future<Either<Failure, FamilyModel>> createFamily(String name, String timezone) async {

@@ -5,6 +5,7 @@ import '../repositories/i_ai_repository.dart';
 import '../../../../core/error/failures.dart';
 
 @lazySingleton
+
 class AiController {
   final IAiRepository _repository;
 
