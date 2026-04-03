@@ -17,6 +17,10 @@ dependencies:
   go_router: ^16.2.1
   http: ^1.6.0
   auto_route: ^11.1.0
+
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  injectable: ^2.5.0
   dartz: ^0.10.1
 
 dev_dependencies:
@@ -25,6 +29,10 @@ dev_dependencies:
 
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  build_runner: ^2.5.4
+  freezed: ^2.5.8
+  json_serializable: ^6.9.5
+  injectable_generator: ^2.7.0
 
 flutter:
   uses-material-design: true

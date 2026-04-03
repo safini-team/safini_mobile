@@ -1,10 +1,22 @@
+import 'package:json_annotation/json_annotation.dart';
 import '../../domain/models/ai_model.dart';
 
+part 'ai_dto.g.dart';
+
+@JsonSerializable()
 class AIConversationLogDto {
   final String id;
+
+  @JsonKey(name: 'child_id')
   final String childId;
+
+  @JsonKey(name: 'message_count')
   final int messageCount;
+
+  @JsonKey(name: 'last_message_at')
   final DateTime? lastMessageAt;
+
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   AIConversationLogDto({
@@ -15,25 +27,10 @@ class AIConversationLogDto {
     required this.createdAt,
   });
 
-  factory AIConversationLogDto.fromJson(Map<String, dynamic> json) {
-    return AIConversationLogDto(
-      id: json['id'] as String? ?? '',
-      childId: json['child_id'] as String? ?? '',
-      messageCount: json['message_count'] as int? ?? 0,
-      lastMessageAt: json['last_message_at'] != null ? DateTime.parse(json['last_message_at'] as String) : null,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-    );
-  }
+  factory AIConversationLogDto.fromJson(Map<String, dynamic> json) =>
+      _$AIConversationLogDtoFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'child_id': childId,
-      'message_count': messageCount,
-      'last_message_at': lastMessageAt?.toIso8601String(),
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$AIConversationLogDtoToJson(this);
 
   AIConversationLogModel toDomain() {
     return AIConversationLogModel(
@@ -46,9 +43,12 @@ class AIConversationLogDto {
   }
 }
 
+@JsonSerializable()
 class AIMessageDto {
   final String role;
   final String content;
+
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   AIMessageDto({
@@ -57,21 +57,10 @@ class AIMessageDto {
     required this.createdAt,
   });
 
-  factory AIMessageDto.fromJson(Map<String, dynamic> json) {
-    return AIMessageDto(
-      role: json['role'] as String? ?? '',
-      content: json['content'] as String? ?? '',
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-    );
-  }
+  factory AIMessageDto.fromJson(Map<String, dynamic> json) =>
+      _$AIMessageDtoFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'role': role,
-      'content': content,
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$AIMessageDtoToJson(this);
 
   AIMessageModel toDomain() {
     return AIMessageModel(
@@ -82,12 +71,18 @@ class AIMessageDto {
   }
 }
 
+@JsonSerializable()
 class TaskSuggestionDto {
   final String title;
   final String description;
   final String category;
+
+  @JsonKey(name: 'coins_reward')
   final int coinsReward;
+
+  @JsonKey(name: 'xp_reward')
   final int xpReward;
+
   final String reasoning;
 
   TaskSuggestionDto({
@@ -99,27 +94,10 @@ class TaskSuggestionDto {
     required this.reasoning,
   });
 
-  factory TaskSuggestionDto.fromJson(Map<String, dynamic> json) {
-    return TaskSuggestionDto(
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
-      category: json['category'] as String? ?? '',
-      coinsReward: json['coins_reward'] as int? ?? 0,
-      xpReward: json['xp_reward'] as int? ?? 0,
-      reasoning: json['reasoning'] as String? ?? '',
-    );
-  }
+  factory TaskSuggestionDto.fromJson(Map<String, dynamic> json) =>
+      _$TaskSuggestionDtoFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'description': description,
-      'category': category,
-      'coins_reward': coinsReward,
-      'xp_reward': xpReward,
-      'reasoning': reasoning,
-    };
-  }
+  Map<String, dynamic> toJson() => _$TaskSuggestionDtoToJson(this);
 
   TaskSuggestionModel toDomain() {
     return TaskSuggestionModel(

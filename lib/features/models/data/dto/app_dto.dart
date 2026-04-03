@@ -1,3 +1,25 @@
+import 'package:json_annotation/json_annotation.dart';
+import '../../domain/models/app_model.dart';
+
+part 'app_dto.g.dart';
+
+@JsonSerializable()
+class AppRuleDto {
+  final String id;
+  @JsonKey(name: 'child_id')
+  final String childId;
+  @JsonKey(name: 'package_name')
+  final String packageName;
+  @JsonKey(name: 'app_name')
+  final String appName;
+  @JsonKey(name: 'daily_limit_minutes')
+  final int dailyLimitMinutes;
+  @JsonKey(name: 'is_blocked')
+  final bool isBlocked;
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+  @JsonKey(name: 'updated_at')
+
 import '../../domain/models/app_model.dart';
 
 class AppRuleDto {
@@ -8,6 +30,7 @@ class AppRuleDto {
   final int dailyLimitMinutes;
   final bool isBlocked;
   final DateTime createdAt;
+
   final DateTime updatedAt;
 
   AppRuleDto({
@@ -20,6 +43,10 @@ class AppRuleDto {
     required this.createdAt,
     required this.updatedAt,
   });
+
+
+  factory AppRuleDto.fromJson(Map<String, dynamic> json) => _$AppRuleDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$AppRuleDtoToJson(this);
 
   factory AppRuleDto.fromJson(Map<String, dynamic> json) {
     return AppRuleDto(
@@ -47,6 +74,7 @@ class AppRuleDto {
     };
   }
 
+
   AppRuleModel toDomain() {
     return AppRuleModel(
       id: id,
@@ -61,9 +89,19 @@ class AppRuleDto {
   }
 }
 
+
+@JsonSerializable()
+class AppUsageReportDto {
+  @JsonKey(name: 'package_name')
+  final String packageName;
+  @JsonKey(name: 'app_name')
+  final String appName;
+  @JsonKey(name: 'usage_minutes')
+
 class AppUsageReportDto {
   final String packageName;
   final String appName;
+
   final int usageMinutes;
 
   AppUsageReportDto({
@@ -71,6 +109,10 @@ class AppUsageReportDto {
     required this.appName,
     required this.usageMinutes,
   });
+
+
+  factory AppUsageReportDto.fromJson(Map<String, dynamic> json) => _$AppUsageReportDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$AppUsageReportDtoToJson(this);
 
   factory AppUsageReportDto.fromJson(Map<String, dynamic> json) {
     return AppUsageReportDto(
@@ -88,6 +130,7 @@ class AppUsageReportDto {
     };
   }
 
+
   AppUsageReportModel toDomain() {
     return AppUsageReportModel(
       packageName: packageName,
@@ -97,7 +140,13 @@ class AppUsageReportDto {
   }
 }
 
+
+@JsonSerializable()
 class RedemptionRequestDto {
+  @JsonKey(name: 'rule_id')
+
+class RedemptionRequestDto {
+
   final String ruleId;
   final int minutes;
 
@@ -105,6 +154,10 @@ class RedemptionRequestDto {
     required this.ruleId,
     required this.minutes,
   });
+
+
+  factory RedemptionRequestDto.fromJson(Map<String, dynamic> json) => _$RedemptionRequestDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$RedemptionRequestDtoToJson(this);
 
   factory RedemptionRequestDto.fromJson(Map<String, dynamic> json) {
     return RedemptionRequestDto(

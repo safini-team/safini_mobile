@@ -1,3 +1,23 @@
+import 'package:json_annotation/json_annotation.dart';
+import '../../domain/models/profile_model.dart';
+
+part 'profile_dto.g.dart';
+
+@JsonSerializable()
+class ProfileDto {
+  @JsonKey(name: 'user_id')
+  final String userId;
+  final String email;
+  @JsonKey(name: 'display_name')
+  final String displayName;
+  @JsonKey(name: 'avatar_url')
+  final String avatarUrl;
+  final String bio;
+  final String timezone;
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+  @JsonKey(name: 'updated_at')
+
 import '../../domain/models/profile_model.dart';
 
 class ProfileDto {
@@ -21,6 +41,8 @@ class ProfileDto {
     required this.updatedAt,
   });
 
+  factory ProfileDto.fromJson(Map<String, dynamic> json) => _$ProfileDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileDtoToJson(this);
   factory ProfileDto.fromJson(Map<String, dynamic> json) {
     return ProfileDto(
       userId: json['user_id'] as String? ?? '',
@@ -59,6 +81,13 @@ class ProfileDto {
       updatedAt: updatedAt,
     );
   }
+}
+
+@JsonSerializable()
+class ProfileUpdateDto {
+  @JsonKey(name: 'display_name')
+  final String? displayName;
+  @JsonKey(name: 'avatar_url')
 
   factory ProfileDto.fromDomain(ProfileModel domain) {
     return ProfileDto(
@@ -87,6 +116,9 @@ class ProfileUpdateDto {
     this.timezone,
   });
 
+
+  factory ProfileUpdateDto.fromJson(Map<String, dynamic> json) => _$ProfileUpdateDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileUpdateDtoToJson(this);
   factory ProfileUpdateDto.fromJson(Map<String, dynamic> json) {
     return ProfileUpdateDto(
       displayName: json['display_name'] as String?,
