@@ -1,264 +1,277 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:safini/core/di/injection.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
-import 'package:safini/features/parent/presentation/widgets/cards/parent_child_card.dart';
 
 class ParentFamilyScreen extends StatelessWidget {
   const ParentFamilyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<ParentFamilyCubit>()..loadFamilyData(),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF8F9FE),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text(
-            "Family",
-            style: context.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout, color: Colors.white),
-              onPressed: () {},
-            ),
-          ],
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF43008F), Color(0xFF8100D1)],
-              ),
-            ),
-          ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FE),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF8100D1),
+        elevation: 0,
+        title: const Text(
+          "Family",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),
         ),
-        body: BlocBuilder<ParentFamilyCubit, ParentFamilyState>(
-          builder: (context, state) {
-            if (state is ParentFamilyLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (state is ParentFamilyLoaded) {
-              return ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Text(
-                    "YOUR CHILDREN",
-                    style: context.textTheme.labelMedium?.copyWith(
-                      color: Colors.grey[600],
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...state.children.map((child) => ParentChildCard(
-                    name: child.name,
-                    age: 10, // Placeholder
-                    gender: "Boy", // Placeholder
-                    coins: 150,
-                    quests: 1,
-                    streak: 5,
-                    onViewAsKid: () {},
-                    onEdit: () {},
-                  )),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF0E6FF),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: const Icon(Icons.add, color: Color(0xFF8100D1)),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Add Another Child",
-                                style: context.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "Set up a new profile",
-                                style: context.textTheme.bodySmall?.copyWith(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(Icons.chevron_right, color: Colors.grey),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    "PARENT ACCOUNT",
-                    style: context.textTheme.labelMedium?.copyWith(
-                      color: Colors.grey[600],
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 24,
-                          child: Icon(Icons.person),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.parent.name,
-                                style: context.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "Family Admin",
-                                style: context.textTheme.bodySmall?.copyWith(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF0E6FF),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            "Admin",
-                            style: TextStyle(color: Color(0xFF8100D1), fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  _buildTipsSection(context),
-                  const SizedBox(height: 24),
-                  const _LogoutButton(),
-                  const SizedBox(height: 100),
-                ],
-              );
-            }
-            
-            return const SizedBox.shrink();
-          },
-        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Icon(Icons.settings_outlined, color: Colors.white),
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          _buildProfileHeader(),
+          const SizedBox(height: 32),
+          _buildKidModeCard(),
+          const SizedBox(height: 16),
+          _buildParentAccountCard(),
+          const SizedBox(height: 32),
+          _buildTipsSection(),
+          const SizedBox(height: 32),
+          _buildLogoutButton(),
+          const SizedBox(height: 100),
+        ],
       ),
     );
   }
 
-  Widget _buildTipsSection(BuildContext context) {
-    final tips = [
-      "Set meaningful tasks that teach responsibility",
-      "Balance screen time rewards with outdoor activities",
-      "Celebrate achievements with your child",
-      "Adjust coin values to match effort levels",
-    ];
-    
+  Widget _buildProfileHeader() {
+    return Row(
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0E6FF),
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFF8100D1), width: 2),
+          ),
+          child: const Icon(Icons.person, color: Color(0xFF8100D1), size: 40),
+        ),
+        const SizedBox(width: 20),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: const [
+                Text(
+                  "Alex",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A1A),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Icon(Icons.edit_outlined, color: Colors.grey, size: 20),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0E6FF),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                "Lv. 5",
+                style: TextStyle(
+                  color: Color(0xFF8100D1),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKidModeCard() {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF9F9),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.red.withOpacity(0.1)),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF8100D1), Color(0xFF5E0099)],
+        ),
+        borderRadius: BorderRadius.circular(32),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.child_care, color: Colors.white, size: 32),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "Switch to Kid Mode",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                Text(
+                  "Hand the phone to Alex",
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildParentAccountCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.person_outline, color: Colors.grey, size: 32),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "Parent Account",
+                  style: TextStyle(
+                    color: Color(0xFF1A1A1A),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                Text(
+                  "Settings & Security",
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.arrow_forward_ios, color: Colors.grey[300], size: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTipsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: const [
+            Icon(Icons.lightbulb_outline, color: Color(0xFF8100D1), size: 24),
+            SizedBox(width: 12),
+            Text(
+              "Tips for Parents",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(32),
+          ),
+          child: Row(
             children: [
-              const Text("🌟", style: TextStyle(fontSize: 24)),
-              const SizedBox(width: 12),
-              Text(
-                "Tips for Parents",
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0E6FF),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(Icons.menu_book_outlined, color: Color(0xFF8100D1), size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "How to set healthy boundaries",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0E6FF),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Read more",
+                        style: TextStyle(
+                          color: Color(0xFF8100D1),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          ...tips.map((tip) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.circle, size: 6, color: Color(0xFF8100D1)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    tip,
-                    style: context.textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
-      ),
+        ),
+      ],
     );
   }
-}
 
-class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildLogoutButton() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 18),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF9F9),
-        border: Border.all(color: Colors.red.withOpacity(0.2)),
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFFFF3B30).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(24),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.logout, color: Colors.red),
-          const SizedBox(width: 12),
-          Text(
-            "Switch to Kid Mode / Logout",
-            style: context.textTheme.titleMedium?.copyWith(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
+      child: const Center(
+        child: Text(
+          "Logout",
+          style: TextStyle(
+            color: Color(0xFFFF3B30),
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
-        ],
+        ),
       ),
     );
   }

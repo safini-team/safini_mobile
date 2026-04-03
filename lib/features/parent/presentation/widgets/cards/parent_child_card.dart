@@ -32,7 +32,7 @@ class ParentChildCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -42,36 +42,59 @@ class ParentChildCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
-                radius: 40,
-                // Placeholder avatar
-                backgroundImage: AssetImage('assets/images/child_avatar_alex.png'),
-                child: Icon(Icons.person, size: 40, color: Colors.grey),
+              Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFF8100D1), width: 2),
+                    ),
+                    child: CircleAvatar(
+                      radius: 36,
+                      backgroundColor: Colors.grey[100],
+                      child: const Text("👦", style: TextStyle(fontSize: 36)),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF8100D1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: const Text(
+                        "Lv.5",
+                        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       name,
-                      style: context.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: context.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 24),
                     ),
+                    const SizedBox(height: 4),
                     Text(
-                      "Age $age • $gender",
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                      "Age $age · $gender",
+                      style: TextStyle(color: Colors.grey[500], fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStat(context, coins.toString(), "Coins"),
-                        _buildStat(context, quests.toString(), "Quests"),
-                        _buildStat(context, streak.toString(), "Streak"),
+                        _buildStatItem(coins.toString(), "Coins"),
+                        _buildStatItem(quests.toString(), "Quests"),
+                        _buildStatItem(streak.toString(), "Streak"),
                       ],
                     ),
                   ],
@@ -79,30 +102,35 @@ class ParentChildCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: onViewAsKid,
-                  icon: const Icon(Icons.visibility),
-                  label: const Text("View as Kid"),
+                  icon: const Icon(Icons.visibility_outlined, size: 18),
+                  label: const Text("View as Kid", style: TextStyle(fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colorScheme.primary,
+                    backgroundColor: const Color(0xFF8100D1),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
-              OutlinedButton.icon(
-                onPressed: onEdit,
-                icon: const Icon(Icons.settings_outlined),
-                label: const Text("Edit"),
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.settings_outlined, size: 18),
+                  label: const Text("Edit", style: TextStyle(fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF8100D1),
+                    side: const BorderSide(color: Color(0xFF8100D1)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
                 ),
               ),
             ],
@@ -112,21 +140,16 @@ class ParentChildCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(BuildContext context, String value, String label) {
+  Widget _buildStatItem(String value, String label) {
     return Column(
       children: [
         Text(
           value,
-          style: context.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: context.colorScheme.primary,
-          ),
+          style: const TextStyle(color: Color(0xFF8100D1), fontWeight: FontWeight.bold, fontSize: 18),
         ),
         Text(
           label,
-          style: context.textTheme.bodySmall?.copyWith(
-            color: Colors.grey[500],
-          ),
+          style: TextStyle(color: Colors.grey[400], fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ],
     );

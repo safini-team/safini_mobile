@@ -2,56 +2,61 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class ParentProgressCard extends StatelessWidget {
-  final String childName;
+  final String name;
   final String level;
-  final int timeCoins;
-  final String? avatarUrl;
+  final int coins;
 
   const ParentProgressCard({
     super.key,
-    required this.childName,
+    required this.name,
     required this.level,
-    required this.timeCoins,
-    this.avatarUrl,
+    required this.coins,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(24),
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: Colors.white.withOpacity(0.3),
-            // Placeholder avatar
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
             child: const Icon(Icons.person, color: Colors.white, size: 40),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  childName,
-                  style: context.textTheme.headlineSmall?.copyWith(
+                  "$name's Progress",
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
+                    fontSize: 22,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 16),
-                    const SizedBox(width: 4),
+                    const Icon(Icons.star, color: Colors.amber, size: 18),
+                    const SizedBox(width: 6),
                     Text(
                       level,
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -59,13 +64,28 @@ class ParentProgressCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Image.asset('assets/icons/coin.png', width: 20, height: 20, errorBuilder: (_, __, ___) => const Icon(Icons.monetization_on, color: Colors.amber, size: 20)),
-                    const SizedBox(width: 4),
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.amber,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Text(
+                        "\$",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Text(
-                      "$timeCoins Time Coins",
-                      style: context.textTheme.bodyLarge?.copyWith(
+                      "$coins Time Coins",
+                      style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
                   ],
