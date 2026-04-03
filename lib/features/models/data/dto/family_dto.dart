@@ -72,3 +72,17 @@ class ChildSummaryDto {
     );
   }
 }
+
+@JsonSerializable()
+class FamilyCreateDto {
+  final String name;
+  final String timezone;
+
+  FamilyCreateDto({
+    required this.name,
+    required this.timezone,
+  });
+
+  factory FamilyCreateDto.fromJson(Map<String, dynamic> json) => _$FamilyCreateDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$FamilyCreateDtoToJson(this);
+}

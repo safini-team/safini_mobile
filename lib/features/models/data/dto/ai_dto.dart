@@ -61,3 +61,38 @@ class AIMessageDto {
     );
   }
 }
+
+@JsonSerializable()
+class TaskSuggestionDto {
+  final String title;
+  final String description;
+  final String category;
+  @JsonKey(name: 'coins_reward')
+  final int coinsReward;
+  @JsonKey(name: 'xp_reward')
+  final int xpReward;
+  final String reasoning;
+
+  TaskSuggestionDto({
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.coinsReward,
+    required this.xpReward,
+    required this.reasoning,
+  });
+
+  factory TaskSuggestionDto.fromJson(Map<String, dynamic> json) => _$TaskSuggestionDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskSuggestionDtoToJson(this);
+
+  TaskSuggestionModel toDomain() {
+    return TaskSuggestionModel(
+      title: title,
+      description: description,
+      category: category,
+      coinsReward: coinsReward,
+      xpReward: xpReward,
+      reasoning: reasoning,
+    );
+  }
+}

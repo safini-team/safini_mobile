@@ -65,7 +65,7 @@ class ChildDto {
       longestStreakDays: longestStreakDays,
       tasksCompletedCount: tasksCompletedCount,
       coinsBalance: coinsBalance,
-      achievementsCount: achievementsCount,
+      achievements_count: achievementsCount,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -82,4 +82,39 @@ class AvatarStateDto {
   Map<String, dynamic> toJson() => _$AvatarStateDtoToJson(this);
 
   AvatarStateModel toDomain() => AvatarStateModel(equipped: equipped);
+}
+
+@JsonSerializable()
+class ChildCreateDto {
+  final String nickname;
+  final int age;
+  final String gender;
+
+  ChildCreateDto({
+    required this.nickname,
+    required this.age,
+    required this.gender,
+  });
+
+  factory ChildCreateDto.fromJson(Map<String, dynamic> json) => _$ChildCreateDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ChildCreateDtoToJson(this);
+}
+
+@JsonSerializable()
+class ChildUpdateDto {
+  final String? nickname;
+  final int? age;
+  final String? gender;
+  @JsonKey(name: 'avatar_state')
+  final AvatarStateDto? avatarState;
+
+  ChildUpdateDto({
+    this.nickname,
+    this.age,
+    this.gender,
+    this.avatarState,
+  });
+
+  factory ChildUpdateDto.fromJson(Map<String, dynamic> json) => _$ChildUpdateDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ChildUpdateDtoToJson(this);
 }

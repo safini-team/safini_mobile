@@ -48,3 +48,45 @@ class AppRuleDto {
     );
   }
 }
+
+@JsonSerializable()
+class AppUsageReportDto {
+  @JsonKey(name: 'package_name')
+  final String packageName;
+  @JsonKey(name: 'app_name')
+  final String appName;
+  @JsonKey(name: 'usage_minutes')
+  final int usageMinutes;
+
+  AppUsageReportDto({
+    required this.packageName,
+    required this.appName,
+    required this.usageMinutes,
+  });
+
+  factory AppUsageReportDto.fromJson(Map<String, dynamic> json) => _$AppUsageReportDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$AppUsageReportDtoToJson(this);
+
+  AppUsageReportModel toDomain() {
+    return AppUsageReportModel(
+      packageName: packageName,
+      appName: appName,
+      usageMinutes: usageMinutes,
+    );
+  }
+}
+
+@JsonSerializable()
+class RedemptionRequestDto {
+  @JsonKey(name: 'rule_id')
+  final String ruleId;
+  final int minutes;
+
+  RedemptionRequestDto({
+    required this.ruleId,
+    required this.minutes,
+  });
+
+  factory RedemptionRequestDto.fromJson(Map<String, dynamic> json) => _$RedemptionRequestDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$RedemptionRequestDtoToJson(this);
+}

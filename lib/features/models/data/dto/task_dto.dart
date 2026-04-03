@@ -102,3 +102,26 @@ class TaskInstanceDto {
     );
   }
 }
+
+@JsonSerializable()
+class TaskSubmissionDto {
+  @JsonKey(name: 'proof_url')
+  final String proofUrl;
+
+  TaskSubmissionDto({required this.proofUrl});
+
+  factory TaskSubmissionDto.fromJson(Map<String, dynamic> json) => _$TaskSubmissionDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskSubmissionDtoToJson(this);
+}
+
+@JsonSerializable()
+class TaskReviewDto {
+  final String status;
+  @JsonKey(name: 'parent_note')
+  final String? parentNote;
+
+  TaskReviewDto({required this.status, this.parentNote});
+
+  factory TaskReviewDto.fromJson(Map<String, dynamic> json) => _$TaskReviewDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskReviewDtoToJson(this);
+}

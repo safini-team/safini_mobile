@@ -77,3 +77,37 @@ class StoreOfferDto {
     );
   }
 }
+
+@JsonSerializable()
+class RedemptionResultDto {
+  final String id;
+  @JsonKey(name: 'child_id')
+  final String childId;
+  @JsonKey(name: 'offer_id')
+  final String offerId;
+  @JsonKey(name: 'new_balance')
+  final int newBalance;
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+
+  RedemptionResultDto({
+    required this.id,
+    required this.childId,
+    required this.offerId,
+    required this.newBalance,
+    required this.createdAt,
+  });
+
+  factory RedemptionResultDto.fromJson(Map<String, dynamic> json) => _$RedemptionResultDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$RedemptionResultDtoToJson(this);
+
+  RedemptionResultModel toDomain() {
+    return RedemptionResultModel(
+      id: id,
+      childId: childId,
+      offerId: offerId,
+      newBalance: newBalance,
+      createdAt: createdAt,
+    );
+  }
+}
