@@ -7,6 +7,7 @@ class ParentAppLimitTile extends StatelessWidget {
   final int limitMinutes;
   final String iconPath;
   final bool isEnabled;
+  final bool isMonitor;
   final ValueChanged<bool>? onToggle;
   final VoidCallback? onAdjust;
 
@@ -17,6 +18,7 @@ class ParentAppLimitTile extends StatelessWidget {
     required this.limitMinutes,
     required this.iconPath,
     this.isEnabled = true,
+    this.isMonitor = false,
     this.onToggle,
     this.onAdjust,
   });
@@ -25,20 +27,13 @@ class ParentAppLimitTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = (usedMinutes / limitMinutes).clamp(0.0, 1.0);
     final remaining = limitMinutes - usedMinutes;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,30 +47,29 @@ class ParentAppLimitTile extends StatelessWidget {
                   color: Colors.grey[100],
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    iconPath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.apps, color: Colors.grey),
-                  ),
+                child: const Center(
+                  child: Icon(Icons.grid_view_rounded, color: Colors.grey, size: 24),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       appName,
-                      style: context.textTheme.titleMedium?.copyWith(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFF1A1A1A),
                       ),
                     ),
                     Text(
                       "$usedMinutes used / $limitMinutes limit",
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -84,38 +78,34 @@ class ParentAppLimitTile extends StatelessWidget {
               Switch(
                 value: isEnabled,
                 onChanged: onToggle,
-                activeColor: context.colorScheme.primary,
+                activeColor: const Color(0xFF8100D1),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.grey[200],
-            valueColor: AlwaysStoppedAnimation<Color>(
-              progress > 0.8 ? Colors.orange : context.colorScheme.primary,
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: Colors.grey[100],
+              color: const Color(0xFF8100D1),
+              minHeight: 8,
             ),
-            minHeight: 6,
-            borderRadius: BorderRadius.circular(3),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "$remaining minutes remaining",
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: progress > 0.8 ? Colors.orange : Colors.grey[600],
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              if (onAdjust != null)
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined, size: 20),
-                  onPressed: onAdjust,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
+              if (!isMonitor)
+                Icon(Icons.settings_outlined, color: Colors.grey[400], size: 20),
             ],
           ),
         ],
