@@ -11,7 +11,7 @@ class AIConversationLogModel with _$AIConversationLogModel {
     DateTime? lastMessageAt,
     required DateTime createdAt,
   }) = _AIConversationLogModel;
-}
+} 
 
 @freezed
 class AIMessageModel with _$AIMessageModel {
