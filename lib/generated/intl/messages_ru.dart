@@ -22,13 +22,19 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(age, gender) => "Возраст ${age} • ${gender}";
 
-  static String m1(count) => "${count} монет";
+  static String m1(name) => "Прогресс ${name}";
 
-  static String m2(level) => "Герой ${level} уровня";
+  static String m2(count) => "${count} монет";
 
-  static String m3(minutes) => "осталось ${minutes}м";
+  static String m3(level) => "Герой ${level} уровня";
 
-  static String m4(count) => "Вам нужно еще ${count} монет.";
+  static String m4(minutes) => "Осталось ${minutes} мин.";
+
+  static String m5(minutes) => "осталось ${minutes}м";
+
+  static String m6(used, limit) => "${used} исп. / ${limit} лимит";
+
+  static String m7(count) => "Вам нужно еще ${count} монет.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -55,9 +61,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "changeOutfit": MessageLookupByLibrary.simpleMessage(
       "Сменить одежду, прическу и др.",
     ),
+    "childProgressTitle": m1,
     "cleanTheRoom": MessageLookupByLibrary.simpleMessage("Убраться в комнате"),
     "coins": MessageLookupByLibrary.simpleMessage("Монеты"),
-    "coinsCount": m1,
+    "coinsCount": m2,
     "coinsText": MessageLookupByLibrary.simpleMessage("Монеты"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("Скоро будет!"),
     "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
@@ -84,6 +91,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Безопасное экранное время для умных детей 🌟",
     ),
     "free": MessageLookupByLibrary.simpleMessage("БЕСПЛАТНО"),
+    "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Перейти к заданиям"),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Доброе утро 👋"),
     "home": MessageLookupByLibrary.simpleMessage("Главная"),
@@ -96,8 +104,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
     ),
     "lessons": MessageLookupByLibrary.simpleMessage("Уроки"),
-    "levelHero": m2,
+    "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 сегодня"),
+    "levelHero": m3,
     "manageAll": MessageLookupByLibrary.simpleMessage("Управлять всем"),
+    "minutesRemainingLong": m4,
+    "mon": MessageLookupByLibrary.simpleMessage("ПН"),
     "monitor": MessageLookupByLibrary.simpleMessage("Мониторинг"),
     "myAvatar": MessageLookupByLibrary.simpleMessage("Мой аватар"),
     "myProfile": MessageLookupByLibrary.simpleMessage("Мой профиль"),
@@ -133,9 +144,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Задания в жизни"),
     "remaining": MessageLookupByLibrary.simpleMessage("Осталось"),
-    "remainingTime": m3,
+    "remainingTime": m5,
     "rewardStore": MessageLookupByLibrary.simpleMessage("Магазин наград"),
     "russian": MessageLookupByLibrary.simpleMessage("Русский"),
+    "sat": MessageLookupByLibrary.simpleMessage("СБ"),
     "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Сохранить вид!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Выберите язык"),
@@ -145,10 +157,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "spendYourTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Потратьте свои монеты времени",
     ),
+    "statusActive": MessageLookupByLibrary.simpleMessage("АКТИВНО"),
+    "statusDone": MessageLookupByLibrary.simpleMessage("ГОТОВО"),
+    "statusPending": MessageLookupByLibrary.simpleMessage("ОЖИДАЕТ"),
     "steps": MessageLookupByLibrary.simpleMessage("Шаги"),
+    "stepsChangeText": MessageLookupByLibrary.simpleMessage(
+      "+12% по сравнению со вчера",
+    ),
     "stepsToday": MessageLookupByLibrary.simpleMessage("Шагов сегодня"),
     "store": MessageLookupByLibrary.simpleMessage("Магазин"),
     "streakText": MessageLookupByLibrary.simpleMessage("Подряд"),
+    "sun": MessageLookupByLibrary.simpleMessage("ВС"),
     "switchToKidMode": MessageLookupByLibrary.simpleMessage(
       "Режим ребенка / Выход",
     ),
@@ -177,6 +196,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "tasksAndRewards": MessageLookupByLibrary.simpleMessage(
       "Задания и награды",
     ),
+    "thu": MessageLookupByLibrary.simpleMessage("ЧТ"),
+    "timeCoins": MessageLookupByLibrary.simpleMessage("Монеты времени"),
     "tip1": MessageLookupByLibrary.simpleMessage(
       "Ставьте значимые задачи, которые учат ответственности",
     ),
@@ -191,12 +212,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Советы родителям"),
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Сегодняшние задания"),
+    "tue": MessageLookupByLibrary.simpleMessage("ВТ"),
     "unlockExtraTime": MessageLookupByLibrary.simpleMessage(
       "Разблокировать время",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("разблокировано"),
+    "usedLimit": m6,
     "viewAsKid": MessageLookupByLibrary.simpleMessage("Войти как ребенок"),
-    "youNeedMoreCoins": m4,
+    "wed": MessageLookupByLibrary.simpleMessage("СР"),
+    "weeklyScreenTime": MessageLookupByLibrary.simpleMessage(
+      "Экранное время за неделю",
+    ),
+    "youNeedMoreCoins": m7,
     "yourChildren": MessageLookupByLibrary.simpleMessage("ВАШИ ДЕТИ"),
   };
 }

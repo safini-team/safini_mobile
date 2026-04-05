@@ -39,9 +39,19 @@
   "selectLanguage": "Select Language",
   "goodMorning": "Good morning 👋",
   "parentName": "Safinio Parent",
+  "childProgressTitle": "{name}'s Progress",
+  "@childProgressTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "steps": "Steps",
   "stepsToday": "Steps Today",
+  "stepsChangeText": "+12% vs yesterday",
   "lessons": "Lessons",
+  "lessonsChangeText": "+1 today",
   "appLimits": "App Limits",
   "manageAll": "Manage All",
   "realWorldTasks": "Real-world Tasks",
@@ -152,5 +162,30 @@
         "type": "int"
       }
     }
-  }
+  },
+  "timeCoins": "Time Coins",
+  "weeklyScreenTime": "Weekly Screen Time",
+  "mon": "MON",
+  "tue": "TUE",
+  "wed": "WED",
+  "thu": "THU",
+  "fri": "FRI",
+  "sat": "SAT",
+  "sun": "SUN",
+  "usedLimit": "{used} used / {limit} limit",
+  "@usedLimit": {
+    "placeholders": {
+      "used": { "type": "int" },
+      "limit": { "type": "int" }
+    }
+  },
+  "minutesRemainingLong": "{minutes} minutes remaining",
+  "@minutesRemainingLong": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "statusPending": "PENDING",
+  "statusDone": "DONE",
+  "statusActive": "ACTIVE"
 }

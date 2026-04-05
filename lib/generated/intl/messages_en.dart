@@ -22,13 +22,19 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(age, gender) => "Age ${age} • ${gender}";
 
-  static String m1(count) => "${count} coins";
+  static String m1(name) => "${name}\'s Progress";
 
-  static String m2(level) => "Level ${level} Hero";
+  static String m2(count) => "${count} coins";
 
-  static String m3(minutes) => "${minutes}m remaining";
+  static String m3(level) => "Level ${level} Hero";
 
-  static String m4(count) => "You need ${count} more coins.";
+  static String m4(minutes) => "${minutes} minutes remaining";
+
+  static String m5(minutes) => "${minutes}m remaining";
+
+  static String m6(used, limit) => "${used} used / ${limit} limit";
+
+  static String m7(count) => "You need ${count} more coins.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -55,9 +61,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "changeOutfit": MessageLookupByLibrary.simpleMessage(
       "Change outfit, hair & more",
     ),
+    "childProgressTitle": m1,
     "cleanTheRoom": MessageLookupByLibrary.simpleMessage("Clean the room"),
     "coins": MessageLookupByLibrary.simpleMessage("Coins"),
-    "coinsCount": m1,
+    "coinsCount": m2,
     "coinsText": MessageLookupByLibrary.simpleMessage("Coins"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("Coming soon!"),
     "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
@@ -82,6 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Safe screen time for smart kids 🌟",
     ),
     "free": MessageLookupByLibrary.simpleMessage("FREE"),
+    "fri": MessageLookupByLibrary.simpleMessage("FRI"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Go to Tasks"),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Good morning 👋"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
@@ -92,8 +100,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Kids earn Time Coins to unlock extra minutes for these apps.",
     ),
     "lessons": MessageLookupByLibrary.simpleMessage("Lessons"),
-    "levelHero": m2,
+    "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 today"),
+    "levelHero": m3,
     "manageAll": MessageLookupByLibrary.simpleMessage("Manage All"),
+    "minutesRemainingLong": m4,
+    "mon": MessageLookupByLibrary.simpleMessage("MON"),
     "monitor": MessageLookupByLibrary.simpleMessage("Monitor"),
     "myAvatar": MessageLookupByLibrary.simpleMessage("My Avatar"),
     "myProfile": MessageLookupByLibrary.simpleMessage("My Profile"),
@@ -123,9 +134,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Real-world Tasks"),
     "remaining": MessageLookupByLibrary.simpleMessage("Remaining"),
-    "remainingTime": m3,
+    "remainingTime": m5,
     "rewardStore": MessageLookupByLibrary.simpleMessage("Reward Store"),
     "russian": MessageLookupByLibrary.simpleMessage("Russian"),
+    "sat": MessageLookupByLibrary.simpleMessage("SAT"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Save My Look!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
@@ -135,10 +147,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "spendYourTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Spend your Time Coins",
     ),
+    "statusActive": MessageLookupByLibrary.simpleMessage("ACTIVE"),
+    "statusDone": MessageLookupByLibrary.simpleMessage("DONE"),
+    "statusPending": MessageLookupByLibrary.simpleMessage("PENDING"),
     "steps": MessageLookupByLibrary.simpleMessage("Steps"),
+    "stepsChangeText": MessageLookupByLibrary.simpleMessage(
+      "+12% vs yesterday",
+    ),
     "stepsToday": MessageLookupByLibrary.simpleMessage("Steps Today"),
     "store": MessageLookupByLibrary.simpleMessage("Store"),
     "streakText": MessageLookupByLibrary.simpleMessage("Streak"),
+    "sun": MessageLookupByLibrary.simpleMessage("SUN"),
     "switchToKidMode": MessageLookupByLibrary.simpleMessage(
       "Switch to Kid Mode / Logout",
     ),
@@ -163,6 +182,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskStepsTitle": MessageLookupByLibrary.simpleMessage("Walk 5,000 Steps"),
     "tasks": MessageLookupByLibrary.simpleMessage("Tasks"),
     "tasksAndRewards": MessageLookupByLibrary.simpleMessage("Tasks & Rewards"),
+    "thu": MessageLookupByLibrary.simpleMessage("THU"),
+    "timeCoins": MessageLookupByLibrary.simpleMessage("Time Coins"),
     "tip1": MessageLookupByLibrary.simpleMessage(
       "Set meaningful tasks that teach responsibility",
     ),
@@ -177,12 +198,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Tips for Parents"),
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Today\'s Quests"),
+    "tue": MessageLookupByLibrary.simpleMessage("TUE"),
     "unlockExtraTime": MessageLookupByLibrary.simpleMessage(
       "Unlock Extra Time",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("unlocked"),
+    "usedLimit": m6,
     "viewAsKid": MessageLookupByLibrary.simpleMessage("View as Kid"),
-    "youNeedMoreCoins": m4,
+    "wed": MessageLookupByLibrary.simpleMessage("WED"),
+    "weeklyScreenTime": MessageLookupByLibrary.simpleMessage(
+      "Weekly Screen Time",
+    ),
+    "youNeedMoreCoins": m7,
     "yourChildren": MessageLookupByLibrary.simpleMessage("YOUR CHILDREN"),
   };
 }

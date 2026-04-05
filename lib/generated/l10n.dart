@@ -339,6 +339,16 @@ class S {
     );
   }
 
+  /// `{name}'s Progress`
+  String childProgressTitle(String name) {
+    return Intl.message(
+      '$name\'s Progress',
+      name: 'childProgressTitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
   /// `Steps`
   String get steps {
     return Intl.message('Steps', name: 'steps', desc: '', args: []);
@@ -349,9 +359,29 @@ class S {
     return Intl.message('Steps Today', name: 'stepsToday', desc: '', args: []);
   }
 
+  /// `+12% vs yesterday`
+  String get stepsChangeText {
+    return Intl.message(
+      '+12% vs yesterday',
+      name: 'stepsChangeText',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Lessons`
   String get lessons {
     return Intl.message('Lessons', name: 'lessons', desc: '', args: []);
+  }
+
+  /// `+1 today`
+  String get lessonsChangeText {
+    return Intl.message(
+      '+1 today',
+      name: 'lessonsChangeText',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `App Limits`
@@ -922,6 +952,91 @@ class S {
       desc: '',
       args: [level],
     );
+  }
+
+  /// `Time Coins`
+  String get timeCoins {
+    return Intl.message('Time Coins', name: 'timeCoins', desc: '', args: []);
+  }
+
+  /// `Weekly Screen Time`
+  String get weeklyScreenTime {
+    return Intl.message(
+      'Weekly Screen Time',
+      name: 'weeklyScreenTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MON`
+  String get mon {
+    return Intl.message('MON', name: 'mon', desc: '', args: []);
+  }
+
+  /// `TUE`
+  String get tue {
+    return Intl.message('TUE', name: 'tue', desc: '', args: []);
+  }
+
+  /// `WED`
+  String get wed {
+    return Intl.message('WED', name: 'wed', desc: '', args: []);
+  }
+
+  /// `THU`
+  String get thu {
+    return Intl.message('THU', name: 'thu', desc: '', args: []);
+  }
+
+  /// `FRI`
+  String get fri {
+    return Intl.message('FRI', name: 'fri', desc: '', args: []);
+  }
+
+  /// `SAT`
+  String get sat {
+    return Intl.message('SAT', name: 'sat', desc: '', args: []);
+  }
+
+  /// `SUN`
+  String get sun {
+    return Intl.message('SUN', name: 'sun', desc: '', args: []);
+  }
+
+  /// `{used} used / {limit} limit`
+  String usedLimit(int used, int limit) {
+    return Intl.message(
+      '$used used / $limit limit',
+      name: 'usedLimit',
+      desc: '',
+      args: [used, limit],
+    );
+  }
+
+  /// `{minutes} minutes remaining`
+  String minutesRemainingLong(int minutes) {
+    return Intl.message(
+      '$minutes minutes remaining',
+      name: 'minutesRemainingLong',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `PENDING`
+  String get statusPending {
+    return Intl.message('PENDING', name: 'statusPending', desc: '', args: []);
+  }
+
+  /// `DONE`
+  String get statusDone {
+    return Intl.message('DONE', name: 'statusDone', desc: '', args: []);
+  }
+
+  /// `ACTIVE`
+  String get statusActive {
+    return Intl.message('ACTIVE', name: 'statusActive', desc: '', args: []);
   }
 }
 

@@ -39,9 +39,19 @@
   "selectLanguage": "Выберите язык",
   "goodMorning": "Доброе утро 👋",
   "parentName": "Родитель Safinio",
+  "childProgressTitle": "Прогресс {name}",
+  "@childProgressTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "steps": "Шаги",
   "stepsToday": "Шагов сегодня",
+  "stepsChangeText": "+12% по сравнению со вчера",
   "lessons": "Уроки",
+  "lessonsChangeText": "+1 сегодня",
   "appLimits": "Лимиты приложений",
   "manageAll": "Управлять всем",
   "realWorldTasks": "Задания в жизни",
@@ -152,5 +162,30 @@
         "type": "int"
       }
     }
-  }
+  },
+  "timeCoins": "Монеты времени",
+  "weeklyScreenTime": "Экранное время за неделю",
+  "mon": "ПН",
+  "tue": "ВТ",
+  "wed": "СР",
+  "thu": "ЧТ",
+  "fri": "ПТ",
+  "sat": "СБ",
+  "sun": "ВС",
+  "usedLimit": "{used} исп. / {limit} лимит",
+  "@usedLimit": {
+    "placeholders": {
+      "used": { "type": "int" },
+      "limit": { "type": "int" }
+    }
+  },
+  "minutesRemainingLong": "Осталось {minutes} мин.",
+  "@minutesRemainingLong": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "statusPending": "ОЖИДАЕТ",
+  "statusDone": "ГОТОВО",
+  "statusActive": "АКТИВНО"
 }

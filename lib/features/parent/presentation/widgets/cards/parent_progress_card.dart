@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentProgressCard extends StatelessWidget {
   final String childName;
@@ -71,7 +72,7 @@ class ParentProgressCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "$timeCoins Time Coins",
+                      "$timeCoins ${S.of(context).timeCoins}",
                       style: context.textTheme.bodyLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,

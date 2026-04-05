@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentTaskTile extends StatelessWidget {
   final String title;
@@ -85,15 +86,15 @@ class ParentTaskTile extends StatelessWidget {
     if (isPending) {
       bgColor = const Color(0xFFF0E6FF);
       textColor = const Color(0xFF8100D1);
-      statusText = "PENDING";
+      statusText = S.of(context).statusPending;
     } else if (isCompleted) {
       bgColor = const Color(0xFFE6FFF0);
       textColor = const Color(0xFF00B050);
-      statusText = "DONE";
+      statusText = S.of(context).statusDone;
     } else {
       bgColor = const Color(0xFFFFF9E6);
       textColor = const Color(0xFFFFA800);
-      statusText = "ACTIVE";
+      statusText = S.of(context).statusActive;
     }
 
     return Container(

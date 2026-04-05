@@ -18,7 +18,8 @@ class ParentMonitorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     return BlocProvider(
-      create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
+      create: (context) =>
+          getIt<ParentMonitorCubit>()..loadMonitorData(s),
       child: Scaffold(
         body: Container(
           decoration: const BoxDecoration(
@@ -56,7 +57,9 @@ class ParentMonitorScreen extends StatelessWidget {
                                     s.goodMorning,
                                     style: context.textTheme.bodyMedium
                                         ?.copyWith(
-                                          color: Colors.white.withOpacity(0.8),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.8,
+                                          ),
                                         ),
                                   ),
                                   Text(
@@ -75,7 +78,7 @@ class ParentMonitorScreen extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -96,7 +99,6 @@ class ParentMonitorScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: ParentStatCard(
-                                title: s.steps,
                                 value: state.stepsToday.toString(),
                                 label: s.stepsToday,
                                 change: state.stepsChange,
@@ -107,7 +109,6 @@ class ParentMonitorScreen extends StatelessWidget {
                             const SizedBox(width: 16),
                             Expanded(
                               child: ParentStatCard(
-                                title: s.lessons,
                                 value: state.lessonsToday,
                                 label: s.lessons,
                                 change: state.lessonsChange,

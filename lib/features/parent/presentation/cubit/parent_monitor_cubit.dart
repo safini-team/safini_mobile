@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/features/parent/domain/controllers/parent_controller.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 
 class ParentMonitorCubit extends Cubit<ParentMonitorState> {
-  final ParentController _controller;
+  ParentMonitorCubit(ParentController controller)
+      : super(const ParentMonitorInitial());
 
-  ParentMonitorCubit(this._controller) : super(const ParentMonitorInitial());
-
-  Future<void> loadMonitorData() async {
+  Future<void> loadMonitorData(S s) async {
     emit(const ParentMonitorLoading());
 
     // Simulate API call via controller
@@ -15,14 +15,14 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
     // Placeholder data based on UI reference
     emit(
-      const ParentMonitorLoaded(
-        childName: "Alex's Progress",
-        level: "Level 5 Explorer",
+      ParentMonitorLoaded(
+        childName: s.childProgressTitle('Alex'),
+        level: s.levelHero(5),
         timeCoins: 150,
         stepsToday: 4230,
-        stepsChange: "+12% vs yesterday",
-        lessonsToday: "1/8",
-        lessonsChange: "+1 today",
+        stepsChange: s.stepsChangeText,
+        lessonsToday: '1/8',
+        lessonsChange: s.lessonsChangeText,
         weeklyUsage: [0.4, 0.5, 0.3, 0.7, 1.0, 0.8, 0.6],
         appLimits: [
           {

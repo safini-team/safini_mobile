@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentScreenTimeChart extends StatelessWidget {
   final List<double> weeklyUsage; // values between 0.0 and 1.0
@@ -8,7 +9,15 @@ class ParentScreenTimeChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+    final days = [
+      S.of(context).mon,
+      S.of(context).tue,
+      S.of(context).wed,
+      S.of(context).thu,
+      S.of(context).fri,
+      S.of(context).sat,
+      S.of(context).sun
+    ];
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -20,7 +29,7 @@ class ParentScreenTimeChart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Weekly Screen Time",
+            S.of(context).weeklyScreenTime,
             style: context.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.black87,
