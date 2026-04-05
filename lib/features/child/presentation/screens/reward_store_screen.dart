@@ -317,7 +317,7 @@ class _StoreBottomNavBar extends StatelessWidget {
               _NavItem(
                 icon: Icons.home_rounded,
                 label: 'Home',
-                onTap: () => context.router.maybePop(),
+                onTap: () => context.router.navigate(const NamedRoute('home')),
               ),
               _NavItem(
                 icon: Icons.check_box_rounded,
