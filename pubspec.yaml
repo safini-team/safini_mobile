@@ -17,6 +17,7 @@ dependencies:
   go_router: ^16.2.1
   http: ^1.6.0
   auto_route: ^11.1.0
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:

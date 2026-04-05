@@ -5,7 +5,7 @@
 
 ## Purpose
 
-This skill defines the canonical architecture pattern for all Flutter features in this project. Every time an AI agent generates, scaffolds, or modifies Flutter code, it **must** follow this template exactly — no deviations unless explicitly instructed.
+This skill defines the canonical architecture pattern for all Flutter features in this project. Every time an AI agent generates, scaffolds, or modifies Flutter code, it **must** follow this template exactly — no deviations unless explicitly instructed. This architecture aims for simplicity, avoiding interfaces and code generation where possible.
 
 ---
 
@@ -14,8 +14,8 @@ This skill defines the canonical architecture pattern for all Flutter features i
 | Layer          | Responsibility                             | Hard Rules                                      |
 |----------------|--------------------------------------------|-------------------------------------------------|
 | **Presentation** | Widgets + Cubits                         | No business logic in widgets; Cubit calls Controller only |
-| **Domain**     | Controllers + Models + Repository (abstract) | No Flutter imports in Controllers; pure Dart only |
-| **Data**       | Repository implementations + DTOs + Sources | Knows Firebase / REST / Hive; never exposed to View |
+| **Domain**     | Controllers + Models                       | No Flutter imports in Controllers; pure Dart only |
+| **Data**       | Repositories + Sources                     | Knows Firebase / REST / Hive; never exposed to View |
 
 ---
 
@@ -23,11 +23,11 @@ This skill defines the canonical architecture pattern for all Flutter features i
 
 Every feature **must** follow this exact layout. Replace `<feature>` with the feature name (snake_case).
 
-```
+```text
 lib/
 ├── core/
-│   ├── di/                   # get_it + injectable setup
-│   ├── router/               # auto_route configuration
+│   ├── di/                   # Manual get_it setup
+│   ├── router/               # Route configuration
 │   ├── theme/                # AppTheme, colors, text styles
 │   └── utils/                # Extensions, constants, helpers
 │
@@ -41,14 +41,12 @@ lib/
 │       │       └── <feature>_state.dart
 │       │
 │       ├── domain/
-│       │   ├── models/           # Immutable Dart models: <feature>_model.dart
-│       │   ├── controllers/      # <feature>_controller.dart (no Flutter imports)
-│       │   └── repositories/     # Abstract contracts: i_<feature>_repository.dart
+│       │   ├── models/           # Simple Dart models: <feature>_model.dart
+│       │   └── controllers/      # <feature>_controller.dart (no Flutter imports)
 │       │
 │       └── data/
-│           ├── repositories/     # Concrete impl: <feature>_repository_impl.dart
-│           ├── datasources/      # Firebase / REST / Hive calls
-│           └── dto/              # JSON mappers: <feature>_dto.dart
+│           ├── repositories/     # Concrete repository: <feature>_repository.dart
+│           └── datasources/      # Firebase / REST / Hive calls: <feature>_remote_datasource.dart
 │
 └── main.dart
 ```
@@ -57,13 +55,13 @@ lib/
 
 ## Data Flow — Always Unidirectional
 
-```
+```text
 User Action
   → Screen (View)
   → <Feature>Cubit.method()
   → <Feature>Controller.execute()
-  → I<Feature>Repository (abstract)
-  → <Feature>RepositoryImpl (Firebase / Hive / REST)
+  → <Feature>Repository (Concrete)
+  → <Feature>RemoteDataSource (Firebase / Hive / REST)
   ← returns Either<Failure, Model>
   ← Cubit.emit(<Feature>State)
   ← BlocBuilder/BlocListener rebuilds Screen
@@ -71,83 +69,36 @@ User Action
 
 ---
 
-## File Templates
+## Layer Details & File Templates
 
-### 1. State — `<feature>_state.dart`
+For specific file templates and rules per layer, refer to the following documents:
 
-```dart
-part of '<feature>_cubit.dart';
+- [Presentation Layer](presentation.md) (Widgets, Cubits, State)
+- [Domain Layer](domain.md) (Controllers, Models)
+- [Datasource & Data Layer](datasource.md) (Repositories, Remote Sources)
 
-@freezed
-class <Feature>State with _$<Feature>State {
-  const factory <Feature>State.initial() = _Initial;
-  const factory <Feature>State.loading() = _Loading;
-  const factory <Feature>State.loaded(<Feature>Model data) = _Loaded;
-  const factory <Feature>State.error(String message) = _Error;
-}
-```
+---
 
-### 2. Cubit — `<feature>_cubit.dart`
+## DI Registration (`core/di/`)
 
 ```dart
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import '../domain/controllers/<feature>_controller.dart';
-import '../domain/models/<feature>_model.dart';
+// Using get_it manually
+import 'package:get_it/get_it.dart';
 
-part '<feature>_state.dart';
-part '<feature>_cubit.freezed.dart';
+final sl = GetIt.instance; // service locator
 
-class <Feature>Cubit extends Cubit<<Feature>State> {
-  final <Feature>Controller _controller;
-
-  <Feature>Cubit(this._controller) : super(const <Feature>State.initial());
-
-  Future<void> load() async {
-    emit(const <Feature>State.loading());
-    final result = await _controller.fetch();
-    result.fold(
-      (failure) => emit(<Feature>State.error(failure.message)),
-      (data)    => emit(<Feature>State.loaded(data)),
-    );
-  }
-}
-```
-
-### 3. Controller — `<feature>_controller.dart`
-
-```dart
-// No Flutter imports — pure Dart only
-import 'package:dartz/dartz.dart';
-import '../models/<feature>_model.dart';
-import '../repositories/i_<feature>_repository.dart';
-import '../../../../core/utils/failure.dart';
-
-class <Feature>Controller {
-  final I<Feature>Repository _repository;
-
-  <Feature>Controller(this._repository);
-
-  Future<Either<Failure, <Feature>Model>> fetch() async {
-    return _repository.fetch();
-  }
-}
-```
-
-### 4. Model — `<feature>_model.dart`
-
-```dart
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part '<feature>_model.freezed.dart';
-
-@freezed
-class <Feature>Model with _$<Feature>Model {
-  const factory <Feature>Model({
-    required String id,
-    required String name,
-    // Add fields here
-  }) = _<Feature>Model;
+void init<Feature>() {
+  // Data sources
+  sl.registerLazySingleton(() => <Feature>RemoteDataSource());
+  
+  // Repository
+  sl.registerLazySingleton(() => <Feature>Repository(sl()));
+  
+  // Controller
+  sl.registerFactory(() => <Feature>Controller(sl()));
+  
+  // Cubit
+  sl.registerFactory(() => <Feature>Cubit(sl()));
 }
 ```
 
@@ -290,27 +241,38 @@ abstract class <Feature>Module {
 
 ---
 
+## Required Packages
+
+| Purpose          | Package                        |
+|------------------|--------------------------------|
+| State management | `flutter_bloc`                 |
+| DI               | `get_it`                       |
+| Functional       | `dartz`                        |
+| Navigation       | `auto_route`                   |
+| Remote           | `dio` or `firebase_core`       |
+| Local storage    | `hive_flutter`                 |
+
+---
+
 ## Non-Negotiable Rules
 
 1. **Views are dumb** — Screens and Widgets contain zero business logic. They call Cubit methods and render state.
 2. **Controllers are pure Dart** — Never import `flutter/material.dart` or any Flutter package in a Controller.
 3. **One Cubit per screen** — Not per widget.
-4. **All errors are caught in the Cubit** — Views only switch on state variants; they never catch exceptions.
-5. **Models are immutable** — Always use `freezed` or a manual `copyWith`. No mutable fields.
-6. **Repositories are interfaces in Domain** — Concrete implementations live in Data only.
+4. **All errors are caught in the Cubit** — Views only switch on state variations; they never catch exceptions.
+5. **Concrete classes only** — Avoid interfaces. Use concrete Repository classes directly.
+6. **No code generation for models** — Write Dart classes with standard `fromJson` manually for simplicity.
 7. **No cross-feature imports** — Features communicate only through `core/`. Never import `features/a` into `features/b`.
-8. **DTOs stay in Data** — Domain models never know about JSON or Firebase documents.
 
 ---
 
 ## Checklist — Before Submitting Any Feature
 
 - [ ] Folder structure matches the canonical template above
-- [ ] `<feature>_state.dart` uses `freezed` sealed states
+- [ ] `<feature>_state.dart` is a standard class with a `Status` enum
+- [ ] `<feature>_model.dart` uses standard Dart classes with `fromJson`
 - [ ] `<feature>_cubit.dart` only calls the Controller, never a Repository directly
 - [ ] `<feature>_controller.dart` has zero Flutter imports
-- [ ] Repository interface lives in `domain/repositories/`
-- [ ] Concrete implementation lives in `data/repositories/`
-- [ ] DTO has `fromJson` and `toDomain()` methods
-- [ ] DI module registers all dependencies
+- [ ] Repository is a concrete class and lives in `data/repositories/`
+- [ ] Manual GetIt registration is added for all dependencies
 - [ ] All async paths return `Either<Failure, T>`

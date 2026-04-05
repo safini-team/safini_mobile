@@ -10,7 +10,7 @@ class AppRouter {
   late final RootStackRouter _router = RootStackRouter.build(
     routes: [
       NamedRouteDef(
-        name: 'home',
+        name: 'auth',
         path: '/',
         builder: (context, data) => const ChildHomeScreen(),
       ),
