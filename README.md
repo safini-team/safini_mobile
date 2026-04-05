@@ -2,6 +2,10 @@
 
 A new Flutter project.   
 
+## Localization
+
+Translation workflow and locale setup are documented in `commands/localization.md`.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
