@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
 import 'package:safini/features/child/presentation/screens/avatar_customizer_screen.dart';
 import 'package:safini/features/child/presentation/screens/child_home_screen.dart';
 import 'package:safini/features/child/presentation/screens/profile_screen.dart';
@@ -12,7 +13,7 @@ class AppRouter {
       NamedRouteDef(
         name: 'auth',
         path: '/',
-        builder: (context, data) => const ChildHomeScreen(),
+        builder: (context, data) => const AuthPage(),
       ),
       NamedRouteDef(
         name: 'store',
