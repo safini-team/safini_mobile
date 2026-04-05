@@ -1,0 +1,155 @@
+{
+  "@@locale": "ru",
+  "appName": "SAFINIO",
+  "tagline": "Учись. Зарабатывай. Играй.",
+  "imAKid": "Я ребенок!",
+  "kidSubtitle": "Зарабатывай монеты и играй",
+  "imAParent": "Я родитель",
+  "parentSubtitle": "Контролируй и награждай",
+  "footerText": "Безопасное экранное время для умных детей 🌟",
+  "todaysQuests": "Сегодняшние задания",
+  "home": "Главная",
+  "tasks": "Задания",
+  "store": "Магазин",
+  "profile": "Профиль",
+  "monitor": "Мониторинг",
+  "apps": "Приложения",
+  "family": "Семья",
+  "parentHomeScreen": "Главный экран родителя",
+  "changeLanguage": "Сменить язык",
+  "english": "Английский",
+  "russian": "Русский",
+  "myProfile": "Мой профиль",
+  "save": "Сохранить",
+  "coins": "Монеты",
+  "questsDone": "Заданий выполнено",
+  "dayStreak": "Дней подряд",
+  "customizeAvatar": "Настроить аватар",
+  "changeOutfit": "Сменить одежду, прическу и др.",
+  "achievements": "Достижения",
+  "unlocked": "разблокировано",
+  "rewardStore": "Магазин наград",
+  "unlockExtraTime": "Разблокировать время",
+  "outfitsAndItems": "Одежда и предметы",
+  "myQuests": "Мои квесты",
+  "doneToday": "Сделано",
+  "remaining": "Осталось",
+  "earnedToday": "Заработано",
+  "noQuestsInCategory": "Нет квестов в этой категории",
+  "selectLanguage": "Выберите язык",
+  "goodMorning": "Доброе утро 👋",
+  "parentName": "Родитель Safinio",
+  "steps": "Шаги",
+  "stepsToday": "Шагов сегодня",
+  "lessons": "Уроки",
+  "appLimits": "Лимиты приложений",
+  "manageAll": "Управлять всем",
+  "realWorldTasks": "Задания в жизни",
+  "newTask": "Новое задание",
+  "cleanTheRoom": "Убраться в комнате",
+  "dailyChore": "Ежедневное дело",
+  "readFor20Mins": "Читать 20 мин",
+  "educational": "Образование",
+  "doHomework": "Сделать уроки",
+  "kidsEarnTimeCoins": "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
+  "dailyLimit": "Дневной лимит",
+  "remainingTime": "осталось {minutes}м",
+  "@remainingTime": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "addAnotherApp": "Добавить приложение",
+  "tasksAndRewards": "Задания и награды",
+  "newBtn": "Новое",
+  "pendingApproval": "Ожидают проверки",
+  "activeTasks": "Активные задания",
+  "completed": "Выполнено",
+  "yourChildren": "ВАШИ ДЕТИ",
+  "addAnotherChild": "Добавить ребенка",
+  "setUpANewProfile": "Создать новый профиль",
+  "parentAccount": "АККАУНТ РОДИТЕЛЯ",
+  "familyAdmin": "Админ семьи",
+  "admin": "Админ",
+  "tipsForParents": "Советы родителям",
+  "tip1": "Ставьте значимые задачи, которые учат ответственности",
+  "tip2": "Балансируйте экранное время с прогулками на улице",
+  "tip3": "Празднуйте достижения вместе с ребенком",
+  "tip4": "Настраивайте стоимость монет в зависимости от усилий",
+  "switchToKidMode": "Режим ребенка / Выход",
+  "cancel": "Отмена",
+  "ok": "ОК",
+  "readyToSpend": "Готовы потратить монеты?",
+  "buyIt": "Купить! 🎉",
+  "notEnoughCoins": "Недостаточно монет!",
+  "youNeedMoreCoins": "Вам нужно еще {count} монет.",
+  "@youNeedMoreCoins": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "comingSoon": "Скоро будет!",
+  "coinsCount": "{count} монет",
+  "@coinsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "earnMoreCoins": "Заработать больше монет",
+  "completeDailyQuests": "Выполняйте ежедневные квесты, чтобы заработать больше монет!",
+  "goToTasks": "Перейти к заданиям",
+  "myAvatar": "Мой аватар",
+  "saveMyLook": "Сохранить вид!",
+  "on": "ВКЛ",
+  "free": "БЕСПЛАТНО",
+  "viewAsKid": "Войти как ребенок",
+  "edit": "Изменить",
+  "ageAndGender": "Возраст {age} • {gender}",
+  "@ageAndGender": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      },
+      "gender": {
+        "type": "String"
+      }
+    }
+  },
+  "questsText": "Задания",
+  "streakText": "Подряд",
+  "coinsText": "Монеты",
+  "parentHomeScreen": "Главный экран родителя",
+  "spendYourTimeCoins": "Потратьте свои монеты времени",
+  "categoryAll": "Все",
+  "categoryLearn": "Учеба",
+  "categoryFitness": "Спорт",
+  "categoryLogic": "Логика",
+  "taskDuolingoTitle": "Пройти Duolingo",
+  "taskDuolingoSub": "Бонус за серию!",
+  "taskStepsTitle": "Пройти 5,000 шагов",
+  "taskStepsSub": "Больше движения!",
+  "taskPuzzleTitle": "Логическая головоломка",
+  "taskPuzzleSub": "Зарядка для ума",
+  "taskChessTitle": "Урок шахмат",
+  "taskChessSub": "Освой доску",
+  "taskReadingTitle": "Читать 20 мин",
+  "taskReadingSub": "Расширяй кругозор",
+  "taskRoomTitle": "Убраться в комнате",
+  "taskRoomSub": "Ежедневное дело",
+  "appTimeTab": "Приложения",
+  "avatarItemsTab": "Предметы",
+  "levelHero": "Герой {level} уровня",
+  "@levelHero": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  }
+}

@@ -24,7 +24,9 @@ class WalletHistoryDto {
       amount: json['amount'] as int? ?? 0,
       transactionType: json['transaction_type'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -78,7 +80,9 @@ class StoreOfferDto {
       category: json['category'] as String? ?? '',
       coinsPrice: json['coins_price'] as int? ?? 0,
       isAvailable: json['is_available'] as bool? ?? false,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -128,7 +132,9 @@ class RedemptionResultDto {
       childId: json['child_id'] as String? ?? '',
       offerId: json['offer_id'] as String? ?? '',
       newBalance: json['new_balance'] as int? ?? 0,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 

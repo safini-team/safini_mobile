@@ -42,8 +42,10 @@ class ChildDto {
       nickname: json['nickname'] as String? ?? '',
       age: json['age'] as int? ?? 0,
       gender: json['gender'] as String? ?? '',
-      avatarState: json['avatar_state'] != null 
-          ? AvatarStateDto.fromJson(json['avatar_state'] as Map<String, dynamic>) 
+      avatarState: json['avatar_state'] != null
+          ? AvatarStateDto.fromJson(
+              json['avatar_state'] as Map<String, dynamic>,
+            )
           : AvatarStateDto(equipped: {}),
       level: json['level'] as int? ?? 0,
       xp: json['xp'] as int? ?? 0,
@@ -52,8 +54,12 @@ class ChildDto {
       tasksCompletedCount: json['tasks_completed_count'] as int? ?? 0,
       coinsBalance: json['coins_balance'] as int? ?? 0,
       achievementsCount: json['achievements_count'] as int? ?? 0,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -105,7 +111,8 @@ class AvatarStateDto {
 
   factory AvatarStateDto.fromJson(Map<String, dynamic> json) {
     return AvatarStateDto(
-      equipped: (json['equipped'] as Map<String, dynamic>?)?.map(
+      equipped:
+          (json['equipped'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, e as String),
           ) ??
           {},
@@ -113,9 +120,7 @@ class AvatarStateDto {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'equipped': equipped,
-    };
+    return {'equipped': equipped};
   }
 
   AvatarStateModel toDomain() => AvatarStateModel(equipped: equipped);
@@ -141,11 +146,7 @@ class ChildCreateDto {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'nickname': nickname,
-      'age': age,
-      'gender': gender,
-    };
+    return {'nickname': nickname, 'age': age, 'gender': gender};
   }
 }
 
@@ -155,12 +156,7 @@ class ChildUpdateDto {
   final String? gender;
   final AvatarStateDto? avatarState;
 
-  ChildUpdateDto({
-    this.nickname,
-    this.age,
-    this.gender,
-    this.avatarState,
-  });
+  ChildUpdateDto({this.nickname, this.age, this.gender, this.avatarState});
 
   factory ChildUpdateDto.fromJson(Map<String, dynamic> json) {
     return ChildUpdateDto(
@@ -168,7 +164,9 @@ class ChildUpdateDto {
       age: json['age'] as int?,
       gender: json['gender'] as String?,
       avatarState: json['avatar_state'] != null
-          ? AvatarStateDto.fromJson(json['avatar_state'] as Map<String, dynamic>)
+          ? AvatarStateDto.fromJson(
+              json['avatar_state'] as Map<String, dynamic>,
+            )
           : null,
     );
   }

@@ -8,6 +8,8 @@ class ProfileController {
 
   ProfileController(this._repository);
 
-  Future<Either<Failure, ProfileModel>> getMyProfile() => _repository.getMyProfile();
-  Future<Either<Failure, ProfileModel>> updateProfile(ProfileModel profile) => _repository.updateProfile(profile);
+  Future<Either<Failure, ProfileModel>> getMyProfile() =>
+      _repository.getMyProfile();
+  Future<Either<Failure, ProfileModel>> updateProfile(ProfileModel profile) =>
+      _repository.updateProfile(profile);
 }

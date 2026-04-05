@@ -9,12 +9,14 @@ import 'package:safini/features/parent/presentation/widgets/cards/parent_stat_ca
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_app_limit_tile.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentMonitorScreen extends StatelessWidget {
   const ParentMonitorScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocProvider(
       create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
       child: Scaffold(
@@ -32,9 +34,11 @@ class ParentMonitorScreen extends StatelessWidget {
             child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
               builder: (context, state) {
                 if (state is ParentMonitorLoading) {
-                  return const Center(child: CircularProgressIndicator(color: Colors.white));
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
                 }
-                
+
                 if (state is ParentMonitorLoaded) {
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(20),
@@ -44,23 +48,29 @@ class ParentMonitorScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Good morning 👋",
-                                  style: context.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white.withOpacity(0.8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    s.goodMorning,
+                                    style: context.textTheme.bodyMedium
+                                        ?.copyWith(
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
                                   ),
-                                ),
-                                Text(
-                                  "Safinio Parent",
-                                  style: context.textTheme.headlineLarge?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                                  Text(
+                                    s.parentName,
+                                    style: context.textTheme.headlineLarge
+                                        ?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 28,
+                                        ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             Container(
                               padding: const EdgeInsets.all(10),
@@ -68,7 +78,10 @@ class ParentMonitorScreen extends StatelessWidget {
                                 color: Colors.white.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.settings_outlined, color: Colors.white),
+                              child: const Icon(
+                                Icons.settings_outlined,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),
@@ -83,9 +96,9 @@ class ParentMonitorScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: ParentStatCard(
-                                title: "Steps",
+                                title: s.steps,
                                 value: state.stepsToday.toString(),
-                                label: "Steps Today",
+                                label: s.stepsToday,
                                 change: state.stepsChange,
                                 icon: Icons.trending_up,
                                 iconBackgroundColor: const Color(0xFFF0E6FF),
@@ -94,9 +107,9 @@ class ParentMonitorScreen extends StatelessWidget {
                             const SizedBox(width: 16),
                             Expanded(
                               child: ParentStatCard(
-                                title: "Lessons",
+                                title: s.lessons,
                                 value: state.lessonsToday,
-                                label: "Lessons",
+                                label: s.lessons,
                                 change: state.lessonsChange,
                                 icon: Icons.book_outlined,
                                 iconBackgroundColor: const Color(0xFFE6FFF0),
@@ -110,73 +123,91 @@ class ParentMonitorScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "App Limits",
-                              style: context.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                s.appLimits,
+                                style: context.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             TextButton(
                               onPressed: () {},
                               child: Text(
-                                "Manage All",
-                                style: TextStyle(color: context.colorScheme.primary),
+                                s.manageAll,
+                                style: TextStyle(
+                                  color: context.colorScheme.primary,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        ...state.appLimits.map((app) => ParentAppLimitTile(
-                          appName: app['name'],
-                          usedMinutes: app['used'],
-                          limitMinutes: app['limit'],
-                          iconPath: app['icon'],
-                        )),
+                        ...state.appLimits.map(
+                          (app) => ParentAppLimitTile(
+                            appName: app['name'],
+                            usedMinutes: app['used'],
+                            limitMinutes: app['limit'],
+                            iconPath: app['icon'],
+                          ),
+                        ),
                         const SizedBox(height: 24),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "Real-world Tasks",
-                              style: context.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                s.realWorldTasks,
+                                style: context.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            const SizedBox(width: 8),
                             ElevatedButton.icon(
                               onPressed: () {},
                               icon: const Icon(Icons.add, size: 18),
-                              label: const Text("New Task"),
+                              label: Text(s.newTask),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.colorScheme.primary,
                                 foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 16),
-                        const ParentTaskTile(
-                          title: "Clean the room",
-                          category: "Daily Chore",
+                        ParentTaskTile(
+                          title: s.cleanTheRoom,
+                          category: s.dailyChore,
                           rewardCoins: 30,
                         ),
-                        const ParentTaskTile(
-                          title: "Read for 20 mins",
-                          category: "Educational",
+                        ParentTaskTile(
+                          title: s.readFor20Mins,
+                          category: s.educational,
                           rewardCoins: 50,
                           isPending: true,
                         ),
-                        const ParentTaskTile(
-                          title: "Do homework",
-                          category: "Educational",
+                        ParentTaskTile(
+                          title: s.doHomework,
+                          category: s.educational,
                           rewardCoins: 40,
                           isCompleted: true,
                         ),
-                        const SizedBox(height: 100), // Bottom padding for navigation
+                        const SizedBox(
+                          height: 100,
+                        ), // Bottom padding for navigation
                       ],
                     ),
                   );
                 }
-                
+
                 return const SizedBox.shrink();
               },
             ),

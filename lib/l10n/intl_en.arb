@@ -1,0 +1,155 @@
+{
+  "@@locale": "en",
+  "appName": "SAFINIO",
+  "tagline": "Learn. Earn. Play.",
+  "imAKid": "I'm a Kid!",
+  "kidSubtitle": "Earn coins & play",
+  "imAParent": "I'm a Parent",
+  "parentSubtitle": "Monitor & reward",
+  "footerText": "Safe screen time for smart kids 🌟",
+  "todaysQuests": "Today's Quests",
+  "home": "Home",
+  "tasks": "Tasks",
+  "store": "Store",
+  "profile": "Profile",
+  "monitor": "Monitor",
+  "apps": "Apps",
+  "family": "Family",
+  "parentHomeScreen": "Parent Home Screen",
+  "changeLanguage": "Change Language",
+  "english": "English",
+  "russian": "Russian",
+  "myProfile": "My Profile",
+  "save": "Save",
+  "coins": "Coins",
+  "questsDone": "Quests Done",
+  "dayStreak": "Day Streak",
+  "customizeAvatar": "Customize Avatar",
+  "changeOutfit": "Change outfit, hair & more",
+  "achievements": "Achievements",
+  "unlocked": "unlocked",
+  "rewardStore": "Reward Store",
+  "unlockExtraTime": "Unlock Extra Time",
+  "outfitsAndItems": "Outfits & Items",
+  "myQuests": "My Quests",
+  "doneToday": "Done Today",
+  "remaining": "Remaining",
+  "earnedToday": "Earned Today",
+  "noQuestsInCategory": "No quests in this category",
+  "selectLanguage": "Select Language",
+  "goodMorning": "Good morning 👋",
+  "parentName": "Safinio Parent",
+  "steps": "Steps",
+  "stepsToday": "Steps Today",
+  "lessons": "Lessons",
+  "appLimits": "App Limits",
+  "manageAll": "Manage All",
+  "realWorldTasks": "Real-world Tasks",
+  "newTask": "New Task",
+  "cleanTheRoom": "Clean the room",
+  "dailyChore": "Daily Chore",
+  "readFor20Mins": "Read for 20 mins",
+  "educational": "Educational",
+  "doHomework": "Do homework",
+  "kidsEarnTimeCoins": "Kids earn Time Coins to unlock extra minutes for these apps.",
+  "dailyLimit": "Daily Limit",
+  "remainingTime": "{minutes}m remaining",
+  "@remainingTime": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "addAnotherApp": "Add Another App",
+  "tasksAndRewards": "Tasks & Rewards",
+  "newBtn": "New",
+  "pendingApproval": "Pending Approval",
+  "activeTasks": "Active Tasks",
+  "completed": "Completed",
+  "yourChildren": "YOUR CHILDREN",
+  "addAnotherChild": "Add Another Child",
+  "setUpANewProfile": "Set up a new profile",
+  "parentAccount": "PARENT ACCOUNT",
+  "familyAdmin": "Family Admin",
+  "admin": "Admin",
+  "tipsForParents": "Tips for Parents",
+  "tip1": "Set meaningful tasks that teach responsibility",
+  "tip2": "Balance screen time rewards with outdoor activities",
+  "tip3": "Celebrate achievements with your child",
+  "tip4": "Adjust coin values to match effort levels",
+  "switchToKidMode": "Switch to Kid Mode / Logout",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "readyToSpend": "Ready to spend your coins?",
+  "buyIt": "Buy it! 🎉",
+  "notEnoughCoins": "Not enough coins!",
+  "youNeedMoreCoins": "You need {count} more coins.",
+  "@youNeedMoreCoins": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "comingSoon": "Coming soon!",
+  "coinsCount": "{count} coins",
+  "@coinsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "earnMoreCoins": "Earn More Coins",
+  "completeDailyQuests": "Complete your daily quests to earn more coins!",
+  "goToTasks": "Go to Tasks",
+  "myAvatar": "My Avatar",
+  "saveMyLook": "Save My Look!",
+  "on": "ON",
+  "free": "FREE",
+  "viewAsKid": "View as Kid",
+  "edit": "Edit",
+  "ageAndGender": "Age {age} • {gender}",
+  "@ageAndGender": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      },
+      "gender": {
+        "type": "String"
+      }
+    }
+  },
+  "questsText": "Quests",
+  "streakText": "Streak",
+  "coinsText": "Coins",
+  "parentHomeScreen": "Parent Home Screen",
+  "spendYourTimeCoins": "Spend your Time Coins",
+  "categoryAll": "All",
+  "categoryLearn": "Learn",
+  "categoryFitness": "Fitness",
+  "categoryLogic": "Logic",
+  "taskDuolingoTitle": "Complete Duolingo",
+  "taskDuolingoSub": "Daily streak bonus!",
+  "taskStepsTitle": "Walk 5,000 Steps",
+  "taskStepsSub": "Keep it moving!",
+  "taskPuzzleTitle": "Logical Puzzle",
+  "taskPuzzleSub": "Brain power boost",
+  "taskChessTitle": "Chess Lesson",
+  "taskChessSub": "Master the board",
+  "taskReadingTitle": "Read for 20 mins",
+  "taskReadingSub": "Expand your mind",
+  "taskRoomTitle": "Clean your room",
+  "taskRoomSub": "Daily chore",
+  "appTimeTab": "App Time",
+  "avatarItemsTab": "Avatar Items",
+  "levelHero": "Level {level} Hero",
+  "@levelHero": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentChildCard extends StatelessWidget {
   final String name;
@@ -45,7 +46,9 @@ class ParentChildCard extends StatelessWidget {
               const CircleAvatar(
                 radius: 40,
                 // Placeholder avatar
-                backgroundImage: AssetImage('assets/images/child_avatar_alex.png'),
+                backgroundImage: AssetImage(
+                  'assets/images/child_avatar_alex.png',
+                ),
                 child: Icon(Icons.person, size: 40, color: Colors.grey),
               ),
               const SizedBox(width: 16),
@@ -60,7 +63,7 @@ class ParentChildCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "Age $age • $gender",
+                      S.of(context).ageAndGender(age, gender),
                       style: context.textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
                       ),
@@ -69,9 +72,21 @@ class ParentChildCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStat(context, coins.toString(), "Coins"),
-                        _buildStat(context, quests.toString(), "Quests"),
-                        _buildStat(context, streak.toString(), "Streak"),
+                        _buildStat(
+                          context,
+                          coins.toString(),
+                          S.of(context).coinsText,
+                        ),
+                        _buildStat(
+                          context,
+                          quests.toString(),
+                          S.of(context).questsText,
+                        ),
+                        _buildStat(
+                          context,
+                          streak.toString(),
+                          S.of(context).streakText,
+                        ),
                       ],
                     ),
                   ],
@@ -86,11 +101,13 @@ class ParentChildCard extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: onViewAsKid,
                   icon: const Icon(Icons.visibility),
-                  label: const Text("View as Kid"),
+                  label: Text(S.of(context).viewAsKid),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.colorScheme.primary,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
@@ -99,10 +116,15 @@ class ParentChildCard extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: onEdit,
                 icon: const Icon(Icons.settings_outlined),
-                label: const Text("Edit"),
+                label: Text(S.of(context).edit),
                 style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
                 ),
               ),
             ],
@@ -124,9 +146,7 @@ class ParentChildCard extends StatelessWidget {
         ),
         Text(
           label,
-          style: context.textTheme.bodySmall?.copyWith(
-            color: Colors.grey[500],
-          ),
+          style: context.textTheme.bodySmall?.copyWith(color: Colors.grey[500]),
         ),
       ],
     );

@@ -20,8 +20,12 @@ class AIConversationLogDto {
       id: json['id'] as String? ?? '',
       childId: json['child_id'] as String? ?? '',
       messageCount: json['message_count'] as int? ?? 0,
-      lastMessageAt: json['last_message_at'] != null ? DateTime.parse(json['last_message_at'] as String) : null,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      lastMessageAt: json['last_message_at'] != null
+          ? DateTime.parse(json['last_message_at'] as String)
+          : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -61,7 +65,9 @@ class AIMessageDto {
     return AIMessageDto(
       role: json['role'] as String? ?? '',
       content: json['content'] as String? ?? '',
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -74,11 +80,7 @@ class AIMessageDto {
   }
 
   AIMessageModel toDomain() {
-    return AIMessageModel(
-      role: role,
-      content: content,
-      createdAt: createdAt,
-    );
+    return AIMessageModel(role: role, content: content, createdAt: createdAt);
   }
 }
 

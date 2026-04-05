@@ -59,7 +59,16 @@ class ParentProgressCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Image.asset('assets/icons/coin.png', width: 20, height: 20, errorBuilder: (_, __, ___) => const Icon(Icons.monetization_on, color: Colors.amber, size: 20)),
+                    Image.asset(
+                      'assets/icons/coin.png',
+                      width: 20,
+                      height: 20,
+                      errorBuilder: (_, _, _) => const Icon(
+                        Icons.monetization_on,
+                        color: Colors.amber,
+                        size: 20,
+                      ),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       "$timeCoins Time Coins",

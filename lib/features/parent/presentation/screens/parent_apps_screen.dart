@@ -5,12 +5,14 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_app_limit_tile.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentAppsScreen extends StatelessWidget {
   const ParentAppsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocProvider(
       create: (context) => getIt<ParentAppsCubit>()..loadAppLimits(),
       child: Scaffold(
@@ -19,7 +21,7 @@ class ParentAppsScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: Text(
-            "App Limits",
+            s.appLimits,
             style: context.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -60,7 +62,7 @@ class ParentAppsScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            "Kids earn Time Coins to unlock extra minutes for these apps.",
+                            s.kidsEarnTimeCoins,
                             style: context.textTheme.bodyMedium?.copyWith(
                               color: const Color(0xFF43008F),
                               fontWeight: FontWeight.w500,
@@ -106,6 +108,7 @@ class _DailyLimitHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -115,7 +118,7 @@ class _DailyLimitHeader extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            "Daily Limit",
+            s.dailyLimit,
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -137,7 +140,7 @@ class _DailyLimitHeader extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            "12m remaining",
+            s.remainingTime("12"),
             style: context.textTheme.bodySmall?.copyWith(
               color: Colors.red,
               fontWeight: FontWeight.bold,
@@ -154,6 +157,7 @@ class _AddAppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -164,8 +168,6 @@ class _AddAppButton extends StatelessWidget {
           width: 1.5,
         ),
         borderRadius: BorderRadius.circular(20),
-        // Dashed border effect would need a custom painter or a package,
-        // using solid for now to match style closely.
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +175,7 @@ class _AddAppButton extends StatelessWidget {
           const Icon(Icons.add, color: Color(0xFF8100D1)),
           const SizedBox(width: 8),
           Text(
-            "Add Another App",
+            s.addAnotherApp,
             style: context.textTheme.titleMedium?.copyWith(
               color: const Color(0xFF8100D1),
               fontWeight: FontWeight.bold,

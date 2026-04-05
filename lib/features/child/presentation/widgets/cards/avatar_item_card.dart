@@ -20,8 +20,8 @@ class AvatarItemCard extends StatelessWidget {
     final bgColor = item.isEquipped
         ? context.colorScheme.primary
         : item.isLocked
-            ? const Color(0xFFF0F0F0)
-            : context.colorScheme.surface;
+        ? const Color(0xFFF0F0F0)
+        : context.colorScheme.surface;
 
     return GestureDetector(
       onTap: item.isLocked ? null : onTap,
@@ -43,10 +43,7 @@ class AvatarItemCard extends StatelessWidget {
           children: [
             Opacity(
               opacity: item.isLocked ? 0.35 : 1.0,
-              child: Text(
-                item.emoji,
-                style: const TextStyle(fontSize: 36),
-              ),
+              child: Text(item.emoji, style: const TextStyle(fontSize: 36)),
             ),
             const SizedBox(height: 6),
             _ItemLabel(item: item, canAfford: canAfford),

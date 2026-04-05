@@ -25,7 +25,7 @@ class ParentAppLimitTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = (usedMinutes / limitMinutes).clamp(0.0, 1.0);
     final remaining = limitMinutes - usedMinutes;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -57,7 +57,8 @@ class ParentAppLimitTile extends StatelessWidget {
                   child: Image.asset(
                     iconPath,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.apps, color: Colors.grey),
+                    errorBuilder: (_, _, _) =>
+                        const Icon(Icons.apps, color: Colors.grey),
                   ),
                 ),
               ),
@@ -84,7 +85,7 @@ class ParentAppLimitTile extends StatelessWidget {
               Switch(
                 value: isEnabled,
                 onChanged: onToggle,
-                activeColor: context.colorScheme.primary,
+                activeThumbColor: context.colorScheme.primary,
               ),
             ],
           ),

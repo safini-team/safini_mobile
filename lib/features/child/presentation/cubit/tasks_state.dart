@@ -10,8 +10,8 @@ class TasksState {
   });
 
   const TasksState.initial()
-      : tasks = const [],
-        selectedCategory = TaskCategory.all;
+    : tasks = const [],
+      selectedCategory = TaskCategory.all;
 
   List<TaskItem> get filteredTasks => selectedCategory == TaskCategory.all
       ? tasks
@@ -24,10 +24,7 @@ class TasksState {
   int get earnedToday =>
       tasks.where((t) => t.isCompleted).fold(0, (sum, t) => sum + t.coins);
 
-  TasksState copyWith({
-    List<TaskItem>? tasks,
-    TaskCategory? selectedCategory,
-  }) {
+  TasksState copyWith({List<TaskItem>? tasks, TaskCategory? selectedCategory}) {
     return TasksState(
       tasks: tasks ?? this.tasks,
       selectedCategory: selectedCategory ?? this.selectedCategory,

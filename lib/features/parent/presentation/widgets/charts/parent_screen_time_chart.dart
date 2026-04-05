@@ -4,15 +4,12 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 class ParentScreenTimeChart extends StatelessWidget {
   final List<double> weeklyUsage; // values between 0.0 and 1.0
 
-  const ParentScreenTimeChart({
-    super.key,
-    required this.weeklyUsage,
-  });
+  const ParentScreenTimeChart({super.key, required this.weeklyUsage});
 
   @override
   Widget build(BuildContext context) {
     final days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -38,7 +35,7 @@ class ParentScreenTimeChart extends StatelessWidget {
               children: List.generate(weeklyUsage.length, (index) {
                 final heightFactor = weeklyUsage[index];
                 final isToday = DateTime.now().weekday - 1 == index;
-                
+
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -46,8 +43,8 @@ class ParentScreenTimeChart extends StatelessWidget {
                       child: Container(
                         width: 30,
                         decoration: BoxDecoration(
-                          color: isToday 
-                              ? const Color(0xFF8100D1) 
+                          color: isToday
+                              ? const Color(0xFF8100D1)
                               : const Color(0xFFC7A2FF),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -56,8 +53,8 @@ class ParentScreenTimeChart extends StatelessWidget {
                           alignment: Alignment.bottomCenter,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: isToday 
-                                  ? const Color(0xFF8100D1) 
+                              color: isToday
+                                  ? const Color(0xFF8100D1)
                                   : const Color(0xFFC7A2FF).withOpacity(0.5),
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -71,7 +68,9 @@ class ParentScreenTimeChart extends StatelessWidget {
                       days[index],
                       style: context.textTheme.bodySmall?.copyWith(
                         color: Colors.grey,
-                        fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isToday
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
