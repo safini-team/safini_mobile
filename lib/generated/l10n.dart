@@ -714,6 +714,11 @@ class S {
     return Intl.message('FREE', name: 'free', desc: '', args: []);
   }
 
+  /// `EQUIPPED`
+  String get equipped {
+    return Intl.message('EQUIPPED', name: 'equipped', desc: '', args: []);
+  }
+
   /// `View as Kid`
   String get viewAsKid {
     return Intl.message('View as Kid', name: 'viewAsKid', desc: '', args: []);

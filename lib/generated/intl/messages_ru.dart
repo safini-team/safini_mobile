@@ -77,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("Изменить"),
     "educational": MessageLookupByLibrary.simpleMessage("Образование"),
     "english": MessageLookupByLibrary.simpleMessage("Английский"),
+    "equipped": MessageLookupByLibrary.simpleMessage("НАДЕТО"),
     "family": MessageLookupByLibrary.simpleMessage("Семья"),
     "familyAdmin": MessageLookupByLibrary.simpleMessage("Админ семьи"),
     "footerText": MessageLookupByLibrary.simpleMessage(
