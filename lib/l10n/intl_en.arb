@@ -187,5 +187,13 @@
   },
   "statusPending": "PENDING",
   "statusDone": "DONE",
-  "statusActive": "ACTIVE"
+  "statusActive": "ACTIVE",
+  "loginTitle": "Sign in",
+  "loginSubtitle": "Continue with your Google account",
+  "loginWithGoogle": "Continue with Google",
+  "signingIn": "Signing in...",
+  "loginBack": "Back",
+  "supabaseConfigMissing": "Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.",
+  "googleClientIdMissing": "Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).",
+  "signedInSuccess": "Signed in successfully"
 }

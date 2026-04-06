@@ -91,6 +91,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "free": MessageLookupByLibrary.simpleMessage("FREE"),
     "fri": MessageLookupByLibrary.simpleMessage("FRI"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Go to Tasks"),
+    "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
+      "Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).",
+    ),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Good morning 👋"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "imAKid": MessageLookupByLibrary.simpleMessage("I\'m a Kid!"),
@@ -100,6 +103,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Kids earn Time Coins to unlock extra minutes for these apps.",
     ),
     "lessons": MessageLookupByLibrary.simpleMessage("Lessons"),
+    "loginBack": MessageLookupByLibrary.simpleMessage("Back"),
+    "loginSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Continue with your Google account",
+    ),
+    "loginTitle": MessageLookupByLibrary.simpleMessage("Sign in"),
+    "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
+      "Continue with Google",
+    ),
     "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 today"),
     "levelHero": m3,
     "manageAll": MessageLookupByLibrary.simpleMessage("Manage All"),
@@ -141,6 +152,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Save My Look!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
+    "signedInSuccess": MessageLookupByLibrary.simpleMessage(
+      "Signed in successfully",
+    ),
+    "signingIn": MessageLookupByLibrary.simpleMessage("Signing in..."),
     "setUpANewProfile": MessageLookupByLibrary.simpleMessage(
       "Set up a new profile",
     ),
@@ -151,6 +166,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "statusDone": MessageLookupByLibrary.simpleMessage("DONE"),
     "statusPending": MessageLookupByLibrary.simpleMessage("PENDING"),
     "steps": MessageLookupByLibrary.simpleMessage("Steps"),
+    "supabaseConfigMissing": MessageLookupByLibrary.simpleMessage(
+      "Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.",
+    ),
     "stepsChangeText": MessageLookupByLibrary.simpleMessage(
       "+12% vs yesterday",
     ),

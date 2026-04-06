@@ -93,6 +93,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "free": MessageLookupByLibrary.simpleMessage("БЕСПЛАТНО"),
     "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Перейти к заданиям"),
+    "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
+      "Не указан Web Client ID Google. Задайте GOOGLE_WEB_CLIENT_ID (OAuth Web client в Google Cloud).",
+    ),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Доброе утро 👋"),
     "home": MessageLookupByLibrary.simpleMessage("Главная"),
     "imAKid": MessageLookupByLibrary.simpleMessage("Я ребенок!"),
@@ -104,6 +107,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
     ),
     "lessons": MessageLookupByLibrary.simpleMessage("Уроки"),
+    "loginBack": MessageLookupByLibrary.simpleMessage("Назад"),
+    "loginSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Продолжите с аккаунтом Google",
+    ),
+    "loginTitle": MessageLookupByLibrary.simpleMessage("Вход"),
+    "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
+      "Продолжить с Google",
+    ),
     "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 сегодня"),
     "levelHero": m3,
     "manageAll": MessageLookupByLibrary.simpleMessage("Управлять всем"),
@@ -151,6 +162,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Сохранить вид!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Выберите язык"),
+    "signedInSuccess": MessageLookupByLibrary.simpleMessage(
+      "Вход выполнен",
+    ),
+    "signingIn": MessageLookupByLibrary.simpleMessage("Вход..."),
     "setUpANewProfile": MessageLookupByLibrary.simpleMessage(
       "Создать новый профиль",
     ),
@@ -161,6 +176,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "statusDone": MessageLookupByLibrary.simpleMessage("ГОТОВО"),
     "statusPending": MessageLookupByLibrary.simpleMessage("ОЖИДАЕТ"),
     "steps": MessageLookupByLibrary.simpleMessage("Шаги"),
+    "supabaseConfigMissing": MessageLookupByLibrary.simpleMessage(
+      "Не заданы URL или anon key Supabase. Укажите SUPABASE_URL и SUPABASE_ANON_KEY при запуске приложения.",
+    ),
     "stepsChangeText": MessageLookupByLibrary.simpleMessage(
       "+12% по сравнению со вчера",
     ),
