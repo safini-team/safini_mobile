@@ -2,37 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class ParentStatCard extends StatelessWidget {
-  final String title;
   final String value;
+  final String label;
+  final String? change;
   final IconData icon;
-  final Color color;
-  final Color backgroundColor;
-  final String? status;
-  final Color? statusColor;
+  final Color iconBackgroundColor;
 
   const ParentStatCard({
     super.key,
-    required this.title,
     required this.value,
+    required this.label,
+    this.change,
     required this.icon,
-    required this.color,
-    required this.backgroundColor,
-    this.status,
-    this.statusColor,
+    required this.iconBackgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -40,40 +36,40 @@ class ParentStatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(16),
+              color: iconBackgroundColor,
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: context.colorScheme.primary, size: 20),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 16),
           Text(
             value,
             style: const TextStyle(
               fontWeight: FontWeight.w800,
-              fontSize: 32,
+              fontSize: 28,
               color: Color(0xFF1A1A1A),
               letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
-            title,
+            label,
             style: TextStyle(
               color: Colors.grey[500],
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
-          if (status != null) ...[
-            const SizedBox(height: 10),
+          if (change != null) ...[
+            const SizedBox(height: 6),
             Text(
-              status!,
-              style: TextStyle(
-                color: statusColor ?? Colors.green,
+              change!,
+              style: const TextStyle(
+                color: Color(0xFF00C566),
                 fontWeight: FontWeight.w700,
-                fontSize: 14,
+                fontSize: 13,
               ),
             ),
           ],

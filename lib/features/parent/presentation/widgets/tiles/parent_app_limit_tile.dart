@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentAppLimitTile extends StatelessWidget {
   final String appName;
   final int usedMinutes;
   final int limitMinutes;
+  final String? iconPath;
   final bool isEnabled;
+  final ValueChanged<bool>? onToggle;
 
   const ParentAppLimitTile({
     super.key,
     required this.appName,
     required this.usedMinutes,
     required this.limitMinutes,
+    this.iconPath,
     this.isEnabled = true,
+    this.onToggle,
   });
 
   @override
   Widget build(BuildContext context) {
-    double progress = usedMinutes / limitMinutes;
-    Color progressColor = appName == "YouTube Kids" ? const Color(0xFFFF9500) : const Color(0xFF00C566);
+    final progress = (usedMinutes / limitMinutes).clamp(0.0, 1.0);
+    final remaining = limitMinutes - usedMinutes;
+    final Color progressColor =
+        progress > 0.8 ? const Color(0xFFFF3B30) : const Color(0xFF00C566);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -45,9 +53,20 @@ class ParentAppLimitTile extends StatelessWidget {
                   color: const Color(0xFFFFF5E6),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Center(
-                  child: Text("🎮", style: TextStyle(fontSize: 24)), // Simplified for now
-                ),
+                child: iconPath != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          iconPath!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Center(
+                            child: Text('🎮', style: TextStyle(fontSize: 24)),
+                          ),
+                        ),
+                      )
+                    : const Center(
+                        child: Text('🎮', style: TextStyle(fontSize: 24)),
+                      ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -65,11 +84,11 @@ class ParentAppLimitTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "$usedMinutes used / $limitMinutes limit",
-                      style: const TextStyle(
-                        color: Color(0xFF00C566),
+                      S.of(context).usedLimit(usedMinutes, limitMinutes),
+                      style: TextStyle(
+                        color: Colors.grey[500],
                         fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -77,15 +96,15 @@ class ParentAppLimitTile extends StatelessWidget {
               ),
               Switch(
                 value: isEnabled,
-                onChanged: (val) {},
+                onChanged: onToggle,
                 activeTrackColor: const Color(0xFF8B46FF),
                 activeColor: Colors.white,
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 12,
@@ -93,13 +112,13 @@ class ParentAppLimitTile extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation<Color>(progressColor),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "Daily Limit",
-                style: TextStyle(
+              Text(
+                S.of(context).dailyLimit,
+                style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -107,7 +126,7 @@ class ParentAppLimitTile extends StatelessWidget {
               ),
               Flexible(
                 child: Text(
-                  "${limitMinutes - usedMinutes}m remaining",
+                  S.of(context).minutesRemainingLong(remaining),
                   style: TextStyle(
                     color: progressColor,
                     fontWeight: FontWeight.w800,
@@ -118,37 +137,8 @@ class ParentAppLimitTile extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLimitButton(Icons.remove),
-              const SizedBox(width: 16),
-              Text(
-                "${limitMinutes}m",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-              const SizedBox(width: 16),
-              _buildLimitButton(Icons.add),
-            ],
-          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildLimitButton(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF2F0FF),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Icon(icon, color: const Color(0xFF8B46FF), size: 20),
     );
   }
 }

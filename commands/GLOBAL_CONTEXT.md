@@ -22,6 +22,8 @@ If rules conflict, follow the higher priority file.
   - Use: `commands/widgets.md`
 - **Colors, fonts, text styles, theme usage**
   - Use: `commands/styles.md`
+- **Localization, ARB strings, generated translations, locale switching**
+  - Use: `commands/localization.md`
 
 ## Mandatory UI Rules (Always Apply)
 
@@ -52,3 +54,5 @@ If rules conflict, follow the higher priority file.
   - Read `widgets.md` + `styles.md`
 - Refactor or scaffold module requested:
   - Read `architecture.md` + `features.md`
+- Localization or translation work requested:
+  - Read `localization.md` + `styles.md`

@@ -1,121 +1,177 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentTasksScreen extends StatelessWidget {
   const ParentTasksScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          "Tasks & Rewards",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w900,
-            fontSize: 26,
-            letterSpacing: -0.5,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text("New"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+    final s = S.of(context);
+    return BlocProvider(
+      create: (context) => getIt<ParentTasksCubit>()..loadTasks(),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF43008F),
+        body: Column(
+          children: [
+            // ── Header ──────────────────────────────────────────
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF2D006F), Color(0xFF5A00B4)],
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 20, 24),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          s.tasksAndRewards,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                s.newBtn,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF43008F), Color(0xFF8100D1)],
+            // ── Content ─────────────────────────────────────────
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF0EEF9),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(36),
+                    topRight: Radius.circular(36),
+                  ),
+                ),
+                child: BlocBuilder<ParentTasksCubit, ParentTasksState>(
+                  builder: (context, state) {
+                    if (state is ParentTasksLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (state is ParentTasksLoaded) {
+                      return ListView(
+                        padding: const EdgeInsets.fromLTRB(20, 28, 20, 100),
+                        children: [
+                          if (state.pendingApproval.isNotEmpty) ...[
+                            _buildSectionHeader(
+                              context,
+                              icon: Icons.access_time_filled,
+                              iconColor: const Color(0xFFFFD700),
+                              title: s.pendingApproval,
+                              badgeCount: state.pendingApproval.length,
+                              badgeColor: const Color(0xFFFFD700),
+                            ),
+                            const SizedBox(height: 16),
+                            ...state.pendingApproval.map(
+                              (task) => ParentTaskTile(
+                                title: task.title,
+                                category: s.educational,
+                                rewardCoins: 50,
+                                isPending: true,
+                                onApprove: () => context
+                                    .read<ParentTasksCubit>()
+                                    .approveTask(task.id),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                          ],
+                          _buildSectionHeader(
+                            context,
+                            icon: Icons.circle,
+                            iconColor: const Color(0xFF8B46FF),
+                            iconSize: 12,
+                            title: s.activeTasks,
+                            badgeCount: state.activeTasks.length,
+                            badgeColor: const Color(0xFFF2F0FF),
+                            badgeTextColor: const Color(0xFF8B46FF),
+                          ),
+                          const SizedBox(height: 16),
+                          ...state.activeTasks.map(
+                            (task) => ParentTaskTile(
+                              title: task.title,
+                              category: s.dailyChore,
+                              rewardCoins: 30,
+                              onDelete: () {},
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          _buildSectionHeader(
+                            context,
+                            icon: Icons.check_circle_rounded,
+                            iconColor: const Color(0xFF00C566),
+                            title: s.completed,
+                          ),
+                          const SizedBox(height: 16),
+                          ...state.completedTasks.map(
+                            (task) => ParentTaskTile(
+                              title: task.title,
+                              category: s.educational,
+                              rewardCoins: 40,
+                              isCompleted: true,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        children: [
-          _buildSectionHeader(
-            context,
-            icon: Icons.access_time_filled,
-            iconColor: const Color(0xFFFFD700),
-            title: "Pending Approval",
-            badgeCount: 1,
-            badgeColor: const Color(0xFFFFD700),
-          ),
-          const SizedBox(height: 16),
-          const ParentTaskTile(
-            title: "Read for 20 mins",
-            category: "Educational",
-            rewardCoins: 50,
-            status: "PENDING",
-            icon: Icons.menu_book_rounded,
-          ),
-          const SizedBox(height: 32),
-          _buildSectionHeader(
-            context,
-            icon: Icons.circle,
-            iconColor: const Color(0xFF8B46FF),
-            iconSize: 12,
-            title: "Active Tasks",
-            badgeCount: 2,
-            badgeColor: const Color(0xFFF2F0FF),
-            badgeTextColor: const Color(0xFF8B46FF),
-          ),
-          const SizedBox(height: 16),
-          const ParentTaskTile(
-            title: "Clean the room",
-            category: "Daily Chore",
-            rewardCoins: 30,
-            status: "ACTIVE",
-            icon: Icons.cleaning_services,
-          ),
-          const ParentTaskTile(
-            title: "Practice piano",
-            category: "Hobby",
-            rewardCoins: 35,
-            status: "ACTIVE",
-            icon: Icons.music_note,
-          ),
-          const SizedBox(height: 32),
-          _buildSectionHeader(
-            context,
-            icon: Icons.check_circle_rounded,
-            iconColor: const Color(0xFF00C566),
-            title: "Completed",
-          ),
-          const SizedBox(height: 16),
-          const ParentTaskTile(
-            title: "Do homework",
-            category: "Educational",
-            rewardCoins: 40,
-            status: "DONE",
-            icon: Icons.edit_note_rounded,
-          ),
-          const SizedBox(height: 100),
-        ],
       ),
     );
   }

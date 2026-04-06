@@ -11,20 +11,20 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
 
   Future<void> loadFamilyData() async {
     emit(const ParentFamilyLoading());
-    
+
     await Future.delayed(const Duration(milliseconds: 500));
-    
-    emit(ParentFamilyLoaded(
-      children: [
-        const ChildModel(id: "child1", name: "Alex"),
-      ],
-      parent: ParentUserModel(
-        userId: "parent1",
-        displayName: "Parent",
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+
+    emit(
+      ParentFamilyLoaded(
+        children: [const ChildModel(id: "child1", name: "Alex")],
+        parent: ParentUserModel(
+          userId: "parent1",
+          displayName: "Parent",
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
       ),
-    ));
+    );
   }
 
   void addAnotherChild() {

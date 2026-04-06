@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_spacing.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_model.dart';
 
@@ -47,6 +48,19 @@ class _CategoryPill extends StatelessWidget {
     required this.onTap,
   });
 
+  String getLabel(BuildContext context) {
+    switch (category) {
+      case TaskCategory.all:
+        return S.of(context).categoryAll;
+      case TaskCategory.learn:
+        return S.of(context).categoryLearn;
+      case TaskCategory.fitness:
+        return S.of(context).categoryFitness;
+      case TaskCategory.logic:
+        return S.of(context).categoryLogic;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -78,7 +92,7 @@ class _CategoryPill extends StatelessWidget {
             Text(category.emoji, style: const TextStyle(fontSize: 14)),
             const SizedBox(width: 5),
             Text(
-              category.label,
+              getLabel(context),
               style: context.textTheme.labelLarge?.copyWith(
                 color: isSelected
                     ? Colors.white

@@ -18,8 +18,16 @@ void configureDependencies() {
   // Parent feature
   getIt.registerLazySingleton<ParentController>(() => const ParentController());
   getIt.registerFactory<ParentCubit>(() => ParentCubit());
-  getIt.registerFactory<ParentMonitorCubit>(() => ParentMonitorCubit(getIt<ParentController>()));
-  getIt.registerFactory<ParentAppsCubit>(() => ParentAppsCubit(getIt<ParentController>()));
-  getIt.registerFactory<ParentTasksCubit>(() => ParentTasksCubit(getIt<ParentController>()));
-  getIt.registerFactory<ParentFamilyCubit>(() => ParentFamilyCubit(getIt<ParentController>()));
+  getIt.registerFactory<ParentMonitorCubit>(
+    () => ParentMonitorCubit(getIt<ParentController>()),
+  );
+  getIt.registerFactory<ParentAppsCubit>(
+    () => ParentAppsCubit(getIt<ParentController>()),
+  );
+  getIt.registerFactory<ParentTasksCubit>(
+    () => ParentTasksCubit(getIt<ParentController>()),
+  );
+  getIt.registerFactory<ParentFamilyCubit>(
+    () => ParentFamilyCubit(getIt<ParentController>()),
+  );
 }

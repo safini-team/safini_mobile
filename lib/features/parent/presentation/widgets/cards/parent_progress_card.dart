@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentProgressCard extends StatelessWidget {
   final String name;
@@ -36,10 +38,13 @@ class ParentProgressCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
+                      ),
                     ),
                     child: const Center(
-                      child: Text("👦", style: TextStyle(fontSize: 44)),
+                      child: Text('👦', style: TextStyle(fontSize: 44)),
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -59,7 +64,11 @@ class ParentProgressCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         Row(
                           children: [
-                            const Icon(Icons.star_rounded, color: Color(0xFFFFD700), size: 20),
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Color(0xFFFFD700),
+                              size: 20,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               "$level Explorer",
@@ -76,26 +85,25 @@ class ParentProgressCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                      ),
-                      shape: BoxShape.circle,
+                  Image.asset(
+                    'assets/icons/coin.png',
+                    width: 20,
+                    height: 20,
+                    errorBuilder: (_, __, ___) => const Icon(
+                      Icons.monetization_on,
+                      color: Colors.amber,
+                      size: 20,
                     ),
-                    child: const Text("🪙", style: TextStyle(fontSize: 16)),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 4),
                   Text(
-                    "$coins Time Coins",
-                    style: const TextStyle(
+                    "$coins ${S.of(context).timeCoins}",
+                    style: context.textTheme.bodyLarge?.copyWith(
                       color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],

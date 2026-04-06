@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentScreenTimeChart extends StatelessWidget {
   final List<double> weeklyUsage; // values between 0.0 and 1.0
 
-  const ParentScreenTimeChart({
-    super.key,
-    required this.weeklyUsage,
-  });
+  const ParentScreenTimeChart({super.key, required this.weeklyUsage});
 
   @override
   Widget build(BuildContext context) {
-    final days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-    
+    final days = [
+      S.of(context).mon,
+      S.of(context).tue,
+      S.of(context).wed,
+      S.of(context).thu,
+      S.of(context).fri,
+      S.of(context).sat,
+      S.of(context).sun,
+    ];
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -30,7 +36,7 @@ class ParentScreenTimeChart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Weekly Screen Time",
+            S.of(context).weeklyScreenTime,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
@@ -46,8 +52,8 @@ class ParentScreenTimeChart extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: List.generate(weeklyUsage.length, (index) {
                 final heightFactor = weeklyUsage[index];
-                final isHighlight = index == 4; // FRI is highlighted in the image
-                
+                final isToday = DateTime.now().weekday - 1 == index;
+
                 return Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -67,8 +73,8 @@ class ParentScreenTimeChart extends StatelessWidget {
                                   heightFactor: heightFactor,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: isHighlight 
-                                          ? const Color(0xFF8B46FF) 
+                                      color: isToday
+                                          ? const Color(0xFF8B46FF)
                                           : const Color(0xFFA17DFF),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -82,8 +88,12 @@ class ParentScreenTimeChart extends StatelessWidget {
                         Text(
                           days[index],
                           style: TextStyle(
-                            color: isHighlight ? const Color(0xFF8B46FF) : Colors.grey[400],
-                            fontWeight: isHighlight ? FontWeight.w800 : FontWeight.w600,
+                            color: isToday
+                                ? const Color(0xFF8B46FF)
+                                : Colors.grey[400],
+                            fontWeight: isToday
+                                ? FontWeight.w800
+                                : FontWeight.w600,
                             fontSize: 10,
                           ),
                         ),

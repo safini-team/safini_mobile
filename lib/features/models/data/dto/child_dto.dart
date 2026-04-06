@@ -1,11 +1,42 @@
+
+import 'package:json_annotation/json_annotation.dart';
+import '../../domain/models/child_model.dart';
+
+part 'child_dto.g.dart';
+
+@JsonSerializable()
+class ChildDto {
+  final String id;
+  @JsonKey(name: 'family_id')
+
 import '../../domain/models/child_model.dart';
 
 class ChildDto {
   final String id;
+
   final String familyId;
   final String nickname;
   final int age;
   final String gender;
+
+  @JsonKey(name: 'avatar_state')
+  final AvatarStateDto avatarState;
+  final int level;
+  final int xp;
+  @JsonKey(name: 'current_streak_days')
+  final int currentStreakDays;
+  @JsonKey(name: 'longest_streak_days')
+  final int longestStreakDays;
+  @JsonKey(name: 'tasks_completed_count')
+  final int tasksCompletedCount;
+  @JsonKey(name: 'coins_balance')
+  final int coinsBalance;
+  @JsonKey(name: 'achievements_count')
+  final int achievementsCount;
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+  @JsonKey(name: 'updated_at')
+
   final AvatarStateDto avatarState;
   final int level;
   final int xp;
@@ -35,6 +66,10 @@ class ChildDto {
     required this.updatedAt,
   });
 
+
+  factory ChildDto.fromJson(Map<String, dynamic> json) => _$ChildDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ChildDtoToJson(this);
+
   factory ChildDto.fromJson(Map<String, dynamic> json) {
     return ChildDto(
       id: json['id'] as String? ?? '',
@@ -42,8 +77,10 @@ class ChildDto {
       nickname: json['nickname'] as String? ?? '',
       age: json['age'] as int? ?? 0,
       gender: json['gender'] as String? ?? '',
-      avatarState: json['avatar_state'] != null 
-          ? AvatarStateDto.fromJson(json['avatar_state'] as Map<String, dynamic>) 
+      avatarState: json['avatar_state'] != null
+          ? AvatarStateDto.fromJson(
+              json['avatar_state'] as Map<String, dynamic>,
+            )
           : AvatarStateDto(equipped: {}),
       level: json['level'] as int? ?? 0,
       xp: json['xp'] as int? ?? 0,
@@ -52,8 +89,12 @@ class ChildDto {
       tasksCompletedCount: json['tasks_completed_count'] as int? ?? 0,
       coinsBalance: json['coins_balance'] as int? ?? 0,
       achievementsCount: json['achievements_count'] as int? ?? 0,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -91,6 +132,9 @@ class ChildDto {
       longestStreakDays: longestStreakDays,
       tasksCompletedCount: tasksCompletedCount,
       coinsBalance: coinsBalance,
+
+      achievements_count: achievementsCount,
+
       achievementsCount: achievementsCount,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -98,14 +142,20 @@ class ChildDto {
   }
 }
 
+@JsonSerializable()
+
 class AvatarStateDto {
   final Map<String, String> equipped;
 
   AvatarStateDto({required this.equipped});
 
+  factory AvatarStateDto.fromJson(Map<String, dynamic> json) => _$AvatarStateDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$AvatarStateDtoToJson(this);
+
   factory AvatarStateDto.fromJson(Map<String, dynamic> json) {
     return AvatarStateDto(
-      equipped: (json['equipped'] as Map<String, dynamic>?)?.map(
+      equipped:
+          (json['equipped'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, e as String),
           ) ??
           {},
@@ -113,13 +163,13 @@ class AvatarStateDto {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'equipped': equipped,
-    };
+    return {'equipped': equipped};
   }
-
   AvatarStateModel toDomain() => AvatarStateModel(equipped: equipped);
 }
+
+
+@JsonSerializable()
 
 class ChildCreateDto {
   final String nickname;
@@ -132,6 +182,12 @@ class ChildCreateDto {
     required this.gender,
   });
 
+  factory ChildCreateDto.fromJson(Map<String, dynamic> json) => _$ChildCreateDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ChildCreateDtoToJson(this);
+}
+
+@JsonSerializable()
+
   factory ChildCreateDto.fromJson(Map<String, dynamic> json) {
     return ChildCreateDto(
       nickname: json['nickname'] as String? ?? '',
@@ -141,11 +197,7 @@ class ChildCreateDto {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'nickname': nickname,
-      'age': age,
-      'gender': gender,
-    };
+    return {'nickname': nickname, 'age': age, 'gender': gender};
   }
 }
 
@@ -153,14 +205,16 @@ class ChildUpdateDto {
   final String? nickname;
   final int? age;
   final String? gender;
+
+  @JsonKey(name: 'avatar_state')
+
   final AvatarStateDto? avatarState;
 
-  ChildUpdateDto({
-    this.nickname,
-    this.age,
-    this.gender,
-    this.avatarState,
-  });
+  ChildUpdateDto({this.nickname, this.age, this.gender, this.avatarState});
+
+
+  factory ChildUpdateDto.fromJson(Map<String, dynamic> json) => _$ChildUpdateDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ChildUpdateDtoToJson(this);
 
   factory ChildUpdateDto.fromJson(Map<String, dynamic> json) {
     return ChildUpdateDto(
@@ -168,7 +222,9 @@ class ChildUpdateDto {
       age: json['age'] as int?,
       gender: json['gender'] as String?,
       avatarState: json['avatar_state'] != null
-          ? AvatarStateDto.fromJson(json['avatar_state'] as Map<String, dynamic>)
+          ? AvatarStateDto.fromJson(
+              json['avatar_state'] as Map<String, dynamic>,
+            )
           : null,
     );
   }

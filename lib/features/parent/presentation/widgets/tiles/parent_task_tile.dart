@@ -1,43 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentTaskTile extends StatelessWidget {
   final String title;
   final String category;
   final int rewardCoins;
-  final String status; // PENDING, ACTIVE, DONE
-  final IconData icon;
+  final bool isPending;
+  final bool isCompleted;
+  final VoidCallback? onApprove;
+  final VoidCallback? onDelete;
 
   const ParentTaskTile({
     super.key,
     required this.title,
     required this.category,
     required this.rewardCoins,
-    required this.status,
-    required this.icon,
+    this.isPending = false,
+    this.isCompleted = false,
+    this.onApprove,
+    this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     Color statusColor;
     Color statusBg;
+    String statusText;
+    IconData categoryIcon;
 
-    switch (status.toUpperCase()) {
-      case 'PENDING':
-        statusColor = const Color(0xFF8100D1);
-        statusBg = const Color(0xFFF0E6FF);
+    if (isPending) {
+      statusColor = const Color(0xFF8100D1);
+      statusBg = const Color(0xFFF0E6FF);
+      statusText = S.of(context).statusPending;
+    } else if (isCompleted) {
+      statusColor = const Color(0xFF00C566);
+      statusBg = const Color(0xFFE2F9EE);
+      statusText = S.of(context).statusDone;
+    } else {
+      statusColor = const Color(0xFFF8B400);
+      statusBg = const Color(0xFFFFF3D6);
+      statusText = S.of(context).statusActive;
+    }
+
+    switch (category.toLowerCase()) {
+      case 'educational':
+        categoryIcon = Icons.menu_book_rounded;
         break;
-      case 'ACTIVE':
-        statusColor = const Color(0xFFF8B400);
-        statusBg = const Color(0xFFFFF3D6);
+      case 'hobby':
+        categoryIcon = Icons.music_note;
         break;
-      case 'DONE':
-        statusColor = const Color(0xFF00C566);
-        statusBg = const Color(0xFFE2F9EE);
+      case 'daily chore':
+      case 'chore':
+        categoryIcon = Icons.cleaning_services;
         break;
       default:
-        statusColor = Colors.grey;
-        statusBg = Colors.grey[100]!;
+        categoryIcon = Icons.task_alt_rounded;
     }
 
     return Container(
@@ -62,7 +80,11 @@ class ParentTaskTile extends StatelessWidget {
               color: const Color(0xFFF2F0FF),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: const Color(0xFF8B46FF), size: 26),
+            child: Icon(
+              categoryIcon,
+              color: const Color(0xFF8B46FF),
+              size: 26,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -90,17 +112,19 @@ class ParentTaskTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFFD700),
-                        shape: BoxShape.circle,
+                    Image.asset(
+                      'assets/icons/coin.png',
+                      width: 16,
+                      height: 16,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.monetization_on,
+                        color: Colors.amber,
+                        size: 16,
                       ),
-                      child: const Text("🪙", style: TextStyle(fontSize: 10)),
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      "$rewardCoins coins reward",
+                      '$rewardCoins coins reward',
                       style: const TextStyle(
                         color: Color(0xFF8B46FF),
                         fontWeight: FontWeight.w700,
@@ -112,45 +136,65 @@ class ParentTaskTile extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: statusBg,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Center(
-              child: Text(
-                status.toUpperCase(),
-                style: TextStyle(
-                  color: statusColor,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 11,
-                  letterSpacing: 0.5,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: statusBg,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  statusText,
+                  style: TextStyle(
+                    color: statusColor,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
-            ),
+              if (isPending && onApprove != null) ...[
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: onApprove,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF00C566),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ] else if (!isPending && !isCompleted && onDelete != null) ...[
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: onDelete,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5F5F5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
-          if (status.toUpperCase() == 'PENDING') ...[
-            const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF00C566),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.check, color: Colors.white, size: 20),
-            ),
-          ] else if (status.toUpperCase() == 'ACTIVE') ...[
-            const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.close, color: Colors.grey, size: 20),
-            ),
-          ],
         ],
       ),
     );
