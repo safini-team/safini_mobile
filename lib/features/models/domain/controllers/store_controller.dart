@@ -1,8 +1,10 @@
+import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../models/store_model.dart';
 import '../repositories/i_store_repository.dart';
 import '../../../../core/error/failures.dart';
 
+@lazySingleton
 class StoreController {
   final IStoreRepository _repository;
 
