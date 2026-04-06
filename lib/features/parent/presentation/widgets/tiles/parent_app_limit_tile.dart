@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentAppLimitTile extends StatelessWidget {
   final String appName;
@@ -25,7 +26,7 @@ class ParentAppLimitTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = (usedMinutes / limitMinutes).clamp(0.0, 1.0);
     final remaining = limitMinutes - usedMinutes;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -57,7 +58,8 @@ class ParentAppLimitTile extends StatelessWidget {
                   child: Image.asset(
                     iconPath,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.apps, color: Colors.grey),
+                    errorBuilder: (_, _, _) =>
+                        const Icon(Icons.apps, color: Colors.grey),
                   ),
                 ),
               ),
@@ -73,7 +75,7 @@ class ParentAppLimitTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "$usedMinutes used / $limitMinutes limit",
+                      S.of(context).usedLimit(usedMinutes, limitMinutes),
                       style: context.textTheme.bodySmall?.copyWith(
                         color: Colors.grey[600],
                       ),
@@ -84,7 +86,7 @@ class ParentAppLimitTile extends StatelessWidget {
               Switch(
                 value: isEnabled,
                 onChanged: onToggle,
-                activeColor: context.colorScheme.primary,
+                activeThumbColor: context.colorScheme.primary,
               ),
             ],
           ),
@@ -103,7 +105,7 @@ class ParentAppLimitTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "$remaining minutes remaining",
+                S.of(context).minutesRemainingLong(remaining),
                 style: context.textTheme.bodySmall?.copyWith(
                   color: progress > 0.8 ? Colors.orange : Colors.grey[600],
                   fontWeight: FontWeight.w500,

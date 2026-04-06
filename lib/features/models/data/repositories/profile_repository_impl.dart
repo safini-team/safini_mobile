@@ -10,7 +10,9 @@ class ProfileRepositoryImpl implements IProfileRepository {
   }
 
   @override
-  Future<Either<Failure, ProfileModel>> updateProfile(ProfileModel profile) async {
+  Future<Either<Failure, ProfileModel>> updateProfile(
+    ProfileModel profile,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 }

@@ -33,7 +33,9 @@ class TaskTemplateDto {
       coinsReward: json['coins_reward'] as int? ?? 0,
       xpReward: json['xp_reward'] as int? ?? 0,
       isStarter: json['is_starter'] as bool? ?? false,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -97,12 +99,20 @@ class TaskInstanceDto {
       childId: json['child_id'] as String? ?? '',
       templateId: json['template_id'] as String? ?? '',
       status: json['status'] as String? ?? '',
-      dueDate: json['due_date'] != null ? DateTime.parse(json['due_date'] as String) : DateTime.now(),
-      completedAt: json['completed_at'] != null ? DateTime.parse(json['completed_at'] as String) : null,
+      dueDate: json['due_date'] != null
+          ? DateTime.parse(json['due_date'] as String)
+          : DateTime.now(),
+      completedAt: json['completed_at'] != null
+          ? DateTime.parse(json['completed_at'] as String)
+          : null,
       proofUrl: json['proof_url'] as String?,
       parentNote: json['parent_note'] as String?,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -143,15 +153,11 @@ class TaskSubmissionDto {
   TaskSubmissionDto({required this.proofUrl});
 
   factory TaskSubmissionDto.fromJson(Map<String, dynamic> json) {
-    return TaskSubmissionDto(
-      proofUrl: json['proof_url'] as String? ?? '',
-    );
+    return TaskSubmissionDto(proofUrl: json['proof_url'] as String? ?? '');
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'proof_url': proofUrl,
-    };
+    return {'proof_url': proofUrl};
   }
 }
 
@@ -169,9 +175,6 @@ class TaskReviewDto {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'parent_note': parentNote,
-    };
+    return {'status': status, 'parent_note': parentNote};
   }
 }

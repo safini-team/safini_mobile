@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
@@ -15,6 +16,44 @@ class QuestTile extends StatelessWidget {
     this.isHighlighted = false,
     this.onTap,
   });
+
+  String _getLocalizedTitle(BuildContext context, String id) {
+    switch (id) {
+      case '1':
+        return S.of(context).taskDuolingoTitle;
+      case '2':
+        return S.of(context).taskStepsTitle;
+      case '3':
+        return S.of(context).taskPuzzleTitle;
+      case '4':
+        return S.of(context).taskChessTitle;
+      case '5':
+        return S.of(context).taskReadingTitle;
+      case '6':
+        return S.of(context).taskRoomTitle;
+      default:
+        return quest.title;
+    }
+  }
+
+  String _getLocalizedSubtitle(BuildContext context, String id) {
+    switch (id) {
+      case '1':
+        return S.of(context).taskDuolingoSub;
+      case '2':
+        return S.of(context).taskStepsSub;
+      case '3':
+        return S.of(context).taskPuzzleSub;
+      case '4':
+        return S.of(context).taskChessSub;
+      case '5':
+        return S.of(context).taskReadingSub;
+      case '6':
+        return S.of(context).taskRoomSub;
+      default:
+        return quest.subtitle;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +95,8 @@ class QuestTile extends StatelessWidget {
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: _QuestLabels(
-                title: quest.title,
-                subtitle: quest.subtitle,
+                title: _getLocalizedTitle(context, quest.id),
+                subtitle: _getLocalizedSubtitle(context, quest.id),
                 isCompleted: quest.isCompleted,
               ),
             ),
@@ -116,8 +155,9 @@ class _QuestLabels extends StatelessWidget {
           style: context.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w600,
             decoration: isCompleted ? TextDecoration.lineThrough : null,
-            decorationColor:
-                context.colorScheme.onSurface.withValues(alpha: 0.45),
+            decorationColor: context.colorScheme.onSurface.withValues(
+              alpha: 0.45,
+            ),
             color: isCompleted
                 ? context.colorScheme.onSurface.withValues(alpha: 0.45)
                 : context.colorScheme.onSurface,

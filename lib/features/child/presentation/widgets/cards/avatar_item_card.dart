@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
 
@@ -20,8 +21,8 @@ class AvatarItemCard extends StatelessWidget {
     final bgColor = item.isEquipped
         ? context.colorScheme.primary
         : item.isLocked
-            ? const Color(0xFFF0F0F0)
-            : context.colorScheme.surface;
+        ? const Color(0xFFF0F0F0)
+        : context.colorScheme.surface;
 
     return GestureDetector(
       onTap: item.isLocked ? null : onTap,
@@ -43,10 +44,7 @@ class AvatarItemCard extends StatelessWidget {
           children: [
             Opacity(
               opacity: item.isLocked ? 0.35 : 1.0,
-              child: Text(
-                item.emoji,
-                style: const TextStyle(fontSize: 36),
-              ),
+              child: Text(item.emoji, style: const TextStyle(fontSize: 36)),
             ),
             const SizedBox(height: 6),
             _ItemLabel(item: item, canAfford: canAfford),
@@ -67,7 +65,7 @@ class _ItemLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     if (item.isEquipped) {
       return Text(
-        'EQUIPPED',
+        S.of(context).equipped,
         style: context.textTheme.labelLarge?.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w700,
@@ -78,7 +76,7 @@ class _ItemLabel extends StatelessWidget {
     }
     if (item.isFree) {
       return Text(
-        'FREE',
+        S.of(context).free,
         style: context.textTheme.labelLarge?.copyWith(
           color: const Color(0xFF3EBF6A),
           fontWeight: FontWeight.w700,

@@ -8,6 +8,10 @@ class FamilyController {
 
   FamilyController(this._repository);
 
-  Future<Either<Failure, FamilyModel>> createFamily(String name, String timezone) => _repository.createFamily(name, timezone);
-  Future<Either<Failure, FamilyModel>> getCurrentFamily() => _repository.getCurrentFamily();
+  Future<Either<Failure, FamilyModel>> createFamily(
+    String name,
+    String timezone,
+  ) => _repository.createFamily(name, timezone);
+  Future<Either<Failure, FamilyModel>> getCurrentFamily() =>
+      _repository.getCurrentFamily();
 }

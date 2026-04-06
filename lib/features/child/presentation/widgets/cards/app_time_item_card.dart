@@ -66,7 +66,9 @@ class AppTimeItemCard extends StatelessWidget {
                   Text(
                     item.subtitle,
                     style: context.textTheme.bodyMedium?.copyWith(
-                      color: context.colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: context.colorScheme.onSurface.withValues(
+                        alpha: 0.5,
+                      ),
                     ),
                   ),
                 ],

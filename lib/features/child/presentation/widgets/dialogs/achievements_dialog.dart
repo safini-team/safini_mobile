@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class AchievementsDialog extends StatelessWidget {
   const AchievementsDialog({super.key});
@@ -16,6 +17,7 @@ class AchievementsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return AlertDialog(
       backgroundColor: context.colorScheme.surface,
       shape: RoundedRectangleBorder(
@@ -26,7 +28,7 @@ class AchievementsDialog extends StatelessWidget {
           const Text('🏆', style: TextStyle(fontSize: 22)),
           const SizedBox(width: 8),
           Text(
-            'Achievements',
+            s.achievements,
             style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
             ),
@@ -34,7 +36,7 @@ class AchievementsDialog extends StatelessWidget {
         ],
       ),
       content: Text(
-        'Coming soon!',
+        s.comingSoon,
         style: context.textTheme.bodyMedium?.copyWith(
           color: context.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
@@ -45,7 +47,7 @@ class AchievementsDialog extends StatelessWidget {
           onPressed: () => context.router.maybePop(),
           child: Center(
             child: Text(
-              'OK',
+              s.ok,
               style: context.textTheme.labelLarge?.copyWith(
                 color: context.colorScheme.onSurface.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,

@@ -5,17 +5,26 @@ import '../../../../core/error/failures.dart';
 
 class AppRepositoryImpl implements IAppRepository {
   @override
-  Future<Either<Failure, List<AppRuleModel>>> getAppRules(String childId) async {
+  Future<Either<Failure, List<AppRuleModel>>> getAppRules(
+    String childId,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 
   @override
-  Future<Either<Failure, AppRuleModel>> updateAppRule(String ruleId, {int? dailyLimitMinutes, bool? isBlocked}) async {
+  Future<Either<Failure, AppRuleModel>> updateAppRule(
+    String ruleId, {
+    int? dailyLimitMinutes,
+    bool? isBlocked,
+  }) async {
     return const Left(ServerFailure('Not implemented'));
   }
 
   @override
-  Future<Either<Failure, Unit>> reportUsage(String childId, List<AppUsageReportModel> reports) async {
+  Future<Either<Failure, Unit>> reportUsage(
+    String childId,
+    List<AppUsageReportModel> reports,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 

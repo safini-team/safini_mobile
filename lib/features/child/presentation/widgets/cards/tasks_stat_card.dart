@@ -6,11 +6,7 @@ class TasksStatCard extends StatelessWidget {
   final String value;
   final String label;
 
-  const TasksStatCard({
-    super.key,
-    required this.value,
-    required this.label,
-  });
+  const TasksStatCard({super.key, required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {

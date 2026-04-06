@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ConfirmPurchaseDialog extends StatelessWidget {
   final String title;
@@ -25,17 +26,15 @@ class ConfirmPurchaseDialog extends StatelessWidget {
     return await showDialog<bool>(
           context: context,
           barrierDismissible: true,
-          builder: (_) => ConfirmPurchaseDialog(
-            title: title,
-            emoji: emoji,
-            cost: cost,
-          ),
+          builder: (_) =>
+              ConfirmPurchaseDialog(title: title, emoji: emoji, cost: cost),
         ) ??
         false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return AlertDialog(
       backgroundColor: context.colorScheme.surface,
       shape: RoundedRectangleBorder(
@@ -84,7 +83,7 @@ class ConfirmPurchaseDialog extends StatelessWidget {
                 const Text('🪙', style: TextStyle(fontSize: 15)),
                 const SizedBox(width: 5),
                 Text(
-                  '$cost coins',
+                  s.coinsCount(cost),
                   style: context.textTheme.labelLarge?.copyWith(
                     color: const Color(0xFFB07D1A),
                     fontWeight: FontWeight.w700,
@@ -95,7 +94,7 @@ class ConfirmPurchaseDialog extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'Ready to spend your coins?',
+            s.readyToSpend,
             textAlign: TextAlign.center,
             style: context.textTheme.bodyMedium?.copyWith(
               color: context.colorScheme.onSurface.withValues(alpha: 0.5),
@@ -122,15 +121,13 @@ class ConfirmPurchaseDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppRadius.pill),
                   ),
                   side: BorderSide(
-                    color:
-                        context.colorScheme.onSurface.withValues(alpha: 0.2),
+                    color: context.colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Text(
-                  'Cancel',
+                  s.cancel,
                   style: context.textTheme.labelLarge?.copyWith(
-                    color:
-                        context.colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: context.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -149,7 +146,7 @@ class ConfirmPurchaseDialog extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Buy it! 🎉',
+                  s.buyIt,
                   style: context.textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,

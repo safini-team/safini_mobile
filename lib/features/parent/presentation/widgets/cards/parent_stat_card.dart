@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class ParentStatCard extends StatelessWidget {
-  final String title;
   final String value;
   final String label;
   final String change;
@@ -11,7 +10,6 @@ class ParentStatCard extends StatelessWidget {
 
   const ParentStatCard({
     super.key,
-    required this.title,
     required this.value,
     required this.label,
     required this.change,
@@ -28,7 +26,7 @@ class ParentStatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
