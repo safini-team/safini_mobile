@@ -187,5 +187,13 @@
   },
   "statusPending": "ОЖИДАЕТ",
   "statusDone": "ГОТОВО",
-  "statusActive": "АКТИВНО"
+  "statusActive": "АКТИВНО",
+  "loginTitle": "Вход",
+  "loginSubtitle": "Продолжите с аккаунтом Google",
+  "loginWithGoogle": "Продолжить с Google",
+  "signingIn": "Вход...",
+  "loginBack": "Назад",
+  "supabaseConfigMissing": "Не заданы URL или anon-ключ Supabase. Укажите SUPABASE_URL и SUPABASE_ANON_KEY при запуске.",
+  "googleClientIdMissing": "Не задан Google Web Client ID. Укажите GOOGLE_WEB_CLIENT_ID (OAuth Web в Google Cloud).",
+  "signedInSuccess": "Вход выполнен"
 }

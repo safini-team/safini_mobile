@@ -26,6 +26,11 @@ dependencies:
   dartz: ^0.10.1
 
   intl: any
+  supabase_flutter: ^2.12.2
+  google_sign_in: ^7.2.0
+  flutter_dotenv: ^5.2.1
+  shared_preferences: ^2.5.3
+  gotrue: ^2.19.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -43,6 +48,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/logo/
+    - assets/env/app.env
 
 flutter_launcher_icons:
   android: true

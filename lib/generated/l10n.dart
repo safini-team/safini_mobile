@@ -1038,6 +1038,71 @@ class S {
   String get statusActive {
     return Intl.message('ACTIVE', name: 'statusActive', desc: '', args: []);
   }
+
+  /// `Sign in`
+  String get loginTitle {
+    return Intl.message('Sign in', name: 'loginTitle', desc: '', args: []);
+  }
+
+  /// `Continue with your Google account`
+  String get loginSubtitle {
+    return Intl.message(
+      'Continue with your Google account',
+      name: 'loginSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue with Google`
+  String get loginWithGoogle {
+    return Intl.message(
+      'Continue with Google',
+      name: 'loginWithGoogle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signing in...`
+  String get signingIn {
+    return Intl.message('Signing in...', name: 'signingIn', desc: '', args: []);
+  }
+
+  /// `Back`
+  String get loginBack {
+    return Intl.message('Back', name: 'loginBack', desc: '', args: []);
+  }
+
+  /// `Supabase URL or anon key is missing...`
+  String get supabaseConfigMissing {
+    return Intl.message(
+      'Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.',
+      name: 'supabaseConfigMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google Web Client ID is missing...`
+  String get googleClientIdMissing {
+    return Intl.message(
+      'Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).',
+      name: 'googleClientIdMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signed in successfully`
+  String get signedInSuccess {
+    return Intl.message(
+      'Signed in successfully',
+      name: 'signedInSuccess',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
