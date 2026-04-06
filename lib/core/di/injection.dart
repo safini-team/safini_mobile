@@ -23,4 +23,3 @@ void configureDependencies() {
   getIt.registerFactory<ParentTasksCubit>(() => ParentTasksCubit(getIt<ParentController>()));
   getIt.registerFactory<ParentFamilyCubit>(() => ParentFamilyCubit(getIt<ParentController>()));
 }
-

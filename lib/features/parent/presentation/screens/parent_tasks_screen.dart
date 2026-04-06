@@ -10,48 +10,60 @@ class ParentTasksScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF8100D1),
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: const Icon(Icons.arrow_back, color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
-          "Tasks & Rew...",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),
+          "Tasks & Rewards",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 26,
+            letterSpacing: -0.5,
+          ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: const [
-                    Icon(Icons.add, color: Colors.white, size: 18),
-                    SizedBox(width: 4),
-                    Text(
-                      "New",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text("New"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                 ),
               ),
             ),
           ),
         ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF43008F), Color(0xFF8100D1)],
+            ),
+          ),
+        ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         children: [
           _buildSectionHeader(
             context,
             icon: Icons.access_time_filled,
-            iconColor: const Color(0xFFFFD54F),
+            iconColor: const Color(0xFFFFD700),
             title: "Pending Approval",
             badgeCount: 1,
-            badgeColor: const Color(0xFFFFD54F),
+            badgeColor: const Color(0xFFFFD700),
           ),
           const SizedBox(height: 16),
           const ParentTaskTile(
@@ -59,18 +71,18 @@ class ParentTasksScreen extends StatelessWidget {
             category: "Educational",
             rewardCoins: 50,
             status: "PENDING",
-            icon: Icons.menu_book_outlined,
+            icon: Icons.menu_book_rounded,
           ),
           const SizedBox(height: 32),
           _buildSectionHeader(
             context,
             icon: Icons.circle,
-            iconColor: const Color(0xFF8100D1),
+            iconColor: const Color(0xFF8B46FF),
             iconSize: 12,
             title: "Active Tasks",
             badgeCount: 2,
-            badgeColor: const Color(0xFFF5F5F5),
-            badgeTextColor: Colors.grey,
+            badgeColor: const Color(0xFFF2F0FF),
+            badgeTextColor: const Color(0xFF8B46FF),
           ),
           const SizedBox(height: 16),
           const ParentTaskTile(
@@ -78,19 +90,19 @@ class ParentTasksScreen extends StatelessWidget {
             category: "Daily Chore",
             rewardCoins: 30,
             status: "ACTIVE",
-            icon: Icons.assignment_outlined,
+            icon: Icons.cleaning_services,
           ),
           const ParentTaskTile(
             title: "Practice piano",
-            category: "Daily Chore",
-            rewardCoins: 30,
+            category: "Hobby",
+            rewardCoins: 35,
             status: "ACTIVE",
-            icon: Icons.assignment_outlined,
+            icon: Icons.music_note,
           ),
           const SizedBox(height: 32),
           _buildSectionHeader(
             context,
-            icon: Icons.check_circle_outline,
+            icon: Icons.check_circle_rounded,
             iconColor: const Color(0xFF00C566),
             title: "Completed",
           ),
@@ -100,7 +112,7 @@ class ParentTasksScreen extends StatelessWidget {
             category: "Educational",
             rewardCoins: 40,
             status: "DONE",
-            icon: Icons.menu_book_outlined,
+            icon: Icons.edit_note_rounded,
           ),
           const SizedBox(height: 100),
         ],
