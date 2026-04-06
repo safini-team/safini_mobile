@@ -11,6 +11,7 @@ import 'package:safini/features/child/presentation/widgets/cards/tasks_stat_card
 import 'package:safini/features/child/presentation/widgets/tiles/task_item_tile.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
 import 'package:safini/features/child/presentation/widgets/utils/tasks_category_filter.dart';
+import 'package:safini/generated/l10n.dart';
 
 class TasksScreen extends StatelessWidget {
   const TasksScreen({super.key});
@@ -49,6 +50,7 @@ class _TasksView extends StatelessWidget {
 class _TasksHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocBuilder<TasksCubit, TasksState>(
       builder: (context, state) {
         return Container(
@@ -77,7 +79,7 @@ class _TasksHeader extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'My Quests',
+                        s.myQuests,
                         style: context.textTheme.headlineSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
@@ -93,21 +95,21 @@ class _TasksHeader extends StatelessWidget {
                       Expanded(
                         child: TasksStatCard(
                           value: '${state.doneToday}',
-                          label: 'Done Today',
+                          label: s.doneToday,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: TasksStatCard(
                           value: '${state.remaining}',
-                          label: 'Remaining',
+                          label: s.remaining,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: TasksStatCard(
                           value: '${state.earnedToday}',
-                          label: 'Earned Today',
+                          label: s.earnedToday,
                         ),
                       ),
                     ],
@@ -127,6 +129,7 @@ class _TasksHeader extends StatelessWidget {
 class _TasksBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocBuilder<TasksCubit, TasksState>(
       builder: (context, state) {
         return Container(
@@ -153,10 +156,11 @@ class _TasksBody extends StatelessWidget {
                 child: state.filteredTasks.isEmpty
                     ? Center(
                         child: Text(
-                          'No quests in this category',
+                          s.noQuestsInCategory,
                           style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.onSurface
-                                .withValues(alpha: 0.4),
+                            color: context.colorScheme.onSurface.withValues(
+                              alpha: 0.4,
+                            ),
                           ),
                         ),
                       )
@@ -189,6 +193,7 @@ class _TasksBody extends StatelessWidget {
 class _TasksBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
@@ -209,22 +214,22 @@ class _TasksBottomNavBar extends StatelessWidget {
             children: [
               _NavItem(
                 icon: Icons.home_rounded,
-                label: 'Home',
+                label: s.home,
                 onTap: () => context.router.maybePop(),
               ),
-              const _NavItem(
+              _NavItem(
                 icon: Icons.check_box_rounded,
-                label: 'Tasks',
+                label: s.tasks,
                 isSelected: true,
               ),
               _NavItem(
                 icon: Icons.shopping_bag_rounded,
-                label: 'Store',
+                label: s.store,
                 onTap: () => context.router.push(const NamedRoute('store')),
               ),
               _NavItem(
                 icon: Icons.person_rounded,
-                label: 'Profile',
+                label: s.profile,
                 onTap: () => context.router.push(const NamedRoute('profile')),
               ),
             ],

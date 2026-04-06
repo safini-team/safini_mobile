@@ -1,3 +1,33 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'child_model.freezed.dart';
+
+@freezed
+class ChildModel with _$ChildModel {
+  const factory ChildModel({
+    required String id,
+    required String familyId,
+    required String nickname,
+    required int age,
+    required String gender,
+    required AvatarStateModel avatarState,
+    required int level,
+    required int xp,
+    required int currentStreakDays,
+    required int longestStreakDays,
+    required int tasksCompletedCount,
+    required int coinsBalance,
+    required int achievementsCount,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _ChildModel;
+}
+
+@freezed
+class AvatarStateModel with _$AvatarStateModel {
+  const factory AvatarStateModel({
+    required Map<String, String> equipped,
+  }) = _AvatarStateModel;
 class ChildModel {
   final String id;
   final String familyId;
@@ -40,7 +70,9 @@ class ChildModel {
       nickname: json['nickname'] as String,
       age: json['age'] as int,
       gender: json['gender'] as String,
-      avatarState: AvatarStateModel.fromJson(json['avatarState'] as Map<String, dynamic>),
+      avatarState: AvatarStateModel.fromJson(
+        json['avatarState'] as Map<String, dynamic>,
+      ),
       level: json['level'] as int,
       xp: json['xp'] as int,
       currentStreakDays: json['currentStreakDays'] as int,
@@ -77,9 +109,7 @@ class ChildModel {
 class AvatarStateModel {
   final Map<String, String> equipped;
 
-  const AvatarStateModel({
-    required this.equipped,
-  });
+  const AvatarStateModel({required this.equipped});
 
   factory AvatarStateModel.fromJson(Map<String, dynamic> json) {
     return AvatarStateModel(
@@ -88,8 +118,6 @@ class AvatarStateModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'equipped': equipped,
-    };
+    return {'equipped': equipped};
   }
 }

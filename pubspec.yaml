@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   cupertino_icons: ^1.0.8
   flutter_bloc: ^9.1.1
@@ -17,14 +19,23 @@ dependencies:
   go_router: ^16.2.1
   http: ^1.6.0
   auto_route: ^11.1.0
+
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  injectable: ^2.5.0
   dartz: ^0.10.1
 
+  intl: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  build_runner: ^2.5.4
+  freezed: ^2.5.8
+  json_serializable: ^6.9.5
+  injectable_generator: ^2.7.0
 
 flutter:
   uses-material-design: true
@@ -39,3 +50,5 @@ flutter_launcher_icons:
   image_path: assets/logo/app_logo.png
   min_sdk_android: 21
   remove_alpha_ios: true
+flutter_intl:
+  enabled: true

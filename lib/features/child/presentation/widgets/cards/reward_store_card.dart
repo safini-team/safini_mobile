@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 
@@ -43,7 +44,7 @@ class RewardStoreCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Reward Store',
+                    S.of(context).rewardStore,
                     style: context.textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -51,7 +52,7 @@ class RewardStoreCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Spend your Time Coins',
+                    S.of(context).spendYourTimeCoins,
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: Colors.white70,
                     ),
@@ -59,10 +60,7 @@ class RewardStoreCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: Colors.white54,
-            ),
+            const Icon(Icons.chevron_right_rounded, color: Colors.white54),
           ],
         ),
       ),

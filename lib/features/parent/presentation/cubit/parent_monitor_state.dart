@@ -1,5 +1,3 @@
-import 'package:safini/features/parent/domain/models/parent_task_model.dart';
-
 abstract class ParentMonitorState {
   const ParentMonitorState();
 }

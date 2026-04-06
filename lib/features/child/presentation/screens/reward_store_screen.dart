@@ -15,6 +15,7 @@ import 'package:safini/features/child/presentation/widgets/dialogs/not_enough_co
 import 'package:safini/features/child/presentation/widgets/utils/earn_more_coins_banner.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_tab_toggle.dart';
+import 'package:safini/generated/l10n.dart';
 
 class RewardStoreScreen extends StatelessWidget {
   const RewardStoreScreen({super.key});
@@ -37,8 +38,7 @@ class _RewardStoreView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<RewardStoreCubit, RewardStoreState>(
       listenWhen: (prev, curr) =>
-          curr.missingCoins != null &&
-          curr.missingCoins != prev.missingCoins,
+          curr.missingCoins != null && curr.missingCoins != prev.missingCoins,
       listener: (ctx, state) {
         if (state.missingCoins case final missing?) {
           NotEnoughCoinsDialog.show(
@@ -68,6 +68,7 @@ class _RewardStoreView extends StatelessWidget {
 class _StoreHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocBuilder<RewardStoreCubit, RewardStoreState>(
       builder: (context, state) {
         return Container(
@@ -95,7 +96,7 @@ class _StoreHeader extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Reward Store',
+                        s.rewardStore,
                         style: context.textTheme.headlineSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
@@ -160,6 +161,7 @@ class _AppTimeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -175,7 +177,7 @@ class _AppTimeContent extends StatelessWidget {
               const Text('🔓', style: TextStyle(fontSize: 16)),
               const SizedBox(width: AppSpacing.xs),
               Text(
-                'Unlock Extra Time',
+                s.unlockExtraTime,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -200,9 +202,9 @@ class _AppTimeContent extends StatelessWidget {
                     cost: item.cost,
                   );
                   if (confirmed && context.mounted) {
-                    context
-                        .read<RewardStoreCubit>()
-                        .purchaseAppTimeItem(item.id);
+                    context.read<RewardStoreCubit>().purchaseAppTimeItem(
+                      item.id,
+                    );
                   }
                 },
               );
@@ -227,6 +229,7 @@ class _AvatarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -242,7 +245,7 @@ class _AvatarContent extends StatelessWidget {
               const Text('👕', style: TextStyle(fontSize: 16)),
               const SizedBox(width: AppSpacing.xs),
               Text(
-                'Outfits & Items',
+                s.outfitsAndItems,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -277,9 +280,9 @@ class _AvatarContent extends StatelessWidget {
                     cost: item.cost ?? 0,
                   );
                   if (confirmed && context.mounted) {
-                    context
-                        .read<RewardStoreCubit>()
-                        .purchaseAvatarItem(item.id);
+                    context.read<RewardStoreCubit>().purchaseAvatarItem(
+                      item.id,
+                    );
                   }
                 },
               );
@@ -296,6 +299,7 @@ class _AvatarContent extends StatelessWidget {
 class _StoreBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
@@ -316,22 +320,22 @@ class _StoreBottomNavBar extends StatelessWidget {
             children: [
               _NavItem(
                 icon: Icons.home_rounded,
-                label: 'Home',
+                label: s.home,
                 onTap: () => context.router.maybePop(),
               ),
               _NavItem(
                 icon: Icons.check_box_rounded,
-                label: 'Tasks',
+                label: s.tasks,
                 onTap: () => context.router.push(const NamedRoute('tasks')),
               ),
               _NavItem(
                 icon: Icons.shopping_bag_rounded,
-                label: 'Store',
+                label: s.store,
                 isSelected: true,
               ),
               _NavItem(
                 icon: Icons.person_rounded,
-                label: 'Profile',
+                label: s.profile,
                 onTap: () => context.router.push(const NamedRoute('profile')),
               ),
             ],
