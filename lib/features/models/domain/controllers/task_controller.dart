@@ -10,8 +10,18 @@ class TaskController {
 
   TaskController(this._repository);
 
-  Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates() => _repository.getTaskTemplates();
-  Future<Either<Failure, List<TaskInstanceModel>>> getChildTasks(String childId) => _repository.getChildTasks(childId);
-  Future<Either<Failure, TaskInstanceModel>> submitTask(String instanceId, String proofUrl) => _repository.submitTask(instanceId, proofUrl);
-  Future<Either<Failure, TaskInstanceModel>> reviewTask(String instanceId, String status, String? parentNote) => _repository.reviewTask(instanceId, status, parentNote);
+  Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates() =>
+      _repository.getTaskTemplates();
+  Future<Either<Failure, List<TaskInstanceModel>>> getChildTasks(
+    String childId,
+  ) => _repository.getChildTasks(childId);
+  Future<Either<Failure, TaskInstanceModel>> submitTask(
+    String instanceId,
+    String proofUrl,
+  ) => _repository.submitTask(instanceId, proofUrl);
+  Future<Either<Failure, TaskInstanceModel>> reviewTask(
+    String instanceId,
+    String status,
+    String? parentNote,
+  ) => _repository.reviewTask(instanceId, status, parentNote);
 }

@@ -1,115 +1,173 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/features/child/presentation/screens/child_home_screen.dart';
 import 'package:safini/features/parent/presentation/screens/parent_main_screen.dart';
+import 'package:safini/generated/l10n.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF9B59D0),
-              Color(0xFF7B3FA0),
-              Color(0xFF6A35B0),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
-              // Mascot logo
-              Image.asset(
-                'assets/logo/app_logo.png',
-                width: 120,
-                height: 120,
-              ),
-              const SizedBox(height: 24),
-              // Title
-              const Text(
-                'SAFINIO',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 8,
-                ),
-              ),
-              const SizedBox(height: 8),
-              // Tagline
-              Text(
-                'Learn. Earn. Play.',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white.withValues(alpha: 0.85),
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const Spacer(flex: 3),
-              // Role cards
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  children: [
-                    _RoleCard(
-                      icon: Icons.sports_esports_rounded,
-                      title: "I'm a Kid!",
-                      subtitle: 'Earn coins & play',
-                      gradientColors: const [
-                        Color(0xFFF5A623),
-                        Color(0xFFE8961A),
+    return BlocBuilder<LocaleCubit, Locale>(
+      builder: (context, locale) {
+        return Localizations.override(
+          context: context,
+          locale: locale,
+          child: Builder(
+            builder: (context) {
+              final s = S.of(context);
+              return Scaffold(
+                body: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF9B59D0),
+                        Color(0xFF7B3FA0),
+                        Color(0xFF6A35B0),
                       ],
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const ChildHomeScreen(),
-                          ),
-                        );
-                      },
                     ),
-                    const SizedBox(height: 16),
-                    _RoleCard(
-                      icon: Icons.people_rounded,
-                      title: "I'm a Parent",
-                      subtitle: 'Monitor & reward',
-                      gradientColors: const [
-                        Color(0xFF2ECC9B),
-                        Color(0xFF27B08A),
+                  ),
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.language,
+                                color: Colors.white,
+                              ),
+                              onPressed: () => _showLanguageDialog(context),
+                            ),
+                          ),
+                        ),
+                        const Spacer(flex: 1),
+                        // Mascot logo
+                        Image.asset(
+                          'assets/logo/app_logo.png',
+                          width: 120,
+                          height: 120,
+                        ),
+                        const SizedBox(height: 24),
+                        // Title
+                        Text(
+                          s.appName,
+                          style: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: 8,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Tagline
+                        Text(
+                          s.tagline,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white.withValues(alpha: 0.85),
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const Spacer(flex: 3),
+                        // Role cards
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Column(
+                            children: [
+                              _RoleCard(
+                                icon: Icons.sports_esports_rounded,
+                                title: s.imAKid,
+                                subtitle: s.kidSubtitle,
+                                gradientColors: const [
+                                  Color(0xFFF5A623),
+                                  Color(0xFFE8961A),
+                                ],
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const ChildHomeScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              _RoleCard(
+                                icon: Icons.people_rounded,
+                                title: s.imAParent,
+                                subtitle: s.parentSubtitle,
+                                gradientColors: const [
+                                  Color(0xFF2ECC9B),
+                                  Color(0xFF27B08A),
+                                ],
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const ParentMainScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Spacer(flex: 2),
+                        // Footer
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text(
+                            s.footerText,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ),
                       ],
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const ParentMainScreen(),
-                          ),
-                        );
-                      },
                     ),
-                  ],
-                ),
-              ),
-              const Spacer(flex: 2),
-              // Footer
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Text(
-                  'Safe screen time for smart kids 🌟',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
-              ),
-            ],
+              );
+            },
           ),
+        );
+      },
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final s = S.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.selectLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(s.english),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.russian),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('ru'));
+                Navigator.pop(context);
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -162,11 +220,7 @@ class _RoleCard extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.25),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 28,
-              ),
+              child: Icon(icon, color: Colors.white, size: 28),
             ),
             const SizedBox(width: 16),
             // Text

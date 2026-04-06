@@ -27,8 +27,19 @@ class AIConversationLogDto {
     required this.createdAt,
   });
 
-  factory AIConversationLogDto.fromJson(Map<String, dynamic> json) =>
-      _$AIConversationLogDtoFromJson(json);
+  factory AIConversationLogDto.fromJson(Map<String, dynamic> json) {
+    return AIConversationLogDto(
+      id: json['id'] as String? ?? '',
+      childId: json['child_id'] as String? ?? '',
+      messageCount: json['message_count'] as int? ?? 0,
+      lastMessageAt: json['last_message_at'] != null
+          ? DateTime.parse(json['last_message_at'] as String)
+          : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+    );
+  }
 
   Map<String, dynamic> toJson() => _$AIConversationLogDtoToJson(this);
 
@@ -63,11 +74,7 @@ class AIMessageDto {
   Map<String, dynamic> toJson() => _$AIMessageDtoToJson(this);
 
   AIMessageModel toDomain() {
-    return AIMessageModel(
-      role: role,
-      content: content,
-      createdAt: createdAt,
-    );
+    return AIMessageModel(role: role, content: content, createdAt: createdAt);
   }
 }
 

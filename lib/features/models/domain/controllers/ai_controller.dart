@@ -11,8 +11,17 @@ class AiController {
 
   AiController(this._repository);
 
-  Future<Either<Failure, List<AIConversationLogModel>>> getConversationLogs(String childId) => _repository.getConversationLogs(childId);
-  Future<Either<Failure, List<AIMessageModel>>> getMessages(String conversationId) => _repository.getMessages(conversationId);
-  Future<Either<Failure, AIMessageModel>> sendMessage(String conversationId, String content) => _repository.sendMessage(conversationId, content);
-  Future<Either<Failure, List<TaskSuggestionModel>>> getTaskSuggestions(String childId) => _repository.getTaskSuggestions(childId);
+  Future<Either<Failure, List<AIConversationLogModel>>> getConversationLogs(
+    String childId,
+  ) => _repository.getConversationLogs(childId);
+  Future<Either<Failure, List<AIMessageModel>>> getMessages(
+    String conversationId,
+  ) => _repository.getMessages(conversationId);
+  Future<Either<Failure, AIMessageModel>> sendMessage(
+    String conversationId,
+    String content,
+  ) => _repository.sendMessage(conversationId, content);
+  Future<Either<Failure, List<TaskSuggestionModel>>> getTaskSuggestions(
+    String childId,
+  ) => _repository.getTaskSuggestions(childId);
 }

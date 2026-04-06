@@ -8,7 +8,10 @@ import '../../../../core/error/failures.dart';
 
 class FamilyRepositoryImpl implements IFamilyRepository {
   @override
-  Future<Either<Failure, FamilyModel>> createFamily(String name, String timezone) async {
+  Future<Either<Failure, FamilyModel>> createFamily(
+    String name,
+    String timezone,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 

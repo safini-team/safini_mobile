@@ -51,8 +51,12 @@ class ProfileDto {
       avatarUrl: json['avatar_url'] as String? ?? '',
       bio: json['bio'] as String? ?? '',
       timezone: json['timezone'] as String? ?? '',
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -109,12 +113,7 @@ class ProfileUpdateDto {
   final String? bio;
   final String? timezone;
 
-  ProfileUpdateDto({
-    this.displayName,
-    this.avatarUrl,
-    this.bio,
-    this.timezone,
-  });
+  ProfileUpdateDto({this.displayName, this.avatarUrl, this.bio, this.timezone});
 
 
   factory ProfileUpdateDto.fromJson(Map<String, dynamic> json) => _$ProfileUpdateDtoFromJson(json);

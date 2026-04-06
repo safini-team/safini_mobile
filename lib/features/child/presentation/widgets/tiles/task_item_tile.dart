@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_model.dart';
@@ -8,11 +9,45 @@ class TaskItemTile extends StatelessWidget {
   final TaskItem task;
   final VoidCallback? onTap;
 
-  const TaskItemTile({
-    super.key,
-    required this.task,
-    this.onTap,
-  });
+  const TaskItemTile({super.key, required this.task, this.onTap});
+
+  String _getLocalizedTitle(BuildContext context, String id) {
+    switch (id) {
+      case 'duolingo':
+        return S.of(context).taskDuolingoTitle;
+      case 'steps':
+        return S.of(context).taskStepsTitle;
+      case 'puzzle':
+        return S.of(context).taskPuzzleTitle;
+      case 'chess':
+        return S.of(context).taskChessTitle;
+      case 'reading':
+        return S.of(context).taskReadingTitle;
+      case 'room':
+        return S.of(context).taskRoomTitle;
+      default:
+        return task.title;
+    }
+  }
+
+  String _getLocalizedSubtitle(BuildContext context, String id) {
+    switch (id) {
+      case 'duolingo':
+        return S.of(context).taskDuolingoSub;
+      case 'steps':
+        return S.of(context).taskStepsSub;
+      case 'puzzle':
+        return S.of(context).taskPuzzleSub;
+      case 'chess':
+        return S.of(context).taskChessSub;
+      case 'reading':
+        return S.of(context).taskReadingSub;
+      case 'room':
+        return S.of(context).taskRoomSub;
+      default:
+        return task.subtitle;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +87,15 @@ class TaskItemTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    task.title,
+                    _getLocalizedTitle(context, task.id),
                     style: context.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       decoration: task.isCompleted
                           ? TextDecoration.lineThrough
                           : null,
-                      decorationColor:
-                          context.colorScheme.onSurface.withValues(alpha: 0.4),
+                      decorationColor: context.colorScheme.onSurface.withValues(
+                        alpha: 0.4,
+                      ),
                       color: task.isCompleted
                           ? context.colorScheme.onSurface.withValues(alpha: 0.4)
                           : context.colorScheme.onSurface,
@@ -67,10 +103,11 @@ class TaskItemTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    task.subtitle,
+                    _getLocalizedSubtitle(context, task.id),
                     style: context.textTheme.bodyMedium?.copyWith(
-                      color:
-                          context.colorScheme.onSurface.withValues(alpha: 0.45),
+                      color: context.colorScheme.onSurface.withValues(
+                        alpha: 0.45,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),

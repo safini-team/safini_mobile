@@ -56,8 +56,12 @@ class AppRuleDto {
       appName: json['app_name'] as String? ?? '',
       dailyLimitMinutes: json['daily_limit_minutes'] as int? ?? 0,
       isBlocked: json['is_blocked'] as bool? ?? false,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -150,10 +154,7 @@ class RedemptionRequestDto {
   final String ruleId;
   final int minutes;
 
-  RedemptionRequestDto({
-    required this.ruleId,
-    required this.minutes,
-  });
+  RedemptionRequestDto({required this.ruleId, required this.minutes});
 
 
   factory RedemptionRequestDto.fromJson(Map<String, dynamic> json) => _$RedemptionRequestDtoFromJson(json);
@@ -167,9 +168,6 @@ class RedemptionRequestDto {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'rule_id': ruleId,
-      'minutes': minutes,
-    };
+    return {'rule_id': ruleId, 'minutes': minutes};
   }
 }

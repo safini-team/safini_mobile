@@ -2,10 +2,7 @@ class ParentAuthUserModel {
   final String id;
   final String role;
 
-  const ParentAuthUserModel({
-    required this.id,
-    required this.role,
-  });
+  const ParentAuthUserModel({required this.id, required this.role});
 
   factory ParentAuthUserModel.fromMap(Map<String, dynamic> map) {
     return ParentAuthUserModel(
@@ -15,9 +12,6 @@ class ParentAuthUserModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'role': role,
-    };
+    return {'id': id, 'role': role};
   }
 }

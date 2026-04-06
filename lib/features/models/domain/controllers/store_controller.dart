@@ -10,7 +10,13 @@ class StoreController {
 
   StoreController(this._repository);
 
-  Future<Either<Failure, List<WalletHistoryModel>>> getWalletHistory(String childId) => _repository.getWalletHistory(childId);
-  Future<Either<Failure, List<StoreOfferModel>>> getStoreOffers() => _repository.getStoreOffers();
-  Future<Either<Failure, RedemptionResultModel>> redeemOffer(String childId, String offerId) => _repository.redeemOffer(childId, offerId);
+  Future<Either<Failure, List<WalletHistoryModel>>> getWalletHistory(
+    String childId,
+  ) => _repository.getWalletHistory(childId);
+  Future<Either<Failure, List<StoreOfferModel>>> getStoreOffers() =>
+      _repository.getStoreOffers();
+  Future<Either<Failure, RedemptionResultModel>> redeemOffer(
+    String childId,
+    String offerId,
+  ) => _repository.redeemOffer(childId, offerId);
 }

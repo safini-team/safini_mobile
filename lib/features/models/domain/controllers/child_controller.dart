@@ -10,8 +10,24 @@ class ChildController {
 
   ChildController(this._repository);
 
-  Future<Either<Failure, ChildModel>> createChild(String nickname, int age, String gender) => _repository.createChild(nickname, age, gender);
-  Future<Either<Failure, ChildModel>> updateChild(String childId, {String? nickname, int? age, String? gender, AvatarStateModel? avatarState}) => 
-      _repository.updateChild(childId, nickname: nickname, age: age, gender: gender, avatarState: avatarState);
-  Future<Either<Failure, ChildModel>> claimChild(String inviteCode) => _repository.claimChild(inviteCode);
+  Future<Either<Failure, ChildModel>> createChild(
+    String nickname,
+    int age,
+    String gender,
+  ) => _repository.createChild(nickname, age, gender);
+  Future<Either<Failure, ChildModel>> updateChild(
+    String childId, {
+    String? nickname,
+    int? age,
+    String? gender,
+    AvatarStateModel? avatarState,
+  }) => _repository.updateChild(
+    childId,
+    nickname: nickname,
+    age: age,
+    gender: gender,
+    avatarState: avatarState,
+  );
+  Future<Either<Failure, ChildModel>> claimChild(String inviteCode) =>
+      _repository.claimChild(inviteCode);
 }

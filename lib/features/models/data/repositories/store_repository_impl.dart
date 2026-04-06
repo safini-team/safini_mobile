@@ -7,7 +7,9 @@ import '../../../../core/error/failures.dart';
 @Injectable(as: IStoreRepository)
 class StoreRepositoryImpl implements IStoreRepository {
   @override
-  Future<Either<Failure, List<WalletHistoryModel>>> getWalletHistory(String childId) async {
+  Future<Either<Failure, List<WalletHistoryModel>>> getWalletHistory(
+    String childId,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 
@@ -17,7 +19,10 @@ class StoreRepositoryImpl implements IStoreRepository {
   }
 
   @override
-  Future<Either<Failure, RedemptionResultModel>> redeemOffer(String childId, String offerId) async {
+  Future<Either<Failure, RedemptionResultModel>> redeemOffer(
+    String childId,
+    String offerId,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 }

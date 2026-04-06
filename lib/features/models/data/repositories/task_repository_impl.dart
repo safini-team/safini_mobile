@@ -13,17 +13,26 @@ class TaskRepositoryImpl implements ITaskRepository {
   }
 
   @override
-  Future<Either<Failure, List<TaskInstanceModel>>> getChildTasks(String childId) async {
+  Future<Either<Failure, List<TaskInstanceModel>>> getChildTasks(
+    String childId,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 
   @override
-  Future<Either<Failure, TaskInstanceModel>> submitTask(String instanceId, String proofUrl) async {
+  Future<Either<Failure, TaskInstanceModel>> submitTask(
+    String instanceId,
+    String proofUrl,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 
   @override
-  Future<Either<Failure, TaskInstanceModel>> reviewTask(String instanceId, String status, String? parentNote) async {
+  Future<Either<Failure, TaskInstanceModel>> reviewTask(
+    String instanceId,
+    String status,
+    String? parentNote,
+  ) async {
     return const Left(ServerFailure('Not implemented'));
   }
 }

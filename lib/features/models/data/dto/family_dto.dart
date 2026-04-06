@@ -39,12 +39,17 @@ class FamilyDto {
       ownerUserId: json['owner_user_id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       timezone: json['timezone'] as String? ?? '',
-      children: (json['children'] as List<dynamic>?)
+      children:
+          (json['children'] as List<dynamic>?)
               ?.map((e) => ChildSummaryDto.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -132,10 +137,7 @@ class FamilyCreateDto {
   final String name;
   final String timezone;
 
-  FamilyCreateDto({
-    required this.name,
-    required this.timezone,
-  });
+  FamilyCreateDto({required this.name, required this.timezone});
 
   factory FamilyCreateDto.fromJson(Map<String, dynamic> json) => _$FamilyCreateDtoFromJson(json);
   Map<String, dynamic> toJson() => _$FamilyCreateDtoToJson(this);
@@ -148,9 +150,6 @@ class FamilyCreateDto {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'timezone': timezone,
-    };
+    return {'name': name, 'timezone': timezone};
   }
 }

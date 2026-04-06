@@ -67,8 +67,9 @@ class ProfileMenuTile extends StatelessWidget {
                   Text(
                     subtitle,
                     style: context.textTheme.bodyMedium?.copyWith(
-                      color:
-                          context.colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: context.colorScheme.onSurface.withValues(
+                        alpha: 0.5,
+                      ),
                     ),
                   ),
                 ],
