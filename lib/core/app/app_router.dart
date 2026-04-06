@@ -13,7 +13,7 @@ class AppRouter {
       NamedRouteDef(
         name: 'login',
         path: '/',
-        builder: (context, data) => const LoginPage(),
+        builder: (context, data) => const AuthPage(),
       ),
       NamedRouteDef(
         name: 'auth',
