@@ -4,7 +4,7 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 class ParentStatCard extends StatelessWidget {
   final String value;
   final String label;
-  final String change;
+  final String? change;
   final IconData icon;
   final Color iconBackgroundColor;
 
@@ -12,9 +12,9 @@ class ParentStatCard extends StatelessWidget {
     super.key,
     required this.value,
     required this.label,
-    required this.change,
+    this.change,
     required this.icon,
-    this.iconBackgroundColor = const Color(0xFFF0E6FF),
+    required this.iconBackgroundColor,
   });
 
   @override
@@ -36,36 +36,43 @@ class ParentStatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: iconBackgroundColor,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: context.colorScheme.primary, size: 24),
+            child: Icon(icon, color: context.colorScheme.primary, size: 20),
           ),
           const SizedBox(height: 16),
           Text(
             value,
-            style: context.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 28,
+              color: Color(0xFF1A1A1A),
+              letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            change,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: change.startsWith('+') ? Colors.green : Colors.grey,
-              fontWeight: FontWeight.w600,
+          if (change != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              change!,
+              style: const TextStyle(
+                color: Color(0xFF00C566),
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
