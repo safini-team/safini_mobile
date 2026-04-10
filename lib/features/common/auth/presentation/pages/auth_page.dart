@@ -51,12 +51,14 @@ class AuthPage extends StatelessWidget {
                         ),
                         const Spacer(flex: 1),
                         // Mascot logo
-                        Image.asset(
-                          'assets/logo/app_logo.png',
-                          width: 120,
-                          height: 120,
-                        ),
-                        const SizedBox(height: 24),
+                            ClipOval(
+                              child: Image.asset(
+                                'assets/logo/app_logo.png',
+                                width: 120,
+                                height: 120,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
                         // Title
                         Text(
                           s.appName,
@@ -64,7 +66,7 @@ class AuthPage extends StatelessWidget {
                             fontSize: 36,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
-                            letterSpacing: 8,
+                            letterSpacing: 5,
                           ),
                         ),
                         const SizedBox(height: 8),
