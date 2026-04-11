@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
 
 class StoreTabToggle extends StatelessWidget {
@@ -24,14 +25,14 @@ class StoreTabToggle extends StatelessWidget {
         children: [
           Expanded(
             child: _TabPill(
-              label: 'App Time',
+              label: S.of(context).appTimeTab,
               isSelected: selectedTab == StoreTab.appTime,
               onTap: () => onTabChanged(StoreTab.appTime),
             ),
           ),
           Expanded(
             child: _TabPill(
-              label: 'Avatar Items',
+              label: S.of(context).avatarItemsTab,
               isSelected: selectedTab == StoreTab.avatarItems,
               onTap: () => onTabChanged(StoreTab.avatarItems),
             ),

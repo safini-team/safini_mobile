@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
@@ -10,15 +11,24 @@ import 'package:safini/features/child/presentation/cubit/profile_model.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/child/presentation/widgets/utils/avatar_category_tabs.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
+import 'package:safini/generated/l10n.dart';
 
 class AvatarCustomizerScreen extends StatelessWidget {
   const AvatarCustomizerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => AvatarCubit(ctx.read<CoinsCubit>()),
-      child: const _AvatarCustomizerView(),
+    return BlocBuilder<LocaleCubit, Locale>(
+      builder: (context, locale) {
+        return Localizations.override(
+          context: context,
+          locale: locale,
+          child: BlocProvider(
+            create: (ctx) => AvatarCubit(ctx.read<CoinsCubit>()),
+            child: const _AvatarCustomizerView(),
+          ),
+        );
+      },
     );
   }
 }
@@ -47,6 +57,7 @@ class _AvatarCustomizerView extends StatelessWidget {
 class _AvatarHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocBuilder<AvatarCubit, AvatarState>(
       builder: (context, state) {
         return Container(
@@ -90,7 +101,7 @@ class _AvatarHeader extends StatelessWidget {
                       Expanded(
                         child: Center(
                           child: Text(
-                            'My Avatar',
+                            s.myAvatar,
                             style: context.textTheme.titleLarge?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -149,10 +160,7 @@ class _AvatarPreview extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.xl),
                 ),
                 child: Center(
-                  child: Text(
-                    faceEmoji,
-                    style: const TextStyle(fontSize: 60),
-                  ),
+                  child: Text(faceEmoji, style: const TextStyle(fontSize: 60)),
                 ),
               ),
               Positioned(
@@ -206,6 +214,7 @@ class _AvatarPreview extends StatelessWidget {
 class _AvatarBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -232,8 +241,7 @@ class _AvatarBody extends StatelessWidget {
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(AppSpacing.lg),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: AppSpacing.sm,
                     mainAxisSpacing: AppSpacing.sm,
@@ -245,7 +253,8 @@ class _AvatarBody extends StatelessWidget {
                     return _AvatarGridCard(
                       item: item,
                       canAfford:
-                          item.cost == null || context.read<CoinsCubit>().state >= item.cost!,
+                          item.cost == null ||
+                          context.read<CoinsCubit>().state >= item.cost!,
                       onTap: () =>
                           context.read<AvatarCubit>().equipItem(item.id),
                     );
@@ -276,7 +285,7 @@ class _AvatarBody extends StatelessWidget {
                       elevation: 0,
                     ),
                     child: Text(
-                      'Save My Look!',
+                      s.saveMyLook,
                       style: context.textTheme.titleMedium?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -308,12 +317,13 @@ class _AvatarGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final isEquipped = item.isEquipped;
     final bgColor = isEquipped
         ? context.colorScheme.primary
         : item.isLocked
-            ? const Color(0xFFF0F0F0)
-            : const Color(0xFFF6F3FB);
+        ? const Color(0xFFF0F0F0)
+        : const Color(0xFFF6F3FB);
 
     return GestureDetector(
       onTap: item.isLocked ? null : onTap,
@@ -335,10 +345,7 @@ class _AvatarGridCard extends StatelessWidget {
           children: [
             Opacity(
               opacity: item.isLocked ? 0.35 : 1.0,
-              child: Text(
-                item.emoji,
-                style: const TextStyle(fontSize: 30),
-              ),
+              child: Text(item.emoji, style: const TextStyle(fontSize: 30)),
             ),
             const SizedBox(height: 4),
             _GridItemLabel(item: item, canAfford: canAfford),
@@ -357,9 +364,10 @@ class _GridItemLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     if (item.isEquipped) {
       return Text(
-        'ON',
+        s.on,
         style: context.textTheme.labelLarge?.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w800,
@@ -370,7 +378,7 @@ class _GridItemLabel extends StatelessWidget {
     }
     if (item.isFree) {
       return Text(
-        'FREE',
+        s.free,
         style: context.textTheme.labelLarge?.copyWith(
           color: const Color(0xFF3EBF6A),
           fontWeight: FontWeight.w700,

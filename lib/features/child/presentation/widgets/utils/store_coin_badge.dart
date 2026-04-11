@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 
 /// Reads coins from the root [CoinsCubit] — no parameter needed.
@@ -33,7 +34,7 @@ class StoreCoinBadge extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                'COINS',
+                S.of(context).coinsText.toUpperCase(),
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: Colors.white70,
                   fontSize: 10,
@@ -48,4 +49,3 @@ class StoreCoinBadge extends StatelessWidget {
     );
   }
 }
-

@@ -26,16 +26,16 @@ class ProfileState {
   });
 
   const ProfileState.initial()
-      : name = 'Explorer Leo',
-        editingName = 'Explorer Leo',
-        isEditing = false,
-        questsDone = 6,
-        dayStreak = 5,
-        level = 5,
-        levelLabel = 'Level 5 Hero',
-        xpProgress = 0.45,
-        equippedFaceEmoji = '😊',
-        equippedBadgeEmoji = '🚀';
+    : name = 'Explorer Leo',
+      editingName = 'Explorer Leo',
+      isEditing = false,
+      questsDone = 6,
+      dayStreak = 5,
+      level = 5,
+      levelLabel = 'Level 5 Hero',
+      xpProgress = 0.45,
+      equippedFaceEmoji = '😊',
+      equippedBadgeEmoji = '🚀';
 
   ProfileState copyWith({
     String? name,
@@ -73,8 +73,8 @@ class AvatarState {
   });
 
   const AvatarState.initial()
-      : avatarItems = const [],
-        selectedCategory = AvatarCategory.outfits;
+    : avatarItems = const [],
+      selectedCategory = AvatarCategory.outfits;
 
   List<AvatarGridItem> get currentItems =>
       avatarItems.where((i) => i.category == selectedCategory).toList();

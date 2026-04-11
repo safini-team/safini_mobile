@@ -14,10 +14,10 @@ class RewardStoreState {
   });
 
   const RewardStoreState.initial()
-      : appTimeItems = const [],
-        avatarItems = const [],
-        selectedTab = StoreTab.appTime,
-        missingCoins = null;
+    : appTimeItems = const [],
+      avatarItems = const [],
+      selectedTab = StoreTab.appTime,
+      missingCoins = null;
 
   RewardStoreState copyWith({
     List<AppTimeItem>? appTimeItems,
@@ -30,8 +30,9 @@ class RewardStoreState {
       appTimeItems: appTimeItems ?? this.appTimeItems,
       avatarItems: avatarItems ?? this.avatarItems,
       selectedTab: selectedTab ?? this.selectedTab,
-      missingCoins:
-          clearMissingCoins ? null : (missingCoins ?? this.missingCoins),
+      missingCoins: clearMissingCoins
+          ? null
+          : (missingCoins ?? this.missingCoins),
     );
   }
 }

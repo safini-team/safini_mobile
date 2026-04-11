@@ -1,3 +1,18 @@
+import 'package:json_annotation/json_annotation.dart';
+import '../../domain/models/store_model.dart';
+
+part 'store_dto.g.dart';
+
+@JsonSerializable()
+class WalletHistoryDto {
+  final String id;
+  @JsonKey(name: 'child_id')
+  final String childId;
+  final int amount;
+  @JsonKey(name: 'transaction_type')
+  final String transactionType;
+  final String description;
+  @JsonKey(name: 'created_at')
 import '../../domain/models/store_model.dart';
 
 class WalletHistoryDto {
@@ -17,6 +32,9 @@ class WalletHistoryDto {
     required this.createdAt,
   });
 
+  factory WalletHistoryDto.fromJson(Map<String, dynamic> json) => _$WalletHistoryDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$WalletHistoryDtoToJson(this);
+
   factory WalletHistoryDto.fromJson(Map<String, dynamic> json) {
     return WalletHistoryDto(
       id: json['id'] as String? ?? '',
@@ -24,7 +42,9 @@ class WalletHistoryDto {
       amount: json['amount'] as int? ?? 0,
       transactionType: json['transaction_type'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -51,11 +71,19 @@ class WalletHistoryDto {
   }
 }
 
+@JsonSerializable()
 class StoreOfferDto {
   final String id;
   final String title;
   final String description;
   final String category;
+
+  @JsonKey(name: 'coins_price')
+  final int coinsPrice;
+  @JsonKey(name: 'is_available')
+  final bool isAvailable;
+  @JsonKey(name: 'created_at')
+
   final int coinsPrice;
   final bool isAvailable;
   final DateTime createdAt;
@@ -70,6 +98,9 @@ class StoreOfferDto {
     required this.createdAt,
   });
 
+  factory StoreOfferDto.fromJson(Map<String, dynamic> json) => _$StoreOfferDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$StoreOfferDtoToJson(this);
+
   factory StoreOfferDto.fromJson(Map<String, dynamic> json) {
     return StoreOfferDto(
       id: json['id'] as String? ?? '',
@@ -78,7 +109,9 @@ class StoreOfferDto {
       category: json['category'] as String? ?? '',
       coinsPrice: json['coins_price'] as int? ?? 0,
       isAvailable: json['is_available'] as bool? ?? false,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 
@@ -107,6 +140,17 @@ class StoreOfferDto {
   }
 }
 
+@JsonSerializable()
+class RedemptionResultDto {
+  final String id;
+  @JsonKey(name: 'child_id')
+  final String childId;
+  @JsonKey(name: 'offer_id')
+  final String offerId;
+  @JsonKey(name: 'new_balance')
+  final int newBalance;
+  @JsonKey(name: 'created_at')
+
 class RedemptionResultDto {
   final String id;
   final String childId;
@@ -122,13 +166,17 @@ class RedemptionResultDto {
     required this.createdAt,
   });
 
+  factory RedemptionResultDto.fromJson(Map<String, dynamic> json) => _$RedemptionResultDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$RedemptionResultDtoToJson(this);
   factory RedemptionResultDto.fromJson(Map<String, dynamic> json) {
     return RedemptionResultDto(
       id: json['id'] as String? ?? '',
       childId: json['child_id'] as String? ?? '',
       offerId: json['offer_id'] as String? ?? '',
       newBalance: json['new_balance'] as int? ?? 0,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 

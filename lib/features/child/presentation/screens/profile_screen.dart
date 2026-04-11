@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
@@ -10,15 +11,24 @@ import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/child/presentation/widgets/cards/profile_stat_card.dart';
 import 'package:safini/features/child/presentation/widgets/dialogs/achievements_dialog.dart';
 import 'package:safini/features/child/presentation/widgets/tiles/profile_menu_tile.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ProfileCubit(),
-      child: const _ProfileView(),
+    return BlocBuilder<LocaleCubit, Locale>(
+      builder: (context, locale) {
+        return Localizations.override(
+          context: context,
+          locale: locale,
+          child: BlocProvider(
+            create: (_) => ProfileCubit(),
+            child: const _ProfileView(),
+          ),
+        );
+      },
     );
   }
 }
@@ -48,6 +58,7 @@ class _ProfileView extends StatelessWidget {
 class _ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         return Container(
@@ -73,7 +84,7 @@ class _ProfileHeader extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'My Profile',
+                        s.myProfile,
                         style: context.textTheme.headlineSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
@@ -108,11 +119,13 @@ class _ProfileHeader extends StatelessWidget {
                 _NameSection(state: state),
                 const SizedBox(height: AppSpacing.sm),
                 // Level badge
-                _LevelBadge(label: state.levelLabel),
+                _LevelBadge(label: S.of(context).levelHero(state.level)),
                 const SizedBox(height: AppSpacing.lg),
                 // XP progress bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
@@ -202,6 +215,7 @@ class _NameSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     if (state.isEditing) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
@@ -251,7 +265,7 @@ class _NameSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
                 child: Text(
-                  'Save',
+                  s.save,
                   style: context.textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -327,6 +341,7 @@ class _LevelBadge extends StatelessWidget {
 class _ProfileBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         return Container(
@@ -350,7 +365,7 @@ class _ProfileBody extends StatelessWidget {
                         builder: (context, coins) => ProfileStatCard(
                           emoji: '🪙',
                           value: '$coins',
-                          label: 'Coins',
+                          label: s.coins,
                         ),
                       ),
                     ),
@@ -359,7 +374,7 @@ class _ProfileBody extends StatelessWidget {
                       child: ProfileStatCard(
                         emoji: '⚡',
                         value: '${state.questsDone}',
-                        label: 'Quests Done',
+                        label: s.questsDone,
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -367,7 +382,7 @@ class _ProfileBody extends StatelessWidget {
                       child: ProfileStatCard(
                         emoji: '🔥',
                         value: '${state.dayStreak}',
-                        label: 'Day Streak',
+                        label: s.dayStreak,
                       ),
                     ),
                   ],
@@ -377,25 +392,64 @@ class _ProfileBody extends StatelessWidget {
                 ProfileMenuTile(
                   emoji: '🎨',
                   iconBg: const Color(0xFFF5EEFF),
-                  title: 'Customize Avatar',
-                  subtitle: 'Change outfit, hair & more',
-                  onTap: () =>
-                      context.router.push(const NamedRoute('avatar')),
+                  title: s.customizeAvatar,
+                  subtitle: s.changeOutfit,
+                  onTap: () => context.router.push(const NamedRoute('avatar')),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 // Achievements
                 ProfileMenuTile(
                   emoji: '🏆',
                   iconBg: const Color(0xFFFFF3D6),
-                  title: 'Achievements',
-                  subtitle: '${state.questsDone} unlocked',
+                  title: s.achievements,
+                  subtitle: '${state.questsDone} ${s.unlocked}',
                   onTap: () => AchievementsDialog.show(context),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                // Language
+                ProfileMenuTile(
+                  emoji: '🌍',
+                  iconBg: const Color(0xFFE3F2FD),
+                  title: s.changeLanguage,
+                  subtitle: Localizations.localeOf(context).languageCode == 'en'
+                      ? s.english
+                      : s.russian,
+                  onTap: () => _showLanguageDialog(context),
                 ),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final s = S.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.selectLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(s.english),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.russian),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('ru'));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -405,6 +459,7 @@ class _ProfileBody extends StatelessWidget {
 class _ProfileBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
@@ -425,22 +480,22 @@ class _ProfileBottomNavBar extends StatelessWidget {
             children: [
               _NavItem(
                 icon: Icons.home_rounded,
-                label: 'Home',
-                onTap: () => context.router.navigate(const NamedRoute('home')),
+                label: s.home,
+                onTap: () => context.router.maybePop(),
               ),
               _NavItem(
                 icon: Icons.check_box_rounded,
-                label: 'Tasks',
+                label: s.tasks,
                 onTap: () => context.router.push(const NamedRoute('tasks')),
               ),
               _NavItem(
                 icon: Icons.shopping_bag_rounded,
-                label: 'Store',
+                label: s.store,
                 onTap: () => context.router.push(const NamedRoute('store')),
               ),
-              const _NavItem(
+              _NavItem(
                 icon: Icons.person_rounded,
-                label: 'Profile',
+                label: s.profile,
                 isSelected: true,
               ),
             ],

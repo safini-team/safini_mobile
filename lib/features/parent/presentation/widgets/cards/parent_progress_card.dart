@@ -1,79 +1,116 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/generated/l10n.dart';
 
 class ParentProgressCard extends StatelessWidget {
-  final String childName;
+  final String name;
   final String level;
-  final int timeCoins;
-  final String? avatarUrl;
+  final int coins;
 
   const ParentProgressCard({
     super.key,
-    required this.childName,
+    required this.name,
     required this.level,
-    required this.timeCoins,
-    this.avatarUrl,
+    required this.coins,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: Colors.white.withOpacity(0.3),
-            // Placeholder avatar
-            child: const Icon(Icons.person, color: Colors.white, size: 40),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(36),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(36),
+            border: Border.all(color: Colors.white.withOpacity(0.1)),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  childName,
-                  style: context.textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 76,
+                    height: 76,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text('👦', style: TextStyle(fontSize: 44)),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      level,
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                      ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "$name's Progress",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 22,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Color(0xFFFFD700),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              "$level Explorer",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Image.asset('assets/icons/coin.png', width: 20, height: 20, errorBuilder: (_, __, ___) => const Icon(Icons.monetization_on, color: Colors.amber, size: 20)),
-                    const SizedBox(width: 4),
-                    Text(
-                      "$timeCoins Time Coins",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/icons/coin.png',
+                    width: 20,
+                    height: 20,
+                    errorBuilder: (_, __, ___) => const Icon(
+                      Icons.monetization_on,
+                      color: Colors.amber,
+                      size: 20,
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "$coins ${S.of(context).timeCoins}",
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

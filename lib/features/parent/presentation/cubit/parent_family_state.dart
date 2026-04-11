@@ -17,10 +17,7 @@ class ParentFamilyLoaded extends ParentFamilyState {
   final List<ChildModel> children;
   final ParentUserModel parent;
 
-  const ParentFamilyLoaded({
-    required this.children,
-    required this.parent,
-  });
+  const ParentFamilyLoaded({required this.children, required this.parent});
 }
 
 class ParentFamilyError extends ParentFamilyState {
