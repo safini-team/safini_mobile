@@ -254,7 +254,9 @@ class ParentFamilyScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    _getLanguageName(Localizations.localeOf(context).languageCode, s),
+                    Localizations.localeOf(context).languageCode == 'en'
+                        ? s.english
+                        : s.russian,
                     style: context.textTheme.bodySmall?.copyWith(
                       color: Colors.grey,
                     ),
@@ -267,17 +269,6 @@ class ParentFamilyScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _getLanguageName(String code, S s) {
-    switch (code) {
-      case 'kk':
-        return s.kazakh;
-      case 'ru':
-        return s.russian;
-      default:
-        return s.english;
-    }
   }
 
   void _showLanguageDialog(BuildContext context) {
@@ -300,13 +291,6 @@ class ParentFamilyScreen extends StatelessWidget {
               title: Text(s.russian),
               onTap: () {
                 context.read<LocaleCubit>().setLocale(const Locale('ru'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text(s.kazakh),
-              onTap: () {
-                context.read<LocaleCubit>().setLocale(const Locale('kk'));
                 Navigator.pop(context);
               },
             ),

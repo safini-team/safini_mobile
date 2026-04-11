@@ -42,36 +42,56 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
             builder: (context) {
               final s = S.of(context);
               return Scaffold(
-                body: IndexedStack(index: _selectedIndex, children: _screens),
-                bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: _selectedIndex,
-                  onTap: _onItemTapped,
-                  type: BottomNavigationBarType.fixed,
-                  selectedItemColor: context.colorScheme.primary,
-                  unselectedItemColor: Colors.grey,
-                  selectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                body: IndexedStack(
+                  index: _selectedIndex,
+                  children: _screens,
+                ),
+                bottomNavigationBar: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, -4),
+                      ),
+                    ],
                   ),
-                  unselectedLabelStyle: const TextStyle(fontSize: 12),
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: const Icon(Icons.grid_view_rounded),
-                      label: s.monitor,
+                  child: BottomNavigationBar(
+                    currentIndex: _selectedIndex,
+                    onTap: _onItemTapped,
+                    type: BottomNavigationBarType.fixed,
+                    backgroundColor: Colors.white,
+                    selectedItemColor: context.colorScheme.primary,
+                    unselectedItemColor: Colors.grey[400],
+                    selectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
-                    BottomNavigationBarItem(
-                      icon: const Icon(Icons.fact_check_outlined),
-                      label: s.tasks,
+                    unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
-                    BottomNavigationBarItem(
-                      icon: const Icon(Icons.smartphone),
-                      label: s.apps,
-                    ),
-                    BottomNavigationBarItem(
-                      icon: const Icon(Icons.people_outline),
-                      label: s.family,
-                    ),
-                  ],
+                    elevation: 0,
+                    items: [
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.grid_view_rounded),
+                        label: s.monitor,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.assignment_turned_in_outlined),
+                        label: s.tasks,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.smartphone_rounded),
+                        label: s.apps,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.people_alt_rounded),
+                        label: s.family,
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

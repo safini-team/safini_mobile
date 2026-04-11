@@ -6,38 +6,38 @@ class ParentAppLimitTile extends StatelessWidget {
   final String appName;
   final int usedMinutes;
   final int limitMinutes;
-  final String iconPath;
+  final String? iconPath;
   final bool isEnabled;
   final ValueChanged<bool>? onToggle;
-  final VoidCallback? onAdjust;
 
   const ParentAppLimitTile({
     super.key,
     required this.appName,
     required this.usedMinutes,
     required this.limitMinutes,
-    required this.iconPath,
+    this.iconPath,
     this.isEnabled = true,
     this.onToggle,
-    this.onAdjust,
   });
 
   @override
   Widget build(BuildContext context) {
     final progress = (usedMinutes / limitMinutes).clamp(0.0, 1.0);
     final remaining = limitMinutes - usedMinutes;
+    final Color progressColor =
+        progress > 0.8 ? const Color(0xFFFF3B30) : const Color(0xFF00C566);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -47,37 +47,48 @@ class ParentAppLimitTile extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 52,
+                height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
+                  color: const Color(0xFFFFF5E6),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    iconPath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) =>
-                        const Icon(Icons.apps, color: Colors.grey),
-                  ),
-                ),
+                child: iconPath != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          iconPath!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Center(
+                            child: Text('🎮', style: TextStyle(fontSize: 24)),
+                          ),
+                        ),
+                      )
+                    : const Center(
+                        child: Text('🎮', style: TextStyle(fontSize: 24)),
+                      ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       appName,
-                      style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1A1A1A),
+                        letterSpacing: -0.5,
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       S.of(context).usedLimit(usedMinutes, limitMinutes),
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -86,38 +97,44 @@ class ParentAppLimitTile extends StatelessWidget {
               Switch(
                 value: isEnabled,
                 onChanged: onToggle,
-                activeThumbColor: context.colorScheme.primary,
+                activeTrackColor: const Color(0xFF8B46FF),
+                activeColor: Colors.white,
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.grey[200],
-            valueColor: AlwaysStoppedAnimation<Color>(
-              progress > 0.8 ? Colors.orange : context.colorScheme.primary,
+          const SizedBox(height: 20),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 12,
+              backgroundColor: const Color(0xFFF0F0F0),
+              valueColor: AlwaysStoppedAnimation<Color>(progressColor),
             ),
-            minHeight: 6,
-            borderRadius: BorderRadius.circular(3),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                S.of(context).minutesRemainingLong(remaining),
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: progress > 0.8 ? Colors.orange : Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+                S.of(context).dailyLimit,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              if (onAdjust != null)
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined, size: 20),
-                  onPressed: onAdjust,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+              Flexible(
+                child: Text(
+                  S.of(context).minutesRemainingLong(remaining),
+                  style: TextStyle(
+                    color: progressColor,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
+              ),
             ],
           ),
         ],
