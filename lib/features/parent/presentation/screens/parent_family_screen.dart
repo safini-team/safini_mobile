@@ -25,16 +25,19 @@ class ParentFamilyScreen extends StatelessWidget {
                 create: (context) =>
                     getIt<ParentFamilyCubit>()..loadFamilyData(),
                 child: Scaffold(
-                  backgroundColor: const Color(0xFF43008F),
+                  backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
                   body: Column(
                     children: [
                       // ── Header ──────────────────────────────────────
                       Container(
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Color(0xFF2D006F), Color(0xFF5A00B4)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              context.colorScheme.primary.withValues(alpha: 0.8),
+                              context.colorScheme.primary,
+                            ],
                           ),
                         ),
                         child: SafeArea(
@@ -58,12 +61,12 @@ class ParentFamilyScreen extends StatelessWidget {
                                   child: Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.15),
+                                      color: context.colorScheme.onPrimary.withOpacity(0.15),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.logout_rounded,
-                                      color: Colors.white,
+                                      color: context.colorScheme.onPrimary,
                                       size: 22,
                                     ),
                                   ),
@@ -77,9 +80,9 @@ class ParentFamilyScreen extends StatelessWidget {
                       // ── Content ──────────────────────────────────────
                       Expanded(
                         child: Container(
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFF0EEF9),
-                            borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                            color: context.colorScheme.surface,
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(36),
                               topRight: Radius.circular(36),
                             ),
@@ -138,13 +141,13 @@ class ParentFamilyScreen extends StatelessWidget {
                                           Container(
                                             padding: const EdgeInsets.all(12),
                                             decoration: BoxDecoration(
-                                              color: const Color(0xFFF2F0FF),
+                                              color: context.infoColor.withValues(alpha: 0.1),
                                               borderRadius:
                                                   BorderRadius.circular(16),
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.add,
-                                              color: Color(0xFF8B46FF),
+                                              color: context.infoColor,
                                               size: 28,
                                             ),
                                           ),
@@ -156,24 +159,24 @@ class ParentFamilyScreen extends StatelessWidget {
                                               children: [
                                                 Text(
                                                   s.addAnotherChild,
-                                                  style: const TextStyle(
+                                                  style: context.textTheme.titleMedium?.copyWith(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w800,
                                                   ),
                                                 ),
                                                 Text(
                                                   s.setUpANewProfile,
-                                                  style: const TextStyle(
-                                                    color: Colors.grey,
+                                                  style: context.textTheme.bodyMedium?.copyWith(
+                                                    color: context.colorScheme.onSurface.withValues(alpha: 0.6),
                                                     fontSize: 14,
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          const Icon(
+                                          Icon(
                                             Icons.arrow_forward_ios_rounded,
-                                            color: Colors.grey,
+                                            color: context.colorScheme.onSurface.withValues(alpha: 0.4),
                                             size: 18,
                                           ),
                                         ],
@@ -199,14 +202,13 @@ class ParentFamilyScreen extends StatelessWidget {
                                       ),
                                       child: Row(
                                         children: [
-                                          const CircleAvatar(
+                                          CircleAvatar(
                                             radius: 28,
-                                            backgroundColor:
-                                                Color(0xFFF5F5F5),
+                                                backgroundColor:
+                                                    context.colorScheme.onSurface.withValues(alpha: 0.05),
                                             child: Text(
                                               '👨',
-                                              style:
-                                                  TextStyle(fontSize: 28),
+                                              style: context.textTheme.headlineSmall?.copyWith(fontSize: 28),
                                             ),
                                           ),
                                           const SizedBox(width: 20),
@@ -224,8 +226,8 @@ class ParentFamilyScreen extends StatelessWidget {
                                                 ),
                                                 Text(
                                                   s.familyAdmin,
-                                                  style: const TextStyle(
-                                                    color: Colors.grey,
+                                                  style: context.textTheme.bodyMedium?.copyWith(
+                                                    color: context.colorScheme.onSurface.withValues(alpha: 0.6),
                                                     fontSize: 14,
                                                   ),
                                                 ),
@@ -244,8 +246,8 @@ class ParentFamilyScreen extends StatelessWidget {
                                             ),
                                             child: Text(
                                               s.admin,
-                                              style: const TextStyle(
-                                                color: Color(0xFF8B46FF),
+                                              style: TextStyle(
+                                                color: context.colorScheme.primary,
                                                 fontWeight: FontWeight.w800,
                                                 fontSize: 13,
                                               ),
@@ -283,7 +285,7 @@ class ParentFamilyScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
@@ -291,10 +293,10 @@ class ParentFamilyScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFE3F2FD),
+                color: context.infoColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.language, color: Colors.blue),
+              child: Icon(Icons.language, color: context.infoColor),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -312,12 +314,12 @@ class ParentFamilyScreen extends StatelessWidget {
                         ? s.english
                         : s.russian,
                     style: context.textTheme.bodySmall
-                        ?.copyWith(color: Colors.grey),
+                        ?.copyWith(color: context.colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            Icon(Icons.chevron_right, color: context.colorScheme.onSurface.withValues(alpha: 0.4)),
           ],
         ),
       ),
@@ -362,7 +364,7 @@ class ParentFamilyScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: context.colorScheme.shadow.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),

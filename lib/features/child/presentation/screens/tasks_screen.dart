@@ -33,7 +33,7 @@ class _TasksView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0EAF8),
+      backgroundColor: context.colorScheme.surface,
       body: Column(
         children: [
           _TasksHeader(),
@@ -55,11 +55,14 @@ class _TasksHeader extends StatelessWidget {
       builder: (context, state) {
         return Container(
           width: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF6200B3), Color(0xFF9000E0)],
+              colors: [
+                context.colorScheme.primary.withValues(alpha: 0.9),
+                context.colorScheme.primary,
+              ],
             ),
           ),
           child: SafeArea(

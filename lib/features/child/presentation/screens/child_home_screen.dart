@@ -57,11 +57,14 @@ class _HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF6200B3), Color(0xFF9000E0)],
+          colors: [
+            context.colorScheme.primary.withValues(alpha: 0.9),
+            context.colorScheme.primary,
+          ],
         ),
       ),
       child: SafeArea(

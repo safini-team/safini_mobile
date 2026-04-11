@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
+import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/screens/child_home_screen.dart';
 import 'package:safini/features/parent/presentation/screens/parent_main_screen.dart';
 import 'package:safini/generated/l10n.dart';
@@ -22,14 +23,14 @@ class AuthPage extends StatelessWidget {
                 body: Container(
                   width: double.infinity,
                   height: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Color(0xFF9B59D0),
-                        Color(0xFF7B3FA0),
-                        Color(0xFF6A35B0),
+                        context.colorScheme.primary.withValues(alpha: 0.8),
+                        context.colorScheme.primary,
+                        context.colorScheme.primary.withValues(alpha: 0.9),
                       ],
                     ),
                   ),
@@ -41,9 +42,9 @@ class AuthPage extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.language,
-                                color: Colors.white,
+                                color: context.colorScheme.onPrimary,
                               ),
                               onPressed: () => _showLanguageDialog(context),
                             ),
@@ -60,10 +61,10 @@ class AuthPage extends StatelessWidget {
                         // Title
                         Text(
                           s.appName,
-                          style: const TextStyle(
+                          style: context.textTheme.displayMedium?.copyWith(
                             fontSize: 36,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                            color: context.colorScheme.onPrimary,
                             letterSpacing: 8,
                           ),
                         ),
@@ -71,10 +72,8 @@ class AuthPage extends StatelessWidget {
                         // Tagline
                         Text(
                           s.tagline,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white.withValues(alpha: 0.85),
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            color: context.colorScheme.onPrimary.withValues(alpha: 0.85),
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -126,9 +125,8 @@ class AuthPage extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: Text(
                             s.footerText,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.7),
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: context.colorScheme.onPrimary.withValues(alpha: 0.7),
                             ),
                           ),
                         ),
@@ -217,10 +215,10 @@ class _RoleCard extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.25),
+                color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(icon, color: Colors.white, size: 28),
+              child: Icon(icon, color: context.colorScheme.onPrimary, size: 28),
             ),
             const SizedBox(width: 16),
             // Text
@@ -230,18 +228,17 @@ class _RoleCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: context.textTheme.titleLarge?.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white.withValues(alpha: 0.85),
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onPrimary.withValues(alpha: 0.85),
                     ),
                   ),
                 ],
@@ -252,12 +249,12 @@ class _RoleCard extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.25),
+                color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_forward_rounded,
-                color: Colors.white,
+                color: context.colorScheme.onPrimary,
                 size: 20,
               ),
             ),

@@ -16,16 +16,19 @@ class ParentAppsScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<ParentAppsCubit>()..loadAppLimits(),
       child: Scaffold(
-        backgroundColor: const Color(0xFF43008F),
+        backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
         body: Column(
           children: [
             // ── Header ──────────────────────────────────────────
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF2D006F), Color(0xFF5A00B4)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    context.colorScheme.primary.withValues(alpha: 0.8),
+                    context.colorScheme.primary,
+                  ],
                 ),
               ),
               child: SafeArea(
@@ -37,8 +40,8 @@ class ParentAppsScreen extends StatelessWidget {
                     children: [
                       Text(
                         s.appLimits,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: context.textTheme.displaySmall?.copyWith(
+                          color: context.colorScheme.onPrimary,
                           fontSize: 30,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -0.5,
@@ -61,8 +64,8 @@ class ParentAppsScreen extends StatelessWidget {
             // ── Content ─────────────────────────────────────────
             Expanded(
               child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF0EEF9),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(36),
                     topRight: Radius.circular(36),
@@ -86,7 +89,7 @@ class ParentAppsScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: context.colorScheme.surface,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -100,8 +103,8 @@ class ParentAppsScreen extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     s.kidsEarnTimeCoins,
-                                    style: const TextStyle(
-                                      color: Color(0xFF8B46FF),
+                                    style: context.textTheme.titleSmall?.copyWith(
+                                      color: context.colorScheme.primary,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,
                                     ),
@@ -127,7 +130,7 @@ class ParentAppsScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: const Color(0xFF8B46FF).withOpacity(0.5),
+                                color: context.colorScheme.primary.withOpacity(0.5),
                                 width: 2,
                               ),
                               borderRadius: BorderRadius.circular(24),
@@ -135,12 +138,12 @@ class ParentAppsScreen extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.add,
-                                  color: Color(0xFF8B46FF),
+                                  color: context.colorScheme.primary,
                                   size: 20,
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8),
                                 Text(
                                   s.addAnotherApp,
                                   style: context.textTheme.titleMedium

@@ -34,7 +34,7 @@ class ParentChildCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: context.colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -51,11 +51,11 @@ class ParentChildCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border:
-                          Border.all(color: const Color(0xFF8100D1), width: 2),
+                          Border.all(color: context.colorScheme.primary, width: 2),
                     ),
                     child: CircleAvatar(
                       radius: 36,
-                      backgroundColor: Colors.grey[100],
+                      backgroundColor: context.colorScheme.onSurface.withValues(alpha: 0.05),
                       child:
                           const Text('👦', style: TextStyle(fontSize: 36)),
                     ),
@@ -69,16 +69,16 @@ class ParentChildCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF8100D1),
+                        color: context.colorScheme.primary,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: context.colorScheme.onPrimary, width: 2),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Lv.5',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: context.colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
+                          fontSize: 10,
                         ),
                       ),
                     ),
@@ -104,8 +104,8 @@ class ParentChildCard extends StatelessWidget {
                       S.of(context).ageAndGender(age, gender),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.grey[400],
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: context.colorScheme.onSurface.withValues(alpha: 0.4),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -146,8 +146,8 @@ class ParentChildCard extends StatelessWidget {
                 icon: const Icon(Icons.visibility_outlined, size: 18),
                 label: Text(S.of(context).viewAsKid),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8100D1),
-                  foregroundColor: Colors.white,
+                  backgroundColor: context.colorScheme.primary,
+                  foregroundColor: context.colorScheme.onPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -160,8 +160,8 @@ class ParentChildCard extends StatelessWidget {
                 icon: const Icon(Icons.settings_outlined, size: 18),
                 label: Text(S.of(context).edit),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF8100D1),
-                  side: const BorderSide(color: Color(0xFF8100D1)),
+                  foregroundColor: context.colorScheme.primary,
+                  side: BorderSide(color: context.colorScheme.primary),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -200,8 +200,8 @@ class ParentChildCard extends StatelessWidget {
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Color(0xFF8100D1),
+          style: context.textTheme.titleMedium?.copyWith(
+            color: context.colorScheme.primary,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -210,8 +210,8 @@ class ParentChildCard extends StatelessWidget {
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Colors.grey[400],
+          style: context.textTheme.labelSmall?.copyWith(
+            color: context.colorScheme.onSurface.withValues(alpha: 0.4),
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),

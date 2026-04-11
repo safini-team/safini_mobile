@@ -24,9 +24,9 @@ class ParentProgressCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: context.colorScheme.onPrimary.withOpacity(0.12),
             borderRadius: BorderRadius.circular(36),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: context.colorScheme.onPrimary.withOpacity(0.1)),
           ),
           child: Column(
             children: [
@@ -36,10 +36,10 @@ class ParentProgressCard extends StatelessWidget {
                     width: 76,
                     height: 76,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: context.colorScheme.onPrimary.withOpacity(0.2),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: context.colorScheme.onPrimary.withOpacity(0.3),
                         width: 2,
                       ),
                     ),
@@ -54,8 +54,8 @@ class ParentProgressCard extends StatelessWidget {
                       children: [
                         Text(
                           "$name's Progress",
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: context.textTheme.displaySmall?.copyWith(
+                            color: context.colorScheme.onPrimary,
                             fontWeight: FontWeight.w900,
                             fontSize: 22,
                             letterSpacing: -0.2,
@@ -102,7 +102,7 @@ class ParentProgressCard extends StatelessWidget {
                   Text(
                     "$coins ${S.of(context).timeCoins}",
                     style: context.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -16,16 +16,19 @@ class ParentTasksScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<ParentTasksCubit>()..loadTasks(),
       child: Scaffold(
-        backgroundColor: const Color(0xFF43008F),
+        backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
         body: Column(
           children: [
             // ── Header ──────────────────────────────────────────
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF2D006F), Color(0xFF5A00B4)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    context.colorScheme.primary.withValues(alpha: 0.8),
+                    context.colorScheme.primary,
+                  ],
                 ),
               ),
               child: SafeArea(
@@ -37,8 +40,8 @@ class ParentTasksScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           s.tasksAndRewards,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: context.textTheme.displaySmall?.copyWith(
+                            color: context.colorScheme.onPrimary,
                             fontSize: 30,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
@@ -54,22 +57,22 @@ class ParentTasksScreen extends StatelessWidget {
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
+                            color: context.colorScheme.onPrimary.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(22),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.add,
                                 color: Colors.white,
                                 size: 18,
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: 6),
                               Text(
                                 s.newBtn,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: context.colorScheme.onPrimary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 15,
                                 ),
@@ -86,8 +89,8 @@ class ParentTasksScreen extends StatelessWidget {
             // ── Content ─────────────────────────────────────────
             Expanded(
               child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF0EEF9),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(36),
                     topRight: Radius.circular(36),
@@ -107,10 +110,10 @@ class ParentTasksScreen extends StatelessWidget {
                             _buildSectionHeader(
                               context,
                               icon: Icons.access_time_filled,
-                              iconColor: const Color(0xFFFFD700),
+                              iconColor: Colors.amber,
                               title: s.pendingApproval,
                               badgeCount: state.pendingApproval.length,
-                              badgeColor: const Color(0xFFFFD700),
+                              badgeColor: Colors.amber,
                             ),
                             const SizedBox(height: 16),
                             ...state.pendingApproval.map(
@@ -192,10 +195,10 @@ class ParentTasksScreen extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           title,
-          style: const TextStyle(
+          style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             fontSize: 20,
-            color: Color(0xFF1A1A1A),
+            color: context.colorScheme.onSurface,
           ),
         ),
         const Spacer(),
@@ -208,8 +211,8 @@ class ParentTasksScreen extends StatelessWidget {
             ),
             child: Text(
               badgeCount.toString(),
-              style: TextStyle(
-                color: badgeTextColor ?? Colors.white,
+              style: context.textTheme.labelLarge?.copyWith(
+                color: badgeTextColor ?? context.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),

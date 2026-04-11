@@ -41,7 +41,7 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0EAF8),
+      backgroundColor: context.colorScheme.surface,
       body: Column(
         children: [
           _ProfileHeader(),
@@ -63,11 +63,14 @@ class _ProfileHeader extends StatelessWidget {
       builder: (context, state) {
         return Container(
           width: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF6200B3), Color(0xFF9000E0)],
+              colors: [
+                context.colorScheme.primary.withValues(alpha: 0.9),
+                context.colorScheme.primary,
+              ],
             ),
           ),
           child: SafeArea(
@@ -130,9 +133,9 @@ class _ProfileHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: state.xpProgress,
-                      backgroundColor: Colors.white.withValues(alpha: 0.2),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFFF5A623),
+                      backgroundColor: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        context.colorScheme.secondary,
                       ),
                       minHeight: 6,
                     ),
@@ -195,7 +198,7 @@ class _AvatarCircle extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFFF5A623),
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: context.colorScheme.onPrimary, width: 2),
               ),
               child: Center(
                 child: Text(badgeEmoji, style: const TextStyle(fontSize: 14)),
@@ -228,7 +231,7 @@ class _NameSection extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
                 child: TextField(
@@ -248,7 +251,7 @@ class _NameSection extends StatelessWidget {
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  cursorColor: Colors.white,
+                  cursorColor: context.colorScheme.onPrimary,
                 ),
               ),
             ),
@@ -261,7 +264,7 @@ class _NameSection extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5A623),
+                  color: context.colorScheme.secondary,
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
                 child: Text(
@@ -311,10 +314,10 @@ class _LevelBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5A623).withValues(alpha: 0.2),
+        color: context.colorScheme.secondary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
-          color: const Color(0xFFF5A623).withValues(alpha: 0.5),
+          color: context.colorScheme.secondary.withValues(alpha: 0.5),
         ),
       ),
       child: Row(
@@ -391,7 +394,7 @@ class _ProfileBody extends StatelessWidget {
                 // Customize Avatar
                 ProfileMenuTile(
                   emoji: '🎨',
-                  iconBg: const Color(0xFFF5EEFF),
+                  iconBg: context.colorScheme.primary.withValues(alpha: 0.1),
                   title: s.customizeAvatar,
                   subtitle: s.changeOutfit,
                   onTap: () => context.router.push(const NamedRoute('avatar')),
@@ -400,7 +403,7 @@ class _ProfileBody extends StatelessWidget {
                 // Achievements
                 ProfileMenuTile(
                   emoji: '🏆',
-                  iconBg: const Color(0xFFFFF3D6),
+                  iconBg: context.colorScheme.secondary.withValues(alpha: 0.1),
                   title: s.achievements,
                   subtitle: '${state.questsDone} ${s.unlocked}',
                   onTap: () => AchievementsDialog.show(context),
@@ -409,7 +412,7 @@ class _ProfileBody extends StatelessWidget {
                 // Language
                 ProfileMenuTile(
                   emoji: '🌍',
-                  iconBg: const Color(0xFFE3F2FD),
+                  iconBg: context.colorScheme.primary.withValues(alpha: 0.1),
                   title: s.changeLanguage,
                   subtitle: Localizations.localeOf(context).languageCode == 'en'
                       ? s.english
