@@ -1,6 +1,6 @@
 {
   "@@locale": "ru",
-  "appName": "SAFINIO",
+  "appName": "SAFINI",
   "tagline": "Учись. Зарабатывай. Играй.",
   "imAKid": "Я ребенок!",
   "kidSubtitle": "Зарабатывай монеты и играй",
@@ -19,6 +19,7 @@
   "changeLanguage": "Сменить язык",
   "english": "Английский",
   "russian": "Русский",
+  "kazakh": "Казахский",
   "myProfile": "Мой профиль",
   "save": "Сохранить",
   "coins": "Монеты",
@@ -38,7 +39,7 @@
   "noQuestsInCategory": "Нет квестов в этой категории",
   "selectLanguage": "Выберите язык",
   "goodMorning": "Доброе утро 👋",
-  "parentName": "Родитель Safinio",
+  "parentName": "Родитель Safini",
   "childProgressTitle": "Прогресс {name}",
   "@childProgressTitle": {
     "placeholders": {

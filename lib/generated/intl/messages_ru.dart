@@ -47,7 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "admin": MessageLookupByLibrary.simpleMessage("Админ"),
     "ageAndGender": m0,
     "appLimits": MessageLookupByLibrary.simpleMessage("Лимиты приложений"),
-    "appName": MessageLookupByLibrary.simpleMessage("SAFINIO"),
+    "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeTab": MessageLookupByLibrary.simpleMessage("Приложения"),
     "apps": MessageLookupByLibrary.simpleMessage("Приложения"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Предметы"),
@@ -93,13 +93,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "free": MessageLookupByLibrary.simpleMessage("БЕСПЛАТНО"),
     "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Перейти к заданиям"),
-    "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
-      "Не указан Web Client ID Google. Задайте GOOGLE_WEB_CLIENT_ID (OAuth Web client в Google Cloud).",
-    ),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Доброе утро 👋"),
+    "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
+      "Не задан Google Web Client ID. Укажите GOOGLE_WEB_CLIENT_ID (OAuth Web в Google Cloud).",
+    ),
     "home": MessageLookupByLibrary.simpleMessage("Главная"),
     "imAKid": MessageLookupByLibrary.simpleMessage("Я ребенок!"),
     "imAParent": MessageLookupByLibrary.simpleMessage("Я родитель"),
+    "kazakh": MessageLookupByLibrary.simpleMessage("Казахский"),
     "kidSubtitle": MessageLookupByLibrary.simpleMessage(
       "Зарабатывай монеты и играй",
     ),
@@ -107,6 +108,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
     ),
     "lessons": MessageLookupByLibrary.simpleMessage("Уроки"),
+    "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 сегодня"),
+    "levelHero": m3,
     "loginBack": MessageLookupByLibrary.simpleMessage("Назад"),
     "loginSubtitle": MessageLookupByLibrary.simpleMessage(
       "Продолжите с аккаунтом Google",
@@ -115,8 +118,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Продолжить с Google",
     ),
-    "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 сегодня"),
-    "levelHero": m3,
     "manageAll": MessageLookupByLibrary.simpleMessage("Управлять всем"),
     "minutesRemainingLong": m4,
     "mon": MessageLookupByLibrary.simpleMessage("ПН"),
@@ -141,7 +142,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "parentHomeScreen": MessageLookupByLibrary.simpleMessage(
       "Главный экран родителя",
     ),
-    "parentName": MessageLookupByLibrary.simpleMessage("Родитель Safinio"),
+    "parentName": MessageLookupByLibrary.simpleMessage("Родитель Safini"),
     "parentSubtitle": MessageLookupByLibrary.simpleMessage(
       "Контролируй и награждай",
     ),
@@ -162,13 +163,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Сохранить вид!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Выберите язык"),
-    "signedInSuccess": MessageLookupByLibrary.simpleMessage(
-      "Вход выполнен",
-    ),
-    "signingIn": MessageLookupByLibrary.simpleMessage("Вход..."),
     "setUpANewProfile": MessageLookupByLibrary.simpleMessage(
       "Создать новый профиль",
     ),
+    "signedInSuccess": MessageLookupByLibrary.simpleMessage("Вход выполнен"),
+    "signingIn": MessageLookupByLibrary.simpleMessage("Вход..."),
     "spendYourTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Потратьте свои монеты времени",
     ),
@@ -176,9 +175,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "statusDone": MessageLookupByLibrary.simpleMessage("ГОТОВО"),
     "statusPending": MessageLookupByLibrary.simpleMessage("ОЖИДАЕТ"),
     "steps": MessageLookupByLibrary.simpleMessage("Шаги"),
-    "supabaseConfigMissing": MessageLookupByLibrary.simpleMessage(
-      "Не заданы URL или anon key Supabase. Укажите SUPABASE_URL и SUPABASE_ANON_KEY при запуске приложения.",
-    ),
     "stepsChangeText": MessageLookupByLibrary.simpleMessage(
       "+12% по сравнению со вчера",
     ),
@@ -186,6 +182,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "store": MessageLookupByLibrary.simpleMessage("Магазин"),
     "streakText": MessageLookupByLibrary.simpleMessage("Подряд"),
     "sun": MessageLookupByLibrary.simpleMessage("ВС"),
+    "supabaseConfigMissing": MessageLookupByLibrary.simpleMessage(
+      "Не заданы URL или anon-ключ Supabase. Укажите SUPABASE_URL и SUPABASE_ANON_KEY при запуске.",
+    ),
     "switchToKidMode": MessageLookupByLibrary.simpleMessage(
       "Режим ребенка / Выход",
     ),

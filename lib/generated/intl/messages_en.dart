@@ -47,7 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "admin": MessageLookupByLibrary.simpleMessage("Admin"),
     "ageAndGender": m0,
     "appLimits": MessageLookupByLibrary.simpleMessage("App Limits"),
-    "appName": MessageLookupByLibrary.simpleMessage("SAFINIO"),
+    "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeTab": MessageLookupByLibrary.simpleMessage("App Time"),
     "apps": MessageLookupByLibrary.simpleMessage("Apps"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar Items"),
@@ -91,18 +91,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "free": MessageLookupByLibrary.simpleMessage("FREE"),
     "fri": MessageLookupByLibrary.simpleMessage("FRI"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Go to Tasks"),
+    "goodMorning": MessageLookupByLibrary.simpleMessage("Good morning 👋"),
     "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
       "Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).",
     ),
-    "goodMorning": MessageLookupByLibrary.simpleMessage("Good morning 👋"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "imAKid": MessageLookupByLibrary.simpleMessage("I\'m a Kid!"),
     "imAParent": MessageLookupByLibrary.simpleMessage("I\'m a Parent"),
+    "kazakh": MessageLookupByLibrary.simpleMessage("Kazakh"),
     "kidSubtitle": MessageLookupByLibrary.simpleMessage("Earn coins & play"),
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Kids earn Time Coins to unlock extra minutes for these apps.",
     ),
     "lessons": MessageLookupByLibrary.simpleMessage("Lessons"),
+    "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 today"),
+    "levelHero": m3,
     "loginBack": MessageLookupByLibrary.simpleMessage("Back"),
     "loginSubtitle": MessageLookupByLibrary.simpleMessage(
       "Continue with your Google account",
@@ -111,8 +114,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Continue with Google",
     ),
-    "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 today"),
-    "levelHero": m3,
     "manageAll": MessageLookupByLibrary.simpleMessage("Manage All"),
     "minutesRemainingLong": m4,
     "mon": MessageLookupByLibrary.simpleMessage("MON"),
@@ -152,13 +153,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Save My Look!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
+    "setUpANewProfile": MessageLookupByLibrary.simpleMessage(
+      "Set up a new profile",
+    ),
     "signedInSuccess": MessageLookupByLibrary.simpleMessage(
       "Signed in successfully",
     ),
     "signingIn": MessageLookupByLibrary.simpleMessage("Signing in..."),
-    "setUpANewProfile": MessageLookupByLibrary.simpleMessage(
-      "Set up a new profile",
-    ),
     "spendYourTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Spend your Time Coins",
     ),
@@ -166,9 +167,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "statusDone": MessageLookupByLibrary.simpleMessage("DONE"),
     "statusPending": MessageLookupByLibrary.simpleMessage("PENDING"),
     "steps": MessageLookupByLibrary.simpleMessage("Steps"),
-    "supabaseConfigMissing": MessageLookupByLibrary.simpleMessage(
-      "Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.",
-    ),
     "stepsChangeText": MessageLookupByLibrary.simpleMessage(
       "+12% vs yesterday",
     ),
@@ -176,6 +174,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "store": MessageLookupByLibrary.simpleMessage("Store"),
     "streakText": MessageLookupByLibrary.simpleMessage("Streak"),
     "sun": MessageLookupByLibrary.simpleMessage("SUN"),
+    "supabaseConfigMissing": MessageLookupByLibrary.simpleMessage(
+      "Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.",
+    ),
     "switchToKidMode": MessageLookupByLibrary.simpleMessage(
       "Switch to Kid Mode / Logout",
     ),

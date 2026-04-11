@@ -54,9 +54,9 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `SAFINIO`
+  /// `SAFINI`
   String get appName {
-    return Intl.message('SAFINIO', name: 'appName', desc: '', args: []);
+    return Intl.message('SAFINI', name: 'appName', desc: '', args: []);
   }
 
   /// `Learn. Earn. Play.`
@@ -182,6 +182,11 @@ class S {
   /// `Russian`
   String get russian {
     return Intl.message('Russian', name: 'russian', desc: '', args: []);
+  }
+
+  /// `Kazakh`
+  String get kazakh {
+    return Intl.message('Kazakh', name: 'kazakh', desc: '', args: []);
   }
 
   /// `My Profile`
@@ -1074,7 +1079,7 @@ class S {
     return Intl.message('Back', name: 'loginBack', desc: '', args: []);
   }
 
-  /// `Supabase URL or anon key is missing...`
+  /// `Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.`
   String get supabaseConfigMissing {
     return Intl.message(
       'Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.',
@@ -1084,7 +1089,7 @@ class S {
     );
   }
 
-  /// `Google Web Client ID is missing...`
+  /// `Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).`
   String get googleClientIdMissing {
     return Intl.message(
       'Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).',
@@ -1111,6 +1116,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'kz'),
       Locale.fromSubtags(languageCode: 'ru'),
     ];
   }

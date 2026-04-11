@@ -7,6 +7,9 @@ class LocaleCubit extends Cubit<Locale> {
 
   static Locale _getInitialLocale() {
     final systemLocale = ui.PlatformDispatcher.instance.locale;
+    if (systemLocale.languageCode == 'kk') {
+      return const Locale('kk');
+    }
     if (systemLocale.languageCode == 'ru') {
       return const Locale('ru');
     }
