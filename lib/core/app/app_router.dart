@@ -4,6 +4,8 @@ import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/login_page.dart';
 import 'package:safini/features/child/presentation/screens/avatar_customizer_screen.dart';
 import 'package:safini/features/child/presentation/screens/profile_screen.dart';
+import 'package:safini/features/child/presentation/screens/child_home_screen.dart';
+import 'package:safini/features/parent/presentation/screens/parent_main_screen.dart';
 import 'package:safini/features/child/presentation/screens/reward_store_screen.dart';
 import 'package:safini/features/child/presentation/screens/tasks_screen.dart';
 
@@ -19,6 +21,16 @@ class AppRouter {
         name: 'auth',
         path: '/auth',
         builder: (context, data) => const AuthPage(),
+      ),
+      NamedRouteDef(
+        name: 'childHome',
+        path: '/child-home',
+        builder: (context, data) => const ChildHomeScreen(),
+      ),
+      NamedRouteDef(
+        name: 'parentHome',
+        path: '/parent-home',
+        builder: (context, data) => const ParentMainScreen(),
       ),
       NamedRouteDef(
         name: 'store',
