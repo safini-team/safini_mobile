@@ -14,12 +14,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: LoginStatus.success));
     } catch (e) {
       final message = e.toString().replaceFirst('Exception: ', '');
-      emit(
-        state.copyWith(
-          status: LoginStatus.failure,
-          errorMessage: message,
-        ),
-      );
+      emit(state.copyWith(status: LoginStatus.failure, errorMessage: message));
     }
   }
 
