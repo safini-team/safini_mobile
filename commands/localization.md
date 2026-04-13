@@ -1,31 +1,34 @@
 # Localization Guide
 
-This project uses Flutter Intl-generated localization files with English and Russian support.
+This project uses Flutter Intl-generated localization files with English, Russian, and Kazakh support.
 
 ## Source of truth
 
 - Translation strings live in:
   - `lib/l10n/intl_en.arb`
   - `lib/l10n/intl_ru.arb`
+  - `lib/l10n/intl_kk.arb`
 - Generated accessors live in:
   - `lib/generated/l10n.dart`
 - Generated lookup files live in:
   - `lib/generated/intl/messages_en.dart`
   - `lib/generated/intl/messages_ru.dart`
+  - `lib/generated/intl/messages_kk.dart`
 
 ## Supported locales
 
 The app currently supports:
 
 - `en`
+- `kk`
 - `ru`
 
 Locale selection is initialized through `lib/core/app/locale_cubit.dart`, and the app registers the localization delegates in `lib/core/app/app.dart`.
 
 ## How to add or update a translation
 
-1. Add or update the key in both ARB files.
-2. Include placeholders in both files if the string needs dynamic values.
+1. Add or update the key in all locale ARB files (`intl_en`, `intl_ru`, `intl_kk`).
+2. Include placeholders in all locales if the string needs dynamic values.
 3. Regenerate the Flutter Intl output so `lib/generated/l10n.dart` and the message lookup files stay in sync.
 4. Use the generated `S` class in widgets, for example:
    - `S.of(context).appLimits`
@@ -36,7 +39,26 @@ Locale selection is initialized through `lib/core/app/locale_cubit.dart`, and th
 - Prefer short, UI-friendly phrases.
 - Keep placeholders named consistently across locales.
 - Avoid hardcoding user-facing text in widgets when a localized key exists.
+- Prefer ICU plurals for count-based text (`coinCount`, `minuteCount`) instead of string concatenation.
 - Do not edit generated files by hand unless you are fixing checked-in generated output.
+
+## Pluralization examples
+
+- `coinCount`: `{count, plural, =1{{count} coin} other{{count} coins}}`
+- `minuteCount`: `{count, plural, =1{{count} minute} other{{count} minutes}}`
+- Widget usage:
+  - `S.of(context).coinCount(coins)`
+  - `S.of(context).minuteCount(minutes)`
+
+For Russian/Kazakh, define locale-appropriate plural categories in each ARB file.
+
+## Parent-side layout guidance for localization
+
+Longer Russian/Kazakh strings can overflow in compact rows. Prefer:
+
+- `Expanded`/`Flexible` around text inside `Row`.
+- `Text(maxLines: 1 or 2, overflow: TextOverflow.ellipsis)` for headers, badges, and buttons.
+- Avoid hard-coded text widths when labels are localized.
 
 ## Where localization is used in the app
 

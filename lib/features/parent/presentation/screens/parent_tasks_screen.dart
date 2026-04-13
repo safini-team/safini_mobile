@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
@@ -190,15 +189,19 @@ class ParentTasksScreen extends StatelessWidget {
       children: [
         Icon(icon, color: iconColor, size: iconSize),
         const SizedBox(width: 12),
-        Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Color(0xFF1A1A1A),
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Color(0xFF1A1A1A),
+            ),
           ),
         ),
-        const Spacer(),
+        const SizedBox(width: 8),
         if (badgeCount != null)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

@@ -5,7 +5,7 @@ enum StoreTab { appTime, avatarItems }
 class AppTimeItem {
   final String id;
   final String title;
-  final String subtitle;
+  final int minutes;
   final IconData icon;
   final Color iconColor;
   final Color iconBackground;
@@ -14,7 +14,7 @@ class AppTimeItem {
   const AppTimeItem({
     required this.id,
     required this.title,
-    required this.subtitle,
+    required this.minutes,
     required this.icon,
     required this.iconColor,
     required this.iconBackground,

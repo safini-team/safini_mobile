@@ -46,6 +46,8 @@ class ParentStatCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 28,
@@ -56,6 +58,8 @@ class ParentStatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.grey[500],
               fontSize: 14,
@@ -66,6 +70,8 @@ class ParentStatCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               change!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Color(0xFF00C566),
                 fontWeight: FontWeight.w700,

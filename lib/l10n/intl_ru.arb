@@ -23,6 +23,23 @@
   "myProfile": "Мой профиль",
   "save": "Сохранить",
   "coins": "Монеты",
+  "minutes": "Минуты",
+  "coinCount": "{count, plural, one{{count} монета} few{{count} монеты} many{{count} монет} other{{count} монеты}}",
+  "@coinCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minuteCount": "{count, plural, one{{count} минута} few{{count} минуты} many{{count} минут} other{{count} минуты}}",
+  "@minuteCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "questsDone": "Заданий выполнено",
   "dayStreak": "Дней подряд",
   "customizeAvatar": "Настроить аватар",
@@ -54,9 +71,18 @@
   "lessons": "Уроки",
   "lessonsChangeText": "+1 сегодня",
   "appLimits": "Лимиты приложений",
+  "appLimitsSubtitle": "Установите дневные лимиты экранного времени",
   "manageAll": "Управлять всем",
   "realWorldTasks": "Задания в жизни",
   "newTask": "Новое задание",
+  "coinsReward": "{count, plural, one{Награда: {count} монета} few{Награда: {count} монеты} many{Награда: {count} монет} other{Награда: {count} монеты}}",
+  "@coinsReward": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "cleanTheRoom": "Убраться в комнате",
   "dailyChore": "Ежедневное дело",
   "readFor20Mins": "Читать 20 мин",

@@ -51,6 +51,7 @@ class TaskItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -114,7 +115,7 @@ class TaskItemTile extends StatelessWidget {
                   Row(
                     children: [
                       _RewardBadge(
-                        label: '${task.coins} coins',
+                        label: s.coinCount(task.coins),
                         emoji: '🪙',
                         bgColor: const Color(0xFFFFF3D6),
                         textColor: const Color(0xFFB07D1A),

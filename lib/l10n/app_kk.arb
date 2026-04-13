@@ -22,9 +22,9 @@
   "kazakh": "Қазақша",
   "myProfile": "Менің профилім",
   "save": "Сақтау",
-  "coins": "Мәнет",
+  "coins": "Монеталар",
   "minutes": "Минут",
-  "coinCount": "{count, plural, one{{count} монета} other{{count} монеталар}}",
+  "coinCount": "{count, plural, one{{count} монета} other{{count} монета}}",
   "@coinCount": {
     "placeholders": {
       "count": {
@@ -223,3 +223,4 @@
   "googleClientIdMissing": "Google Web Client ID жоқ. GOOGLE_WEB_CLIENT_ID орнатыңыз (Google Cloud OAuth Web client)",
   "signedInSuccess": "Сәтті кірдіңіз"
 }
+

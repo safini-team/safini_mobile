@@ -76,15 +76,19 @@ class _TasksHeader extends StatelessWidget {
                 children: [
                   // Title + Coin Badge
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        s.myQuests,
-                        style: context.textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
+                      Expanded(
+                        child: Text(
+                          s.myQuests,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
+                      const SizedBox(width: AppSpacing.sm),
                       const StoreCoinBadge(),
                     ],
                   ),

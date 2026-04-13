@@ -254,9 +254,10 @@ class ParentFamilyScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    Localizations.localeOf(context).languageCode == 'en'
-                        ? s.english
-                        : s.russian,
+                    _getLanguageName(
+                      Localizations.localeOf(context).languageCode,
+                      s,
+                    ),
                     style: context.textTheme.bodySmall?.copyWith(
                       color: Colors.grey,
                     ),
@@ -294,10 +295,28 @@ class ParentFamilyScreen extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
     );
+  }
+
+  String _getLanguageName(String code, S s) {
+    switch (code) {
+      case 'kk':
+        return s.kazakh;
+      case 'ru':
+        return s.russian;
+      default:
+        return s.english;
+    }
   }
 
   Widget _buildTipsSection(BuildContext context, S s) {
