@@ -1,12 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-import '../../domain/models/family_model.dart';
-
-part 'family_dto.g.dart';
-
-@JsonSerializable()
-class FamilyDto {
-  final String id;
-  @JsonKey(name: 'owner_user_id')
 import '../../domain/models/family_model.dart';
 
 class FamilyDto {
@@ -15,9 +6,6 @@ class FamilyDto {
   final String name;
   final String timezone;
   final List<ChildSummaryDto> children;
-  @JsonKey(name: 'created_at')
-  final DateTime createdAt;
-  @JsonKey(name: 'updated_at')
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -31,8 +19,6 @@ class FamilyDto {
     required this.updatedAt,
   });
 
-  factory FamilyDto.fromJson(Map<String, dynamic> json) => _$FamilyDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$FamilyDtoToJson(this);
   factory FamilyDto.fromJson(Map<String, dynamic> json) {
     return FamilyDto(
       id: json['id'] as String? ?? '',
@@ -78,14 +64,10 @@ class FamilyDto {
   }
 }
 
-@JsonSerializable()
 class ChildSummaryDto {
   final String id;
   final String nickname;
   final int age;
-
-  @JsonKey(name: 'coins_balance')
-
   final int coinsBalance;
   final int level;
 
@@ -96,9 +78,6 @@ class ChildSummaryDto {
     required this.coinsBalance,
     required this.level,
   });
-
-  factory ChildSummaryDto.fromJson(Map<String, dynamic> json) => _$ChildSummaryDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$ChildSummaryDtoToJson(this);
 
   factory ChildSummaryDto.fromJson(Map<String, dynamic> json) {
     return ChildSummaryDto(
@@ -120,7 +99,6 @@ class ChildSummaryDto {
     };
   }
 
-
   ChildSummaryModel toDomain() {
     return ChildSummaryModel(
       id: id,
@@ -132,15 +110,11 @@ class ChildSummaryDto {
   }
 }
 
-@JsonSerializable()
 class FamilyCreateDto {
   final String name;
   final String timezone;
 
   FamilyCreateDto({required this.name, required this.timezone});
-
-  factory FamilyCreateDto.fromJson(Map<String, dynamic> json) => _$FamilyCreateDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$FamilyCreateDtoToJson(this);
 
   factory FamilyCreateDto.fromJson(Map<String, dynamic> json) {
     return FamilyCreateDto(

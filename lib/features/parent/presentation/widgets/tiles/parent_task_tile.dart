@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class ParentTaskTile extends StatelessWidget {
   final String title;
@@ -188,7 +189,9 @@ class ParentTaskTile extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: context.colorScheme.onSurface.withValues(alpha: 0.05),
+                      color: context.colorScheme.onSurface.withValues(
+                        alpha: 0.05,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(

@@ -7,10 +7,6 @@ import '../../../../core/error/failures.dart';
 @Injectable(as: IAiRepository)
 class AiRepositoryImpl implements IAiRepository {
   @override
-  Future<Either<Failure, List<AIConversationLogModel>>> getConversationLogs(String childId) async {
-
-class AiRepositoryImpl implements IAiRepository {
-  @override
   Future<Either<Failure, List<AIConversationLogModel>>> getConversationLogs(
     String childId,
   ) async {
@@ -18,19 +14,13 @@ class AiRepositoryImpl implements IAiRepository {
   }
 
   @override
-
-  Future<Either<Failure, List<AIMessageModel>>> getMessages(String conversationId) async {
   Future<Either<Failure, List<AIMessageModel>>> getMessages(
     String conversationId,
   ) async {
-
     return const Left(ServerFailure('Not implemented'));
   }
 
   @override
-
-  Future<Either<Failure, AIMessageModel>> sendMessage(String conversationId, String content) async {
-
   Future<Either<Failure, AIMessageModel>> sendMessage(
     String conversationId,
     String content,
@@ -39,8 +29,6 @@ class AiRepositoryImpl implements IAiRepository {
   }
 
   @override
-
-  Future<Either<Failure, List<TaskSuggestionModel>>> getTaskSuggestions(String childId) async {
   Future<Either<Failure, List<TaskSuggestionModel>>> getTaskSuggestions(
     String childId,
   ) async {
