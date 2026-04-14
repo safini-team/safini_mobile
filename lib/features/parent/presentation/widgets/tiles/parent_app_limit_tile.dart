@@ -113,7 +113,6 @@ class ParentAppLimitTile extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 S.of(context).dailyLimit,
@@ -122,13 +121,15 @@ class ParentAppLimitTile extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Flexible(
+              const SizedBox(width: 8),
+              Expanded(
                 child: Text(
                   S.of(context).minutesRemainingLong(remaining),
                   style: context.textTheme.labelSmall?.copyWith(
                     color: progressColor,
                     fontWeight: FontWeight.w800,
                   ),
+                  textAlign: TextAlign.end,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

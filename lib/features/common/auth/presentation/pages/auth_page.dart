@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
@@ -52,12 +53,14 @@ class AuthPage extends StatelessWidget {
                         ),
                         const Spacer(flex: 1),
                         // Mascot logo
-                        Image.asset(
-                          'assets/logo/app_logo.png',
-                          width: 120,
-                          height: 120,
-                        ),
-                        const SizedBox(height: 24),
+                            ClipOval(
+                              child: Image.asset(
+                                'assets/logo/app_logo.png',
+                                width: 120,
+                                height: 120,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
                         // Title
                         Text(
                           s.appName,
@@ -92,11 +95,7 @@ class AuthPage extends StatelessWidget {
                                   Color(0xFFE8961A),
                                 ],
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const ChildHomeScreen(),
-                                    ),
-                                  );
+                                  context.router.push(const NamedRoute('childHome'));
                                 },
                               ),
                               const SizedBox(height: 16),
@@ -109,11 +108,7 @@ class AuthPage extends StatelessWidget {
                                   Color(0xFF27B08A),
                                 ],
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const ParentMainScreen(),
-                                    ),
-                                  );
+                                  context.router.push(const NamedRoute('parentHome'));
                                 },
                               ),
                             ],
@@ -162,6 +157,13 @@ class AuthPage extends StatelessWidget {
               title: Text(s.russian),
               onTap: () {
                 context.read<LocaleCubit>().setLocale(const Locale('ru'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
                 Navigator.pop(context);
               },
             ),

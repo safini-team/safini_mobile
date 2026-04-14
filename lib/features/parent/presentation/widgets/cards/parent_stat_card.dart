@@ -58,8 +58,11 @@ class ParentStatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: context.textTheme.bodySmall?.copyWith(
               color: context.colorScheme.onSurface.withValues(alpha: 0.5),
+              fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -67,6 +70,8 @@ class ParentStatCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               change!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: context.textTheme.labelSmall?.copyWith(
                 color: context.successColor,
                 fontWeight: FontWeight.w700,

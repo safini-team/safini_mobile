@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/generated/l10n.dart';
 
 class ParentTaskTile extends StatelessWidget {
@@ -24,6 +23,7 @@ class ParentTaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     Color statusColor;
     Color statusBg;
     String statusText;
@@ -93,6 +93,8 @@ class ParentTaskTile extends StatelessWidget {
               children: [
                 Text(
                   title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w800,
                     fontSize: 18,
@@ -103,6 +105,8 @@ class ParentTaskTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   category,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodySmall?.copyWith(
                     color: context.colorScheme.onSurface.withValues(alpha: 0.4),
                     fontWeight: FontWeight.w600,
@@ -123,7 +127,9 @@ class ParentTaskTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '$rewardCoins coins reward',
+                      s.coinsReward(rewardCoins),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: context.textTheme.labelSmall?.copyWith(
                         color: context.colorScheme.primary,
                         fontWeight: FontWeight.w700,
@@ -148,6 +154,8 @@ class ParentTaskTile extends StatelessWidget {
                 ),
                 child: Text(
                   statusText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: statusColor,
                     fontWeight: FontWeight.w800,

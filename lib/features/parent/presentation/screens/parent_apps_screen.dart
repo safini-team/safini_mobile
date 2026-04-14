@@ -48,8 +48,10 @@ class ParentAppsScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'Set daily screen time limits',
+                      Text(
+                        s.appLimitsSubtitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: 15,
@@ -146,6 +148,8 @@ class ParentAppsScreen extends StatelessWidget {
                                 SizedBox(width: 8),
                                 Text(
                                   s.addAnotherApp,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: context.textTheme.titleMedium
                                       ?.copyWith(
                                     color: const Color(0xFF8100D1),

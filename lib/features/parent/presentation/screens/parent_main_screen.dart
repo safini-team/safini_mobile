@@ -66,11 +66,11 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
                     unselectedItemColor: Colors.grey[400],
                     selectedLabelStyle: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 10,
                     ),
                     unselectedLabelStyle: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 10,
                     ),
                     elevation: 0,
                     items: [

@@ -21,254 +21,230 @@ class ParentFamilyScreen extends StatelessWidget {
           child: Builder(
             builder: (context) {
               final s = S.of(context);
+
               return BlocProvider(
                 create: (context) =>
                     getIt<ParentFamilyCubit>()..loadFamilyData(),
                 child: Scaffold(
-                  backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
-                  body: Column(
-                    children: [
-                      // ── Header ──────────────────────────────────────
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              context.colorScheme.primary.withValues(alpha: 0.8),
-                              context.colorScheme.primary,
-                            ],
-                          ),
-                        ),
-                        child: SafeArea(
-                          bottom: false,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 20, 20, 28),
-                            child: Row(
-                              children: [
-                                Text(
-                                  s.family,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: -0.5,
-                                  ),
-                                ),
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: context.colorScheme.onPrimary.withOpacity(0.15),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.logout_rounded,
-                                      color: context.colorScheme.onPrimary,
-                                      size: 22,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                  backgroundColor: context.colorScheme.surface,
+
+                  appBar: AppBar(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    title: Text(
+                      s.family,
+                      style: context.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-
-                      // ── Content ──────────────────────────────────────
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: context.colorScheme.surface,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(36),
-                              topRight: Radius.circular(36),
-                            ),
-                          ),
-                          child: BlocBuilder<ParentFamilyCubit,
-                              ParentFamilyState>(
-                            builder: (context, state) {
-                              if (state is ParentFamilyLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-
-                              if (state is ParentFamilyLoaded) {
-                                return ListView(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    24,
-                                    28,
-                                    24,
-                                    60,
-                                  ),
-                                  children: [
-                                    Text(
-                                      s.yourChildren,
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 1.2,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    ...state.children.map(
-                                      (child) => ParentChildCard(
-                                        name: child.name,
-                                        age: 10,
-                                        gender: 'Boy',
-                                        coins: 150,
-                                        quests: 1,
-                                        streak: 5,
-                                        onViewAsKid: () {},
-                                        onEdit: () {},
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    // Add Another Child
-                                    Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(24),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: context.infoColor.withValues(alpha: 0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            child: Icon(
-                                              Icons.add,
-                                              color: context.infoColor,
-                                              size: 28,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 20),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  s.addAnotherChild,
-                                                  style: context.textTheme.titleMedium?.copyWith(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  s.setUpANewProfile,
-                                                  style: context.textTheme.bodyMedium?.copyWith(
-                                                    color: context.colorScheme.onSurface.withValues(alpha: 0.6),
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: context.colorScheme.onSurface.withValues(alpha: 0.4),
-                                            size: 18,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 32),
-                                    Text(
-                                      s.parentAccount,
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 1.2,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(24),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 28,
-                                                backgroundColor:
-                                                    context.colorScheme.onSurface.withValues(alpha: 0.05),
-                                            child: Text(
-                                              '👨',
-                                              style: context.textTheme.headlineSmall?.copyWith(fontSize: 28),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 20),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  state.parent.name,
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  s.familyAdmin,
-                                                  style: context.textTheme.bodyMedium?.copyWith(
-                                                    color: context.colorScheme.onSurface.withValues(alpha: 0.6),
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                              vertical: 6,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFFF2F0FF),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Text(
-                                              s.admin,
-                                              style: TextStyle(
-                                                color: context.colorScheme.primary,
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 32),
-                                    _buildTipsSection(context, s),
-                                    const SizedBox(height: 32),
-                                    _buildLanguageTile(context, s),
-                                  ],
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                        ),
+                    ),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.language, color: Colors.white),
+                        onPressed: () => _showLanguageDialog(context),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.logout, color: Colors.white),
+                        onPressed: () {},
                       ),
                     ],
+                    flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            context.colorScheme.primary.withValues(alpha: 0.8),
+                            context.colorScheme.primary,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  body: BlocBuilder<ParentFamilyCubit, ParentFamilyState>(
+                    builder: (context, state) {
+                      if (state is ParentFamilyLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      if (state is ParentFamilyLoaded) {
+                        return ListView(
+                          padding: const EdgeInsets.all(20),
+                          children: [
+                            // ── Children ─────────────────────
+                            Text(
+                              s.yourChildren,
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: Colors.grey[600],
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            ...state.children.map(
+                              (child) => ParentChildCard(
+                                name: child.name,
+                                age: 10,
+                                gender: "Boy",
+                                coins: 150,
+                                quests: 1,
+                                streak: 5,
+                                onViewAsKid: () {},
+                                onEdit: () {},
+                              ),
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            // ── Language ─────────────────────
+                            _buildLanguageTile(context, s),
+
+                            const SizedBox(height: 16),
+
+                            // ── Add Child ─────────────────────
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: context.colorScheme.surface,
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: context.infoColor
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: context.infoColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          s.addAnotherChild,
+                                          style: context.textTheme.titleMedium
+                                              ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          s.setUpANewProfile,
+                                          style: context.textTheme.bodySmall
+                                              ?.copyWith(
+                                            color: context.colorScheme.onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: context.colorScheme.onSurface
+                                        .withValues(alpha: 0.4),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 32),
+
+                            // ── Parent Account ─────────────────────
+                            Text(
+                              s.parentAccount,
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: Colors.grey[600],
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: context.colorScheme.surface,
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Row(
+                                children: [
+                                  const CircleAvatar(
+                                    radius: 24,
+                                    child: Icon(Icons.person),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          state.parent.name,
+                                          style: context.textTheme.titleMedium
+                                              ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          s.familyAdmin,
+                                          style: context.textTheme.bodySmall
+                                              ?.copyWith(
+                                            color: context.colorScheme.onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: context.colorScheme.primary
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      s.admin,
+                                      style: TextStyle(
+                                        color: context.colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 32),
+
+                            // ── Tips ─────────────────────
+                            _buildTipsSection(context, s),
+
+                            const SizedBox(height: 24),
+
+                            const _LogoutButton(),
+
+                            const SizedBox(height: 100),
+                          ],
+                        );
+                      }
+
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
               );
@@ -310,16 +286,23 @@ class ParentFamilyScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    Localizations.localeOf(context).languageCode == 'en'
-                        ? s.english
-                        : s.russian,
-                    style: context.textTheme.bodySmall
-                        ?.copyWith(color: context.colorScheme.onSurface.withValues(alpha: 0.6)),
+                    _getLanguageName(
+                      Localizations.localeOf(context).languageCode,
+                      s,
+                    ),
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onSurface
+                          .withValues(alpha: 0.6),
+                    ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: context.colorScheme.onSurface.withValues(alpha: 0.4)),
+            Icon(
+              Icons.chevron_right,
+              color: context.colorScheme.onSurface
+                  .withValues(alpha: 0.4),
+            ),
           ],
         ),
       ),
@@ -349,18 +332,37 @@ class ParentFamilyScreen extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
+  String _getLanguageName(String code, S s) {
+    switch (code) {
+      case 'kk':
+        return s.kazakh;
+      case 'ru':
+        return s.russian;
+      default:
+        return s.english;
+    }
+  }
+
   Widget _buildTipsSection(BuildContext context, S s) {
     final tips = [s.tip1, s.tip2, s.tip3, s.tip4];
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
@@ -375,46 +377,60 @@ class ParentFamilyScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('🌟', style: TextStyle(fontSize: 20)),
+              const Text("🌟", style: TextStyle(fontSize: 24)),
               const SizedBox(width: 12),
               Text(
                 s.tipsForParents,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF1A1A1A),
+                style: context.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           ...tips.map(
             (tip) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 6),
-                    child: Icon(
-                      Icons.circle,
-                      color: Color(0xFF8B46FF),
-                      size: 8,
-                    ),
-                  ),
+                  const Icon(Icons.circle, size: 6),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      tip,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+                  Expanded(child: Text(tip)),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LogoutButton extends StatelessWidget {
+  const _LogoutButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.logout, color: Colors.red),
+          const SizedBox(width: 12),
+          Text(
+            s.switchToKidMode,
+            style: context.textTheme.titleMedium?.copyWith(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

@@ -5,7 +5,7 @@ import 'package:safini/generated/l10n.dart';
 
 class ParentProgressCard extends StatelessWidget {
   final String name;
-  final String level;
+  final int level;
   final int coins;
 
   const ParentProgressCard({
@@ -53,12 +53,11 @@ class ParentProgressCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "$name's Progress",
+                          S.of(context).childProgressTitle(name),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: context.textTheme.displaySmall?.copyWith(
                             color: context.colorScheme.onPrimary,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 22,
-                            letterSpacing: -0.2,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -70,13 +69,17 @@ class ParentProgressCard extends StatelessWidget {
                               size: 20,
                             ),
                             const SizedBox(width: 6),
-                            Text(
-                              "$level Explorer",
+                            Expanded(
+                              child: Text(
+                                S.of(context).levelHero(level),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                               ),
+                            ),
                             ),
                           ],
                         ),
@@ -100,7 +103,9 @@ class ParentProgressCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    "$coins ${S.of(context).timeCoins}",
+                    S.of(context).coinCount(coins),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: context.textTheme.bodyLarge?.copyWith(
                       color: context.colorScheme.onPrimary,
                       fontWeight: FontWeight.w600,
