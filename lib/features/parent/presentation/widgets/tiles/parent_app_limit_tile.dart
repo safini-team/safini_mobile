@@ -25,17 +25,17 @@ class ParentAppLimitTile extends StatelessWidget {
     final progress = (usedMinutes / limitMinutes).clamp(0.0, 1.0);
     final remaining = limitMinutes - usedMinutes;
     final Color progressColor =
-        progress > 0.8 ? const Color(0xFFFF3B30) : const Color(0xFF00C566);
+        progress > 0.8 ? context.colorScheme.error : context.successColor;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: context.colorScheme.shadow.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -50,7 +50,7 @@ class ParentAppLimitTile extends StatelessWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF5E6),
+                  color: context.colorScheme.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: iconPath != null
@@ -75,19 +75,18 @@ class ParentAppLimitTile extends StatelessWidget {
                   children: [
                     Text(
                       appName,
-                      style: const TextStyle(
+                      style: context.textTheme.titleMedium?.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF1A1A1A),
+                        color: context.colorScheme.onSurface,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       S.of(context).usedLimit(usedMinutes, limitMinutes),
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 14,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: context.colorScheme.onSurface.withValues(alpha: 0.5),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -97,8 +96,8 @@ class ParentAppLimitTile extends StatelessWidget {
               Switch(
                 value: isEnabled,
                 onChanged: onToggle,
-                activeTrackColor: const Color(0xFF8B46FF),
-                activeColor: Colors.white,
+                activeTrackColor: context.colorScheme.primary,
+                activeColor: context.colorScheme.onPrimary,
               ),
             ],
           ),
@@ -108,30 +107,29 @@ class ParentAppLimitTile extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 12,
-              backgroundColor: const Color(0xFFF0F0F0),
+              backgroundColor: context.colorScheme.onSurface.withValues(alpha: 0.05),
               valueColor: AlwaysStoppedAnimation<Color>(progressColor),
             ),
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 S.of(context).dailyLimit,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colorScheme.onSurface.withValues(alpha: 0.5),
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Flexible(
+              const SizedBox(width: 8),
+              Expanded(
                 child: Text(
                   S.of(context).minutesRemainingLong(remaining),
-                  style: TextStyle(
+                  style: context.textTheme.labelSmall?.copyWith(
                     color: progressColor,
                     fontWeight: FontWeight.w800,
-                    fontSize: 13,
                   ),
+                  textAlign: TextAlign.end,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

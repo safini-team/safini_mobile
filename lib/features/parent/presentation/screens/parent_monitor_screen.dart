@@ -16,9 +16,8 @@ class ParentMonitorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
     return BlocProvider(
-      create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(s),
+      create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
       child: const _ParentMonitorView(),
     );
   }
@@ -39,7 +38,7 @@ class _ParentMonitorView extends StatelessWidget {
             expandedHeight: 300,
             floating: false,
             pinned: true,
-            backgroundColor: const Color(0xFF43008F),
+            backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
             elevation: 0,
             automaticallyImplyLeading: false,
             flexibleSpace: FlexibleSpaceBar(
@@ -49,8 +48,8 @@ class _ParentMonitorView extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFF0EEF9),
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(36),
                   topRight: Radius.circular(36),
@@ -82,9 +81,9 @@ class _ParentMonitorView extends StatelessWidget {
                                 child: ParentStatCard(
                                   value: state.stepsToday.toString(),
                                   label: s.stepsToday,
-                                  change: state.stepsChange,
+                                  change: s.stepsChangeText,
                                   icon: Icons.trending_up,
-                                  iconBackgroundColor: const Color(0xFFF0E6FF),
+                                  iconBackgroundColor: context.colorScheme.primary.withValues(alpha: 0.1),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -92,9 +91,10 @@ class _ParentMonitorView extends StatelessWidget {
                                 child: ParentStatCard(
                                   value: state.lessonsToday,
                                   label: s.lessons,
-                                  change: state.lessonsChange,
+                                  change: s.lessonsChangeText,
                                   icon: Icons.book_outlined,
-                                  iconBackgroundColor: const Color(0xFFE6FFF0),
+                                  iconBackgroundColor: context.successColor.withValues(alpha: 0.1),
+                                  iconColor: context.successColor,
                                 ),
                               ),
                             ],
@@ -103,21 +103,26 @@ class _ParentMonitorView extends StatelessWidget {
                           ParentScreenTimeChart(weeklyUsage: state.weeklyUsage),
                           const SizedBox(height: 40),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                s.appLimits,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF1A1A1A),
-                                  letterSpacing: -0.5,
+                              Expanded(
+                                child: Text(
+                                  s.appLimits,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF1A1A1A),
+                                    letterSpacing: -0.5,
+                                  ),
                                 ),
                               ),
                               TextButton(
                                 onPressed: () {},
                                 child: Text(
                                   s.manageAll,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: context.colorScheme.primary,
                                     fontWeight: FontWeight.w700,
@@ -138,24 +143,32 @@ class _ParentMonitorView extends StatelessWidget {
                           ),
                           const SizedBox(height: 40),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                s.realWorldTasks,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF1A1A1A),
-                                  letterSpacing: -0.5,
+                              Expanded(
+                                child: Text(
+                                  s.realWorldTasks,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF1A1A1A),
+                                    letterSpacing: -0.5,
+                                  ),
                                 ),
                               ),
+                              const SizedBox(width: 8),
                               ElevatedButton.icon(
                                 onPressed: () {},
                                 icon: const Icon(Icons.add, size: 20),
-                                label: Text(s.newTask),
+                                label: Text(
+                                  s.newTask,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF8B46FF),
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: context.colorScheme.primary,
+                                  foregroundColor: context.colorScheme.onPrimary,
                                   elevation: 0,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
@@ -204,11 +217,14 @@ class _ParentMonitorView extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context, S s) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF2D006F), Color(0xFF5A00B4)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            context.colorScheme.primary.withValues(alpha: 0.8),
+            context.colorScheme.primary,
+          ],
         ),
       ),
       child: SafeArea(
@@ -226,8 +242,8 @@ class _ParentMonitorView extends StatelessWidget {
                       children: [
                         Text(
                           s.goodMorning,
-                          style: const TextStyle(
-                            color: Colors.white70,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: context.colorScheme.onPrimary.withValues(alpha: 0.7),
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
@@ -235,8 +251,8 @@ class _ParentMonitorView extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           s.parentName,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: context.textTheme.displaySmall?.copyWith(
+                            color: context.colorScheme.onPrimary,
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
@@ -248,12 +264,12 @@ class _ParentMonitorView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
+                      color: context.colorScheme.onPrimary.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.settings_outlined,
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                       size: 26,
                     ),
                   ),
@@ -264,8 +280,8 @@ class _ParentMonitorView extends StatelessWidget {
                 builder: (context, state) {
                   if (state is ParentMonitorLoaded) {
                     return ParentProgressCard(
-                      name: 'Alex',
-                      level: 'Level 5',
+                      name: state.childName,
+                      level: state.level,
                       coins: state.timeCoins,
                     );
                   }

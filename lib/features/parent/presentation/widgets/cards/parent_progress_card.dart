@@ -5,7 +5,7 @@ import 'package:safini/generated/l10n.dart';
 
 class ParentProgressCard extends StatelessWidget {
   final String name;
-  final String level;
+  final int level;
   final int coins;
 
   const ParentProgressCard({
@@ -24,9 +24,9 @@ class ParentProgressCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: context.colorScheme.onPrimary.withOpacity(0.12),
             borderRadius: BorderRadius.circular(36),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: context.colorScheme.onPrimary.withOpacity(0.1)),
           ),
           child: Column(
             children: [
@@ -36,10 +36,10 @@ class ParentProgressCard extends StatelessWidget {
                     width: 76,
                     height: 76,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: context.colorScheme.onPrimary.withOpacity(0.2),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: context.colorScheme.onPrimary.withOpacity(0.3),
                         width: 2,
                       ),
                     ),
@@ -53,12 +53,11 @@ class ParentProgressCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "$name's Progress",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 22,
-                            letterSpacing: -0.2,
+                          S.of(context).childProgressTitle(name),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.displaySmall?.copyWith(
+                            color: context.colorScheme.onPrimary,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -70,13 +69,17 @@ class ParentProgressCard extends StatelessWidget {
                               size: 20,
                             ),
                             const SizedBox(width: 6),
-                            Text(
-                              "$level Explorer",
+                            Expanded(
+                              child: Text(
+                                S.of(context).levelHero(level),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                               ),
+                            ),
                             ),
                           ],
                         ),
@@ -100,9 +103,11 @@ class ParentProgressCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    "$coins ${S.of(context).timeCoins}",
+                    S.of(context).coinCount(coins),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: context.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -51,6 +51,7 @@ class TaskItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -114,17 +115,17 @@ class TaskItemTile extends StatelessWidget {
                   Row(
                     children: [
                       _RewardBadge(
-                        label: '${task.coins} coins',
+                        label: s.coinCount(task.coins),
                         emoji: '🪙',
-                        bgColor: const Color(0xFFFFF3D6),
-                        textColor: const Color(0xFFB07D1A),
+                        bgColor: context.colorScheme.secondary.withValues(alpha: 0.1),
+                        textColor: context.colorScheme.secondary,
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       _RewardBadge(
                         label: '${task.xp} XP',
                         emoji: '⚡',
-                        bgColor: const Color(0xFFFFFACC),
-                        textColor: const Color(0xFFB09A00),
+                        bgColor: context.colorScheme.primary.withValues(alpha: 0.1),
+                        textColor: context.colorScheme.primary,
                       ),
                     ],
                   ),
@@ -224,7 +225,7 @@ class _CompletionBadge extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isCompleted
-            ? const Color(0xFF3FC48A)
+            ? context.successColor
             : context.colorScheme.surface,
         border: isCompleted
             ? null
@@ -234,7 +235,7 @@ class _CompletionBadge extends StatelessWidget {
               ),
       ),
       child: isCompleted
-          ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+          ? Icon(Icons.check_rounded, color: context.colorScheme.onPrimary, size: 16)
           : null,
     );
   }
