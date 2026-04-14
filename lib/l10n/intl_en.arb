@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appName": "SAFINIO",
+  "appName": "SAFINI",
   "tagline": "Learn. Earn. Play.",
   "imAKid": "I'm a Kid!",
   "kidSubtitle": "Earn coins & play",
@@ -19,9 +19,27 @@
   "changeLanguage": "Change Language",
   "english": "English",
   "russian": "Russian",
+  "kazakh": "Kazakh",
   "myProfile": "My Profile",
   "save": "Save",
   "coins": "Coins",
+  "minutes": "Minutes",
+  "coinCount": "{count, plural, =1{{count} coin} other{{count} coins}}",
+  "@coinCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minuteCount": "{count, plural, =1{{count} minute} other{{count} minutes}}",
+  "@minuteCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "questsDone": "Quests Done",
   "dayStreak": "Day Streak",
   "customizeAvatar": "Customize Avatar",
@@ -53,9 +71,18 @@
   "lessons": "Lessons",
   "lessonsChangeText": "+1 today",
   "appLimits": "App Limits",
+  "appLimitsSubtitle": "Set daily screen time limits",
   "manageAll": "Manage All",
   "realWorldTasks": "Real-world Tasks",
   "newTask": "New Task",
+  "coinsReward": "{count, plural, =1{{count} coin reward} other{{count} coins reward}}",
+  "@coinsReward": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "cleanTheRoom": "Clean the room",
   "dailyChore": "Daily Chore",
   "readFor20Mins": "Read for 20 mins",

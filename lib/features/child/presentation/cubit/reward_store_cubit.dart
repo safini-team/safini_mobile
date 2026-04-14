@@ -18,7 +18,7 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           AppTimeItem(
             id: 'youtube',
             title: 'YouTube Kids',
-            subtitle: '+30 Minutes',
+            minutes: 30,
             icon: Icons.play_circle_filled_rounded,
             iconColor: Color(0xFF4A90D9),
             iconBackground: Color(0xFFDEEEFB),
@@ -27,7 +27,7 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           AppTimeItem(
             id: 'roblox',
             title: 'Roblox',
-            subtitle: '+20 Minutes',
+            minutes: 20,
             icon: Icons.sports_esports_rounded,
             iconColor: Color(0xFFE05555),
             iconBackground: Color(0xFFFCEAE3),
@@ -36,7 +36,7 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           AppTimeItem(
             id: 'brawlstars',
             title: 'Brawl Stars',
-            subtitle: '+15 Minutes',
+            minutes: 15,
             icon: Icons.star_rounded,
             iconColor: Color(0xFFFFB800),
             iconBackground: Color(0xFFFFF3CC),
@@ -45,7 +45,7 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           AppTimeItem(
             id: 'minecraft',
             title: 'Minecraft',
-            subtitle: '+45 Minutes',
+            minutes: 45,
             icon: Icons.landscape_rounded,
             iconColor: Color(0xFF3EBF6A),
             iconBackground: Color(0xFFE0F5E9),

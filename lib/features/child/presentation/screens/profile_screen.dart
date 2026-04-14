@@ -411,9 +411,7 @@ class _ProfileBody extends StatelessWidget {
                   emoji: '🌍',
                   iconBg: const Color(0xFFE3F2FD),
                   title: s.changeLanguage,
-                  subtitle: Localizations.localeOf(context).languageCode == 'en'
-                      ? s.english
-                      : s.russian,
+                  subtitle: _getLanguageName(Localizations.localeOf(context).languageCode, s),
                   onTap: () => _showLanguageDialog(context),
                 ),
               ],
@@ -422,6 +420,17 @@ class _ProfileBody extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _getLanguageName(String code, S s) {
+    switch (code) {
+      case 'kk':
+        return s.kazakh;
+      case 'ru':
+        return s.russian;
+      default:
+        return s.english;
+    }
   }
 
   void _showLanguageDialog(BuildContext context) {
@@ -444,6 +453,13 @@ class _ProfileBody extends StatelessWidget {
               title: Text(s.russian),
               onTap: () {
                 context.read<LocaleCubit>().setLocale(const Locale('ru'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
                 Navigator.pop(context);
               },
             ),

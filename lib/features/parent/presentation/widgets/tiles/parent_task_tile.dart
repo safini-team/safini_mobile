@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/generated/l10n.dart';
 
 class ParentTaskTile extends StatelessWidget {
@@ -24,6 +23,7 @@ class ParentTaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     Color statusColor;
     Color statusBg;
     String statusText;
@@ -32,15 +32,15 @@ class ParentTaskTile extends StatelessWidget {
     if (isPending) {
       statusColor = const Color(0xFF8100D1);
       statusBg = const Color(0xFFF0E6FF);
-      statusText = S.of(context).statusPending;
+      statusText = s.statusPending;
     } else if (isCompleted) {
       statusColor = const Color(0xFF00C566);
       statusBg = const Color(0xFFE2F9EE);
-      statusText = S.of(context).statusDone;
+      statusText = s.statusDone;
     } else {
       statusColor = const Color(0xFFF8B400);
       statusBg = const Color(0xFFFFF3D6);
-      statusText = S.of(context).statusActive;
+      statusText = s.statusActive;
     }
 
     switch (category.toLowerCase()) {
@@ -93,6 +93,8 @@ class ParentTaskTile extends StatelessWidget {
               children: [
                 Text(
                   title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 18,
@@ -103,6 +105,8 @@ class ParentTaskTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   category,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.grey[400],
                     fontSize: 14,
@@ -124,7 +128,9 @@ class ParentTaskTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '$rewardCoins coins reward',
+                      s.coinsReward(rewardCoins),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Color(0xFF8B46FF),
                         fontWeight: FontWeight.w700,
@@ -150,6 +156,8 @@ class ParentTaskTile extends StatelessWidget {
                 ),
                 child: Text(
                   statusText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: statusColor,
                     fontWeight: FontWeight.w800,

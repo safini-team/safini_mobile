@@ -167,6 +167,13 @@ class AuthPage extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
