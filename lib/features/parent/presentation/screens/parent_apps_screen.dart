@@ -145,9 +145,9 @@ class ParentAppsScreen extends StatelessWidget {
                                   s.addAnotherApp,
                                   style: context.textTheme.titleMedium
                                       ?.copyWith(
-                                    color: const Color(0xFF8100D1),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                        color: const Color(0xFF8100D1),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                               ],
                             ),
