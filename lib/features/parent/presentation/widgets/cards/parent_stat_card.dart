@@ -7,6 +7,7 @@ class ParentStatCard extends StatelessWidget {
   final String? change;
   final IconData icon;
   final Color iconBackgroundColor;
+  final Color? iconColor;
 
   const ParentStatCard({
     super.key,
@@ -15,6 +16,7 @@ class ParentStatCard extends StatelessWidget {
     this.change,
     required this.icon,
     required this.iconBackgroundColor,
+    this.iconColor,
   });
 
   @override
@@ -22,11 +24,11 @@ class ParentStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: context.colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -41,17 +43,15 @@ class ParentStatCard extends StatelessWidget {
               color: iconBackgroundColor,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: context.colorScheme.primary, size: 20),
+            child: Icon(icon, color: iconColor ?? context.colorScheme.primary, size: 20),
           ),
           const SizedBox(height: 16),
           Text(
             value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: context.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.w800,
               fontSize: 28,
-              color: Color(0xFF1A1A1A),
+              color: context.colorScheme.onSurface,
               letterSpacing: -0.5,
             ),
           ),
@@ -60,8 +60,8 @@ class ParentStatCard extends StatelessWidget {
             label,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.grey[500],
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -72,10 +72,9 @@ class ParentStatCard extends StatelessWidget {
               change!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color(0xFF00C566),
+              style: context.textTheme.labelSmall?.copyWith(
+                color: context.successColor,
                 fontWeight: FontWeight.w700,
-                fontSize: 13,
               ),
             ),
           ],

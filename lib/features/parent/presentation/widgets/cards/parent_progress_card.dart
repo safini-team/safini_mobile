@@ -24,9 +24,9 @@ class ParentProgressCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: context.colorScheme.onPrimary.withOpacity(0.12),
             borderRadius: BorderRadius.circular(36),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: context.colorScheme.onPrimary.withOpacity(0.1)),
           ),
           child: Column(
             children: [
@@ -36,10 +36,10 @@ class ParentProgressCard extends StatelessWidget {
                     width: 76,
                     height: 76,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: context.colorScheme.onPrimary.withOpacity(0.2),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: context.colorScheme.onPrimary.withOpacity(0.3),
                         width: 2,
                       ),
                     ),
@@ -56,11 +56,8 @@ class ParentProgressCard extends StatelessWidget {
                           S.of(context).childProgressTitle(name),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 22,
-                            letterSpacing: -0.2,
+                          style: context.textTheme.displaySmall?.copyWith(
+                            color: context.colorScheme.onPrimary,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -110,7 +107,7 @@ class ParentProgressCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

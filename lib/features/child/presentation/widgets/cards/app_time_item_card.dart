@@ -113,7 +113,7 @@ class _CoinPill extends StatelessWidget {
             '$cost',
             style: context.textTheme.labelLarge?.copyWith(
               color: canAfford
-                  ? Colors.white
+                  ? context.colorScheme.onPrimary
                   : context.colorScheme.onSurface.withValues(alpha: 0.5),
               fontWeight: FontWeight.w700,
             ),

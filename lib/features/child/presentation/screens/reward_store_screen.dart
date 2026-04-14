@@ -50,7 +50,7 @@ class _RewardStoreView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF0EAF8),
+        backgroundColor: context.colorScheme.surface,
         body: Column(
           children: [
             _StoreHeader(),
@@ -73,11 +73,14 @@ class _StoreHeader extends StatelessWidget {
       builder: (context, state) {
         return Container(
           width: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF6200B3), Color(0xFF9000E0)],
+              colors: [
+                context.colorScheme.primary.withValues(alpha: 0.9),
+                context.colorScheme.primary,
+              ],
             ),
           ),
           child: SafeArea(

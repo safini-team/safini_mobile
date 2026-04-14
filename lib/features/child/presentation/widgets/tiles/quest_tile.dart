@@ -71,11 +71,11 @@ class QuestTile extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isHighlighted
-              ? const Color(0xFFEDE4F9)
+              ? context.colorScheme.primary.withValues(alpha: 0.1)
               : context.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: isHighlighted
-              ? Border.all(color: const Color(0xFFCFB8F0), width: 1)
+              ? Border.all(color: context.colorScheme.primary.withValues(alpha: 0.3), width: 1)
               : null,
           boxShadow: [
             BoxShadow(
@@ -189,7 +189,7 @@ class _CompletionBadge extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isCompleted
-            ? const Color(0xFF3FC48A)
+            ? context.successColor
             : context.colorScheme.surface,
         border: isCompleted
             ? null
@@ -199,7 +199,7 @@ class _CompletionBadge extends StatelessWidget {
               ),
       ),
       child: isCompleted
-          ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+          ? Icon(Icons.check_rounded, color: context.colorScheme.onPrimary, size: 16)
           : null,
     );
   }

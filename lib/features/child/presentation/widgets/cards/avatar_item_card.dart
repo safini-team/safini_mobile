@@ -21,7 +21,7 @@ class AvatarItemCard extends StatelessWidget {
     final bgColor = item.isEquipped
         ? context.colorScheme.primary
         : item.isLocked
-        ? const Color(0xFFF0F0F0)
+        ? context.colorScheme.onSurface.withValues(alpha: 0.1)
         : context.colorScheme.surface;
 
     return GestureDetector(

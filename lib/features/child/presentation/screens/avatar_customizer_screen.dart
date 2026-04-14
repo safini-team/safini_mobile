@@ -41,7 +41,7 @@ class _AvatarCustomizerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF7B2FBE),
+      backgroundColor: context.colorScheme.primary,
       body: Column(
         children: [
           _AvatarHeader(),
@@ -61,11 +61,14 @@ class _AvatarHeader extends StatelessWidget {
     return BlocBuilder<AvatarCubit, AvatarState>(
       builder: (context, state) {
         return Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF6200B3), Color(0xFF9000E0)],
+              colors: [
+                context.colorScheme.primary.withValues(alpha: 0.9),
+                context.colorScheme.primary,
+              ],
             ),
           ),
           child: SafeArea(

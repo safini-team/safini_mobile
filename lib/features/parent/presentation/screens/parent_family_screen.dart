@@ -21,11 +21,13 @@ class ParentFamilyScreen extends StatelessWidget {
           child: Builder(
             builder: (context) {
               final s = S.of(context);
+
               return BlocProvider(
                 create: (context) =>
                     getIt<ParentFamilyCubit>()..loadFamilyData(),
                 child: Scaffold(
-                  backgroundColor: const Color(0xFFF8F9FE),
+                  backgroundColor: context.colorScheme.surface,
+
                   appBar: AppBar(
                     backgroundColor: Colors.transparent,
                     elevation: 0,
@@ -47,25 +49,30 @@ class ParentFamilyScreen extends StatelessWidget {
                       ),
                     ],
                     flexibleSpace: Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF43008F), Color(0xFF8100D1)],
+                          colors: [
+                            context.colorScheme.primary.withValues(alpha: 0.8),
+                            context.colorScheme.primary,
+                          ],
                         ),
                       ),
                     ),
                   ),
+
                   body: BlocBuilder<ParentFamilyCubit, ParentFamilyState>(
                     builder: (context, state) {
                       if (state is ParentFamilyLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }
 
                       if (state is ParentFamilyLoaded) {
                         return ListView(
                           padding: const EdgeInsets.all(20),
                           children: [
+                            // ── Children ─────────────────────
                             Text(
                               s.yourChildren,
                               style: context.textTheme.labelMedium?.copyWith(
@@ -75,6 +82,7 @@ class ParentFamilyScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 16),
+
                             ...state.children.map(
                               (child) => ParentChildCard(
                                 name: child.name,
@@ -87,14 +95,19 @@ class ParentFamilyScreen extends StatelessWidget {
                                 onEdit: () {},
                               ),
                             ),
+
                             const SizedBox(height: 24),
-                            // Language Switcher Tile
+
+                            // ── Language ─────────────────────
                             _buildLanguageTile(context, s),
+
                             const SizedBox(height: 16),
+
+                            // ── Add Child ─────────────────────
                             Container(
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: context.colorScheme.surface,
                                 borderRadius: BorderRadius.circular(24),
                               ),
                               child: Row(
@@ -102,12 +115,13 @@ class ParentFamilyScreen extends StatelessWidget {
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFF0E6FF),
+                                      color: context.infoColor
+                                          .withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(16),
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.add,
-                                      color: Color(0xFF8100D1),
+                                      color: context.infoColor,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
@@ -120,25 +134,32 @@ class ParentFamilyScreen extends StatelessWidget {
                                           s.addAnotherChild,
                                           style: context.textTheme.titleMedium
                                               ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                         Text(
                                           s.setUpANewProfile,
                                           style: context.textTheme.bodySmall
-                                              ?.copyWith(color: Colors.grey),
+                                              ?.copyWith(
+                                            color: context.colorScheme.onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.chevron_right,
-                                    color: Colors.grey,
+                                    color: context.colorScheme.onSurface
+                                        .withValues(alpha: 0.4),
                                   ),
                                 ],
                               ),
                             ),
+
                             const SizedBox(height: 32),
+
+                            // ── Parent Account ─────────────────────
                             Text(
                               s.parentAccount,
                               style: context.textTheme.labelMedium?.copyWith(
@@ -148,10 +169,11 @@ class ParentFamilyScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 16),
+
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: context.colorScheme.surface,
                                 borderRadius: BorderRadius.circular(24),
                               ),
                               child: Row(
@@ -170,13 +192,16 @@ class ParentFamilyScreen extends StatelessWidget {
                                           state.parent.name,
                                           style: context.textTheme.titleMedium
                                               ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                         Text(
                                           s.familyAdmin,
                                           style: context.textTheme.bodySmall
-                                              ?.copyWith(color: Colors.grey),
+                                              ?.copyWith(
+                                            color: context.colorScheme.onSurface
+                                                .withValues(alpha: 0.6),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -187,25 +212,32 @@ class ParentFamilyScreen extends StatelessWidget {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFF0E6FF),
+                                      color: context.colorScheme.primary
+                                          .withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
                                       s.admin,
-                                      style: const TextStyle(
-                                        color: Color(0xFF8100D1),
-                                        fontSize: 12,
+                                      style: TextStyle(
+                                        color: context.colorScheme.primary,
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
+
                             const SizedBox(height: 32),
+
+                            // ── Tips ─────────────────────
                             _buildTipsSection(context, s),
+
                             const SizedBox(height: 24),
+
                             const _LogoutButton(),
+
                             const SizedBox(height: 100),
                           ],
                         );
@@ -229,7 +261,7 @@ class ParentFamilyScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
@@ -237,10 +269,10 @@ class ParentFamilyScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFE3F2FD),
+                color: context.infoColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.language, color: Colors.blue),
+              child: Icon(Icons.language, color: context.infoColor),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -259,13 +291,18 @@ class ParentFamilyScreen extends StatelessWidget {
                       s,
                     ),
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
+                      color: context.colorScheme.onSurface
+                          .withValues(alpha: 0.6),
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            Icon(
+              Icons.chevron_right,
+              color: context.colorScheme.onSurface
+                  .withValues(alpha: 0.4),
+            ),
           ],
         ),
       ),
@@ -325,9 +362,15 @@ class ParentFamilyScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF9F9),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.red.withOpacity(0.1)),
+        color: context.colorScheme.surface,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: context.colorScheme.shadow.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,7 +383,6 @@ class ParentFamilyScreen extends StatelessWidget {
                 s.tipsForParents,
                 style: context.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
                 ),
               ),
             ],
@@ -350,18 +392,10 @@ class ParentFamilyScreen extends StatelessWidget {
             (tip) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.circle, size: 6, color: Color(0xFF8100D1)),
+                  const Icon(Icons.circle, size: 6),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      tip,
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ),
+                  Expanded(child: Text(tip)),
                 ],
               ),
             ),
@@ -378,12 +412,13 @@ class _LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF9F9),
-        border: Border.all(color: Colors.red.withOpacity(0.2)),
+        color: context.colorScheme.surface,
+        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
