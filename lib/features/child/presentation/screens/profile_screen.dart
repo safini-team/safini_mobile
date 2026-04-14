@@ -497,7 +497,7 @@ class _ProfileBottomNavBar extends StatelessWidget {
               _NavItem(
                 icon: Icons.home_rounded,
                 label: s.home,
-                onTap: () => context.router.maybePop(),
+                onTap: () => context.router.popUntilRouteWithName('childHome'),
               ),
               _NavItem(
                 icon: Icons.check_box_rounded,
