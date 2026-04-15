@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class ParentTaskTile extends StatelessWidget {

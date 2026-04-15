@@ -9,7 +9,7 @@ import 'package:safini/features/parent/presentation/widgets/cards/parent_stat_ca
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_app_limit_tile.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class ParentMonitorScreen extends StatelessWidget {
   const ParentMonitorScreen({super.key});

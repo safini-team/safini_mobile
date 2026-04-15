@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../../domain/models/ai_model.dart';
 import '../../domain/repositories/i_ai_repository.dart';
-import '../../../../core/error/failures.dart';
+import '../../../../core/utils/error/failures.dart';
 
 @Injectable(as: IAiRepository)
 class AiRepositoryImpl implements IAiRepository {

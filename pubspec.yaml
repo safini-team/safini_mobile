@@ -2,7 +2,7 @@ name: safini
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: ^3.10.7
@@ -59,3 +59,5 @@ flutter_launcher_icons:
   remove_alpha_ios: true
 flutter_intl:
   enabled: true
+  arb_dir: lib/core/translation/l10n
+  output_dir: lib/core/translation/generated

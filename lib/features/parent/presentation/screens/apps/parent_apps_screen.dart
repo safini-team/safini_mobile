@@ -5,7 +5,7 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_app_limit_tile.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class ParentAppsScreen extends StatelessWidget {
   const ParentAppsScreen({super.key});

@@ -11,10 +11,10 @@ import 'package:safini/features/child/presentation/cubit/profile_model.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/child/presentation/widgets/utils/avatar_category_tabs.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
-class AvatarCustomizerScreen extends StatelessWidget {
-  const AvatarCustomizerScreen({super.key});
+class ChildAvatarCustomizerScreen extends StatelessWidget {
+  const ChildAvatarCustomizerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

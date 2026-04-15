@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../models/store_model.dart';
-import '../../../../core/error/failures.dart';
+import '../../../../core/utils/error/failures.dart';
 
 abstract class IStoreRepository {
   Future<Either<Failure, List<WalletHistoryModel>>> getWalletHistory(

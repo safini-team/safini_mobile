@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_radius.dart';
@@ -15,10 +14,11 @@ import 'package:safini/features/child/presentation/widgets/dialogs/not_enough_co
 import 'package:safini/features/child/presentation/widgets/utils/earn_more_coins_banner.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_tab_toggle.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 
-class RewardStoreScreen extends StatelessWidget {
-  const RewardStoreScreen({super.key});
+class ChildRewardStoreScreen extends StatelessWidget {
+  const ChildRewardStoreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,6 @@ class _RewardStoreView extends StatelessWidget {
             Expanded(child: _StoreBody()),
           ],
         ),
-        bottomNavigationBar: _StoreBottomNavBar(),
       ),
     );
   }
@@ -215,7 +214,7 @@ class _AppTimeContent extends StatelessWidget {
           ),
         ),
         EarnMoreCoinsBanner(
-          onGoToTasks: () => context.router.push(const NamedRoute('tasks')),
+          onGoToTasks: () => context.read<ChildHomeCubit>().selectTab(1),
         ),
       ],
     );
@@ -299,92 +298,3 @@ class _AvatarContent extends StatelessWidget {
 
 // ─── Bottom Nav ───────────────────────────────────────────────────────────────
 
-class _StoreBottomNavBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavItem(
-                icon: Icons.home_rounded,
-                label: s.home,
-                onTap: () => context.router.popUntilRouteWithName('childHome'),
-              ),
-              _NavItem(
-                icon: Icons.check_box_rounded,
-                label: s.tasks,
-                onTap: () => context.router.push(const NamedRoute('tasks')),
-              ),
-              _NavItem(
-                icon: Icons.shopping_bag_rounded,
-                label: s.store,
-                isSelected: true,
-              ),
-              _NavItem(
-                icon: Icons.person_rounded,
-                label: s.profile,
-                onTap: () => context.router.push(const NamedRoute('profile')),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback? onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.isSelected = false,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isSelected
-        ? context.colorScheme.primary
-        : context.colorScheme.onSurface.withValues(alpha: 0.4);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 26),
-          const SizedBox(height: 3),
-          Text(
-            label,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: color,
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

@@ -9,7 +9,7 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/common/auth/presentation/cubit/login_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/login_state.dart';
 import 'package:safini/features/common/auth/presentation/widgets/buttons/google_sign_in_button.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -93,10 +93,11 @@ class _LoginView extends StatelessWidget {
                               const SizedBox(height: 16),
                               Text(
                                 s.loginTitle,
-                                style: context.textTheme.headlineMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                style: context.textTheme.headlineMedium
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -125,16 +126,16 @@ class _LoginView extends StatelessWidget {
                                   label: s.loginWithGoogle,
                                   loadingLabel: s.signingIn,
                                   isLoading: loading,
-                                  onPressed: () =>
-                                      context.read<LoginCubit>().signInWithGoogle(),
+                                  onPressed: () => context
+                                      .read<LoginCubit>()
+                                      .signInWithGoogle(),
                                 ),
                                 if (state.errorMessage != null) ...[
                                   const SizedBox(height: 16),
                                   Text(
                                     state.errorMessage!,
-                                    style: context.textTheme.bodySmall?.copyWith(
-                                      color: Colors.red.shade100,
-                                    ),
+                                    style: context.textTheme.bodySmall
+                                        ?.copyWith(color: Colors.red.shade100),
                                   ),
                                 ],
                               ],

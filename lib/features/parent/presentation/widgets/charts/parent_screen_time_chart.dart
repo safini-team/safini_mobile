@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class ParentScreenTimeChart extends StatelessWidget {
   final List<double> weeklyUsage; // values between 0.0 and 1.0

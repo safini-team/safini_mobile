@@ -1,31 +1,22 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_state.dart';
 import 'package:safini/features/child/presentation/widgets/cards/reward_store_card.dart';
 import 'package:safini/features/child/presentation/widgets/tiles/quest_tile.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class ChildHomeScreen extends StatelessWidget {
   const ChildHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocaleCubit, Locale>(
-      builder: (context, locale) {
-        return Localizations.override(
-          context: context,
-          locale: locale,
-          child: BlocProvider(
-            create: (_) => QuestCubit(),
-            child: const _ChildHomeView(),
-          ),
-        );
-      },
+    return BlocProvider(
+      create: (_) => QuestCubit(),
+      child: const _ChildHomeView(),
     );
   }
 }
@@ -45,7 +36,6 @@ class _ChildHomeView extends StatelessWidget {
           Expanded(child: _QuestListBody()),
         ],
       ),
-      bottomNavigationBar: _BottomNavBar(),
     );
   }
 }
@@ -75,7 +65,7 @@ class _HomeHeader extends StatelessWidget {
             bottom: AppSpacing.xl,
           ),
           child: RewardStoreCard(
-            onTap: () => context.router.push(const NamedRoute('store')),
+            onTap: () => context.read<ChildHomeCubit>().selectTab(2),
           ),
         ),
       ),
@@ -93,7 +83,6 @@ class _QuestListBody extends StatelessWidget {
       builder: (context, state) {
         return CustomScrollView(
           slivers: [
-            //  "Today's Quests   6/6" header row
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -120,8 +109,6 @@ class _QuestListBody extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Quest tiles
             SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final quest = state.quests[index];
@@ -132,7 +119,6 @@ class _QuestListBody extends StatelessWidget {
                 );
               }, childCount: state.quests.length),
             ),
-
             const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xl)),
           ],
         );
@@ -166,100 +152,6 @@ class _QuestCountBadge extends StatelessWidget {
           color: context.colorScheme.primary,
           fontWeight: FontWeight.w700,
         ),
-      ),
-    );
-  }
-}
-
-// ─── Bottom Nav Bar ───────────────────────────────────────────────────────────
-
-class _BottomNavBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavItem(
-                icon: Icons.home_rounded,
-                label: s.home,
-                isSelected: true,
-              ),
-              _NavItem(
-                icon: Icons.check_box_rounded,
-                label: s.tasks,
-                onTap: () => context.router.push(const NamedRoute('tasks')),
-              ),
-              _NavItem(
-                icon: Icons.shopping_bag_rounded,
-                label: s.store,
-                onTap: () => context.router.push(const NamedRoute('store')),
-              ),
-              _NavItem(
-                icon: Icons.person_rounded,
-                label: s.profile,
-                onTap: () => context.router.push(const NamedRoute('profile')),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Nav Item ─────────────────────────────────────────────────────────────────
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback? onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.isSelected = false,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isSelected
-        ? context.colorScheme.primary
-        : context.colorScheme.onSurface.withValues(alpha: 0.4);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 26),
-          const SizedBox(height: 3),
-          Text(
-            label,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: color,
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
-        ],
       ),
     );
   }

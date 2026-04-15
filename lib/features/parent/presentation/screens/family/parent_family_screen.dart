@@ -6,7 +6,7 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
 import 'package:safini/features/parent/presentation/widgets/cards/parent_child_card.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class ParentFamilyScreen extends StatelessWidget {
   const ParentFamilyScreen({super.key});

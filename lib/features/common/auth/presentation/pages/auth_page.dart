@@ -3,9 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/features/child/presentation/screens/child_home_screen.dart';
-import 'package:safini/features/parent/presentation/screens/parent_main_screen.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});

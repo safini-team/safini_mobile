@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/generated/l10n.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 
 /// Reads coins from the root [CoinsCubit] — no parameter needed.

@@ -17,7 +17,8 @@ final GetIt getIt = GetIt.instance;
 bool _sharedPreferencesPluginAvailable = false;
 
 /// Whether the native `shared_preferences` plugin responded (used by Supabase bootstrap).
-bool get isSharedPreferencesPluginAvailable => _sharedPreferencesPluginAvailable;
+bool get isSharedPreferencesPluginAvailable =>
+    _sharedPreferencesPluginAvailable;
 
 /// Awaits [SharedPreferences.getInstance], registers it when available, then registers all dependencies.
 Future<void> configureDependencies() async {

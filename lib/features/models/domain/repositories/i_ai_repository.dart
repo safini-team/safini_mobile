@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../models/ai_model.dart';
-import '../../../../core/error/failures.dart';
+import '../../../../core/utils/error/failures.dart';
 
 abstract class IAiRepository {
   Future<Either<Failure, List<AIConversationLogModel>>> getConversationLogs(
