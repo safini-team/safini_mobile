@@ -23,10 +23,10 @@ class AuthGoogleSignInService {
     final String? clientId = kIsWeb
         ? webClientId
         : (defaultTargetPlatform == TargetPlatform.iOS
-            ? (SupabaseConfig.googleIosClientId.isEmpty
-                ? null
-                : SupabaseConfig.googleIosClientId)
-            : null);
+              ? (SupabaseConfig.googleIosClientId.isEmpty
+                    ? null
+                    : SupabaseConfig.googleIosClientId)
+              : null);
 
     _initializeFuture ??= GoogleSignIn.instance.initialize(
       serverClientId: webClientId,
@@ -39,10 +39,8 @@ class AuthGoogleSignInService {
     await _ensureGoogleSignInInitialized();
 
     try {
-      final GoogleSignInAccount account =
-          await GoogleSignIn.instance.authenticate(
-        scopeHint: const <String>['email', 'profile'],
-      );
+      final GoogleSignInAccount account = await GoogleSignIn.instance
+          .authenticate(scopeHint: const <String>['email', 'profile']);
 
       final GoogleSignInAuthentication auth = account.authentication;
       final String? idToken = auth.idToken;

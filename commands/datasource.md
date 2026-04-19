@@ -1,28 +1,28 @@
 # Datasource & Data Layer
 
-The Data Layer is responsible for handling data retrieval, storage mechanisms, and API communications. It provides concrete repositories that fetch data from specific Data Sources (Firebase, REST APIs, Hive, etc.).
+The data layer handles API communication and local persistence. It sits between the domain layer and external services (REST APIs, SharedPreferences, etc.).
 
 ## Non-Negotiable Rules
 
-1. **Concrete Classes Only** — Avoid overusing Repository Interfaces unless explicitly doing test mocks. Use concrete `Repository` classes directly for simplicity.
-2. **DTOs aren't necessary if simple** — Let the Dart `Model` parse JSON (`fromJson`) unless the API response strictly requires mapping intermediary DTOs.
-3. **Repository Catches Exceptions** — The Repository is responsible for catching `Exceptions` thrown by the `DataSource` and converting them into strongly typed `Failure` objects (using `Left(Failure(...))`).
+1. **Remote always uses Dio** — inject `Dio` via constructor. Never use the `http` package directly.
+2. **Local always uses SharedPreferences** — inject `SharedPreferences` via constructor.
+3. **Datasources throw typed exceptions** — throw `ServerException` (remote) or `CacheException` (local). Never return null silently.
+4. **Repository catches exceptions** — converts them into `Left(Failure(...))`. The presentation layer never sees raw exceptions.
+5. **DTOs are optional** — use `Model.fromJson()` directly unless the API shape is fundamentally different from the domain model.
 
 ---
 
 ## Folder Structure
 
-Datasources are split into two subfolders:
-
 ```
 data/
-  datasources/
-    remote/
-      <feature>_remote_datasource.dart
-    local/
-      <feature>_local_datasource.dart
-  repositories/
-    <feature>_repository.dart
+├── datasources/
+│   ├── remote/
+│   │   └── <feature>_remote_datasource.dart
+│   └── local/
+│       └── <feature>_local_datasource.dart
+└── repositories/
+    └── <feature>_repository.dart
 ```
 
 ---
@@ -30,8 +30,6 @@ data/
 ## File Templates
 
 ### 1. Remote Data Source — `datasources/remote/<feature>_remote_datasource.dart`
-
-Uses `Dio` for HTTP requests. The `Dio` instance is injected via the constructor.
 
 ```dart
 import 'package:dio/dio.dart';
@@ -58,9 +56,8 @@ class <Feature>RemoteDataSource {
 
 ### 2. Local Data Source — `datasources/local/<feature>_local_datasource.dart`
 
-Uses `SharedPreferences` for lightweight local storage. The `SharedPreferences` instance is injected via the constructor.
-
 ```dart
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/models/<feature>_model.dart';
 import '../../../../core/error/exceptions.dart';
@@ -92,7 +89,7 @@ class <Feature>LocalDataSource {
 
 ### 3. Repository — `repositories/<feature>_repository.dart`
 
-Orchestrates remote and local datasources. Tries remote first, falls back to cache, and updates cache on success.
+Tries remote first, falls back to cache, updates cache on success.
 
 ```dart
 import 'package:dartz/dartz.dart';

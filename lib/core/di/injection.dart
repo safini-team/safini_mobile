@@ -3,14 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/app/app_router.dart';
-import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
-import 'package:safini/features/common/auth/presentation/cubit/login_cubit.dart';
-import 'package:safini/features/parent/domain/controllers/parent_controller.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:safini/features/common/common_injection.dart';
+import 'package:safini/features/parent/parent_injection.dart';
+import 'package:safini/features/child/child_injection.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -41,29 +36,7 @@ Future<void> configureDependencies() async {
     getIt.registerLazySingleton<AppRouter>(AppRouter.new);
   }
 
-  if (!getIt.isRegistered<AuthGoogleSignInService>()) {
-    getIt.registerLazySingleton<AuthGoogleSignInService>(
-      AuthGoogleSignInService.new,
-    );
-  }
-  if (!getIt.isRegistered<LoginCubit>()) {
-    getIt.registerFactory<LoginCubit>(
-      () => LoginCubit(getIt<AuthGoogleSignInService>()),
-    );
-  }
-
-  getIt.registerLazySingleton<ParentController>(() => const ParentController());
-  getIt.registerFactory<ParentCubit>(() => ParentCubit());
-  getIt.registerFactory<ParentMonitorCubit>(
-    () => ParentMonitorCubit(getIt<ParentController>()),
-  );
-  getIt.registerFactory<ParentAppsCubit>(
-    () => ParentAppsCubit(getIt<ParentController>()),
-  );
-  getIt.registerFactory<ParentTasksCubit>(
-    () => ParentTasksCubit(getIt<ParentController>()),
-  );
-  getIt.registerFactory<ParentFamilyCubit>(
-    () => ParentFamilyCubit(getIt<ParentController>()),
-  );
+  registerCommonDependencies(getIt);
+  registerParentDependencies(getIt);
+  registerChildDependencies(getIt);
 }
