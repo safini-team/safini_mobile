@@ -24,6 +24,8 @@ dependencies:
   json_annotation: ^4.9.0
   injectable: ^2.5.0
   dartz: ^0.10.1
+  dio: ^5.8.0
+  jwt_decoder: ^2.0.1
 
   intl: any
   supabase_flutter: ^2.12.2

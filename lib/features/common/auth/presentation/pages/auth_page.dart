@@ -2,11 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/features/common/profile/presentation/cubit/profile_cubit.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<ProfileCubit>(
+      create: (_) => getIt<ProfileCubit>()..load(),
+      child: const _AuthContent(),
+    );
+  }
+}
+
+class _AuthContent extends StatelessWidget {
+  const _AuthContent();
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +65,14 @@ class AuthPage extends StatelessWidget {
                         ),
                         const Spacer(flex: 1),
                         // Mascot logo
-                            ClipOval(
-                              child: Image.asset(
-                                'assets/logo/app_logo.png',
-                                width: 120,
-                                height: 120,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
+                        ClipOval(
+                          child: Image.asset(
+                            'assets/logo/app_logo.png',
+                            width: 120,
+                            height: 120,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
                         // Title
                         Text(
                           s.appName,
@@ -74,7 +88,9 @@ class AuthPage extends StatelessWidget {
                         Text(
                           s.tagline,
                           style: context.textTheme.bodyLarge?.copyWith(
-                            color: context.colorScheme.onPrimary.withValues(alpha: 0.85),
+                            color: context.colorScheme.onPrimary.withValues(
+                              alpha: 0.85,
+                            ),
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -93,7 +109,9 @@ class AuthPage extends StatelessWidget {
                                   Color(0xFFE8961A),
                                 ],
                                 onTap: () {
-                                  context.router.push(const NamedRoute('childHome'));
+                                  context.router.push(
+                                    const NamedRoute('childHome'),
+                                  );
                                 },
                               ),
                               const SizedBox(height: 16),
@@ -106,7 +124,9 @@ class AuthPage extends StatelessWidget {
                                   Color(0xFF27B08A),
                                 ],
                                 onTap: () {
-                                  context.router.push(const NamedRoute('parentHome'));
+                                  context.router.push(
+                                    const NamedRoute('parentHome'),
+                                  );
                                 },
                               ),
                             ],
@@ -119,7 +139,9 @@ class AuthPage extends StatelessWidget {
                           child: Text(
                             s.footerText,
                             style: context.textTheme.bodySmall?.copyWith(
-                              color: context.colorScheme.onPrimary.withValues(alpha: 0.7),
+                              color: context.colorScheme.onPrimary.withValues(
+                                alpha: 0.7,
+                              ),
                             ),
                           ),
                         ),
@@ -238,7 +260,9 @@ class _RoleCard extends StatelessWidget {
                   Text(
                     subtitle,
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colorScheme.onPrimary.withValues(alpha: 0.85),
+                      color: context.colorScheme.onPrimary.withValues(
+                        alpha: 0.85,
+                      ),
                     ),
                   ),
                 ],

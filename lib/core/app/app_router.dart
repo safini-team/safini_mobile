@@ -46,4 +46,6 @@ class AppRouter {
   RouterConfig<Object> config() {
     return _router.config();
   }
+
+  void navigateToSplash() => _router.navigatePath('/');
 }
