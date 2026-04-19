@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/common/auth/presentation/cubit/login_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/login_state.dart';
@@ -48,7 +49,12 @@ class _LoginView extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(S.of(context).signedInSuccess)),
                     );
-                    context.router.replace(const NamedRoute('auth'));
+                    final route = switch (state.accountType) {
+                      AppConstants.accountTypeParent => 'parentHome',
+                      AppConstants.accountTypeChild => 'childHome',
+                      _ => 'auth',
+                    };
+                    context.router.replace(NamedRoute(route));
                   }
                 },
                 builder: (context, state) {

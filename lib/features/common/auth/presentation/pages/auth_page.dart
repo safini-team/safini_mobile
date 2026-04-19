@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
-import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/features/common/profile/presentation/cubit/profile_cubit.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProfileCubit>(
-      create: (_) => getIt<ProfileCubit>()..load(),
-      child: const _AuthContent(),
-    );
+    return const _AuthContent();
   }
 }
 

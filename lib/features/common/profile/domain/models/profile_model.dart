@@ -5,7 +5,7 @@ class ProfileModel {
   final String? avatarUrl;
   final String? bio;
   final String? timezone;
-  final String accountType;
+  final String? accountType;
   final String? familyId;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -17,7 +17,7 @@ class ProfileModel {
     this.avatarUrl,
     this.bio,
     this.timezone,
-    required this.accountType,
+    this.accountType,
     this.familyId,
     required this.createdAt,
     required this.updatedAt,
@@ -31,7 +31,7 @@ class ProfileModel {
       avatarUrl: json['avatar_url'] as String?,
       bio: json['bio'] as String?,
       timezone: json['timezone'] as String?,
-      accountType: json['account_type'] as String,
+      accountType: json['account_type'] as String?,
       familyId: json['family_id'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),

@@ -55,6 +55,7 @@ class DioNetwork {
         final token = _accessToken;
         final isExpired = token == null || JwtDecoder.isExpired(token);
 
+        debugPrint('[DioNetwork] → ${options.method} ${options.path} | token: ${token != null ? '✓' : '✗ null'} | expired: $isExpired');
         log('Access token is expired: $isExpired');
 
         if (!isExpired) {

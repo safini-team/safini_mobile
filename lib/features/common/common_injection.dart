@@ -15,7 +15,11 @@ void registerCommonDependencies(GetIt sl) {
     AuthGoogleSignInService.new,
   );
   sl.registerFactory<LoginCubit>(
-    () => LoginCubit(sl<AuthGoogleSignInService>(), sl<SharedPreferences>()),
+    () => LoginCubit(
+      sl<AuthGoogleSignInService>(),
+      sl<SharedPreferences>(),
+      sl<ProfileController>(),
+    ),
   );
 
   // ── Profile ────────────────────────────────────────────────────────────────
