@@ -1,0 +1,476 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/app/locale_cubit.dart';
+import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/core/theme/app_spacing.dart';
+import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/profile_state.dart';
+import 'package:safini/features/child/presentation/widgets/cards/profile_stat_card.dart';
+import 'package:safini/features/child/presentation/widgets/dialogs/achievements_dialog.dart';
+import 'package:safini/features/child/presentation/widgets/tiles/profile_menu_tile.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
+
+class ChildProfileScreen extends StatelessWidget {
+  const ChildProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LocaleCubit, Locale>(
+      builder: (context, locale) {
+        return Localizations.override(
+          context: context,
+          locale: locale,
+          child: BlocProvider(
+            create: (_) => ProfileCubit(),
+            child: const _ProfileView(),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ─── Root View ────────────────────────────────────────────────────────────────
+
+class _ProfileView extends StatelessWidget {
+  const _ProfileView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: context.colorScheme.surface,
+      body: Column(
+        children: [
+          _ProfileHeader(),
+          Expanded(child: _ProfileBody()),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Purple Header ─────────────────────────────────────────────────────────────
+
+class _ProfileHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                context.colorScheme.primary.withValues(alpha: 0.9),
+                context.colorScheme.primary,
+              ],
+            ),
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                // Top bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        s.myProfile,
+                        style: context.textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.logout_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Avatar circle
+                _AvatarCircle(
+                  faceEmoji: state.equippedFaceEmoji,
+                  badgeEmoji: state.equippedBadgeEmoji,
+                  level: state.level,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                // Name row
+                _NameSection(state: state),
+                const SizedBox(height: AppSpacing.sm),
+                // Level badge
+                _LevelBadge(label: S.of(context).levelHero(state.level)),
+                const SizedBox(height: AppSpacing.lg),
+                // XP progress bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: state.xpProgress,
+                      backgroundColor: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        context.colorScheme.secondary,
+                      ),
+                      minHeight: 6,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _AvatarCircle extends StatelessWidget {
+  final String faceEmoji;
+  final String badgeEmoji;
+  final int level;
+
+  const _AvatarCircle({
+    required this.faceEmoji,
+    required this.badgeEmoji,
+    required this.level,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 96,
+      height: 96,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(color: Colors.white, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(faceEmoji, style: const TextStyle(fontSize: 48)),
+            ),
+          ),
+          // Badge at bottom right
+          Positioned(
+            bottom: -4,
+            right: -4,
+            child: Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5A623),
+                shape: BoxShape.circle,
+                border: Border.all(color: context.colorScheme.onPrimary, width: 2),
+              ),
+              child: Center(
+                child: Text(badgeEmoji, style: const TextStyle(fontSize: 14)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NameSection extends StatelessWidget {
+  final ProfileState state;
+
+  const _NameSection({required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    if (state.isEditing) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: TextField(
+                  autofocus: true,
+                  controller: TextEditingController(text: state.editingName)
+                    ..selection = TextSelection.fromPosition(
+                      TextPosition(offset: state.editingName.length),
+                    ),
+                  onChanged: (v) =>
+                      context.read<ProfileCubit>().updateEditingName(v),
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  cursorColor: context.colorScheme.onPrimary,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            GestureDetector(
+              onTap: () => context.read<ProfileCubit>().saveName(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Text(
+                  s.save,
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return GestureDetector(
+      onTap: () => context.read<ProfileCubit>().startEditing(),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            state.name,
+            style: context.textTheme.titleLarge?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Icon(
+            Icons.edit_rounded,
+            color: Colors.white.withValues(alpha: 0.8),
+            size: 16,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LevelBadge extends StatelessWidget {
+  final String label;
+
+  const _LevelBadge({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      decoration: BoxDecoration(
+        color: context.colorScheme.secondary.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: context.colorScheme.secondary.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('⭐', style: TextStyle(fontSize: 13)),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: context.textTheme.labelLarge?.copyWith(
+              color: const Color(0xFFF5A623),
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── White Body ───────────────────────────────────────────────────────────────
+
+class _ProfileBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(AppRadius.xl),
+              topRight: Radius.circular(AppRadius.xl),
+            ),
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              children: [
+                const SizedBox(height: AppSpacing.sm),
+                // Stat cards
+                Row(
+                  children: [
+                    Expanded(
+                      child: BlocBuilder<CoinsCubit, int>(
+                        builder: (context, coins) => ProfileStatCard(
+                          emoji: '🪙',
+                          value: '$coins',
+                          label: s.coins,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: ProfileStatCard(
+                        emoji: '⚡',
+                        value: '${state.questsDone}',
+                        label: s.questsDone,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: ProfileStatCard(
+                        emoji: '🔥',
+                        value: '${state.dayStreak}',
+                        label: s.dayStreak,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                // Customize Avatar
+                ProfileMenuTile(
+                  emoji: '🎨',
+                  iconBg: context.colorScheme.primary.withValues(alpha: 0.1),
+                  title: s.customizeAvatar,
+                  subtitle: s.changeOutfit,
+                  onTap: () => context.router.push(const NamedRoute('avatar')),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                // Achievements
+                ProfileMenuTile(
+                  emoji: '🏆',
+                  iconBg: context.colorScheme.secondary.withValues(alpha: 0.1),
+                  title: s.achievements,
+                  subtitle: '${state.questsDone} ${s.unlocked}',
+                  onTap: () => AchievementsDialog.show(context),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                // Language
+                ProfileMenuTile(
+                  emoji: '🌍',
+                  iconBg: context.colorScheme.primary.withValues(alpha: 0.1),
+                  title: s.changeLanguage,
+                  subtitle: _getLanguageName(Localizations.localeOf(context).languageCode, s),
+                  onTap: () => _showLanguageDialog(context),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _getLanguageName(String code, S s) {
+    switch (code) {
+      case 'kk':
+        return s.kazakh;
+      case 'ru':
+        return s.russian;
+      default:
+        return s.english;
+    }
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final s = S.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.selectLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(s.english),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.russian),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('ru'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Bottom Nav ───────────────────────────────────────────────────────────────
+

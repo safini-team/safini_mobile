@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../../domain/models/store_model.dart';
 import '../../domain/repositories/i_store_repository.dart';
-import '../../../../core/error/failures.dart';
+import '../../../../core/utils/error/failures.dart';
 
 @Injectable(as: IStoreRepository)
 class StoreRepositoryImpl implements IStoreRepository {

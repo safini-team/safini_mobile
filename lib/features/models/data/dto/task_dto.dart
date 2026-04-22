@@ -1,12 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-import '../../domain/models/task_model.dart';
-
-part 'task_dto.g.dart';
-
-@JsonSerializable()
-class TaskTemplateDto {
-  final String id;
-  @JsonKey(name: 'family_id')
 import '../../domain/models/task_model.dart';
 
 class TaskTemplateDto {
@@ -15,15 +6,6 @@ class TaskTemplateDto {
   final String title;
   final String description;
   final String category;
-
-  @JsonKey(name: 'coins_reward')
-  final int coinsReward;
-  @JsonKey(name: 'xp_reward')
-  final int xpReward;
-  @JsonKey(name: 'is_starter')
-  final bool isStarter;
-  @JsonKey(name: 'created_at')
-
   final int coinsReward;
   final int xpReward;
   final bool isStarter;
@@ -41,8 +23,6 @@ class TaskTemplateDto {
     required this.createdAt,
   });
 
-  factory TaskTemplateDto.fromJson(Map<String, dynamic> json) => _$TaskTemplateDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskTemplateDtoToJson(this);
   factory TaskTemplateDto.fromJson(Map<String, dynamic> json) {
     return TaskTemplateDto(
       id: json['id'] as String? ?? '',
@@ -88,26 +68,6 @@ class TaskTemplateDto {
   }
 }
 
-@JsonSerializable()
-class TaskInstanceDto {
-  final String id;
-  @JsonKey(name: 'child_id')
-  final String childId;
-  @JsonKey(name: 'template_id')
-  final String templateId;
-  final String status;
-  @JsonKey(name: 'due_date')
-  final DateTime dueDate;
-  @JsonKey(name: 'completed_at')
-  final DateTime? completedAt;
-  @JsonKey(name: 'proof_url')
-  final String? proofUrl;
-  @JsonKey(name: 'parent_note')
-  final String? parentNote;
-  @JsonKey(name: 'created_at')
-  final DateTime createdAt;
-  @JsonKey(name: 'updated_at')
-
 class TaskInstanceDto {
   final String id;
   final String childId;
@@ -133,8 +93,6 @@ class TaskInstanceDto {
     required this.updatedAt,
   });
 
-  factory TaskInstanceDto.fromJson(Map<String, dynamic> json) => _$TaskInstanceDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskInstanceDtoToJson(this);
   factory TaskInstanceDto.fromJson(Map<String, dynamic> json) {
     return TaskInstanceDto(
       id: json['id'] as String? ?? '',
@@ -189,22 +147,11 @@ class TaskInstanceDto {
   }
 }
 
-@JsonSerializable()
-class TaskSubmissionDto {
-  @JsonKey(name: 'proof_url')
 class TaskSubmissionDto {
   final String proofUrl;
 
   TaskSubmissionDto({required this.proofUrl});
 
-  factory TaskSubmissionDto.fromJson(Map<String, dynamic> json) => _$TaskSubmissionDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskSubmissionDtoToJson(this);
-}
-
-@JsonSerializable()
-class TaskReviewDto {
-  final String status;
-  @JsonKey(name: 'parent_note')
   factory TaskSubmissionDto.fromJson(Map<String, dynamic> json) {
     return TaskSubmissionDto(proofUrl: json['proof_url'] as String? ?? '');
   }
@@ -220,8 +167,6 @@ class TaskReviewDto {
 
   TaskReviewDto({required this.status, this.parentNote});
 
-  factory TaskReviewDto.fromJson(Map<String, dynamic> json) => _$TaskReviewDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskReviewDtoToJson(this);
   factory TaskReviewDto.fromJson(Map<String, dynamic> json) {
     return TaskReviewDto(
       status: json['status'] as String? ?? '',

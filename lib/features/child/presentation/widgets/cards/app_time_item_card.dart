@@ -3,6 +3,7 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class AppTimeItemCard extends StatelessWidget {
   final AppTimeItem item;
@@ -64,7 +65,7 @@ class AppTimeItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    item.subtitle,
+                    '+${S.of(context).minuteCount(item.minutes)}',
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: context.colorScheme.onSurface.withValues(
                         alpha: 0.5,
@@ -112,7 +113,7 @@ class _CoinPill extends StatelessWidget {
             '$cost',
             style: context.textTheme.labelLarge?.copyWith(
               color: canAfford
-                  ? Colors.white
+                  ? context.colorScheme.onPrimary
                   : context.colorScheme.onSurface.withValues(alpha: 0.5),
               fontWeight: FontWeight.w700,
             ),

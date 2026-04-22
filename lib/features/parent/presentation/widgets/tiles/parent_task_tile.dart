@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/generated/l10n.dart';
 
 class ParentTaskTile extends StatelessWidget {
   final String title;
@@ -24,22 +24,23 @@ class ParentTaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     Color statusColor;
     Color statusBg;
     String statusText;
     IconData categoryIcon;
 
     if (isPending) {
-      statusColor = const Color(0xFF8100D1);
-      statusBg = const Color(0xFFF0E6FF);
+      statusColor = context.colorScheme.primary;
+      statusBg = context.colorScheme.primary.withValues(alpha: 0.1);
       statusText = S.of(context).statusPending;
     } else if (isCompleted) {
-      statusColor = const Color(0xFF00C566);
-      statusBg = const Color(0xFFE2F9EE);
+      statusColor = context.successColor;
+      statusBg = context.successColor.withValues(alpha: 0.1);
       statusText = S.of(context).statusDone;
     } else {
-      statusColor = const Color(0xFFF8B400);
-      statusBg = const Color(0xFFFFF3D6);
+      statusColor = context.colorScheme.tertiary;
+      statusBg = context.colorScheme.tertiary.withValues(alpha: 0.1);
       statusText = S.of(context).statusActive;
     }
 
@@ -66,7 +67,7 @@ class ParentTaskTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: context.colorScheme.shadow.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -77,12 +78,12 @@ class ParentTaskTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF2F0FF),
+              color: context.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
               categoryIcon,
-              color: const Color(0xFF8B46FF),
+              color: context.colorScheme.primary,
               size: 26,
             ),
           ),
@@ -93,19 +94,22 @@ class ParentTaskTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w800,
                     fontSize: 18,
-                    color: Color(0xFF1A1A1A),
+                    color: context.colorScheme.onSurface,
                     letterSpacing: -0.2,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   category,
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colorScheme.onSurface.withValues(alpha: 0.4),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -124,11 +128,12 @@ class ParentTaskTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '$rewardCoins coins reward',
-                      style: const TextStyle(
-                        color: Color(0xFF8B46FF),
+                      s.coinsReward(rewardCoins),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: context.colorScheme.primary,
                         fontWeight: FontWeight.w700,
-                        fontSize: 13,
                       ),
                     ),
                   ],
@@ -150,6 +155,8 @@ class ParentTaskTile extends StatelessWidget {
                 ),
                 child: Text(
                   statusText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: statusColor,
                     fontWeight: FontWeight.w800,
@@ -165,7 +172,7 @@ class ParentTaskTile extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00C566),
+                      color: context.successColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -182,7 +189,9 @@ class ParentTaskTile extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF5F5F5),
+                      color: context.colorScheme.onSurface.withValues(
+                        alpha: 0.05,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(

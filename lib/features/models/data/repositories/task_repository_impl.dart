@@ -2,8 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../../domain/models/task_model.dart';
 import '../../domain/repositories/i_task_repository.dart';
-import '../../../../core/error/failures.dart';
-
+import '../../../../core/utils/error/failures.dart';
 
 @Injectable(as: ITaskRepository)
 class TaskRepositoryImpl implements ITaskRepository {

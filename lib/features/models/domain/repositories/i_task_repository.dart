@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../models/task_model.dart';
-import '../../../../core/error/failures.dart';
+import '../../../../core/utils/error/failures.dart';
 
 abstract class ITaskRepository {
   Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates();

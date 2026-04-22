@@ -1,6 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 
+class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
+  final Color success;
+  final Color info;
+  final Color warning;
+
+  const AppColorsExtension({
+    required this.success,
+    required this.info,
+    required this.warning,
+  });
+
+  @override
+  ThemeExtension<AppColorsExtension> copyWith({
+    Color? success,
+    Color? info,
+    Color? warning,
+  }) {
+    return AppColorsExtension(
+      success: success ?? this.success,
+      info: info ?? this.info,
+      warning: warning ?? this.warning,
+    );
+  }
+
+  @override
+  ThemeExtension<AppColorsExtension> lerp(
+    ThemeExtension<AppColorsExtension>? other,
+    double t,
+  ) {
+    if (other is! AppColorsExtension) return this;
+    return AppColorsExtension(
+      success: Color.lerp(success, other.success, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+    );
+  }
+}
+
 class AppTheme {
   const AppTheme._();
 
@@ -63,6 +101,13 @@ class AppTheme {
           foregroundColor: AppColors.textOnPrimary,
         ),
       ),
+      extensions: [
+        const AppColorsExtension(
+          success: AppColors.success,
+          info: AppColors.info,
+          warning: AppColors.warning,
+        ),
+      ],
     );
   }
 }

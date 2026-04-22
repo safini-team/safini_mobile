@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../models/family_model.dart';
-import '../../../../core/error/failures.dart';
+import '../../../../core/utils/error/failures.dart';
 
 abstract class IFamilyRepository {
   Future<Either<Failure, FamilyModel>> createFamily(

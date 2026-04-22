@@ -12,7 +12,7 @@ class ParentMonitorLoading extends ParentMonitorState {
 
 class ParentMonitorLoaded extends ParentMonitorState {
   final String childName;
-  final String level;
+  final int level;
   final int timeCoins;
   final int stepsToday;
   final String stepsChange;
