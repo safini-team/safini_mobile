@@ -4,6 +4,8 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_state.dart';
 import 'package:safini/features/parent/presentation/widgets/cards/parent_progress_card.dart';
 import 'package:safini/features/parent/presentation/widgets/cards/parent_stat_card.dart';
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
@@ -17,8 +19,15 @@ class ParentMonitorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    return BlocProvider(
-      create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(s),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<ParentCubit>()..loadProfile(),
+        ),
+        BlocProvider(
+          create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(s),
+        ),
+      ],
       child: const _ParentMonitorView(),
     );
   }
@@ -233,14 +242,18 @@ class _ParentMonitorView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          s.parentName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.5,
-                          ),
+                        BlocBuilder<ParentCubit, ParentState>(
+                          builder: (context, state) {
+                            return Text(
+                              state.user?.displayName ?? s.parentName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.5,
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

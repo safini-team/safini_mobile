@@ -12,6 +12,11 @@ import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:safini/features/parent/data/datasources/parent_remote_datasource.dart';
+import 'package:safini/features/parent/data/repositories/parent_user_repository_impl.dart';
+import 'package:safini/features/parent/domain/repositories/i_parent_user_repository.dart';
+
 final GetIt getIt = GetIt.instance;
 
 bool _sharedPreferencesPluginAvailable = false;
@@ -36,6 +41,10 @@ Future<void> configureDependencies() async {
     );
   }
 
+  if (!getIt.isRegistered<SupabaseClient>()) {
+    getIt.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+  }
+
   if (!getIt.isRegistered<AppRouter>()) {
     getIt.registerLazySingleton<AppRouter>(AppRouter.new);
   }
@@ -51,8 +60,18 @@ Future<void> configureDependencies() async {
     );
   }
 
-  getIt.registerLazySingleton<ParentController>(() => const ParentController());
-  getIt.registerFactory<ParentCubit>(() => ParentCubit());
+  getIt.registerLazySingleton<ParentRemoteDataSource>(
+    () => ParentRemoteDataSource(getIt<SupabaseClient>()),
+  );
+  getIt.registerLazySingleton<IParentUserRepository>(
+    () => ParentUserRepositoryImpl(getIt<ParentRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<ParentController>(
+    () => ParentController(getIt<IParentUserRepository>()),
+  );
+  getIt.registerFactory<ParentCubit>(
+    () => ParentCubit(getIt<ParentController>(), getIt<SupabaseClient>()),
+  );
   getIt.registerFactory<ParentMonitorCubit>(
     () => ParentMonitorCubit(getIt<ParentController>()),
   );
