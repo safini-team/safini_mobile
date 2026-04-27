@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
 @RoutePage()
 class SplashScreen extends StatefulWidget {
@@ -17,6 +21,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  Timer? _splashTimer;
 
   bool _animationDone = false;
   bool _hasNavigated = false;
@@ -38,20 +43,23 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Minimum splash duration so users see the branding.
-    Future.delayed(const Duration(milliseconds: 2200), () {
-      if (mounted) {
-        _animationDone = true;
-        _navigateIfReady();
-      }
-    });
-
-    // Kick off session check.
-    context.read<AuthSessionCubit>().checkExistingSession();
+    // Kick off session check only when Supabase is configured; widget tests
+    // and local preview modes can render the splash safely without backend init.
+    final isConfigured = SupabaseConfig.isSupabaseConfigured;
+    if (isConfigured) {
+      _splashTimer = Timer(const Duration(milliseconds: 2200), () {
+        if (mounted) {
+          _animationDone = true;
+          _navigateIfReady();
+        }
+      });
+      context.read<AuthSessionCubit>().checkExistingSession();
+    }
   }
 
   @override
   void dispose() {
+    _splashTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -100,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen>
   void _routeByAccountType(String? accountType) {
     switch (accountType) {
       case 'parent':
-        context.router.replace(const NamedRoute('parentHome'));
+        _routeParent();
         break;
       case 'child':
         context.router.replace(const NamedRoute('childHome'));
@@ -108,6 +116,23 @@ class _SplashScreenState extends State<SplashScreen>
       default:
         // null, missing, or any unexpected value → Role Selection
         context.router.replace(const NamedRoute('roleSelection'));
+    }
+  }
+
+  void _routeParent() {
+    final familyState = context.read<ParentFamilyCubit>().state;
+
+    if (familyState.isDashboard || familyState.hasFamily) {
+      context.router.replace(const NamedRoute('parentHome'));
+      return;
+    }
+
+    if (familyState.isCreate) {
+      context.router.replace(const NamedRoute('createFamily'));
+    } else if (familyState.isJoin) {
+      context.router.replace(const NamedRoute('joinFamily'));
+    } else {
+      context.router.replace(const NamedRoute('familyDecision'));
     }
   }
 
@@ -122,13 +147,28 @@ class _SplashScreenState extends State<SplashScreen>
         body: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: Image.asset(
-                'assets/logo/app_logo.png',
-                width: 220,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Image.asset(
+                    'assets/logo/app_logo.png',
+                    width: 220,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'SAFINIO',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 8,
+                  ),
+                ),
+              ],
               ),
-            ),
           ),
         ),
       ),

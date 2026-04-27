@@ -2,9 +2,11 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/user_me_service.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
 /// Manages the entire authentication lifecycle:
 ///
@@ -101,13 +103,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
       ));
     } on UnauthorizedException {
       // Token is invalid — force re-login.
-      await Supabase.instance.client.auth.signOut();
-      emit(state.copyWith(
-        status: AuthSessionStatus.unauthenticated,
-        errorMessage: null,
-        canRetry: false,
-        isUnauthorized: true,
-      ));
+      await forceSignOut('Your session expired. Please sign in again.');
     } on NetworkException catch (e) {
       emit(state.copyWith(
         status: AuthSessionStatus.profileError,
@@ -117,11 +113,10 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
       ));
     } on UnexpectedResponseException catch (e) {
       debugPrint('Unexpected /v1/me response: $e');
-      emit(state.copyWith(
-        status: AuthSessionStatus.profileError,
-        errorMessage: 'Something went wrong. Please try again.',
-        canRetry: true,
-        isUnauthorized: false,
+      emit(AuthSessionState(
+        status: AuthSessionStatus.authenticated,
+        userId: Supabase.instance.client.auth.currentUser?.id,
+        accountType: null,
       ));
     } catch (e) {
       debugPrint('Unknown error fetching /v1/me: $e');
@@ -150,11 +145,29 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
   // ── Sign out ───────────────────────────────────────────────────────────
 
   Future<void> signOut() async {
+    await _clearFamilyState();
     await Supabase.instance.client.auth.signOut();
     emit(const AuthSessionState(
       status: AuthSessionStatus.unauthenticated,
       isUnauthorized: false,
       canRetry: false,
     ));
+  }
+
+  Future<void> forceSignOut(String message) async {
+    await _clearFamilyState();
+    await Supabase.instance.client.auth.signOut();
+    emit(AuthSessionState(
+      status: AuthSessionStatus.unauthenticated,
+      errorMessage: message,
+      canRetry: false,
+      isUnauthorized: true,
+    ));
+  }
+
+  Future<void> _clearFamilyState() async {
+    if (getIt.isRegistered<ParentFamilyCubit>()) {
+      await getIt<ParentFamilyCubit>().reset();
+    }
   }
 }

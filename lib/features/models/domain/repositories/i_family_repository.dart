@@ -7,5 +7,6 @@ abstract class IFamilyRepository {
     String name,
     String timezone,
   );
+  Future<Either<Failure, FamilyModel>> joinFamily(String inviteCode);
   Future<Either<Failure, FamilyModel>> getCurrentFamily();
 }

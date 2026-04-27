@@ -1,15 +1,20 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
-/// Placeholder screen for the parent-onboarding "family decision" step.
-///
-/// This is the first screen after a new parent selects "Parent" on the
-/// [RoleSelectionPage].
-class FamilyDecisionPage extends StatelessWidget {
+class FamilyDecisionPage extends StatefulWidget {
   const FamilyDecisionPage({super.key});
+
+  @override
+  State<FamilyDecisionPage> createState() => _FamilyDecisionPageState();
+}
+
+class _FamilyDecisionPageState extends State<FamilyDecisionPage> {
+  bool _initialized = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +25,17 @@ class FamilyDecisionPage extends StatelessWidget {
           locale: locale,
           child: Builder(
             builder: (context) {
+              if (!_initialized) {
+                _initialized = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.read<ParentFamilyCubit>().markDecision();
+                  }
+                });
+              }
+
+              final s = S.of(context);
+
               return Scaffold(
                 body: Container(
                   width: double.infinity,
@@ -29,73 +45,71 @@ class FamilyDecisionPage extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        context.colorScheme.primary.withValues(alpha: 0.85),
+                        context.colorScheme.primary.withValues(alpha: 0.88),
                         context.colorScheme.primary,
                       ],
                     ),
                   ),
                   child: SafeArea(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 48),
-                        // Icon
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 28),
+                          Icon(
                             Icons.family_restroom_rounded,
-                            size: 40,
                             color: context.colorScheme.onPrimary,
+                            size: 72,
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        // Title
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Text(
-                            S.of(context).setupYourFamily,
+                          const SizedBox(height: 18),
+                          Text(
+                            s.setupYourFamily,
+                            textAlign: TextAlign.center,
                             style: context.textTheme.headlineMedium?.copyWith(
                               color: context.colorScheme.onPrimary,
                               fontWeight: FontWeight.w800,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Subtitle
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 48),
-                          child: Text(
-                            S.of(context).familyDecisionSubtitle,
+                          const SizedBox(height: 10),
+                          Text(
+                            s.familyDecisionSubtitle,
+                            textAlign: TextAlign.center,
                             style: context.textTheme.bodyLarge?.copyWith(
-                              color: context.colorScheme.onPrimary
-                                  .withValues(alpha: 0.85),
+                              color: context.colorScheme.onPrimary.withValues(alpha: 0.85),
                             ),
+                          ),
+                          const SizedBox(height: 28),
+                          _ActionCard(
+                            icon: Icons.add_home_rounded,
+                            title: 'Create a family',
+                            subtitle:
+                                'Start a new family space and invite others later.',
+                            onTap: () => context.router.push(
+                              const NamedRoute('createFamily'),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _ActionCard(
+                            icon: Icons.group_add_rounded,
+                            title: 'Join a family',
+                            subtitle:
+                                'Use an invite code to join an existing family.',
+                            onTap: () => context.router.push(
+                              const NamedRoute('joinFamily'),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            s.footerText,
                             textAlign: TextAlign.center,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: context.colorScheme.onPrimary.withValues(alpha: 0.65),
+                            ),
                           ),
-                        ),
-                        const Spacer(),
-                        // Placeholder illustration
-                        Icon(
-                          Icons.construction_rounded,
-                          size: 64,
-                          color: context.colorScheme.onPrimary
-                              .withValues(alpha: 0.3),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          S.of(context).comingSoon,
-                          style: context.textTheme.titleMedium?.copyWith(
-                            color: context.colorScheme.onPrimary
-                                .withValues(alpha: 0.5),
-                          ),
-                        ),
-                        const Spacer(),
-                      ],
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -104,6 +118,79 @@ class FamilyDecisionPage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ActionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _ActionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Icon(icon, color: Colors.white, size: 30),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: context.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.85),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white.withValues(alpha: 0.9),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

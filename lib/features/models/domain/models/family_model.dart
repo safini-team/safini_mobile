@@ -18,16 +18,29 @@ class FamilyModel {
   });
 
   factory FamilyModel.fromJson(Map<String, dynamic> json) {
+    final childrenJson = (json['children'] ?? json['kids'] ?? json['members']);
     return FamilyModel(
-      id: json['id'] as String,
-      ownerUserId: json['ownerUserId'] as String,
-      name: json['name'] as String,
-      timezone: json['timezone'] as String,
-      children: (json['children'] as List<dynamic>)
-          .map((e) => ChildSummaryModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      id: (json['id'] ?? json['family_id'] ?? json['familyId']) as String? ?? '',
+      ownerUserId:
+          (json['ownerUserId'] ?? json['owner_user_id'] ?? json['owner_id'])
+              as String? ??
+          '',
+      name: (json['name'] ?? json['family_name'] ?? 'Family') as String,
+      timezone: (json['timezone'] ?? 'UTC') as String,
+      children: childrenJson is List
+          ? childrenJson
+              .whereType<Map<String, dynamic>>()
+              .map(ChildSummaryModel.fromJson)
+              .toList()
+          : const <ChildSummaryModel>[],
+      createdAt: DateTime.tryParse(
+            (json['createdAt'] ?? json['created_at'] ?? '').toString(),
+          ) ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(
+            (json['updatedAt'] ?? json['updated_at'] ?? '').toString(),
+          ) ??
+          DateTime.now(),
     );
   }
 
@@ -60,12 +73,20 @@ class ChildSummaryModel {
   });
 
   factory ChildSummaryModel.fromJson(Map<String, dynamic> json) {
+    final rawAge = json['age'];
+    final rawCoins = json['coinsBalance'] ?? json['coins_balance'];
+    final rawLevel = json['level'] ?? json['rank'];
     return ChildSummaryModel(
-      id: json['id'] as String,
-      nickname: json['nickname'] as String,
-      age: json['age'] as int,
-      coinsBalance: json['coinsBalance'] as int,
-      level: json['level'] as int,
+      id: (json['id'] ?? json['child_id']) as String? ?? '',
+      nickname: (json['nickname'] ?? json['name'] ?? json['display_name'])
+          as String? ??
+          'Child',
+      age: rawAge is int ? rawAge : int.tryParse(rawAge?.toString() ?? '') ?? 0,
+      coinsBalance: rawCoins is int
+          ? rawCoins
+          : int.tryParse(rawCoins?.toString() ?? '') ??
+              0,
+      level: rawLevel is int ? rawLevel : int.tryParse(rawLevel?.toString() ?? '') ?? 0,
     );
   }
 

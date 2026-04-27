@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
+import 'package:safini/features/common/auth/presentation/pages/create_family_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/family_decision_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/login_page.dart';
+import 'package:safini/features/common/auth/presentation/pages/join_family_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/role_selection_page.dart';
 import 'package:safini/features/common/splash/splash_screen.dart';
 import 'package:safini/features/child/presentation/screens/main/child_main_screen.dart';
@@ -36,6 +38,16 @@ class AppRouter {
         name: 'familyDecision',
         path: '/family-decision',
         builder: (context, data) => const FamilyDecisionPage(),
+      ),
+      NamedRouteDef(
+        name: 'createFamily',
+        path: '/create-family',
+        builder: (context, data) => const CreateFamilyPage(),
+      ),
+      NamedRouteDef(
+        name: 'joinFamily',
+        path: '/join-family',
+        builder: (context, data) => const JoinFamilyPage(),
       ),
       NamedRouteDef(
         name: 'childHome',

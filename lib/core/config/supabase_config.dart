@@ -17,9 +17,13 @@ class SupabaseConfig {
     if (fromDefine.isNotEmpty) {
       return fromDefine;
     }
-    final fromFile = dotenv.env[key];
-    if (fromFile != null && fromFile.trim().isNotEmpty) {
-      return fromFile.trim();
+    try {
+      final fromFile = dotenv.env[key];
+      if (fromFile != null && fromFile.trim().isNotEmpty) {
+        return fromFile.trim();
+      }
+    } catch (_) {
+      return defaultValue;
     }
     return defaultValue;
   }

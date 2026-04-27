@@ -14,6 +14,8 @@ class FamilyController {
     String name,
     String timezone,
   ) => _repository.createFamily(name, timezone);
+  Future<Either<Failure, FamilyModel>> joinFamily(String inviteCode) =>
+      _repository.joinFamily(inviteCode);
   Future<Either<Failure, FamilyModel>> getCurrentFamily() =>
       _repository.getCurrentFamily();
 }

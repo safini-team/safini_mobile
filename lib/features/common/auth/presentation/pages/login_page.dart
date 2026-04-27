@@ -8,6 +8,7 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/widgets/buttons/google_sign_in_button.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 class LoginPage extends StatelessWidget {
@@ -45,14 +46,16 @@ class _LoginView extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(s.signedInSuccess)),
                     );
-                    _routeByAccountType(context, state.accountType);
+                    _routeAuthenticated(context, state.accountType);
                   }
 
                   // 401 in profile fetch signs out and returns to login.
                   if (state.status == AuthSessionStatus.unauthenticated &&
                       state.isUnauthorized) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(s.signInError)),
+                      SnackBar(
+                        content: Text(state.errorMessage ?? s.signInError),
+                      ),
                     );
                   }
                 },
@@ -152,6 +155,16 @@ class _LoginView extends StatelessWidget {
                                     ),
                                   ),
                                 ],
+                                if (state.status == AuthSessionStatus.unauthenticated &&
+                                    state.isUnauthorized) ...[
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    state.errorMessage ?? s.signInError,
+                                    style: context.textTheme.bodySmall?.copyWith(
+                                      color: Colors.red.shade100,
+                                    ),
+                                  ),
+                                ],
                                 // ── Profile-fetch error (retryable) ───
                                 if (state.status ==
                                         AuthSessionStatus.profileError &&
@@ -196,16 +209,33 @@ class _LoginView extends StatelessWidget {
     );
   }
 
-  void _routeByAccountType(BuildContext context, String? accountType) {
+  void _routeAuthenticated(BuildContext context, String? accountType) {
     switch (accountType) {
       case 'parent':
-        context.router.replace(const NamedRoute('parentHome'));
+        _routeParent(context);
         break;
       case 'child':
         context.router.replace(const NamedRoute('childHome'));
         break;
       default:
         context.router.replace(const NamedRoute('roleSelection'));
+    }
+  }
+
+  void _routeParent(BuildContext context) {
+    final familyState = context.read<ParentFamilyCubit>().state;
+
+    if (familyState.hasFamily || familyState.isDashboard) {
+      context.router.replace(const NamedRoute('parentHome'));
+      return;
+    }
+
+    if (familyState.isCreate) {
+      context.router.replace(const NamedRoute('createFamily'));
+    } else if (familyState.isJoin) {
+      context.router.replace(const NamedRoute('joinFamily'));
+    } else {
+      context.router.replace(const NamedRoute('familyDecision'));
     }
   }
 
