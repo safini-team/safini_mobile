@@ -22,7 +22,9 @@ class LoginCubit extends Cubit<LoginState> {
       final authResponse = await _googleAuth.signInWithGoogle();
 
       final token = authResponse.session?.accessToken;
-      debugPrint('[LoginCubit] Access token received: ${token != null ? '✓ (${token.length} chars)' : '✗ null'}');
+      final tokenStatus =
+          token != null ? '✓ (${token.length} chars)' : '✗ null';
+      debugPrint('[LoginCubit] Access token received: $tokenStatus');
 
       if (token != null) {
         await _prefs.setString(AppConstants.accessToken, token);
@@ -37,15 +39,22 @@ class LoginCubit extends Cubit<LoginState> {
           debugPrint('[LoginCubit] Profile fetch FAILED: ${failure.message}');
         },
         (profile) {
-          debugPrint('[LoginCubit] Profile fetch SUCCESS — accountType: ${profile.accountType}');
+          debugPrint(
+            '[LoginCubit] Profile fetch SUCCESS — accountType: ${profile.accountType}',
+          );
         },
       );
 
       final accountType = profileResult.fold((_) => null, (p) => p.accountType);
-      debugPrint('[LoginCubit] Emitting success with accountType: $accountType');
-      emit(state.copyWith(status: LoginStatus.success, accountType: accountType));
-    } catch (e) {
+      final successMessage =
+          '[LoginCubit] Emitting success with accountType: $accountType';
+      debugPrint(successMessage);
+      emit(
+        state.copyWith(status: LoginStatus.success, accountType: accountType),
+      );
+    } catch (e, st) {
       debugPrint('[LoginCubit] Unexpected error: $e');
+      debugPrintStack(stackTrace: st);
       final message = e.toString().replaceFirst('Exception: ', '');
       emit(state.copyWith(status: LoginStatus.failure, errorMessage: message));
     }
