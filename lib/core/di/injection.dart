@@ -8,11 +8,7 @@ import 'package:safini/core/network/dio_network.dart';
 import 'package:safini/features/common/common_injection.dart';
 import 'package:safini/features/parent/parent_injection.dart';
 import 'package:safini/features/child/child_injection.dart';
-
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:safini/features/parent/data/datasources/parent_remote_datasource.dart';
-import 'package:safini/features/parent/data/repositories/parent_user_repository_impl.dart';
-import 'package:safini/features/parent/domain/repositories/i_parent_user_repository.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -47,30 +43,6 @@ Future<void> configureDependencies() async {
   }
 
   await _dioInjection();
-  getIt.registerLazySingleton<ParentRemoteDataSource>(
-    () => ParentRemoteDataSource(getIt<SupabaseClient>()),
-  );
-  getIt.registerLazySingleton<IParentUserRepository>(
-    () => ParentUserRepositoryImpl(getIt<ParentRemoteDataSource>()),
-  );
-  getIt.registerLazySingleton<ParentController>(
-    () => ParentController(getIt<IParentUserRepository>()),
-  );
-  getIt.registerFactory<ParentCubit>(
-    () => ParentCubit(getIt<ParentController>(), getIt<SupabaseClient>()),
-  );
-  getIt.registerFactory<ParentMonitorCubit>(
-    () => ParentMonitorCubit(getIt<ParentController>()),
-  );
-  getIt.registerFactory<ParentAppsCubit>(
-    () => ParentAppsCubit(getIt<ParentController>()),
-  );
-  getIt.registerFactory<ParentTasksCubit>(
-    () => ParentTasksCubit(getIt<ParentController>()),
-  );
-  getIt.registerFactory<ParentFamilyCubit>(
-    () => ParentFamilyCubit(getIt<ParentController>()),
-  );
   registerCommonDependencies(getIt);
   registerParentDependencies(getIt);
   registerChildDependencies(getIt);
