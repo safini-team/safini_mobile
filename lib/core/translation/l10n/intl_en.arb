@@ -222,5 +222,12 @@
   "loginBack": "Back",
   "supabaseConfigMissing": "Supabase URL or anon key is missing. Set SUPABASE_URL and SUPABASE_ANON_KEY when running the app.",
   "googleClientIdMissing": "Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).",
-  "signedInSuccess": "Signed in successfully"
+  "signedInSuccess": "Signed in successfully",
+  "chooseYourRole": "Choose Your Role",
+  "roleSelectionSubtitle": "How will you use Safini?",
+  "setupYourFamily": "Set Up Your Family",
+  "familyDecisionSubtitle": "Create your family space and invite your kids to start earning screen time.",
+  "signInError": "Sign in failed. Please try again.",
+  "networkError": "Network error. Check your connection.",
+  "retry": "Retry"
 }

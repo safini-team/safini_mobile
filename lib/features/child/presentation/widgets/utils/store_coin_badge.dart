@@ -14,6 +14,7 @@ class StoreCoinBadge extends StatelessWidget {
     return BlocBuilder<CoinsCubit, int>(
       builder: (context, coins) {
         return Container(
+          constraints: const BoxConstraints(maxWidth: 150),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.2),
@@ -33,13 +34,17 @@ class StoreCoinBadge extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              Text(
-                S.of(context).coinsText.toUpperCase(),
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: Colors.white70,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+              Flexible(
+                child: Text(
+                  S.of(context).coinsText.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: Colors.white70,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ],

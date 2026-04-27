@@ -49,35 +49,42 @@ class ParentTasksScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: context.colorScheme.onPrimary.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(22),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                              SizedBox(width: 6),
-                              Text(
-                                s.newBtn,
-                                style: TextStyle(
-                                  color: context.colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15,
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: context.colorScheme.onPrimary
+                                  .withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 18,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    s.newBtn,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: context.colorScheme.onPrimary,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

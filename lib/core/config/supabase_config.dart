@@ -42,4 +42,9 @@ class SupabaseConfig {
       url.isNotEmpty && anonKey.isNotEmpty;
 
   static bool get isGoogleConfigured => googleWebClientId.isNotEmpty;
+
+  /// Backend API base URL (e.g. `https://api.safini.fun`).
+  static String get apiBaseUrl => _env('API_BASE_URL');
+
+  static bool get isApiConfigured => apiBaseUrl.isNotEmpty;
 }

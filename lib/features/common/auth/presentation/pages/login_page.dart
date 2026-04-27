@@ -4,11 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/config/supabase_config.dart';
-import 'package:safini/core/di/injection.dart';
-import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/features/common/auth/presentation/cubit/login_cubit.dart';
-import 'package:safini/features/common/auth/presentation/cubit/login_state.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/widgets/buttons/google_sign_in_button.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
@@ -17,10 +15,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<LoginCubit>(),
-      child: const _LoginView(),
-    );
+    return const _LoginView();
   }
 }
 
@@ -43,22 +38,29 @@ class _LoginView extends StatelessWidget {
           child: Builder(
             builder: (context) {
               final s = S.of(context);
-              return BlocConsumer<LoginCubit, LoginState>(
+              return BlocConsumer<AuthSessionCubit, AuthSessionState>(
                 listener: (context, state) {
-                  if (state.status == LoginStatus.success) {
+                  // ── Authenticated → route by account_type ──────────────
+                  if (state.status == AuthSessionStatus.authenticated) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(S.of(context).signedInSuccess)),
+                      SnackBar(content: Text(s.signedInSuccess)),
                     );
-                    final route = switch (state.accountType) {
-                      AppConstants.accountTypeParent => 'parentHome',
-                      AppConstants.accountTypeChild => 'childHome',
-                      _ => 'auth',
-                    };
-                    context.router.replace(NamedRoute(route));
+                    _routeByAccountType(context, state.accountType);
+                  }
+
+                  // 401 in profile fetch signs out and returns to login.
+                  if (state.status == AuthSessionStatus.unauthenticated &&
+                      state.isUnauthorized) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(s.signInError)),
+                    );
                   }
                 },
                 builder: (context, state) {
-                  final loading = state.status == LoginStatus.loading;
+                  final loading =
+                      state.status == AuthSessionStatus.signingIn ||
+                          state.status == AuthSessionStatus.fetchingProfile;
+
                   return Scaffold(
                     body: Container(
                       width: double.infinity,
@@ -76,7 +78,8 @@ class _LoginView extends StatelessWidget {
                       ),
                       child: SafeArea(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -87,7 +90,8 @@ class _LoginView extends StatelessWidget {
                                     Icons.language,
                                     color: Colors.white,
                                   ),
-                                  onPressed: () => _showLanguageDialog(context),
+                                  onPressed: () =>
+                                      _showLanguageDialog(context),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -101,31 +105,31 @@ class _LoginView extends StatelessWidget {
                                 s.loginTitle,
                                 style: context.textTheme.headlineMedium
                                     ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 s.loginSubtitle,
-                                style: context.textTheme.bodyLarge?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                style:
+                                    context.textTheme.bodyLarge?.copyWith(
+                                  color: Colors.white
+                                      .withValues(alpha: 0.9),
                                 ),
                               ),
                               const SizedBox(height: 32),
                               if (!SupabaseConfig.isSupabaseConfigured)
                                 Text(
                                   s.supabaseConfigMissing,
-                                  style: context.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
+                                  style: context.textTheme.bodyMedium
+                                      ?.copyWith(color: Colors.white),
                                 )
                               else if (!SupabaseConfig.isGoogleConfigured)
                                 Text(
                                   s.googleClientIdMissing,
-                                  style: context.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
+                                  style: context.textTheme.bodyMedium
+                                      ?.copyWith(color: Colors.white),
                                 )
                               else ...[
                                 GoogleSignInButton(
@@ -133,15 +137,47 @@ class _LoginView extends StatelessWidget {
                                   loadingLabel: s.signingIn,
                                   isLoading: loading,
                                   onPressed: () => context
-                                      .read<LoginCubit>()
+                                      .read<AuthSessionCubit>()
                                       .signInWithGoogle(),
                                 ),
-                                if (state.errorMessage != null) ...[
+                                // ── Sign-in error ──────────────────────
+                                if (state.status ==
+                                    AuthSessionStatus.signInError) ...[
                                   const SizedBox(height: 16),
                                   Text(
-                                    state.errorMessage!,
+                                    state.errorMessage ?? s.signInError,
                                     style: context.textTheme.bodySmall
-                                        ?.copyWith(color: Colors.red.shade100),
+                                        ?.copyWith(
+                                      color: Colors.red.shade100,
+                                    ),
+                                  ),
+                                ],
+                                // ── Profile-fetch error (retryable) ───
+                                if (state.status ==
+                                        AuthSessionStatus.profileError &&
+                                    state.canRetry &&
+                                    !state.isUnauthorized) ...[
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    state.errorMessage ??
+                                        s.networkError,
+                                    style: context.textTheme.bodySmall
+                                        ?.copyWith(
+                                      color: Colors.red.shade100,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  OutlinedButton(
+                                    onPressed: () => context
+                                        .read<AuthSessionCubit>()
+                                        .retryFetchProfile(),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      side: const BorderSide(
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                    child: Text(s.retry),
                                   ),
                                 ],
                               ],
@@ -158,6 +194,19 @@ class _LoginView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _routeByAccountType(BuildContext context, String? accountType) {
+    switch (accountType) {
+      case 'parent':
+        context.router.replace(const NamedRoute('parentHome'));
+        break;
+      case 'child':
+        context.router.replace(const NamedRoute('childHome'));
+        break;
+      default:
+        context.router.replace(const NamedRoute('roleSelection'));
+    }
   }
 
   void _showLanguageDialog(BuildContext context) {
