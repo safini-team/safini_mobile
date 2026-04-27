@@ -10,15 +10,25 @@ class ProfileRemoteDataSource {
   ProfileRemoteDataSource(this._dio);
 
   Future<ProfileModel> fetchMe() async {
-    debugPrint('[ProfileRemoteDataSource] GET ${ApiConst.baseUrl}${ApiConst.me}');
+    debugPrint(
+      '[ProfileRemoteDataSource] GET ${ApiConst.baseUrl}${ApiConst.me}',
+    );
     try {
       final response = await _dio.get(ApiConst.me);
-      debugPrint('[ProfileRemoteDataSource] Response ${response.statusCode}: ${response.data}');
-      final model = ProfileModel.fromJson(response.data as Map<String, dynamic>);
-      debugPrint('[ProfileRemoteDataSource] Parsed accountType: ${model.accountType}');
+      debugPrint(
+        '[ProfileRemoteDataSource] Response ${response.statusCode}: ${response.data}',
+      );
+      final model = ProfileModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+      debugPrint(
+        '[ProfileRemoteDataSource] Parsed accountType: ${model.accountType}',
+      );
       return model;
     } on DioException catch (e) {
-      debugPrint('[ProfileRemoteDataSource] DioException ${e.response?.statusCode}: ${e.message}');
+      debugPrint(
+        '[ProfileRemoteDataSource] DioException ${e.response?.statusCode}: ${e.message}',
+      );
       throw ServerException(e.message ?? 'Server error');
     } catch (e) {
       debugPrint('[ProfileRemoteDataSource] Unexpected error: $e');
