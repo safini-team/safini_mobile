@@ -36,6 +36,6 @@ void registerParentDependencies(GetIt sl) {
     () => ParentTasksCubit(sl<ParentController>()),
   );
   sl.registerFactory<ParentFamilyCubit>(
-    () => ParentFamilyCubit(sl<ParentController>()),
+    () => ParentFamilyCubit(sl<ParentController>(), sl<ChildController>()),
   );
 }

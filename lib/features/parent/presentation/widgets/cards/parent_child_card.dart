@@ -3,9 +3,10 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 class ParentChildCard extends StatelessWidget {
-  final String name;
+  final String nickname;
   final int age;
   final String gender;
+  final int level;
   final int coins;
   final int quests;
   final int streak;
@@ -14,9 +15,10 @@ class ParentChildCard extends StatelessWidget {
 
   const ParentChildCard({
     super.key,
-    required this.name,
+    required this.nickname,
     required this.age,
     required this.gender,
+    required this.level,
     required this.coins,
     required this.quests,
     required this.streak,
@@ -74,7 +76,7 @@ class ParentChildCard extends StatelessWidget {
                         border: Border.all(color: context.colorScheme.onPrimary, width: 2),
                       ),
                       child: Text(
-                        'Lv.5',
+                        'Lv.$level',
                         style: context.textTheme.labelSmall?.copyWith(
                           color: context.colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
@@ -91,7 +93,7 @@ class ParentChildCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      nickname,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textTheme.titleLarge?.copyWith(

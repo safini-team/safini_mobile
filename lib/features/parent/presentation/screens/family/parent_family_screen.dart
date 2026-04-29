@@ -85,12 +85,13 @@ class ParentFamilyScreen extends StatelessWidget {
 
                             ...state.children.map(
                               (child) => ParentChildCard(
-                                name: child.name,
-                                age: 10,
-                                gender: "Boy",
-                                coins: 150,
-                                quests: 1,
-                                streak: 5,
+                                nickname: child.nickname,
+                                age: child.age,
+                                gender: child.gender ?? "Boy",
+                                level: child.level,
+                                coins: child.coinsBalance,
+                                quests: child.tasksCompletedCount,
+                                streak: child.currentStreakDays,
                                 onViewAsKid: () {},
                                 onEdit: () {},
                               ),

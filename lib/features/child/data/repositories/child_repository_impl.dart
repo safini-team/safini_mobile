@@ -1,12 +1,31 @@
+import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
+import 'package:safini/core/error/exceptions.dart';
+import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/child/data/datasources/child_remote_datasource.dart';
 import 'package:safini/features/child/domain/models/child_model.dart';
 import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
 
 class ChildRepositoryImpl implements IChildRepository {
+  final ChildRemoteDataSource _remote;
+
+  ChildRepositoryImpl(this._remote);
+
   @override
-  Future<List<ChildModel>> fetchChildren() async {
-    return const [
-      ChildModel(id: 'child_1', name: 'Child One'),
-      ChildModel(id: 'child_2', name: 'Child Two'),
-    ];
+  Future<Either<Failure, List<ChildModel>>> fetchChildren() async {
+    debugPrint('[ChildRepositoryImpl] fetchChildren called');
+    try {
+      final children = await _remote.fetchChildren();
+      debugPrint(
+        '[ChildRepositoryImpl] Fetched ${children.length} children',
+      );
+      return Right(children);
+    } on ServerException catch (e) {
+      debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      debugPrint('[ChildRepositoryImpl] Unexpected error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
   }
 }
