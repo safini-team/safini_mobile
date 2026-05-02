@@ -42,4 +42,27 @@ class ChildRemoteDataSource {
       throw ServerException(e.toString());
     }
   }
+
+  /// Fetches a specific child by ID.
+  Future<ChildModel> fetchChild(String childId) async {
+    final path = ApiConst.childById(childId);
+    debugPrint('[ChildRemoteDataSource] GET ${ApiConst.baseUrl}$path');
+    try {
+      final response = await _dio.get(path);
+      debugPrint(
+        '[ChildRemoteDataSource] Response ${response.statusCode}: ${response.data}',
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      return ChildDto.fromJson(data).toDomain();
+    } on DioException catch (e) {
+      debugPrint(
+        '[ChildRemoteDataSource] DioException ${e.response?.statusCode}: ${e.message}',
+      );
+      throw ServerException(e.message ?? 'Server error');
+    } catch (e) {
+      debugPrint('[ChildRemoteDataSource] Unexpected error: $e');
+      throw ServerException(e.toString());
+    }
+  }
 }

@@ -43,6 +43,8 @@ class ProfileState {
     bool? isEditing,
     int? questsDone,
     int? dayStreak,
+    int? level,
+    double? xpProgress,
     String? equippedFaceEmoji,
     String? equippedBadgeEmoji,
   }) {
@@ -52,9 +54,9 @@ class ProfileState {
       isEditing: isEditing ?? this.isEditing,
       questsDone: questsDone ?? this.questsDone,
       dayStreak: dayStreak ?? this.dayStreak,
-      level: level,
-      levelLabel: levelLabel,
-      xpProgress: xpProgress,
+      level: level ?? this.level,
+      levelLabel: level != null ? 'Level $level Hero' : this.levelLabel,
+      xpProgress: xpProgress ?? this.xpProgress,
       equippedFaceEmoji: equippedFaceEmoji ?? this.equippedFaceEmoji,
       equippedBadgeEmoji: equippedBadgeEmoji ?? this.equippedBadgeEmoji,
     );

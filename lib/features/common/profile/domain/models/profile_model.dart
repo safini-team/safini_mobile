@@ -7,6 +7,7 @@ class ProfileModel {
   final String? timezone;
   final String? accountType;
   final String? familyId;
+  final String? childId;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -19,6 +20,7 @@ class ProfileModel {
     this.timezone,
     this.accountType,
     this.familyId,
+    this.childId,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -33,6 +35,7 @@ class ProfileModel {
       timezone: json['timezone'] as String?,
       accountType: json['account_type'] as String?,
       familyId: json['family_id'] as String?,
+      childId: json['child_id'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -48,6 +51,7 @@ class ProfileModel {
       'timezone': timezone,
       'account_type': accountType,
       'family_id': familyId,
+      'child_id': childId,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

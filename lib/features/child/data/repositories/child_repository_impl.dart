@@ -28,4 +28,19 @@ class ChildRepositoryImpl implements IChildRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+  
+  @override
+  Future<Either<Failure, ChildModel>> fetchChild(String childId) async {
+    debugPrint('[ChildRepositoryImpl] fetchChild called for $childId');
+    try {
+      final child = await _remote.fetchChild(childId);
+      return Right(child);
+    } on ServerException catch (e) {
+      debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      debugPrint('[ChildRepositoryImpl] Unexpected error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }
