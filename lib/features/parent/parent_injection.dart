@@ -10,6 +10,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/child/domain/controllers/child_controller.dart';
 
 void registerParentDependencies(GetIt sl) {
   sl.registerLazySingleton<ParentRemoteDataSource>(
@@ -36,6 +37,6 @@ void registerParentDependencies(GetIt sl) {
     () => ParentTasksCubit(sl<ParentController>()),
   );
   sl.registerFactory<ParentFamilyCubit>(
-    () => ParentFamilyCubit(sl<ParentController>()),
+    () => ParentFamilyCubit(sl<ParentController>(), sl<ChildController>()),
   );
 }
