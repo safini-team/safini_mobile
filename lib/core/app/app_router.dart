@@ -6,6 +6,7 @@ import 'package:safini/features/common/auth/presentation/pages/family_decision_p
 import 'package:safini/features/common/auth/presentation/pages/login_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/join_family_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/role_selection_page.dart';
+import 'package:safini/features/common/profile/presentation/pages/edit_profile_page.dart';
 import 'package:safini/features/common/splash/splash_screen.dart';
 import 'package:safini/features/child/presentation/screens/main/child_main_screen.dart';
 import 'package:safini/features/child/presentation/screens/avatar/child_avatar_customizer_screen.dart';
@@ -48,6 +49,11 @@ class AppRouter {
         name: 'joinFamily',
         path: '/join-family',
         builder: (context, data) => const JoinFamilyPage(),
+      ),
+      NamedRouteDef(
+        name: 'editProfile',
+        path: '/edit-profile',
+        builder: (context, data) => const EditProfilePage(),
       ),
       NamedRouteDef(
         name: 'childHome',

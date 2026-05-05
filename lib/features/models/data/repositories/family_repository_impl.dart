@@ -9,6 +9,7 @@ import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
+import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -33,12 +34,15 @@ class FamilyRepositoryImpl implements IFamilyRepository {
   Future<Either<Failure, FamilyModel>> joinFamily(String inviteCode) {
     return _postFamily(
       '/v1/families/join',
-      payload: {
-        'invite_code': inviteCode,
-        'code': inviteCode,
-      },
+      payload: {'invite_code': inviteCode},
       fallbackName: 'Family',
       fallbackTimezone: 'UTC',
+      statusMessages: {
+        401: 'Session expired. Please log in again.',
+        409: 'This code is invalid or the family already has two parents.',
+        422: 'Invalid invite code format. Must be 4-16 characters.',
+        503: 'Service unavailable. Please try again later.',
+      },
     );
   }
 
@@ -47,11 +51,33 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     return _fetchFamily('/v1/families/current');
   }
 
+  @override
+  Future<Either<Failure, ParentInviteCodeModel>>
+  createParentInviteCode() async {
+    final response = await _request(
+      () => _client.post(
+        _uri('/v1/families/current/parent-invite-code'),
+        headers: _headers(),
+      ),
+      statusMessages: {
+        401: 'Session expired. Please log in again.',
+        409: 'A conflict occurred. Your family may already have two parents.',
+        503: 'Service unavailable. Please try again later.',
+      },
+    );
+
+    return response.fold(
+      (failure) => Left(failure),
+      (body) => Right(ParentInviteCodeModel.fromJson(body)),
+    );
+  }
+
   Future<Either<Failure, FamilyModel>> _postFamily(
     String path, {
     required Map<String, dynamic> payload,
     required String fallbackName,
     required String fallbackTimezone,
+    Map<int, String>? statusMessages,
   }) async {
     final response = await _request(
       () => _client.post(
@@ -59,6 +85,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
         headers: _headers(),
         body: jsonEncode(payload),
       ),
+      statusMessages: statusMessages,
     );
 
     return response.fold(
@@ -75,10 +102,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
 
   Future<Either<Failure, FamilyModel>> _fetchFamily(String path) async {
     final response = await _request(
-      () => _client.get(
-        _uri(path),
-        headers: _headers(),
-      ),
+      () => _client.get(_uri(path), headers: _headers()),
       treat404AsEmpty: true,
     );
 
@@ -97,12 +121,13 @@ class FamilyRepositoryImpl implements IFamilyRepository {
   Future<Either<Failure, Map<String, dynamic>>> _request(
     Future<http.Response> Function() request, {
     bool treat404AsEmpty = false,
+    Map<int, String>? statusMessages,
   }) async {
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken;
     if (token == null || token.isEmpty) {
       return const Left(
-        UnauthorizedFailure('Your session expired. Please sign in again.'),
+        UnauthorizedFailure('Session expired. Please log in again.'),
       );
     }
 
@@ -121,7 +146,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
 
     if (response.statusCode == 401) {
       return const Left(
-        UnauthorizedFailure('Your session expired. Please sign in again.'),
+        UnauthorizedFailure('Session expired. Please log in again.'),
       );
     }
 
@@ -130,10 +155,11 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     }
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      final message = _extractErrorMessage(
+      final defaultMessage = _extractErrorMessage(
         response.body,
         defaultMessage: 'Something went wrong. Please try again.',
       );
+      final message = statusMessages?[response.statusCode] ?? defaultMessage;
       if (response.statusCode == 400 ||
           response.statusCode == 404 ||
           response.statusCode == 409 ||
@@ -205,6 +231,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
         ownerUserId: json['ownerUserId']?.toString() ?? '',
         name: json['name']?.toString() ?? fallbackName,
         timezone: json['timezone']?.toString() ?? fallbackTimezone,
+        parents: const [],
         children: const [],
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
@@ -220,6 +247,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
         ownerUserId: familyJson['ownerUserId']?.toString() ?? '',
         name: familyJson['name']?.toString() ?? fallbackName,
         timezone: familyJson['timezone']?.toString() ?? fallbackTimezone,
+        parents: const [],
         children: const [],
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),

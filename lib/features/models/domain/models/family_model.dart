@@ -3,6 +3,7 @@ class FamilyModel {
   final String ownerUserId;
   final String name;
   final String timezone;
+  final List<ParentSummaryModel> parents;
   final List<ChildSummaryModel> children;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -12,6 +13,7 @@ class FamilyModel {
     required this.ownerUserId,
     required this.name,
     required this.timezone,
+    required this.parents,
     required this.children,
     required this.createdAt,
     required this.updatedAt,
@@ -19,25 +21,47 @@ class FamilyModel {
 
   factory FamilyModel.fromJson(Map<String, dynamic> json) {
     final childrenJson = (json['children'] ?? json['kids'] ?? json['members']);
+    final parentsJson = json['parents'];
+    final ownerUserId =
+        (json['ownerUserId'] ?? json['owner_user_id'] ?? json['owner_id'])
+            as String? ??
+        '';
     return FamilyModel(
-      id: (json['id'] ?? json['family_id'] ?? json['familyId']) as String? ?? '',
-      ownerUserId:
-          (json['ownerUserId'] ?? json['owner_user_id'] ?? json['owner_id'])
-              as String? ??
+      id:
+          (json['id'] ?? json['family_id'] ?? json['familyId']) as String? ??
           '',
+      ownerUserId: ownerUserId,
       name: (json['name'] ?? json['family_name'] ?? 'Family') as String,
       timezone: (json['timezone'] ?? 'UTC') as String,
+      parents: parentsJson is List
+          ? parentsJson
+                .whereType<Map<String, dynamic>>()
+                .map(ParentSummaryModel.fromJson)
+                .toList()
+          : (ownerUserId.isEmpty
+                ? const <ParentSummaryModel>[]
+                : <ParentSummaryModel>[
+                    ParentSummaryModel(
+                      userId: ownerUserId,
+                      email: null,
+                      displayName: 'Parent',
+                      role: 'admin',
+                      joinedAt: null,
+                    ),
+                  ]),
       children: childrenJson is List
           ? childrenJson
-              .whereType<Map<String, dynamic>>()
-              .map(ChildSummaryModel.fromJson)
-              .toList()
+                .whereType<Map<String, dynamic>>()
+                .map(ChildSummaryModel.fromJson)
+                .toList()
           : const <ChildSummaryModel>[],
-      createdAt: DateTime.tryParse(
+      createdAt:
+          DateTime.tryParse(
             (json['createdAt'] ?? json['created_at'] ?? '').toString(),
           ) ??
           DateTime.now(),
-      updatedAt: DateTime.tryParse(
+      updatedAt:
+          DateTime.tryParse(
             (json['updatedAt'] ?? json['updated_at'] ?? '').toString(),
           ) ??
           DateTime.now(),
@@ -50,9 +74,49 @@ class FamilyModel {
       'ownerUserId': ownerUserId,
       'name': name,
       'timezone': timezone,
+      'parents': parents.map((e) => e.toJson()).toList(),
       'children': children.map((e) => e.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+}
+
+class ParentSummaryModel {
+  final String userId;
+  final String? email;
+  final String displayName;
+  final String role;
+  final DateTime? joinedAt;
+
+  const ParentSummaryModel({
+    required this.userId,
+    this.email,
+    required this.displayName,
+    required this.role,
+    this.joinedAt,
+  });
+
+  factory ParentSummaryModel.fromJson(Map<String, dynamic> json) {
+    return ParentSummaryModel(
+      userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
+      email: json['email'] as String?,
+      displayName: (json['display_name'] ?? json['displayName'] ?? 'Parent')
+          .toString(),
+      role: (json['role'] ?? 'parent').toString(),
+      joinedAt: DateTime.tryParse(
+        (json['joined_at'] ?? json['joinedAt'] ?? '').toString(),
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': userId,
+      'email': email,
+      'display_name': displayName,
+      'role': role,
+      'joined_at': joinedAt?.toIso8601String(),
     };
   }
 }
@@ -78,15 +142,17 @@ class ChildSummaryModel {
     final rawLevel = json['level'] ?? json['rank'];
     return ChildSummaryModel(
       id: (json['id'] ?? json['child_id']) as String? ?? '',
-      nickname: (json['nickname'] ?? json['name'] ?? json['display_name'])
-          as String? ??
+      nickname:
+          (json['nickname'] ?? json['name'] ?? json['display_name'])
+              as String? ??
           'Child',
       age: rawAge is int ? rawAge : int.tryParse(rawAge?.toString() ?? '') ?? 0,
       coinsBalance: rawCoins is int
           ? rawCoins
-          : int.tryParse(rawCoins?.toString() ?? '') ??
-              0,
-      level: rawLevel is int ? rawLevel : int.tryParse(rawLevel?.toString() ?? '') ?? 0,
+          : int.tryParse(rawCoins?.toString() ?? '') ?? 0,
+      level: rawLevel is int
+          ? rawLevel
+          : int.tryParse(rawLevel?.toString() ?? '') ?? 0,
     );
   }
 

@@ -1,15 +1,11 @@
 import 'package:safini/features/models/domain/models/family_model.dart';
 
-enum ParentFamilyStage {
-  decision,
-  create,
-  join,
-  dashboard,
-}
+enum ParentFamilyStage { decision, create, join, dashboard }
 
 class ParentFamilyState {
   final ParentFamilyStage stage;
   final bool isLoading;
+  final bool isParentInviteCodeLoading;
   final FamilyModel? family;
   final String? errorMessage;
   final String? joinCodeError;
@@ -19,6 +15,7 @@ class ParentFamilyState {
   const ParentFamilyState({
     required this.stage,
     required this.isLoading,
+    this.isParentInviteCodeLoading = false,
     this.family,
     this.errorMessage,
     this.joinCodeError,
@@ -26,10 +23,16 @@ class ParentFamilyState {
     this.isUnauthorized = false,
   });
 
-  factory ParentFamilyState.initial({FamilyModel? family, ParentFamilyStage? stage}) {
+  factory ParentFamilyState.initial({
+    FamilyModel? family,
+    ParentFamilyStage? stage,
+  }) {
     return ParentFamilyState(
-      stage: family != null ? ParentFamilyStage.dashboard : stage ?? ParentFamilyStage.decision,
+      stage: family != null
+          ? ParentFamilyStage.dashboard
+          : stage ?? ParentFamilyStage.decision,
       isLoading: false,
+      isParentInviteCodeLoading: false,
       family: family,
     );
   }
@@ -43,6 +46,7 @@ class ParentFamilyState {
   ParentFamilyState copyWith({
     ParentFamilyStage? stage,
     bool? isLoading,
+    bool? isParentInviteCodeLoading,
     FamilyModel? family,
     String? errorMessage,
     String? joinCodeError,
@@ -54,7 +58,11 @@ class ParentFamilyState {
     return ParentFamilyState(
       stage: stage ?? this.stage,
       isLoading: isLoading ?? this.isLoading,
-      family: clearFamily ? null : (keepFamily ? this.family : family ?? this.family),
+      isParentInviteCodeLoading:
+          isParentInviteCodeLoading ?? this.isParentInviteCodeLoading,
+      family: clearFamily
+          ? null
+          : (keepFamily ? this.family : family ?? this.family),
       errorMessage: errorMessage,
       joinCodeError: joinCodeError,
       canRetry: canRetry ?? this.canRetry,

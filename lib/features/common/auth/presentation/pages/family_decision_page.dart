@@ -29,7 +29,15 @@ class _FamilyDecisionPageState extends State<FamilyDecisionPage> {
                 _initialized = true;
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) {
-                    context.read<ParentFamilyCubit>().markDecision();
+                    final familyCubit = context.read<ParentFamilyCubit>();
+                    final familyState = familyCubit.state;
+
+                    if (familyState.hasFamily || familyState.isDashboard) {
+                      context.router.replace(const NamedRoute('parentHome'));
+                      return;
+                    }
+
+                    familyCubit.markDecision();
                   }
                 });
               }
@@ -76,7 +84,9 @@ class _FamilyDecisionPageState extends State<FamilyDecisionPage> {
                             s.familyDecisionSubtitle,
                             textAlign: TextAlign.center,
                             style: context.textTheme.bodyLarge?.copyWith(
-                              color: context.colorScheme.onPrimary.withValues(alpha: 0.85),
+                              color: context.colorScheme.onPrimary.withValues(
+                                alpha: 0.85,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 28),
@@ -92,9 +102,9 @@ class _FamilyDecisionPageState extends State<FamilyDecisionPage> {
                           const SizedBox(height: 16),
                           _ActionCard(
                             icon: Icons.group_add_rounded,
-                            title: 'Join a family',
+                            title: 'Join Family as Parent',
                             subtitle:
-                                'Use an invite code to join an existing family.',
+                                'Use a parent invite code to join an existing family.',
                             onTap: () => context.router.push(
                               const NamedRoute('joinFamily'),
                             ),
@@ -104,7 +114,9 @@ class _FamilyDecisionPageState extends State<FamilyDecisionPage> {
                             s.footerText,
                             textAlign: TextAlign.center,
                             style: context.textTheme.bodySmall?.copyWith(
-                              color: context.colorScheme.onPrimary.withValues(alpha: 0.65),
+                              color: context.colorScheme.onPrimary.withValues(
+                                alpha: 0.65,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
