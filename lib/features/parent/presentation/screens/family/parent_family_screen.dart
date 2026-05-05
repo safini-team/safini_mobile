@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -130,6 +131,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             onCreateParentInviteCode: state.isParentInviteCodeLoading
                 ? null
                 : _createParentInviteCode,
+            onCreateChildInviteCode: () => _openChildInvitePicker(family),
           ),
           const SizedBox(height: 24),
           Text(
@@ -144,7 +146,14 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
           if (family.children.isEmpty)
             const _EmptyChildrenState()
           else
-            ...family.children.map((child) => _ChildSummaryCard(child: child)),
+            ...family.children.map(
+              (child) => _ChildSummaryCard(
+                child: child,
+                isIssuingInviteCodeForChild:
+                    state.issuingChildInviteCodeForId == child.id,
+                onCreateInviteCode: () => _createChildInviteCode(child.id),
+              ),
+            ),
           const SizedBox(height: 24),
           if (state.errorMessage != null)
             _InlineErrorBanner(
@@ -184,6 +193,69 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     await showDialog<void>(
       context: context,
       builder: (context) => _ParentInviteCodeDialog(inviteCode: inviteCode),
+    );
+  }
+
+  Future<void> _createChildInviteCode(String childId) async {
+    final cubit = context.read<ParentFamilyCubit>();
+    final inviteCode = await cubit.createChildInviteCode(childId);
+    if (!mounted) return;
+    if (inviteCode == null) {
+      final message = cubit.state.errorMessage;
+      if (message != null && message.isNotEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (context) => _ChildInviteCodeDialog(inviteCode: inviteCode),
+    );
+  }
+
+  Future<void> _openChildInvitePicker(FamilyModel family) async {
+    if (family.children.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Add a child first to issue an invite code.'),
+        ),
+      );
+      return;
+    }
+
+    await showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              const ListTile(
+                title: Text(
+                  'Select Child',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              ...family.children.map(
+                (child) => ListTile(
+                  title: Text(child.nickname),
+                  subtitle: Text('ID: ${child.id}'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _createChildInviteCode(child.id);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -334,11 +406,13 @@ class _ParentManagementCard extends StatelessWidget {
   final FamilyModel family;
   final bool isLoading;
   final VoidCallback? onCreateParentInviteCode;
+  final VoidCallback onCreateChildInviteCode;
 
   const _ParentManagementCard({
     required this.family,
     required this.isLoading,
     required this.onCreateParentInviteCode,
+    required this.onCreateChildInviteCode,
   });
 
   @override
@@ -390,6 +464,14 @@ class _ParentManagementCard extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Create Parent Invite Code'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: onCreateChildInviteCode,
+              child: const Text('Create Child Invite Code'),
             ),
           ),
         ],
@@ -497,8 +579,14 @@ class _ParentListTile extends StatelessWidget {
 
 class _ChildSummaryCard extends StatelessWidget {
   final ChildSummaryModel child;
+  final bool isIssuingInviteCodeForChild;
+  final VoidCallback onCreateInviteCode;
 
-  const _ChildSummaryCard({required this.child});
+  const _ChildSummaryCard({
+    required this.child,
+    required this.isIssuingInviteCodeForChild,
+    required this.onCreateInviteCode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -509,43 +597,122 @@ class _ChildSummaryCard extends StatelessWidget {
         color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 24,
-            child: Text(
-              child.nickname.isNotEmpty ? child.nickname[0].toUpperCase() : 'C',
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  child.nickname,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text('Age: ${child.age}', style: context.textTheme.bodySmall),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
             children: [
-              Text('Coins', style: context.textTheme.bodySmall),
-              Text(
-                child.coinsBalance.toString(),
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+              CircleAvatar(
+                radius: 24,
+                child: Text(
+                  child.nickname.isNotEmpty
+                      ? child.nickname[0].toUpperCase()
+                      : 'C',
                 ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      child.nickname,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Age: ${child.age}',
+                      style: context.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('Coins', style: context.textTheme.bodySmall),
+                  Text(
+                    child.coinsBalance.toString(),
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: isIssuingInviteCodeForChild
+                  ? null
+                  : onCreateInviteCode,
+              child: isIssuingInviteCodeForChild
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Create Child Invite Code'),
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _ChildInviteCodeDialog extends StatelessWidget {
+  final ChildInviteCodeModel inviteCode;
+
+  const _ChildInviteCodeDialog({required this.inviteCode});
+
+  @override
+  Widget build(BuildContext context) {
+    final expiryLocal = inviteCode.inviteCodeExpiresAt.toLocal();
+    final date = MaterialLocalizations.of(context).formatFullDate(expiryLocal);
+    final time = MaterialLocalizations.of(
+      context,
+    ).formatTimeOfDay(TimeOfDay.fromDateTime(expiryLocal));
+
+    return AlertDialog(
+      title: const Text('Child Invite Code'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: SelectableText(
+              inviteCode.inviteCode,
+              style: context.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.6,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('Expires: $date, $time'),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: inviteCode.inviteCode));
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Invite code copied')),
+              );
+            }
+          },
+          child: const Text('Copy'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/controllers/family_controller.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
@@ -243,6 +244,50 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
         emit(
           state.copyWith(
             isParentInviteCodeLoading: false,
+            errorMessage: null,
+            canRetry: false,
+            keepFamily: true,
+          ),
+        );
+      },
+    );
+    return inviteCode;
+  }
+
+  Future<ChildInviteCodeModel?> createChildInviteCode(String childId) async {
+    if (childId.trim().isEmpty) return null;
+
+    emit(
+      state.copyWith(
+        issuingChildInviteCodeForId: childId,
+        errorMessage: null,
+        canRetry: false,
+        keepFamily: true,
+      ),
+    );
+
+    final result = await _controller.createChildInviteCode(childId);
+    ChildInviteCodeModel? inviteCode;
+    await result.fold(
+      (failure) async {
+        if (failure is UnauthorizedFailure) {
+          await _signOutAndRedirect(failure.message);
+          return;
+        }
+        emit(
+          state.copyWith(
+            issuingChildInviteCodeForId: null,
+            errorMessage: failure.message,
+            canRetry: false,
+            keepFamily: true,
+          ),
+        );
+      },
+      (code) async {
+        inviteCode = code;
+        emit(
+          state.copyWith(
+            issuingChildInviteCodeForId: null,
             errorMessage: null,
             canRetry: false,
             keepFamily: true,

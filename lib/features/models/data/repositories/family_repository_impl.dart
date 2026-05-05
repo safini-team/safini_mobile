@@ -8,6 +8,7 @@ import 'package:injectable/injectable.dart';
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
@@ -69,6 +70,28 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     return response.fold(
       (failure) => Left(failure),
       (body) => Right(ParentInviteCodeModel.fromJson(body)),
+    );
+  }
+
+  @override
+  Future<Either<Failure, ChildInviteCodeModel>> createChildInviteCode(
+    String childId,
+  ) async {
+    final response = await _request(
+      () => _client.post(
+        _uri('/v1/children/$childId/invite-code'),
+        headers: _headers(),
+      ),
+      statusMessages: {
+        401: 'Session expired. Please log in again.',
+        422: 'Invalid child profile or request.',
+        503: 'Service unavailable. Please try again later.',
+      },
+    );
+
+    return response.fold(
+      (failure) => Left(failure),
+      (body) => Right(ChildInviteCodeModel.fromJson(body)),
     );
   }
 
