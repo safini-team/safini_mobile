@@ -1,12 +1,66 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/features/child/domain/controllers/child_controller.dart';
+import 'package:safini/features/child/domain/models/child_model.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_model.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
+import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 
 // ─── Profile Cubit ────────────────────────────────────────────────────────────
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit() : super(const ProfileState.initial());
+  final ChildController _childController;
+  final ProfileRepository _profileRepository;
+
+  ProfileCubit(this._childController, this._profileRepository)
+      : super(const ProfileState.initial());
+
+  Future<void> loadProfile() async {
+    // First get the profile to find the childId
+    final profileResult = await _profileRepository.fetchMe();
+
+    await profileResult.fold(
+      (failure) async {
+        // If profile fetch fails, we can't find childId, but let's try fetchChildren as fallback
+        await _loadFirstChildFallback();
+      },
+      (profile) async {
+        if (profile.childId != null) {
+          final childResult =
+              await _childController.fetchChild(profile.childId!);
+          childResult.fold(
+            (failure) => _loadFirstChildFallback(),
+            (child) => _updateFromChildModel(child),
+          );
+        } else {
+          // If no childId, try to get the first child from current family
+          await _loadFirstChildFallback();
+        }
+      },
+    );
+  }
+
+  Future<void> _loadFirstChildFallback() async {
+    final childrenResult = await _childController.fetchChildren();
+    childrenResult.fold(
+      (failure) => null, // Keep mock data if everything fails
+      (children) {
+        if (children.isNotEmpty) {
+          _updateFromChildModel(children.first);
+        }
+      },
+    );
+  }
+
+  void _updateFromChildModel(ChildModel child) {
+    emit(state.copyWith(
+      name: child.nickname,
+      questsDone: child.tasksCompletedCount,
+      dayStreak: child.currentStreakDays,
+      level: child.level,
+      xpProgress: (child.xp % 1000) / 1000.0, // Example: 1000 XP per level
+    ));
+  }
 
   void startEditing() =>
       emit(state.copyWith(isEditing: true, editingName: state.name));

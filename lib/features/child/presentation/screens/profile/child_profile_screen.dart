@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
@@ -24,7 +25,7 @@ class ChildProfileScreen extends StatelessWidget {
           context: context,
           locale: locale,
           child: BlocProvider(
-            create: (_) => ProfileCubit(),
+            create: (_) => getIt<ProfileCubit>()..loadProfile(),
             child: const _ProfileView(),
           ),
         );
