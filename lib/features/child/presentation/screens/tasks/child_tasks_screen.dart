@@ -90,7 +90,7 @@ class _TasksHeader extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      const StoreCoinBadge(),
+                      const Flexible(child: StoreCoinBadge()),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),

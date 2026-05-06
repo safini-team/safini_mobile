@@ -222,5 +222,12 @@
   "loginBack": "Назад",
   "supabaseConfigMissing": "Не заданы URL или anon-ключ Supabase. Укажите SUPABASE_URL и SUPABASE_ANON_KEY при запуске.",
   "googleClientIdMissing": "Не задан Google Web Client ID. Укажите GOOGLE_WEB_CLIENT_ID (OAuth Web в Google Cloud).",
-  "signedInSuccess": "Вход выполнен"
+  "signedInSuccess": "Вход выполнен",
+  "chooseYourRole": "Выберите роль",
+  "roleSelectionSubtitle": "Как вы будете использовать Safini?",
+  "setupYourFamily": "Настройте семью",
+  "familyDecisionSubtitle": "Создайте семейное пространство и пригласите детей зарабатывать экранное время.",
+  "signInError": "Не удалось войти. Попробуйте ещё раз.",
+  "networkError": "Ошибка сети. Проверьте подключение.",
+  "retry": "Повторить"
 }

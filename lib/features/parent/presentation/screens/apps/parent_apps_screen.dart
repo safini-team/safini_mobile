@@ -137,26 +137,30 @@ class ParentAppsScreen extends StatelessWidget {
                               ),
                               borderRadius: BorderRadius.circular(24),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  color: context.colorScheme.primary,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  s.addAnotherApp,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: context.textTheme.titleMedium
-                                      ?.copyWith(
-                                        color: const Color(0xFF8100D1),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ],
+                            child: Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    color: context.colorScheme.primary,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      s.addAnotherApp,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: context.textTheme.titleMedium
+                                          ?.copyWith(
+                                            color: const Color(0xFF8100D1),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(height: 60),

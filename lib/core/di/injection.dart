@@ -1,14 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/app/app_router.dart';
-import 'package:safini/core/network/dio_network.dart';
 import 'package:safini/features/common/common_injection.dart';
 import 'package:safini/features/parent/parent_injection.dart';
-import 'package:safini/features/child/child_injection.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -18,6 +14,7 @@ bool _sharedPreferencesPluginAvailable = false;
 bool get isSharedPreferencesPluginAvailable =>
     _sharedPreferencesPluginAvailable;
 
+/// Awaits [SharedPreferences.getInstance], registers it when available, then registers all dependencies.
 Future<void> configureDependencies() async {
   try {
     final preferences = await SharedPreferences.getInstance();
@@ -34,29 +31,10 @@ Future<void> configureDependencies() async {
     );
   }
 
-  if (!getIt.isRegistered<SupabaseClient>()) {
-    getIt.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
-  }
-
   if (!getIt.isRegistered<AppRouter>()) {
     getIt.registerLazySingleton<AppRouter>(AppRouter.new);
   }
 
-  await _dioInjection();
   registerCommonDependencies(getIt);
   registerParentDependencies(getIt);
-  registerChildDependencies(getIt);
-}
-
-Future<void> _dioInjection() async {
-  DioNetwork.initDio();
-  getIt.registerLazySingleton<Dio>(() => DioNetwork.appAPI);
-  getIt<Dio>().interceptors.add(
-    LogInterceptor(
-      responseBody: true,
-      requestBody: true,
-      requestHeader: true,
-      responseHeader: false,
-    ),
-  );
 }

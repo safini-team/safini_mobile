@@ -5,15 +5,15 @@ This project uses Flutter Intl-generated localization files with English, Russia
 ## Source of truth
 
 - Translation strings live in:
-  - `lib/l10n/intl_en.arb`
-  - `lib/l10n/intl_ru.arb`
-  - `lib/l10n/intl_kk.arb`
+  - `lib/core/translation/l10n/intl_en.arb`
+  - `lib/core/translation/l10n/intl_ru.arb`
+  - `lib/core/translation/l10n/intl_kk.arb`
 - Generated accessors live in:
-  - `lib/generated/l10n.dart`
+  - `lib/core/translation/generated/l10n.dart`
 - Generated lookup files live in:
-  - `lib/generated/intl/messages_en.dart`
-  - `lib/generated/intl/messages_ru.dart`
-  - `lib/generated/intl/messages_kk.dart`
+  - `lib/core/translation/generated/intl/messages_en.dart`
+  - `lib/core/translation/generated/intl/messages_ru.dart`
+  - `lib/core/translation/generated/intl/messages_kk.dart`
 
 ## Supported locales
 
@@ -29,7 +29,7 @@ Locale selection is initialized through `lib/core/app/locale_cubit.dart`, and th
 
 1. Add or update the key in all locale ARB files (`intl_en`, `intl_ru`, `intl_kk`).
 2. Include placeholders in all locales if the string needs dynamic values.
-3. Regenerate the Flutter Intl output so `lib/generated/l10n.dart` and the message lookup files stay in sync.
+3. Regenerate the Flutter Intl output so `lib/core/translation/generated/l10n.dart` and the message lookup files stay in sync.
 4. Use the generated `S` class in widgets, for example:
    - `S.of(context).appLimits`
    - `S.of(context).childProgressTitle(name)`
