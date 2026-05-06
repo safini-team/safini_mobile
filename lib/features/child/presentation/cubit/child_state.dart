@@ -14,9 +14,9 @@ class ChildState {
   });
 
   const ChildState.initial()
-      : status = ChildStatus.initial,
-        children = const [],
-        errorMessage = null;
+    : status = ChildStatus.initial,
+      children = const [],
+      errorMessage = null;
 
   ChildState copyWith({
     ChildStatus? status,
