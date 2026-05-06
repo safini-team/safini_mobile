@@ -221,5 +221,12 @@
   "loginBack": "Артқа",
   "supabaseConfigMissing": "Supabase URL немесе anon key жоқ. Қосымшаны іске қосқанда SUPABASE_URL және SUPABASE_ANON_KEY орнатыңыз",
   "googleClientIdMissing": "Google Web Client ID жоқ. GOOGLE_WEB_CLIENT_ID орнатыңыз (Google Cloud OAuth Web client)",
-  "signedInSuccess": "Сәтті кірдіңіз"
+  "signedInSuccess": "Сәтті кірдіңіз",
+  "chooseYourRole": "Рөліңізді таңдаңыз",
+  "roleSelectionSubtitle": "Safini-ді қалай қолданасыз?",
+  "setupYourFamily": "Отбасыңызды орнатыңыз",
+  "familyDecisionSubtitle": "Отбасылық кеңістік жасаңыз және балаларыңызды экран уақытын табуға шақырыңыз.",
+  "signInError": "Кіру сәтсіз. Қайта байқап көріңіз.",
+  "networkError": "Желі қатесі. Байланысыңызды тексеріңіз.",
+  "retry": "Қайталау"
 }

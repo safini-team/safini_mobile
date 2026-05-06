@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
-import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
+import 'package:safini/features/models/domain/models/family_model.dart';
+import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
-import 'package:safini/features/parent/presentation/widgets/cards/parent_child_card.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
-class ParentFamilyScreen extends StatelessWidget {
+class ParentFamilyScreen extends StatefulWidget {
   const ParentFamilyScreen({super.key});
+
+  @override
+  State<ParentFamilyScreen> createState() => _ParentFamilyScreenState();
+}
+
+class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
+  bool _refreshed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,238 +33,241 @@ class ParentFamilyScreen extends StatelessWidget {
             builder: (context) {
               final s = S.of(context);
 
-              return BlocProvider(
-                create: (context) =>
-                    getIt<ParentFamilyCubit>()..loadFamilyData(),
-                child: Scaffold(
-                  backgroundColor: context.colorScheme.surface,
+              if (!_refreshed) {
+                _refreshed = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    final cubit = context.read<ParentFamilyCubit>();
+                    if (cubit.state.hasFamily) {
+                      cubit.loadCurrentFamily(refresh: true);
+                    }
+                  }
+                });
+              }
 
-                  appBar: AppBar(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    title: Text(
-                      s.family,
-                      style: context.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+              return BlocBuilder<ParentFamilyCubit, ParentFamilyState>(
+                builder: (context, state) {
+                  return Scaffold(
+                    backgroundColor: context.colorScheme.surface,
+                    appBar: AppBar(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      title: Text(
+                        state.family?.name ?? s.family,
+                        style: context.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.language, color: Colors.white),
-                        onPressed: () => _showLanguageDialog(context),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.logout, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ],
-                    flexibleSpace: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            context.colorScheme.primary.withValues(alpha: 0.8),
-                            context.colorScheme.primary,
-                          ],
+                      actions: [
+                        IconButton(
+                          icon: const Icon(Icons.language, color: Colors.white),
+                          onPressed: () => _showLanguageDialog(context),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.logout, color: Colors.white),
+                          onPressed: () =>
+                              context.read<AuthSessionCubit>().signOut(),
+                        ),
+                      ],
+                      flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              context.colorScheme.primary.withValues(
+                                alpha: 0.8,
+                              ),
+                              context.colorScheme.primary,
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-
-                  body: BlocBuilder<ParentFamilyCubit, ParentFamilyState>(
-                    builder: (context, state) {
-                      if (state is ParentFamilyLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      if (state is ParentFamilyLoaded) {
-                        return ListView(
-                          padding: const EdgeInsets.all(20),
-                          children: [
-                            // ── Children ─────────────────────
-                            Text(
-                              s.yourChildren,
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: Colors.grey[600],
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            ...state.children.map(
-                              (child) => ParentChildCard(
-                                nickname: child.nickname,
-                                age: child.age,
-                                gender: child.gender ?? "Boy",
-                                level: child.level,
-                                coins: child.coinsBalance,
-                                quests: child.tasksCompletedCount,
-                                streak: child.currentStreakDays,
-                                onViewAsKid: () {},
-                                onEdit: () {},
-                              ),
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // ── Language ─────────────────────
-                            _buildLanguageTile(context, s),
-
-                            const SizedBox(height: 16),
-
-                            // ── Add Child ─────────────────────
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: context.colorScheme.surface,
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: context.infoColor
-                                          .withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: context.infoColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          s.addAnotherChild,
-                                          style: context.textTheme.titleMedium
-                                              ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          s.setUpANewProfile,
-                                          style: context.textTheme.bodySmall
-                                              ?.copyWith(
-                                            color: context.colorScheme.onSurface
-                                                .withValues(alpha: 0.6),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.chevron_right,
-                                    color: context.colorScheme.onSurface
-                                        .withValues(alpha: 0.4),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // ── Parent Account ─────────────────────
-                            Text(
-                              s.parentAccount,
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: Colors.grey[600],
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: context.colorScheme.surface,
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              child: Row(
-                                children: [
-                                  const CircleAvatar(
-                                    radius: 24,
-                                    child: Icon(Icons.person),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          state.parent.name,
-                                          style: context.textTheme.titleMedium
-                                              ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          s.familyAdmin,
-                                          style: context.textTheme.bodySmall
-                                              ?.copyWith(
-                                            color: context.colorScheme.onSurface
-                                                .withValues(alpha: 0.6),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: context.colorScheme.primary
-                                          .withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      s.admin,
-                                      style: TextStyle(
-                                        color: context.colorScheme.primary,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // ── Tips ─────────────────────
-                            _buildTipsSection(context, s),
-
-                            const SizedBox(height: 24),
-
-                            const _LogoutButton(),
-
-                            const SizedBox(height: 100),
-                          ],
-                        );
-                      }
-
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ),
+                    body: _buildBody(context, state, s),
+                  );
+                },
               );
             },
           ),
         );
       },
     );
+  }
+
+  Widget _buildBody(BuildContext context, ParentFamilyState state, S s) {
+    if (state.isLoading && state.family == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.errorMessage != null && state.family == null) {
+      return _ErrorState(
+        message: state.errorMessage!,
+        canRetry: state.canRetry,
+        onRetry: () =>
+            context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true),
+        onCreate: () => context.read<ParentFamilyCubit>().markCreateFlow(),
+        onJoin: () => context.read<ParentFamilyCubit>().markJoinFlow(),
+      );
+    }
+
+    final family = state.family;
+    if (family == null) {
+      return _EmptyState(
+        onCreate: () => context.read<ParentFamilyCubit>().markCreateFlow(),
+        onJoin: () => context.read<ParentFamilyCubit>().markJoinFlow(),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () =>
+          context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(20),
+        children: [
+          _ParentManagementCard(
+            family: family,
+            isLoading: state.isParentInviteCodeLoading,
+            onCreateParentInviteCode: state.isParentInviteCodeLoading
+                ? null
+                : _createParentInviteCode,
+            onCreateChildInviteCode: () => _openChildInvitePicker(family),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            s.yourChildren,
+            style: context.textTheme.labelMedium?.copyWith(
+              color: Colors.grey[600],
+              letterSpacing: 1.2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (family.children.isEmpty)
+            const _EmptyChildrenState()
+          else
+            ...family.children.map(
+              (child) => _ChildSummaryCard(
+                child: child,
+                isIssuingInviteCodeForChild:
+                    state.issuingChildInviteCodeForId == child.id,
+                onCreateInviteCode: () => _createChildInviteCode(child.id),
+              ),
+            ),
+          const SizedBox(height: 24),
+          if (state.errorMessage != null)
+            _InlineErrorBanner(
+              message: state.errorMessage!,
+              onRetry: state.canRetry
+                  ? () => context.read<ParentFamilyCubit>().loadCurrentFamily(
+                      refresh: true,
+                    )
+                  : null,
+            ),
+          const SizedBox(height: 24),
+          _buildEditProfileTile(context),
+          const SizedBox(height: 16),
+          _buildLanguageTile(context, s),
+          const SizedBox(height: 24),
+          const _LogoutButton(),
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _createParentInviteCode() async {
+    final cubit = context.read<ParentFamilyCubit>();
+    final inviteCode = await cubit.createParentInviteCode();
+    if (!mounted) return;
+    if (inviteCode == null) {
+      final message = cubit.state.errorMessage;
+      if (message != null && message.isNotEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+      return;
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => _ParentInviteCodeDialog(inviteCode: inviteCode),
+    );
+  }
+
+  Future<void> _createChildInviteCode(String childId) async {
+    final cubit = context.read<ParentFamilyCubit>();
+    final inviteCode = await cubit.createChildInviteCode(childId);
+    if (!mounted) return;
+    if (inviteCode == null) {
+      final message = cubit.state.errorMessage;
+      if (message != null && message.isNotEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (context) => _ChildInviteCodeDialog(inviteCode: inviteCode),
+    );
+  }
+
+  Future<void> _openChildInvitePicker(FamilyModel family) async {
+    if (family.children.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Add a child first to issue an invite code.'),
+        ),
+      );
+      return;
+    }
+
+    await showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              const ListTile(
+                title: Text(
+                  'Select Child',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              ...family.children.map(
+                (child) => ListTile(
+                  title: Text(child.nickname),
+                  subtitle: Text('ID: ${child.id}'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _createChildInviteCode(child.id);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _getLanguageName(String code, S s) {
+    switch (code) {
+      case 'kk':
+        return s.kazakh;
+      case 'ru':
+        return s.russian;
+      default:
+        return s.english;
+    }
   }
 
   Widget _buildLanguageTile(BuildContext context, S s) {
@@ -292,8 +306,9 @@ class ParentFamilyScreen extends StatelessWidget {
                       s,
                     ),
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colorScheme.onSurface
-                          .withValues(alpha: 0.6),
+                      color: context.colorScheme.onSurface.withValues(
+                        alpha: 0.6,
+                      ),
                     ),
                   ),
                 ],
@@ -301,8 +316,48 @@ class ParentFamilyScreen extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right,
-              color: context.colorScheme.onSurface
-                  .withValues(alpha: 0.4),
+              color: context.colorScheme.onSurface.withValues(alpha: 0.4),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEditProfileTile(BuildContext context) {
+    return InkWell(
+      onTap: () => context.router.push(const NamedRoute('editProfile')),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.edit_rounded,
+                color: context.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                'Edit Profile',
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: context.colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ],
         ),
@@ -345,30 +400,32 @@ class ParentFamilyScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  String _getLanguageName(String code, S s) {
-    switch (code) {
-      case 'kk':
-        return s.kazakh;
-      case 'ru':
-        return s.russian;
-      default:
-        return s.english;
-    }
-  }
+class _ParentManagementCard extends StatelessWidget {
+  final FamilyModel family;
+  final bool isLoading;
+  final VoidCallback? onCreateParentInviteCode;
+  final VoidCallback onCreateChildInviteCode;
 
-  Widget _buildTipsSection(BuildContext context, S s) {
-    final tips = [s.tip1, s.tip2, s.tip3, s.tip4];
+  const _ParentManagementCard({
+    required this.family,
+    required this.isLoading,
+    required this.onCreateParentInviteCode,
+    required this.onCreateChildInviteCode,
+  });
 
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.04),
-            blurRadius: 16,
+            color: context.colorScheme.shadow.withValues(alpha: 0.06),
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -376,32 +433,413 @@ class ParentFamilyScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Text("🌟", style: TextStyle(fontSize: 24)),
-              const SizedBox(width: 12),
-              Text(
-                s.tipsForParents,
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+          Text(
+            'Parents',
+            style: context.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (family.parents.isEmpty)
+            const _ParentListTile(displayName: 'Parent', role: 'admin')
+          else
+            ...family.parents.map(
+              (parent) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _ParentListTile(
+                  displayName: parent.displayName,
+                  role: parent.role,
                 ),
               ),
-            ],
-          ),
+            ),
           const SizedBox(height: 16),
-          ...tips.map(
-            (tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
-                  const Icon(Icons.circle, size: 6),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(tip)),
-                ],
-              ),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onCreateParentInviteCode,
+              child: isLoading
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Create Parent Invite Code'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: onCreateChildInviteCode,
+              child: const Text('Create Child Invite Code'),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ParentInviteCodeDialog extends StatelessWidget {
+  final ParentInviteCodeModel inviteCode;
+
+  const _ParentInviteCodeDialog({required this.inviteCode});
+
+  @override
+  Widget build(BuildContext context) {
+    final expiryLocal = inviteCode.inviteCodeExpiresAt.toLocal();
+    final date = MaterialLocalizations.of(context).formatFullDate(expiryLocal);
+    final time = MaterialLocalizations.of(
+      context,
+    ).formatTimeOfDay(TimeOfDay.fromDateTime(expiryLocal));
+
+    return AlertDialog(
+      title: const Text('Parent Invite Code'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: SelectableText(
+              inviteCode.inviteCode,
+              style: context.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.6,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('Expires: $date, $time'),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: inviteCode.inviteCode));
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Invite code copied')),
+              );
+            }
+          },
+          child: const Text('Copy'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+}
+
+class _ParentListTile extends StatelessWidget {
+  final String displayName;
+  final String role;
+
+  const _ParentListTile({required this.displayName, required this.role});
+
+  @override
+  Widget build(BuildContext context) {
+    final initials = displayName.isNotEmpty
+        ? displayName[0].toUpperCase()
+        : 'P';
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.35,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(radius: 18, child: Text(initials)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(role, style: context.textTheme.bodySmall),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChildSummaryCard extends StatelessWidget {
+  final ChildSummaryModel child;
+  final bool isIssuingInviteCodeForChild;
+  final VoidCallback onCreateInviteCode;
+
+  const _ChildSummaryCard({
+    required this.child,
+    required this.isIssuingInviteCodeForChild,
+    required this.onCreateInviteCode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 24,
+                child: Text(
+                  child.nickname.isNotEmpty
+                      ? child.nickname[0].toUpperCase()
+                      : 'C',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      child.nickname,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Age: ${child.age}',
+                      style: context.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('Coins', style: context.textTheme.bodySmall),
+                  Text(
+                    child.coinsBalance.toString(),
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: isIssuingInviteCodeForChild
+                  ? null
+                  : onCreateInviteCode,
+              child: isIssuingInviteCodeForChild
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Create Child Invite Code'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChildInviteCodeDialog extends StatelessWidget {
+  final ChildInviteCodeModel inviteCode;
+
+  const _ChildInviteCodeDialog({required this.inviteCode});
+
+  @override
+  Widget build(BuildContext context) {
+    final expiryLocal = inviteCode.inviteCodeExpiresAt.toLocal();
+    final date = MaterialLocalizations.of(context).formatFullDate(expiryLocal);
+    final time = MaterialLocalizations.of(
+      context,
+    ).formatTimeOfDay(TimeOfDay.fromDateTime(expiryLocal));
+
+    return AlertDialog(
+      title: const Text('Child Invite Code'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: SelectableText(
+              inviteCode.inviteCode,
+              style: context.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.6,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('Expires: $date, $time'),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: inviteCode.inviteCode));
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Invite code copied')),
+              );
+            }
+          },
+          child: const Text('Copy'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final VoidCallback onCreate;
+  final VoidCallback onJoin;
+
+  const _EmptyState({required this.onCreate, required this.onJoin});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 80),
+        child: Column(
+          children: [
+            Icon(
+              Icons.family_restroom_rounded,
+              size: 72,
+              color: context.colorScheme.primary,
+            ),
+            const SizedBox(height: 16),
+            Text('No family set up yet', style: context.textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'Create a family or join one with an invite code.',
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyChildrenState extends StatelessWidget {
+  const _EmptyChildrenState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        children: [
+          const Icon(Icons.child_care_rounded, size: 40),
+          const SizedBox(height: 12),
+          Text('No children found yet', style: context.textTheme.titleMedium),
+          const SizedBox(height: 6),
+          Text(
+            'Invite a child or refresh after linking a family member.',
+            textAlign: TextAlign.center,
+            style: context.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton(onPressed: null, child: const Text('Add Child')),
+        ],
+      ),
+    );
+  }
+}
+
+class _InlineErrorBanner extends StatelessWidget {
+  final String message;
+  final VoidCallback? onRetry;
+
+  const _InlineErrorBanner({required this.message, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(message, style: const TextStyle(color: Colors.red)),
+          if (onRetry != null) ...[
+            const SizedBox(height: 10),
+            TextButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  final String message;
+  final bool canRetry;
+  final VoidCallback onRetry;
+  final VoidCallback onCreate;
+  final VoidCallback onJoin;
+
+  const _ErrorState({
+    required this.message,
+    required this.canRetry,
+    required this.onRetry,
+    required this.onCreate,
+    required this.onJoin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.warning_rounded, size: 56, color: Colors.red),
+            const SizedBox(height: 12),
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            if (canRetry)
+              ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
+        ),
       ),
     );
   }
@@ -414,27 +852,34 @@ class _LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.read<AuthSessionCubit>().signOut(),
         borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.logout, color: Colors.red),
-          const SizedBox(width: 12),
-          Text(
-            s.switchToKidMode,
-            style: context.textTheme.titleMedium?.copyWith(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.logout, color: Colors.red),
+              const SizedBox(width: 12),
+              Text(
+                s.switchToKidMode,
+                style: context.textTheme.titleMedium?.copyWith(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

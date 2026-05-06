@@ -17,9 +17,13 @@ class SupabaseConfig {
     if (fromDefine.isNotEmpty) {
       return fromDefine;
     }
-    final fromFile = dotenv.env[key];
-    if (fromFile != null && fromFile.trim().isNotEmpty) {
-      return fromFile.trim();
+    try {
+      final fromFile = dotenv.env[key];
+      if (fromFile != null && fromFile.trim().isNotEmpty) {
+        return fromFile.trim();
+      }
+    } catch (_) {
+      return defaultValue;
     }
     return defaultValue;
   }
@@ -42,4 +46,9 @@ class SupabaseConfig {
       url.isNotEmpty && anonKey.isNotEmpty;
 
   static bool get isGoogleConfigured => googleWebClientId.isNotEmpty;
+
+  /// Backend API base URL (e.g. `https://api.safini.fun`).
+  static String get apiBaseUrl => _env('API_BASE_URL');
+
+  static bool get isApiConfigured => apiBaseUrl.isNotEmpty;
 }

@@ -23,7 +23,7 @@ migrate_working_dir/
 # is commented out by default.
 #.vscode/
 
-# Local secrets (copy from assets/env/app.env.example)
+# Local secrets (copy from assets/env/app.env)
 .env
 
 # Flutter/Dart/Pub related
