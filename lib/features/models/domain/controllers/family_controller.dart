@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../models/child_invite_code_model.dart';
+import '../models/child_model.dart';
 import '../models/family_model.dart';
 import '../models/parent_invite_code_model.dart';
 import '../repositories/i_family_repository.dart';
@@ -25,4 +26,9 @@ class FamilyController {
   Future<Either<Failure, ChildInviteCodeModel>> createChildInviteCode(
     String childId,
   ) => _repository.createChildInviteCode(childId);
+  Future<Either<Failure, ChildModel>> createChild({
+    required String nickname,
+    required int age,
+    String? gender,
+  }) => _repository.createChild(nickname: nickname, age: age, gender: gender);
 }

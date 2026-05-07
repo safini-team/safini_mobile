@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../models/child_invite_code_model.dart';
+import '../models/child_model.dart';
 import '../models/parent_invite_code_model.dart';
 import '../models/family_model.dart';
 import '../../../../core/utils/error/failures.dart';
@@ -15,4 +16,9 @@ abstract class IFamilyRepository {
   Future<Either<Failure, ChildInviteCodeModel>> createChildInviteCode(
     String childId,
   );
+  Future<Either<Failure, ChildModel>> createChild({
+    required String nickname,
+    required int age,
+    String? gender,
+  });
 }

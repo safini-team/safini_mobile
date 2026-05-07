@@ -144,7 +144,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
           ),
           const SizedBox(height: 16),
           if (family.children.isEmpty)
-            const _EmptyChildrenState()
+            _EmptyChildrenState(onAddChild: _openAddChildPage)
           else
             ...family.children.map(
               (child) => _ChildSummaryCard(
@@ -154,6 +154,16 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                 onCreateInviteCode: () => _createChildInviteCode(child.id),
               ),
             ),
+          if (family.children.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: _openAddChildPage,
+                child: const Text('Add Child'),
+              ),
+            ),
+          ],
           const SizedBox(height: 24),
           if (state.errorMessage != null)
             _InlineErrorBanner(
@@ -257,6 +267,16 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
         );
       },
     );
+  }
+
+  Future<void> _openAddChildPage() async {
+    final result = await context.router.push<bool>(
+      const NamedRoute('addChild'),
+    );
+    if (!mounted) return;
+    if (result == true) {
+      await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+    }
   }
 
   String _getLanguageName(String code, S s) {
@@ -751,7 +771,9 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _EmptyChildrenState extends StatelessWidget {
-  const _EmptyChildrenState();
+  final VoidCallback onAddChild;
+
+  const _EmptyChildrenState({required this.onAddChild});
 
   @override
   Widget build(BuildContext context) {
@@ -773,7 +795,7 @@ class _EmptyChildrenState extends StatelessWidget {
             style: context.textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
-          OutlinedButton(onPressed: null, child: const Text('Add Child')),
+          OutlinedButton(onPressed: onAddChild, child: const Text('Add Child')),
         ],
       ),
     );

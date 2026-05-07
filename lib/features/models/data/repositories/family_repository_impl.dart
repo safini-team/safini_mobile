@@ -6,9 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/utils/constants/api_const.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
+import 'package:safini/features/models/domain/models/child_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
@@ -92,6 +94,36 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     return response.fold(
       (failure) => Left(failure),
       (body) => Right(ChildInviteCodeModel.fromJson(body)),
+    );
+  }
+
+  @override
+  Future<Either<Failure, ChildModel>> createChild({
+    required String nickname,
+    required int age,
+    String? gender,
+  }) async {
+    final payload = <String, dynamic>{'nickname': nickname, 'age': age};
+    payload['gender'] = (gender == null || gender.trim().isEmpty)
+        ? null
+        : gender.trim();
+
+    final response = await _request(
+      () => _client.post(
+        _uri(ApiConst.children),
+        headers: _headers(),
+        body: jsonEncode(payload),
+      ),
+      statusMessages: {
+        401: 'Missing, expired, or invalid token.',
+        422: 'Please check the entered child data.',
+        503: 'Auth verification or database configuration unavailable.',
+      },
+    );
+
+    return response.fold(
+      (failure) => Left(failure),
+      (body) => Right(ChildModel.fromJson(body)),
     );
   }
 
