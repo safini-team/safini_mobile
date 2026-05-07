@@ -16,7 +16,7 @@ class _AddChildPageState extends State<AddChildPage> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nicknameController;
   late final TextEditingController _ageController;
-  late final TextEditingController _genderController;
+  _GenderOption? _selectedGender;
 
   bool _isSubmitting = false;
   String? _errorMessage;
@@ -26,14 +26,12 @@ class _AddChildPageState extends State<AddChildPage> {
     super.initState();
     _nicknameController = TextEditingController();
     _ageController = TextEditingController();
-    _genderController = TextEditingController();
   }
 
   @override
   void dispose() {
     _nicknameController.dispose();
     _ageController.dispose();
-    _genderController.dispose();
     super.dispose();
   }
 
@@ -110,21 +108,29 @@ class _AddChildPageState extends State<AddChildPage> {
                   },
                 ),
                 const SizedBox(height: 14),
-                TextFormField(
-                  controller: _genderController,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                    labelText: 'Gender (optional)',
-                    hintText: 'e.g. boy',
+                InkWell(
+                  onTap: _openGenderSelector,
+                  borderRadius: BorderRadius.circular(12),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'Gender (optional)',
+                      hintText: 'Select gender',
+                      suffixIcon: const Icon(Icons.arrow_drop_down),
+                      helperText: _selectedGender == null
+                          ? 'No selection'
+                          : 'Selected: ${_selectedGender!.label}',
+                    ),
+                    child: Text(
+                      _selectedGender?.label ?? 'Tap to select',
+                      style: _selectedGender == null
+                          ? context.textTheme.bodyMedium?.copyWith(
+                              color: context.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
+                            )
+                          : context.textTheme.bodyMedium,
+                    ),
                   ),
-                  validator: (value) {
-                    final gender = value?.trim() ?? '';
-                    if (gender.length > 30) {
-                      return 'Gender must be at most 30 characters.';
-                    }
-                    return null;
-                  },
-                  onFieldSubmitted: (_) => _submit(),
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 14),
@@ -162,8 +168,6 @@ class _AddChildPageState extends State<AddChildPage> {
 
     FocusScope.of(context).unfocus();
     final age = int.parse(_ageController.text.trim());
-    final genderInput = _genderController.text.trim();
-
     setState(() {
       _isSubmitting = true;
       _errorMessage = null;
@@ -172,7 +176,7 @@ class _AddChildPageState extends State<AddChildPage> {
     final failure = await context.read<ParentFamilyCubit>().createChild(
       nickname: _nicknameController.text.trim(),
       age: age,
-      gender: genderInput.isEmpty ? null : genderInput,
+      gender: _selectedGender?.apiValue,
     );
 
     if (!mounted) return;
@@ -203,4 +207,45 @@ class _AddChildPageState extends State<AddChildPage> {
     }
     return 'Unable to create child right now. Please try again.';
   }
+
+  Future<void> _openGenderSelector() async {
+    final selected = await showDialog<_GenderOption>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Gender'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _GenderOption.values
+                .map(
+                  (option) => ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(option.label),
+                    trailing: _selectedGender == option
+                        ? const Icon(Icons.check)
+                        : null,
+                    onTap: () => Navigator.of(context).pop(option),
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      },
+    );
+
+    if (selected == null || !mounted) return;
+    setState(() {
+      _selectedGender = selected;
+    });
+  }
+}
+
+enum _GenderOption {
+  girl('Girl', 'girl'),
+  boy('Boy', 'boy'),
+  other('Other', 'other');
+
+  final String label;
+  final String apiValue;
+  const _GenderOption(this.label, this.apiValue);
 }

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/create_family_page.dart';
+import 'package:safini/features/common/auth/presentation/pages/enter_invite_code_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/family_decision_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/login_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/join_family_page.dart';
@@ -50,6 +51,11 @@ class AppRouter {
         name: 'joinFamily',
         path: '/join-family',
         builder: (context, data) => const JoinFamilyPage(),
+      ),
+      NamedRouteDef(
+        name: 'enterInviteCode',
+        path: '/enter-invite-code',
+        builder: (context, data) => const EnterInviteCodePage(),
       ),
       NamedRouteDef(
         name: 'editProfile',

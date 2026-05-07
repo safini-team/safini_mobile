@@ -7,7 +7,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 
 /// Screen shown when `account_type` is `null` or unrecognised after login.
 ///
-/// Two role cards — **Parent** (active) and **Child** (coming-soon placeholder).
+/// Two role cards — **Parent** and **Child**.
 class RoleSelectionPage extends StatelessWidget {
   const RoleSelectionPage({super.key});
 
@@ -62,9 +62,9 @@ class RoleSelectionPage extends StatelessWidget {
                                 S.of(context).chooseYourRole,
                                 style: context.textTheme.headlineMedium
                                     ?.copyWith(
-                                  color: context.colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                      color: context.colorScheme.onPrimary,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 8),
@@ -105,21 +105,15 @@ class RoleSelectionPage extends StatelessWidget {
                               _RoleCard(
                                 icon: Icons.sports_esports_rounded,
                                 title: S.of(context).imAKid,
-                                subtitle: S.of(context).comingSoon,
+                                subtitle:
+                                    'Enter an invite code from your parent to continue.',
                                 gradientColors: const [
-                                  Color(0xFFBDBDBD),
-                                  Color(0xFF9E9E9E),
+                                  Color(0xFF5A7DFF),
+                                  Color(0xFF3F63E0),
                                 ],
-                                disabled: true,
                                 onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text(S.of(context).comingSoon),
-                                      duration:
-                                          const Duration(milliseconds: 1500),
-                                      behavior: SnackBarBehavior.floating,
-                                    ),
+                                  context.router.replace(
+                                    const NamedRoute('enterInviteCode'),
                                   );
                                 },
                               ),
@@ -133,8 +127,9 @@ class RoleSelectionPage extends StatelessWidget {
                           child: Text(
                             S.of(context).footerText,
                             style: context.textTheme.bodySmall?.copyWith(
-                              color: context.colorScheme.onPrimary
-                                  .withValues(alpha: 0.6),
+                              color: context.colorScheme.onPrimary.withValues(
+                                alpha: 0.6,
+                              ),
                             ),
                           ),
                         ),
@@ -159,7 +154,6 @@ class _RoleCard extends StatelessWidget {
   final String subtitle;
   final List<Color> gradientColors;
   final VoidCallback onTap;
-  final bool disabled;
 
   const _RoleCard({
     required this.icon,
@@ -167,106 +161,81 @@ class _RoleCard extends StatelessWidget {
     required this.subtitle,
     required this.gradientColors,
     required this.onTap,
-    this.disabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Opacity(
-        opacity: disabled ? 0.65 : 1.0,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: gradientColors,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: gradientColors,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors.first.withValues(alpha: 0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: gradientColors.first.withValues(alpha: 0.4),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Icon container
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(14),
               ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Icon container
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(icon,
-                    color: context.colorScheme.onPrimary, size: 28),
-              ),
-              const SizedBox(width: 16),
-              // Text
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: context.textTheme.titleLarge?.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: context.colorScheme.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.onPrimary
-                            .withValues(alpha: 0.85),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Arrow or badge
-              if (disabled)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color:
-                        context.colorScheme.onPrimary.withValues(alpha: 0.25),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    S.of(context).comingSoon,
-                    style: context.textTheme.labelSmall?.copyWith(
+              child: Icon(icon, color: context.colorScheme.onPrimary, size: 28),
+            ),
+            const SizedBox(width: 16),
+            // Text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
                       color: context.colorScheme.onPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 10,
                     ),
                   ),
-                )
-              else
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color:
-                        context.colorScheme.onPrimary.withValues(alpha: 0.25),
-                    shape: BoxShape.circle,
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onPrimary.withValues(
+                        alpha: 0.85,
+                      ),
+                    ),
                   ),
-                  child: Icon(
-                    Icons.arrow_forward_rounded,
-                    color: context.colorScheme.onPrimary,
-                    size: 20,
-                  ),
-                ),
-            ],
-          ),
+                ],
+              ),
+            ),
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.arrow_forward_rounded,
+                color: context.colorScheme.onPrimary,
+                size: 20,
+              ),
+            ),
+          ],
         ),
       ),
     );

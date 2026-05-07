@@ -131,7 +131,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             onCreateParentInviteCode: state.isParentInviteCodeLoading
                 ? null
                 : _createParentInviteCode,
-            onCreateChildInviteCode: () => _openChildInvitePicker(family),
           ),
           const SizedBox(height: 24),
           Text(
@@ -149,8 +148,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             ...family.children.map(
               (child) => _ChildSummaryCard(
                 child: child,
-                isIssuingInviteCodeForChild:
-                    state.issuingChildInviteCodeForId == child.id,
                 onCreateInviteCode: () => _createChildInviteCode(child.id),
               ),
             ),
@@ -222,50 +219,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     await showDialog<void>(
       context: context,
       builder: (context) => _ChildInviteCodeDialog(inviteCode: inviteCode),
-    );
-  }
-
-  Future<void> _openChildInvitePicker(FamilyModel family) async {
-    if (family.children.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Add a child first to issue an invite code.'),
-        ),
-      );
-      return;
-    }
-
-    await showModalBottomSheet<void>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              const ListTile(
-                title: Text(
-                  'Select Child',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ),
-              ...family.children.map(
-                (child) => ListTile(
-                  title: Text(child.nickname),
-                  subtitle: Text('ID: ${child.id}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _createChildInviteCode(child.id);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 
@@ -426,13 +379,11 @@ class _ParentManagementCard extends StatelessWidget {
   final FamilyModel family;
   final bool isLoading;
   final VoidCallback? onCreateParentInviteCode;
-  final VoidCallback onCreateChildInviteCode;
 
   const _ParentManagementCard({
     required this.family,
     required this.isLoading,
     required this.onCreateParentInviteCode,
-    required this.onCreateChildInviteCode,
   });
 
   @override
@@ -484,14 +435,6 @@ class _ParentManagementCard extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Create Parent Invite Code'),
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: onCreateChildInviteCode,
-              child: const Text('Create Child Invite Code'),
             ),
           ),
         ],
@@ -599,12 +542,10 @@ class _ParentListTile extends StatelessWidget {
 
 class _ChildSummaryCard extends StatelessWidget {
   final ChildSummaryModel child;
-  final bool isIssuingInviteCodeForChild;
   final VoidCallback onCreateInviteCode;
 
   const _ChildSummaryCard({
     required this.child,
-    required this.isIssuingInviteCodeForChild,
     required this.onCreateInviteCode,
   });
 
@@ -666,16 +607,8 @@ class _ChildSummaryCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: isIssuingInviteCodeForChild
-                  ? null
-                  : onCreateInviteCode,
-              child: isIssuingInviteCodeForChild
-                  ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Create Child Invite Code'),
+              onPressed: onCreateInviteCode,
+              child: const Text('Create Child Invite Code'),
             ),
           ),
         ],
