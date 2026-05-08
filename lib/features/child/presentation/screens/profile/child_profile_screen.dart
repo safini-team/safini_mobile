@@ -66,6 +66,87 @@ class _ProfileView extends StatelessWidget {
 // ─── Purple Header ─────────────────────────────────────────────────────────────
 
 class _ProfileHeader extends StatelessWidget {
+  Future<void> _showEditNameDialog(
+    BuildContext context,
+    ProfileState state,
+  ) async {
+    final profileCubit = context.read<ProfileCubit>();
+    final controller = TextEditingController(text: state.name.trim());
+    final formKey = GlobalKey<FormState>();
+
+    await showDialog<void>(
+      context: context,
+      useRootNavigator: false,
+      builder: (dialogContext) {
+        return BlocProvider.value(
+          value: profileCubit,
+          child: BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, profileState) {
+              return AlertDialog(
+                title: const Text('Edit Profile Name'),
+                content: Form(
+                  key: formKey,
+                  child: TextFormField(
+                    controller: controller,
+                    autofocus: true,
+                    maxLength: 120,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                    validator: (value) {
+                      final name = (value ?? '').trim();
+                      if (name.isEmpty) return 'Name is required.';
+                      if (name.length > 120) {
+                        return 'Name must be at most 120 characters.';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: profileState.isUpdatingName
+                        ? null
+                        : () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: profileState.isUpdatingName
+                        ? null
+                        : () async {
+                            if (!formKey.currentState!.validate()) return;
+                            final failure = await context
+                                .read<ProfileCubit>()
+                                .updateDisplayName(controller.text);
+                            if (!dialogContext.mounted) return;
+                            if (failure == null) {
+                              Navigator.of(dialogContext).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Profile updated'),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(failure.message)),
+                              );
+                            }
+                          },
+                    child: profileState.isUpdatingName
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Save'),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -130,6 +211,16 @@ class _ProfileHeader extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 // Name row
                 _NameSection(state: state),
+                TextButton.icon(
+                  onPressed: state.isUpdatingName
+                      ? null
+                      : () => _showEditNameDialog(context, state),
+                  icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                  label: const Text(
+                    'Edit Profile',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 // Level badge
                 _LevelBadge(label: S.of(context).levelHero(state.level)),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/child/domain/controllers/child_controller.dart';
 import 'package:safini/features/child/domain/models/child_model.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
@@ -195,6 +196,31 @@ class ProfileCubit extends Cubit<ProfileState> {
         equippedBadgeEmoji: badgeEmoji,
       ),
     );
+  }
+
+  Future<Failure?> updateDisplayName(String displayName) async {
+    final trimmed = displayName.trim();
+    if (trimmed.isEmpty || trimmed.length > 120) {
+      return ValidationFailure('Name must be between 1 and 120 characters.');
+    }
+
+    if (state.isUpdatingName) return null;
+
+    emit(state.copyWith(isUpdatingName: true));
+    final result = await _profileRepository.updateMe(displayName: trimmed);
+
+    Failure? capturedFailure;
+    result.fold(
+      (failure) {
+        capturedFailure = failure;
+      },
+      (profile) {
+        emit(state.copyWith(name: profile.displayName.trim()));
+      },
+    );
+
+    emit(state.copyWith(isUpdatingName: false));
+    return capturedFailure;
   }
 }
 
