@@ -57,6 +57,7 @@ class FamilyDto {
       ownerUserId: ownerUserId,
       name: name,
       timezone: timezone,
+      parents: const [],
       children: children.map((e) => e.toDomain()).toList(),
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -68,6 +69,8 @@ class ChildSummaryDto {
   final String id;
   final String nickname;
   final int age;
+  final String? gender;
+  final String? claimedByUserId;
   final int coinsBalance;
   final int level;
 
@@ -75,6 +78,8 @@ class ChildSummaryDto {
     required this.id,
     required this.nickname,
     required this.age,
+    this.gender,
+    this.claimedByUserId,
     required this.coinsBalance,
     required this.level,
   });
@@ -84,6 +89,8 @@ class ChildSummaryDto {
       id: json['id'] as String? ?? '',
       nickname: json['nickname'] as String? ?? '',
       age: json['age'] as int? ?? 0,
+      gender: json['gender'] as String?,
+      claimedByUserId: json['claimed_by_user_id'] as String?,
       coinsBalance: json['coins_balance'] as int? ?? 0,
       level: json['level'] as int? ?? 0,
     );
@@ -94,6 +101,8 @@ class ChildSummaryDto {
       'id': id,
       'nickname': nickname,
       'age': age,
+      'gender': gender,
+      'claimed_by_user_id': claimedByUserId,
       'coins_balance': coinsBalance,
       'level': level,
     };
@@ -104,6 +113,8 @@ class ChildSummaryDto {
       id: id,
       nickname: nickname,
       age: age,
+      gender: gender,
+      claimedByUserId: claimedByUserId,
       coinsBalance: coinsBalance,
       level: level,
     );

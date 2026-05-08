@@ -21,4 +21,10 @@ abstract class IFamilyRepository {
     required int age,
     String? gender,
   });
+  Future<Either<Failure, ChildModel>> updateChild(
+    String childId, {
+    String? nickname,
+    int? age,
+    String? gender,
+  });
 }

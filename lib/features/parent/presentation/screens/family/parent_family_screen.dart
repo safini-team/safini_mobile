@@ -8,6 +8,7 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubi
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
+import 'package:safini/features/parent/presentation/screens/family/edit_child_page.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -149,6 +150,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
               (child) => _ChildSummaryCard(
                 child: child,
                 onCreateInviteCode: () => _createChildInviteCode(child.id),
+                onEditChild: () => _openEditChildPage(child),
               ),
             ),
           if (family.children.isNotEmpty) ...[
@@ -228,6 +230,16 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     );
     if (!mounted) return;
     if (result == true) {
+      await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+    }
+  }
+
+  Future<void> _openEditChildPage(ChildSummaryModel child) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => EditChildPage(child: child)),
+    );
+    if (!mounted) return;
+    if (updated == true) {
       await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
     }
   }
@@ -543,10 +555,12 @@ class _ParentListTile extends StatelessWidget {
 class _ChildSummaryCard extends StatelessWidget {
   final ChildSummaryModel child;
   final VoidCallback onCreateInviteCode;
+  final VoidCallback onEditChild;
 
   const _ChildSummaryCard({
     required this.child,
     required this.onCreateInviteCode,
+    required this.onEditChild,
   });
 
   @override
@@ -607,8 +621,14 @@ class _ChildSummaryCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: onCreateInviteCode,
-              child: const Text('Create Child Invite Code'),
+              onPressed: child.claimedByUserId == null
+                  ? onCreateInviteCode
+                  : onEditChild,
+              child: Text(
+                child.claimedByUserId == null
+                    ? 'Create Child Invite Code'
+                    : 'Edit Child',
+              ),
             ),
           ),
         ],

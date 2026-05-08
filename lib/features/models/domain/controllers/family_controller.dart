@@ -31,4 +31,15 @@ class FamilyController {
     required int age,
     String? gender,
   }) => _repository.createChild(nickname: nickname, age: age, gender: gender);
+  Future<Either<Failure, ChildModel>> updateChild(
+    String childId, {
+    String? nickname,
+    int? age,
+    String? gender,
+  }) => _repository.updateChild(
+    childId,
+    nickname: nickname,
+    age: age,
+    gender: gender,
+  );
 }

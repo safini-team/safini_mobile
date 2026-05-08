@@ -125,6 +125,8 @@ class ChildSummaryModel {
   final String id;
   final String nickname;
   final int age;
+  final String? gender;
+  final String? claimedByUserId;
   final int coinsBalance;
   final int level;
 
@@ -132,6 +134,8 @@ class ChildSummaryModel {
     required this.id,
     required this.nickname,
     required this.age,
+    this.gender,
+    this.claimedByUserId,
     required this.coinsBalance,
     required this.level,
   });
@@ -147,6 +151,9 @@ class ChildSummaryModel {
               as String? ??
           'Child',
       age: rawAge is int ? rawAge : int.tryParse(rawAge?.toString() ?? '') ?? 0,
+      gender: (json['gender'] as String?)?.trim(),
+      claimedByUserId:
+          (json['claimed_by_user_id'] ?? json['claimedByUserId']) as String?,
       coinsBalance: rawCoins is int
           ? rawCoins
           : int.tryParse(rawCoins?.toString() ?? '') ?? 0,
@@ -161,6 +168,8 @@ class ChildSummaryModel {
       'id': id,
       'nickname': nickname,
       'age': age,
+      'gender': gender,
+      'claimed_by_user_id': claimedByUserId,
       'coinsBalance': coinsBalance,
       'level': level,
     };

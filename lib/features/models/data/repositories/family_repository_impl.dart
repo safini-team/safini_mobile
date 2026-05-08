@@ -127,6 +127,43 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     );
   }
 
+  @override
+  Future<Either<Failure, ChildModel>> updateChild(
+    String childId, {
+    String? nickname,
+    int? age,
+    String? gender,
+  }) async {
+    final payload = <String, dynamic>{};
+    if (nickname != null) {
+      payload['nickname'] = nickname;
+    }
+    if (age != null) {
+      payload['age'] = age;
+    }
+    if (gender != null) {
+      payload['gender'] = gender.trim().isEmpty ? null : gender.trim();
+    }
+
+    final response = await _request(
+      () => _client.patch(
+        _uri('/v1/children/$childId'),
+        headers: _headers(),
+        body: jsonEncode(payload),
+      ),
+      statusMessages: {
+        401: 'Invalid or expired token.',
+        422: 'Please check the entered child data.',
+        503: 'Auth verification or database configuration unavailable.',
+      },
+    );
+
+    return response.fold(
+      (failure) => Left(failure),
+      (body) => Right(ChildModel.fromJson(body)),
+    );
+  }
+
   Future<Either<Failure, FamilyModel>> _postFamily(
     String path, {
     required Map<String, dynamic> payload,
