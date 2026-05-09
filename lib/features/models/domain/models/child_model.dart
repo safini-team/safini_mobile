@@ -34,24 +34,35 @@ class ChildModel {
   });
 
   factory ChildModel.fromJson(Map<String, dynamic> json) {
+    final avatarStateRaw = json['avatarState'] ?? json['avatar_state'];
+    final avatarStateJson = avatarStateRaw is Map<String, dynamic>
+        ? avatarStateRaw
+        : <String, dynamic>{};
+
     return ChildModel(
       id: json['id'] as String,
-      familyId: json['familyId'] as String,
+      familyId: (json['familyId'] ?? json['family_id']) as String,
       nickname: json['nickname'] as String,
       age: json['age'] as int,
-      gender: json['gender'] as String,
-      avatarState: AvatarStateModel.fromJson(
-        json['avatarState'] as Map<String, dynamic>,
-      ),
+      gender: (json['gender'] as String?) ?? '',
+      avatarState: AvatarStateModel.fromJson(avatarStateJson),
       level: json['level'] as int,
       xp: json['xp'] as int,
-      currentStreakDays: json['currentStreakDays'] as int,
-      longestStreakDays: json['longestStreakDays'] as int,
-      tasksCompletedCount: json['tasksCompletedCount'] as int,
-      coinsBalance: json['coinsBalance'] as int,
-      achievementsCount: json['achievementsCount'] as int,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      currentStreakDays:
+          (json['currentStreakDays'] ?? json['current_streak_days']) as int,
+      longestStreakDays:
+          (json['longestStreakDays'] ?? json['longest_streak_days']) as int,
+      tasksCompletedCount:
+          (json['tasksCompletedCount'] ?? json['tasks_completed_count']) as int,
+      coinsBalance: (json['coinsBalance'] ?? json['coins_balance']) as int,
+      achievementsCount:
+          (json['achievementsCount'] ?? json['achievements_count']) as int,
+      createdAt: DateTime.parse(
+        (json['createdAt'] ?? json['created_at']) as String,
+      ),
+      updatedAt: DateTime.parse(
+        (json['updatedAt'] ?? json['updated_at']) as String,
+      ),
     );
   }
 

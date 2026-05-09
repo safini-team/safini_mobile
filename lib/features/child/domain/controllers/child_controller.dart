@@ -13,4 +13,7 @@ class ChildController {
 
   Future<Either<Failure, ChildModel>> fetchChild(String childId) =>
       _repository.fetchChild(childId);
+
+  Future<Either<Failure, ChildModel>> fetchChildDashboard(String childId) =>
+      _repository.fetchChildDashboard(childId);
 }

@@ -8,6 +8,7 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubi
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
+import 'package:safini/features/parent/presentation/screens/family/edit_child_page.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -131,7 +132,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             onCreateParentInviteCode: state.isParentInviteCodeLoading
                 ? null
                 : _createParentInviteCode,
-            onCreateChildInviteCode: () => _openChildInvitePicker(family),
           ),
           const SizedBox(height: 24),
           Text(
@@ -144,16 +144,25 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
           ),
           const SizedBox(height: 16),
           if (family.children.isEmpty)
-            const _EmptyChildrenState()
+            _EmptyChildrenState(onAddChild: _openAddChildPage)
           else
             ...family.children.map(
               (child) => _ChildSummaryCard(
                 child: child,
-                isIssuingInviteCodeForChild:
-                    state.issuingChildInviteCodeForId == child.id,
                 onCreateInviteCode: () => _createChildInviteCode(child.id),
+                onEditChild: () => _openEditChildPage(child),
               ),
             ),
+          if (family.children.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: _openAddChildPage,
+                child: const Text('Add Child'),
+              ),
+            ),
+          ],
           const SizedBox(height: 24),
           if (state.errorMessage != null)
             _InlineErrorBanner(
@@ -215,48 +224,24 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     );
   }
 
-  Future<void> _openChildInvitePicker(FamilyModel family) async {
-    if (family.children.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Add a child first to issue an invite code.'),
-        ),
-      );
-      return;
-    }
-
-    await showModalBottomSheet<void>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              const ListTile(
-                title: Text(
-                  'Select Child',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ),
-              ...family.children.map(
-                (child) => ListTile(
-                  title: Text(child.nickname),
-                  subtitle: Text('ID: ${child.id}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _createChildInviteCode(child.id);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+  Future<void> _openAddChildPage() async {
+    final result = await context.router.push<bool>(
+      const NamedRoute('addChild'),
     );
+    if (!mounted) return;
+    if (result == true) {
+      await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+    }
+  }
+
+  Future<void> _openEditChildPage(ChildSummaryModel child) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => EditChildPage(child: child)),
+    );
+    if (!mounted) return;
+    if (updated == true) {
+      await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+    }
   }
 
   String _getLanguageName(String code, S s) {
@@ -406,13 +391,11 @@ class _ParentManagementCard extends StatelessWidget {
   final FamilyModel family;
   final bool isLoading;
   final VoidCallback? onCreateParentInviteCode;
-  final VoidCallback onCreateChildInviteCode;
 
   const _ParentManagementCard({
     required this.family,
     required this.isLoading,
     required this.onCreateParentInviteCode,
-    required this.onCreateChildInviteCode,
   });
 
   @override
@@ -464,14 +447,6 @@ class _ParentManagementCard extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Create Parent Invite Code'),
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: onCreateChildInviteCode,
-              child: const Text('Create Child Invite Code'),
             ),
           ),
         ],
@@ -579,13 +554,13 @@ class _ParentListTile extends StatelessWidget {
 
 class _ChildSummaryCard extends StatelessWidget {
   final ChildSummaryModel child;
-  final bool isIssuingInviteCodeForChild;
   final VoidCallback onCreateInviteCode;
+  final VoidCallback onEditChild;
 
   const _ChildSummaryCard({
     required this.child,
-    required this.isIssuingInviteCodeForChild,
     required this.onCreateInviteCode,
+    required this.onEditChild,
   });
 
   @override
@@ -646,16 +621,14 @@ class _ChildSummaryCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: isIssuingInviteCodeForChild
-                  ? null
-                  : onCreateInviteCode,
-              child: isIssuingInviteCodeForChild
-                  ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Create Child Invite Code'),
+              onPressed: child.claimedByUserId == null
+                  ? onCreateInviteCode
+                  : onEditChild,
+              child: Text(
+                child.claimedByUserId == null
+                    ? 'Create Child Invite Code'
+                    : 'Edit Child',
+              ),
             ),
           ),
         ],
@@ -751,7 +724,9 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _EmptyChildrenState extends StatelessWidget {
-  const _EmptyChildrenState();
+  final VoidCallback onAddChild;
+
+  const _EmptyChildrenState({required this.onAddChild});
 
   @override
   Widget build(BuildContext context) {
@@ -773,7 +748,7 @@ class _EmptyChildrenState extends StatelessWidget {
             style: context.textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
-          OutlinedButton(onPressed: null, child: const Text('Add Child')),
+          OutlinedButton(onPressed: onAddChild, child: const Text('Add Child')),
         ],
       ),
     );

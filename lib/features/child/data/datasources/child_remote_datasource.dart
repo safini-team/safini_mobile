@@ -28,9 +28,7 @@ class ChildRemoteDataSource {
           .map((e) => ChildDto.fromJson(e as Map<String, dynamic>).toDomain())
           .toList();
 
-      debugPrint(
-        '[ChildRemoteDataSource] Parsed ${children.length} children',
-      );
+      debugPrint('[ChildRemoteDataSource] Parsed ${children.length} children');
       return children;
     } on DioException catch (e) {
       debugPrint(
@@ -55,6 +53,35 @@ class ChildRemoteDataSource {
 
       final data = response.data as Map<String, dynamic>;
       return ChildDto.fromJson(data).toDomain();
+    } on DioException catch (e) {
+      debugPrint(
+        '[ChildRemoteDataSource] DioException ${e.response?.statusCode}: ${e.message}',
+      );
+      throw ServerException(e.message ?? 'Server error');
+    } catch (e) {
+      debugPrint('[ChildRemoteDataSource] Unexpected error: $e');
+      throw ServerException(e.toString());
+    }
+  }
+
+  /// Fetches child dashboard summary and returns child identity/progression data.
+  Future<ChildModel> fetchChildDashboard(String childId) async {
+    final path = ApiConst.childDashboard(childId);
+    debugPrint('[ChildRemoteDataSource] GET ${ApiConst.baseUrl}$path');
+    try {
+      final response = await _dio.get(path);
+      debugPrint(
+        '[ChildRemoteDataSource] Response ${response.statusCode}: ${response.data}',
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      final childJson = data['child'];
+      if (childJson is! Map<String, dynamic>) {
+        throw const ServerException(
+          'Invalid dashboard payload: missing child object',
+        );
+      }
+      return ChildDto.fromJson(childJson).toDomain();
     } on DioException catch (e) {
       debugPrint(
         '[ChildRemoteDataSource] DioException ${e.response?.statusCode}: ${e.message}',

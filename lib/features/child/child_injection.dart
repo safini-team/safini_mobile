@@ -35,7 +35,11 @@ void registerChildDependencies(GetIt sl) {
   sl.registerFactory<ChildHomeCubit>(() => ChildHomeCubit());
   sl.registerFactory<TasksCubit>(() => TasksCubit(sl<CoinsCubit>()));
   sl.registerFactory<ProfileCubit>(
-    () => ProfileCubit(sl<ChildController>(), sl<ProfileRepository>()),
+    () => ProfileCubit(
+      sl<ChildController>(),
+      sl<ProfileRepository>(),
+      sl<CoinsCubit>(),
+    ),
   );
   sl.registerFactory<AvatarCubit>(() => AvatarCubit(sl<CoinsCubit>()));
   sl.registerFactory<QuestCubit>(() => QuestCubit());

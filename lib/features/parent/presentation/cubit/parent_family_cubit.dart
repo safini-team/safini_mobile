@@ -298,6 +298,67 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     return inviteCode;
   }
 
+  Future<Failure?> createChild({
+    required String nickname,
+    required int age,
+    String? gender,
+  }) async {
+    final result = await _controller.createChild(
+      nickname: nickname,
+      age: age,
+      gender: gender,
+    );
+
+    Failure? capturedFailure;
+    await result.fold(
+      (failure) async {
+        if (failure is UnauthorizedFailure) {
+          await _signOutAndRedirect(failure.message);
+          capturedFailure = failure;
+          return;
+        }
+
+        capturedFailure = failure;
+      },
+      (_) async {
+        capturedFailure = null;
+      },
+    );
+
+    return capturedFailure;
+  }
+
+  Future<Failure?> updateChild(
+    String childId, {
+    String? nickname,
+    int? age,
+    String? gender,
+  }) async {
+    final result = await _controller.updateChild(
+      childId,
+      nickname: nickname,
+      age: age,
+      gender: gender,
+    );
+
+    Failure? capturedFailure;
+    await result.fold(
+      (failure) async {
+        if (failure is UnauthorizedFailure) {
+          await _signOutAndRedirect(failure.message);
+          capturedFailure = failure;
+          return;
+        }
+        capturedFailure = failure;
+      },
+      (_) async {
+        capturedFailure = null;
+      },
+    );
+
+    return capturedFailure;
+  }
+
   Future<void> loadCurrentFamily({bool refresh = false}) async {
     if (!refresh && state.family == null) {
       return;

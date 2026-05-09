@@ -16,9 +16,7 @@ class ChildRepositoryImpl implements IChildRepository {
     debugPrint('[ChildRepositoryImpl] fetchChildren called');
     try {
       final children = await _remote.fetchChildren();
-      debugPrint(
-        '[ChildRepositoryImpl] Fetched ${children.length} children',
-      );
+      debugPrint('[ChildRepositoryImpl] Fetched ${children.length} children');
       return Right(children);
     } on ServerException catch (e) {
       debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');
@@ -28,12 +26,29 @@ class ChildRepositoryImpl implements IChildRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
-  
+
   @override
   Future<Either<Failure, ChildModel>> fetchChild(String childId) async {
     debugPrint('[ChildRepositoryImpl] fetchChild called for $childId');
     try {
       final child = await _remote.fetchChild(childId);
+      return Right(child);
+    } on ServerException catch (e) {
+      debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      debugPrint('[ChildRepositoryImpl] Unexpected error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ChildModel>> fetchChildDashboard(
+    String childId,
+  ) async {
+    debugPrint('[ChildRepositoryImpl] fetchChildDashboard called for $childId');
+    try {
+      final child = await _remote.fetchChildDashboard(childId);
       return Right(child);
     } on ServerException catch (e) {
       debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');

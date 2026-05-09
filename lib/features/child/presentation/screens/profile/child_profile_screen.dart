@@ -6,6 +6,9 @@ import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
+import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
+import 'package:safini/features/child/domain/controllers/child_controller.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
@@ -25,7 +28,14 @@ class ChildProfileScreen extends StatelessWidget {
           context: context,
           locale: locale,
           child: BlocProvider(
-            create: (_) => getIt<ProfileCubit>()..loadProfile(),
+            create: (context) =>
+                ProfileCubit(
+                  getIt<ChildController>(),
+                  getIt<ProfileRepository>(),
+                  getIt<CoinsCubit>(),
+                )..loadProfile(
+                  fallbackChild: context.read<ChildClaimCubit>().state.child,
+                ),
             child: const _ProfileView(),
           ),
         );
@@ -133,7 +143,9 @@ class _ProfileHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: state.xpProgress,
-                      backgroundColor: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+                      backgroundColor: context.colorScheme.onPrimary.withValues(
+                        alpha: 0.2,
+                      ),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         context.colorScheme.secondary,
                       ),
@@ -198,7 +210,10 @@ class _AvatarCircle extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFFF5A623),
                 shape: BoxShape.circle,
-                border: Border.all(color: context.colorScheme.onPrimary, width: 2),
+                border: Border.all(
+                  color: context.colorScheme.onPrimary,
+                  width: 2,
+                ),
               ),
               child: Center(
                 child: Text(badgeEmoji, style: const TextStyle(fontSize: 14)),
@@ -218,87 +233,23 @@ class _NameSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
-    if (state.isEditing) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-                child: TextField(
-                  autofocus: true,
-                  controller: TextEditingController(text: state.editingName)
-                    ..selection = TextSelection.fromPosition(
-                      TextPosition(offset: state.editingName.length),
-                    ),
-                  onChanged: (v) =>
-                      context.read<ProfileCubit>().updateEditingName(v),
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  cursorColor: context.colorScheme.onPrimary,
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            GestureDetector(
-              onTap: () => context.read<ProfileCubit>().saveName(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: context.colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-                child: Text(
-                  s.save,
-                  style: context.textTheme.labelLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-    return GestureDetector(
-      onTap: () => context.read<ProfileCubit>().startEditing(),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            state.name,
-            style: context.textTheme.titleLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Icon(
-            Icons.edit_rounded,
-            color: Colors.white.withValues(alpha: 0.8),
-            size: 16,
-          ),
-        ],
+    final claimedNickname =
+        context.watch<ChildClaimCubit>().state.child?.nickname ?? '';
+    final profileName = state.name.trim();
+    final fallbackName = claimedNickname.trim();
+    final displayName = profileName.isNotEmpty
+        ? profileName
+        : (fallbackName.isNotEmpty ? fallbackName : 'Child');
+    debugPrint(
+      '[ChildProfileScreen] name render | state.name="$profileName" '
+      '| claimedNickname="$fallbackName" | displayName="$displayName"',
+    );
+
+    return Text(
+      displayName,
+      style: context.textTheme.titleLarge?.copyWith(
+        color: Colors.white,
+        fontWeight: FontWeight.w700,
       ),
     );
   }
@@ -414,7 +365,10 @@ class _ProfileBody extends StatelessWidget {
                   emoji: '🌍',
                   iconBg: context.colorScheme.primary.withValues(alpha: 0.1),
                   title: s.changeLanguage,
-                  subtitle: _getLanguageName(Localizations.localeOf(context).languageCode, s),
+                  subtitle: _getLanguageName(
+                    Localizations.localeOf(context).languageCode,
+                    s,
+                  ),
                   onTap: () => _showLanguageDialog(context),
                 ),
               ],
@@ -474,4 +428,3 @@ class _ProfileBody extends StatelessWidget {
 }
 
 // ─── Bottom Nav ───────────────────────────────────────────────────────────────
-

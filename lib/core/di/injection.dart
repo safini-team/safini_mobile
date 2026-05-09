@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/app/app_router.dart';
+import 'package:safini/core/network/dio_network.dart';
+import 'package:safini/features/child/child_injection.dart';
 import 'package:safini/features/common/common_injection.dart';
 import 'package:safini/features/parent/parent_injection.dart';
 
@@ -35,6 +38,14 @@ Future<void> configureDependencies() async {
     getIt.registerLazySingleton<AppRouter>(AppRouter.new);
   }
 
+  // Shared Dio setup for feature data sources that rely on API base options
+  // and auth interceptors.
+  if (!getIt.isRegistered<Dio>()) {
+    DioNetwork.initDio();
+    getIt.registerLazySingleton<Dio>(() => DioNetwork.appAPI);
+  }
+
   registerCommonDependencies(getIt);
+  registerChildDependencies(getIt);
   registerParentDependencies(getIt);
 }

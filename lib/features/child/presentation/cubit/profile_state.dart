@@ -26,8 +26,8 @@ class ProfileState {
   });
 
   const ProfileState.initial()
-    : name = 'Explorer Leo',
-      editingName = 'Explorer Leo',
+    : name = '',
+      editingName = '',
       isEditing = false,
       questsDone = 6,
       dayStreak = 5,
@@ -55,7 +55,7 @@ class ProfileState {
       questsDone: questsDone ?? this.questsDone,
       dayStreak: dayStreak ?? this.dayStreak,
       level: level ?? this.level,
-      levelLabel: level != null ? 'Level $level Hero' : this.levelLabel,
+      levelLabel: level != null ? 'Level $level Hero' : levelLabel,
       xpProgress: xpProgress ?? this.xpProgress,
       equippedFaceEmoji: equippedFaceEmoji ?? this.equippedFaceEmoji,
       equippedBadgeEmoji: equippedBadgeEmoji ?? this.equippedBadgeEmoji,

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/create_family_page.dart';
+import 'package:safini/features/common/auth/presentation/pages/enter_invite_code_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/family_decision_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/login_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/join_family_page.dart';
@@ -10,6 +11,7 @@ import 'package:safini/features/common/profile/presentation/pages/edit_profile_p
 import 'package:safini/features/common/splash/splash_screen.dart';
 import 'package:safini/features/child/presentation/screens/main/child_main_screen.dart';
 import 'package:safini/features/child/presentation/screens/avatar/child_avatar_customizer_screen.dart';
+import 'package:safini/features/parent/presentation/screens/family/add_child_page.dart';
 import 'package:safini/features/parent/presentation/screens/main/parent_main_screen.dart';
 
 class AppRouter {
@@ -51,6 +53,11 @@ class AppRouter {
         builder: (context, data) => const JoinFamilyPage(),
       ),
       NamedRouteDef(
+        name: 'enterInviteCode',
+        path: '/enter-invite-code',
+        builder: (context, data) => const EnterInviteCodePage(),
+      ),
+      NamedRouteDef(
         name: 'editProfile',
         path: '/edit-profile',
         builder: (context, data) => const EditProfilePage(),
@@ -64,6 +71,11 @@ class AppRouter {
         name: 'parentHome',
         path: '/parent-home',
         builder: (context, data) => const ParentMainScreen(),
+      ),
+      NamedRouteDef(
+        name: 'addChild',
+        path: '/add-child',
+        builder: (context, data) => const AddChildPage(),
       ),
       NamedRouteDef(
         name: 'avatar',

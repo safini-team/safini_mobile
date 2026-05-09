@@ -9,6 +9,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
 class MyApp extends StatelessWidget {
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => CoinsCubit()),
         BlocProvider(create: (_) => LocaleCubit()),
         BlocProvider.value(value: getIt<AuthSessionCubit>()),
+        BlocProvider.value(value: getIt<ChildClaimCubit>()),
         BlocProvider.value(value: getIt<ParentFamilyCubit>()),
       ],
       child: MaterialApp.router(
