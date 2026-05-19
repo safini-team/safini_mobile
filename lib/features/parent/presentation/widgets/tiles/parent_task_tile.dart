@@ -4,8 +4,9 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class ParentTaskTile extends StatelessWidget {
   final String title;
-  final String category;
-  final int rewardCoins;
+  final String? category;
+  final int? rewardCoins;
+  final String? statusLabel;
   final bool isPending;
   final bool isCompleted;
   final VoidCallback? onApprove;
@@ -14,8 +15,9 @@ class ParentTaskTile extends StatelessWidget {
   const ParentTaskTile({
     super.key,
     required this.title,
-    required this.category,
-    required this.rewardCoins,
+    this.category,
+    this.rewardCoins,
+    this.statusLabel,
     this.isPending = false,
     this.isCompleted = false,
     this.onApprove,
@@ -33,18 +35,18 @@ class ParentTaskTile extends StatelessWidget {
     if (isPending) {
       statusColor = context.colorScheme.primary;
       statusBg = context.colorScheme.primary.withValues(alpha: 0.1);
-      statusText = S.of(context).statusPending;
+      statusText = statusLabel ?? S.of(context).statusPending;
     } else if (isCompleted) {
       statusColor = context.successColor;
       statusBg = context.successColor.withValues(alpha: 0.1);
-      statusText = S.of(context).statusDone;
+      statusText = statusLabel ?? S.of(context).statusDone;
     } else {
       statusColor = context.colorScheme.tertiary;
       statusBg = context.colorScheme.tertiary.withValues(alpha: 0.1);
-      statusText = S.of(context).statusActive;
+      statusText = statusLabel ?? S.of(context).statusActive;
     }
 
-    switch (category.toLowerCase()) {
+    switch ((category ?? '').toLowerCase()) {
       case 'educational':
         categoryIcon = Icons.menu_book_rounded;
         break;
@@ -103,41 +105,47 @@ class ParentTaskTile extends StatelessWidget {
                     letterSpacing: -0.2,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  category,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colorScheme.onSurface.withValues(alpha: 0.4),
-                    fontWeight: FontWeight.w600,
+                if (category?.trim().isNotEmpty == true) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    category!.trim(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onSurface.withValues(
+                        alpha: 0.4,
+                      ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/icons/coin.png',
-                      width: 16,
-                      height: 16,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.monetization_on,
-                        color: Colors.amber,
-                        size: 16,
+                ],
+                if (rewardCoins != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Image.asset(
+                        'assets/icons/coin.png',
+                        width: 16,
+                        height: 16,
+                        errorBuilder: (_, _, _) => const Icon(
+                          Icons.monetization_on,
+                          color: Colors.amber,
+                          size: 16,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      s.coinsReward(rewardCoins),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.labelSmall?.copyWith(
-                        color: context.colorScheme.primary,
-                        fontWeight: FontWeight.w700,
+                      const SizedBox(width: 6),
+                      Text(
+                        s.coinsReward(rewardCoins!),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: context.colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

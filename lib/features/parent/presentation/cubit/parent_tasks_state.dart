@@ -1,4 +1,4 @@
-import 'package:safini/features/parent/domain/models/parent_task_model.dart';
+import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 
 abstract class ParentTasksState {
   const ParentTasksState();
@@ -13,18 +13,38 @@ class ParentTasksLoading extends ParentTasksState {
 }
 
 class ParentTasksLoaded extends ParentTasksState {
-  final List<ParentTaskModel> pendingApproval;
-  final List<ParentTaskModel> activeTasks;
-  final List<ParentTaskModel> completedTasks;
+  final String childId;
+  final String childName;
+  final List<ParentTaskTemplateModel> templates;
+  final List<ParentTaskInstanceModel> todayInstances;
 
   const ParentTasksLoaded({
-    required this.pendingApproval,
-    required this.activeTasks,
-    required this.completedTasks,
+    required this.childId,
+    required this.childName,
+    required this.templates,
+    required this.todayInstances,
   });
+
+  List<ParentTaskInstanceModel> get pendingApproval => todayInstances
+      .where((task) => task.isPendingApproval)
+      .toList(growable: false);
+
+  List<ParentTaskInstanceModel> get activeTasks => todayInstances
+      .where((task) => !task.isPendingApproval && !task.isCompleted)
+      .toList(growable: false);
+
+  List<ParentTaskInstanceModel> get completedTasks =>
+      todayInstances.where((task) => task.isCompleted).toList(growable: false);
 }
 
 class ParentTasksError extends ParentTasksState {
   final String message;
-  const ParentTasksError(this.message);
+  final bool isUnauthorized;
+  final bool canRetry;
+
+  const ParentTasksError(
+    this.message, {
+    this.isUnauthorized = false,
+    this.canRetry = true,
+  });
 }

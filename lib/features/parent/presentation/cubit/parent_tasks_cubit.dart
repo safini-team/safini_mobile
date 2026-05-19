@@ -1,64 +1,58 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:safini/features/parent/domain/controllers/parent_controller.dart';
-import 'package:safini/features/parent/domain/models/parent_task_model.dart';
+import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 
 class ParentTasksCubit extends Cubit<ParentTasksState> {
-  final ParentController _controller;
+  final IParentTaskRepository _repository;
+  final ParentFamilyCubit _familyCubit;
 
-  ParentTasksCubit(this._controller) : super(const ParentTasksInitial());
+  ParentTasksCubit(this._repository, this._familyCubit)
+    : super(const ParentTasksInitial());
 
   Future<void> loadTasks() async {
     emit(const ParentTasksLoading());
 
-    // Simulate API call
-    await Future.delayed(const Duration(milliseconds: 800));
+    if (_familyCubit.state.family == null) {
+      await _familyCubit.loadCurrentFamily(refresh: true);
+    }
 
-    emit(
-      const ParentTasksLoaded(
-        pendingApproval: [
-          ParentTaskModel(
-            id: "1",
-            title: "Read for 20 mins",
-            durationMinutes: 20,
-            isCompleted: true,
-            assignedToChildId: "child1",
-          ),
-        ],
-        activeTasks: [
-          ParentTaskModel(
-            id: "2",
-            title: "Clean the room",
-            durationMinutes: 15,
-            isCompleted: false,
-            assignedToChildId: "child1",
-          ),
-          ParentTaskModel(
-            id: "3",
-            title: "Practice piano",
-            durationMinutes: 30,
-            isCompleted: false,
-            assignedToChildId: "child1",
-          ),
-        ],
-        completedTasks: [
-          ParentTaskModel(
-            id: "4",
-            title: "Do homework",
-            durationMinutes: 60,
-            isCompleted: true,
-            assignedToChildId: "child1",
-          ),
-        ],
+    final family = _familyCubit.state.family;
+    final child = family?.children
+        .where((child) => child.id.isNotEmpty)
+        .firstOrNull;
+    if (child == null) {
+      emit(
+        const ParentTasksError(
+          'No child profile is available for this parent account.',
+          canRetry: false,
+        ),
+      );
+      return;
+    }
+
+    final result = await _repository.fetchTasks(child.id);
+    result.fold(
+      (failure) => emit(_errorFromFailure(failure)),
+      (tasks) => emit(
+        ParentTasksLoaded(
+          childId: child.id,
+          childName: child.nickname,
+          templates: tasks.templates,
+          todayInstances: tasks.todayInstances,
+        ),
       ),
     );
   }
 
-  void approveTask(String taskId) {
-    // Logic to approve task via controller
-  }
-
-  void addNewTask() {
-    // Logic to trigger add task dialog/screen
+  ParentTasksError _errorFromFailure(Failure failure) {
+    if (failure is UnauthorizedFailure) {
+      return ParentTasksError(failure.message, isUnauthorized: true);
+    }
+    if (failure is ValidationFailure) {
+      return ParentTasksError(failure.message, canRetry: false);
+    }
+    return ParentTasksError(failure.message);
   }
 }
