@@ -33,13 +33,11 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _fadeAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
-    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _scaleAnimation = Tween<double>(
+      begin: 0.85,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
 
@@ -70,7 +68,8 @@ class _SplashScreenState extends State<SplashScreen>
     if (!_animationDone || !mounted || _hasNavigated) return;
 
     final state = context.read<AuthSessionCubit>().state;
-    final resolved = state.status == AuthSessionStatus.unauthenticated ||
+    final resolved =
+        state.status == AuthSessionStatus.unauthenticated ||
         state.status == AuthSessionStatus.authenticated ||
         state.status == AuthSessionStatus.signInError ||
         state.status == AuthSessionStatus.profileError;
@@ -87,7 +86,7 @@ class _SplashScreenState extends State<SplashScreen>
         break;
 
       case AuthSessionStatus.authenticated:
-        _routeByAccountType(state.accountType);
+        unawaited(_routeByAccountType(state.accountType));
         break;
 
       case AuthSessionStatus.profileError:
@@ -105,35 +104,33 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  void _routeByAccountType(String? accountType) {
+  Future<void> _routeByAccountType(String? accountType) async {
     switch (accountType) {
       case 'parent':
-        _routeParent();
+        await _routeParent();
         break;
       case 'child':
+        if (!mounted) return;
         context.router.replace(const NamedRoute('childHome'));
         break;
       default:
-        // null, missing, or any unexpected value → Role Selection
+        if (!mounted) return;
+        // null, missing, or any unexpected value -> Role Selection
         context.router.replace(const NamedRoute('roleSelection'));
     }
   }
 
-  void _routeParent() {
-    final familyState = context.read<ParentFamilyCubit>().state;
+  Future<void> _routeParent() async {
+    await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+    if (!mounted) return;
 
-    if (familyState.isDashboard || familyState.hasFamily) {
-      context.router.replace(const NamedRoute('parentHome'));
+    final authState = context.read<AuthSessionCubit>().state;
+    if (authState.status == AuthSessionStatus.unauthenticated) {
+      context.router.replace(const NamedRoute('login'));
       return;
     }
 
-    if (familyState.isCreate) {
-      context.router.replace(const NamedRoute('createFamily'));
-    } else if (familyState.isJoin) {
-      context.router.replace(const NamedRoute('joinFamily'));
-    } else {
-      context.router.replace(const NamedRoute('familyDecision'));
-    }
+    context.router.replace(const NamedRoute('parentHome'));
   }
 
   @override
@@ -152,10 +149,7 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 ScaleTransition(
                   scale: _scaleAnimation,
-                  child: Image.asset(
-                    'assets/logo/app_logo.png',
-                    width: 220,
-                  ),
+                  child: Image.asset('assets/logo/app_logo.png', width: 220),
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -168,7 +162,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
               ],
-              ),
+            ),
           ),
         ),
       ),
