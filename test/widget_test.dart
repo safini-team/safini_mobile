@@ -11,7 +11,6 @@ void main() {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('SAFINIO'), findsOneWidget);
-    expect(find.text('SAFINIO'), findsOneWidget);
+    expect(find.text('SAFINI'), findsOneWidget);
   });
 }
