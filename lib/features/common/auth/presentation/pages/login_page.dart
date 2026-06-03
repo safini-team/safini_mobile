@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,10 +45,10 @@ class _LoginView extends StatelessWidget {
                 listener: (context, state) {
                   // ── Authenticated → route by account_type ──────────────
                   if (state.status == AuthSessionStatus.authenticated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(s.signedInSuccess)),
-                    );
-                    _routeAuthenticated(context, state.accountType);
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(s.signedInSuccess)));
+                    unawaited(_routeAuthenticated(context, state.accountType));
                   }
 
                   // 401 in profile fetch signs out and returns to login.
@@ -62,7 +64,7 @@ class _LoginView extends StatelessWidget {
                 builder: (context, state) {
                   final loading =
                       state.status == AuthSessionStatus.signingIn ||
-                          state.status == AuthSessionStatus.fetchingProfile;
+                      state.status == AuthSessionStatus.fetchingProfile;
 
                   return Scaffold(
                     body: Container(
@@ -81,8 +83,7 @@ class _LoginView extends StatelessWidget {
                       ),
                       child: SafeArea(
                         child: Padding(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -93,8 +94,7 @@ class _LoginView extends StatelessWidget {
                                     Icons.language,
                                     color: Colors.white,
                                   ),
-                                  onPressed: () =>
-                                      _showLanguageDialog(context),
+                                  onPressed: () => _showLanguageDialog(context),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -108,31 +108,31 @@ class _LoginView extends StatelessWidget {
                                 s.loginTitle,
                                 style: context.textTheme.headlineMedium
                                     ?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 s.loginSubtitle,
-                                style:
-                                    context.textTheme.bodyLarge?.copyWith(
-                                  color: Colors.white
-                                      .withValues(alpha: 0.9),
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.9),
                                 ),
                               ),
                               const SizedBox(height: 32),
                               if (!SupabaseConfig.isSupabaseConfigured)
                                 Text(
                                   s.supabaseConfigMissing,
-                                  style: context.textTheme.bodyMedium
-                                      ?.copyWith(color: Colors.white),
+                                  style: context.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white,
+                                  ),
                                 )
                               else if (!SupabaseConfig.isGoogleConfigured)
                                 Text(
                                   s.googleClientIdMissing,
-                                  style: context.textTheme.bodyMedium
-                                      ?.copyWith(color: Colors.white),
+                                  style: context.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white,
+                                  ),
                                 )
                               else ...[
                                 GoogleSignInButton(
@@ -150,19 +150,17 @@ class _LoginView extends StatelessWidget {
                                   Text(
                                     state.errorMessage ?? s.signInError,
                                     style: context.textTheme.bodySmall
-                                        ?.copyWith(
-                                      color: Colors.red.shade100,
-                                    ),
+                                        ?.copyWith(color: Colors.red.shade100),
                                   ),
                                 ],
-                                if (state.status == AuthSessionStatus.unauthenticated &&
+                                if (state.status ==
+                                        AuthSessionStatus.unauthenticated &&
                                     state.isUnauthorized) ...[
                                   const SizedBox(height: 16),
                                   Text(
                                     state.errorMessage ?? s.signInError,
-                                    style: context.textTheme.bodySmall?.copyWith(
-                                      color: Colors.red.shade100,
-                                    ),
+                                    style: context.textTheme.bodySmall
+                                        ?.copyWith(color: Colors.red.shade100),
                                   ),
                                 ],
                                 // ── Profile-fetch error (retryable) ───
@@ -172,12 +170,9 @@ class _LoginView extends StatelessWidget {
                                     !state.isUnauthorized) ...[
                                   const SizedBox(height: 16),
                                   Text(
-                                    state.errorMessage ??
-                                        s.networkError,
+                                    state.errorMessage ?? s.networkError,
                                     style: context.textTheme.bodySmall
-                                        ?.copyWith(
-                                      color: Colors.red.shade100,
-                                    ),
+                                        ?.copyWith(color: Colors.red.shade100),
                                   ),
                                   const SizedBox(height: 12),
                                   OutlinedButton(
@@ -209,34 +204,35 @@ class _LoginView extends StatelessWidget {
     );
   }
 
-  void _routeAuthenticated(BuildContext context, String? accountType) {
+  Future<void> _routeAuthenticated(
+    BuildContext context,
+    String? accountType,
+  ) async {
     switch (accountType) {
       case 'parent':
-        _routeParent(context);
+        await _routeParent(context);
         break;
       case 'child':
+        if (!context.mounted) return;
         context.router.replace(const NamedRoute('childHome'));
         break;
       default:
+        if (!context.mounted) return;
         context.router.replace(const NamedRoute('roleSelection'));
     }
   }
 
-  void _routeParent(BuildContext context) {
-    final familyState = context.read<ParentFamilyCubit>().state;
+  Future<void> _routeParent(BuildContext context) async {
+    await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+    if (!context.mounted) return;
 
-    if (familyState.hasFamily || familyState.isDashboard) {
-      context.router.replace(const NamedRoute('parentHome'));
+    final authState = context.read<AuthSessionCubit>().state;
+    if (authState.status == AuthSessionStatus.unauthenticated) {
+      context.router.replace(const NamedRoute('login'));
       return;
     }
 
-    if (familyState.isCreate) {
-      context.router.replace(const NamedRoute('createFamily'));
-    } else if (familyState.isJoin) {
-      context.router.replace(const NamedRoute('joinFamily'));
-    } else {
-      context.router.replace(const NamedRoute('familyDecision'));
-    }
+    context.router.replace(const NamedRoute('parentHome'));
   }
 
   void _showLanguageDialog(BuildContext context) {
