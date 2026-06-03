@@ -20,13 +20,41 @@ class ProfileRepository {
       debugPrint('[ProfileRepository] Remote success — cached profile');
       return Right(model);
     } on ServerException catch (e) {
-      debugPrint('[ProfileRepository] ServerException: ${e.message} — trying cache');
+      debugPrint(
+        '[ProfileRepository] ServerException: ${e.message} — trying cache',
+      );
       final cached = _local.getCached();
       if (cached != null) {
         debugPrint('[ProfileRepository] Returning cached profile');
         return Right(cached);
       }
       debugPrint('[ProfileRepository] No cache available — returning failure');
+      return Left(ServerFailure(e.message));
+    } on CacheException catch (e) {
+      debugPrint('[ProfileRepository] CacheException: ${e.message}');
+      return Left(CacheFailure(e.message));
+    }
+  }
+
+  Future<Either<Failure, ProfileModel>> updateMe({
+    String? displayName,
+    String? bio,
+    String? timezone,
+    String? avatarUrl,
+  }) async {
+    debugPrint('[ProfileRepository] updateMe called');
+    try {
+      final model = await _remote.updateMe(
+        displayName: displayName,
+        bio: bio,
+        timezone: timezone,
+        avatarUrl: avatarUrl,
+      );
+      await _local.cache(model);
+      debugPrint('[ProfileRepository] Remote update success — cached profile');
+      return Right(model);
+    } on ServerException catch (e) {
+      debugPrint('[ProfileRepository] ServerException: ${e.message}');
       return Left(ServerFailure(e.message));
     } on CacheException catch (e) {
       debugPrint('[ProfileRepository] CacheException: ${e.message}');

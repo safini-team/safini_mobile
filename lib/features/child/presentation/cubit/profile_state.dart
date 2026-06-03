@@ -11,6 +11,7 @@ class ProfileState {
   final double xpProgress;
   final String equippedFaceEmoji;
   final String equippedBadgeEmoji;
+  final bool isUpdatingName;
 
   const ProfileState({
     required this.name,
@@ -23,6 +24,7 @@ class ProfileState {
     required this.xpProgress,
     required this.equippedFaceEmoji,
     required this.equippedBadgeEmoji,
+    required this.isUpdatingName,
   });
 
   const ProfileState.initial()
@@ -35,7 +37,8 @@ class ProfileState {
       levelLabel = 'Level 5 Hero',
       xpProgress = 0.45,
       equippedFaceEmoji = '😊',
-      equippedBadgeEmoji = '🚀';
+      equippedBadgeEmoji = '🚀',
+      isUpdatingName = false;
 
   ProfileState copyWith({
     String? name,
@@ -47,6 +50,7 @@ class ProfileState {
     double? xpProgress,
     String? equippedFaceEmoji,
     String? equippedBadgeEmoji,
+    bool? isUpdatingName,
   }) {
     return ProfileState(
       name: name ?? this.name,
@@ -59,6 +63,7 @@ class ProfileState {
       xpProgress: xpProgress ?? this.xpProgress,
       equippedFaceEmoji: equippedFaceEmoji ?? this.equippedFaceEmoji,
       equippedBadgeEmoji: equippedBadgeEmoji ?? this.equippedBadgeEmoji,
+      isUpdatingName: isUpdatingName ?? this.isUpdatingName,
     );
   }
 }
