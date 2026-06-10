@@ -23,7 +23,12 @@ class ValidationFailure extends Failure {
   const ValidationFailure(super.message);
 }
 
+class FieldValidationFailure extends ValidationFailure {
+  final Map<String, String> fieldErrors;
+
+  const FieldValidationFailure(super.message, this.fieldErrors);
+}
+
 class NotFoundFailure extends Failure {
   const NotFoundFailure(super.message);
 }
-

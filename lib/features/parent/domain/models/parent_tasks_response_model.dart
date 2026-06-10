@@ -35,6 +35,96 @@ class ParentTasksResponseModel {
   }
 }
 
+class ParentTaskTemplateCreateRequest {
+  final String title;
+  final String category;
+  final String taskType;
+  final String recurrenceRule;
+  final String proofMode;
+  final String verificationMode;
+  final int coinReward;
+  final int xpReward;
+  final String? description;
+  final String? targetUnit;
+  final num? targetValue;
+  final String? contentRef;
+  final Map<String, dynamic>? metadata;
+
+  const ParentTaskTemplateCreateRequest({
+    required this.title,
+    required this.category,
+    required this.taskType,
+    required this.recurrenceRule,
+    required this.proofMode,
+    required this.verificationMode,
+    required this.coinReward,
+    required this.xpReward,
+    this.description,
+    this.targetUnit,
+    this.targetValue,
+    this.contentRef,
+    this.metadata,
+  });
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'title': title,
+      'category': category,
+      'task_type': taskType,
+      'recurrence_rule': recurrenceRule,
+      'proof_mode': proofMode,
+      'verification_mode': verificationMode,
+      'coin_reward': coinReward,
+      'xp_reward': xpReward,
+    };
+
+    void addOptional(String key, Object? value) {
+      if (value == null) return;
+      if (value is String && value.trim().isEmpty) return;
+      json[key] = value;
+    }
+
+    addOptional('description', description);
+    addOptional('target_unit', targetUnit);
+    addOptional('target_value', targetValue);
+    addOptional('content_ref', contentRef);
+    addOptional('metadata', metadata);
+    return json;
+  }
+
+  bool get mayGenerateTodayInstance {
+    final normalized = recurrenceRule.trim().toLowerCase();
+    return normalized == 'once' || normalized == 'manual';
+  }
+}
+
+class ParentTaskTemplateCreateResult {
+  final ParentTaskTemplateModel template;
+  final List<ParentTaskInstanceModel> todayInstances;
+
+  const ParentTaskTemplateCreateResult({
+    required this.template,
+    required this.todayInstances,
+  });
+
+  factory ParentTaskTemplateCreateResult.fromJson(Map<String, dynamic> json) {
+    final templateJson = _extractObject(json, [
+      'template',
+      'task_template',
+      'taskTemplate',
+      'data',
+      'result',
+    ]);
+    return ParentTaskTemplateCreateResult(
+      template: ParentTaskTemplateModel.fromJson(templateJson ?? json),
+      todayInstances: ParentTasksResponseModel._listFromJson(
+        json['today_instances'] ?? json['todayInstances'],
+        ParentTaskInstanceModel.fromJson,
+      ),
+    );
+  }
+}
+
 class ParentTaskTemplateModel {
   final String id;
   final String? title;
@@ -152,6 +242,20 @@ int? _intValue(Map<String, dynamic> json, List<String> keys) {
     if (value is num) return value.toInt();
     final parsed = int.tryParse(value?.toString() ?? '');
     if (parsed != null) return parsed;
+  }
+  return null;
+}
+
+Map<String, dynamic>? _extractObject(
+  Map<String, dynamic> json,
+  List<String> keys,
+) {
+  for (final key in keys) {
+    final value = json[key];
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) {
+      return value.map((key, value) => MapEntry(key.toString(), value));
+    }
   }
   return null;
 }

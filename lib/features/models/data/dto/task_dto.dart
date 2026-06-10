@@ -2,69 +2,151 @@ import '../../domain/models/task_model.dart';
 
 class TaskTemplateDto {
   final String id;
-  final String familyId;
+  final String? childId;
+  final String? source;
+  final String? taskType;
   final String title;
-  final String description;
-  final String category;
-  final int coinsReward;
+  final String? description;
+  final String? category;
+  final String? proofMode;
+  final String? verificationMode;
+  final String? recurrenceRule;
+  final int coinReward;
   final int xpReward;
-  final bool isStarter;
-  final DateTime createdAt;
+  final int? targetValue;
+  final String? targetUnit;
+  final Map<String, dynamic>? metadata;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   TaskTemplateDto({
     required this.id,
-    required this.familyId,
+    this.childId,
+    this.source,
+    this.taskType,
     required this.title,
-    required this.description,
-    required this.category,
-    required this.coinsReward,
+    this.description,
+    this.category,
+    this.proofMode,
+    this.verificationMode,
+    this.recurrenceRule,
+    required this.coinReward,
     required this.xpReward,
-    required this.isStarter,
-    required this.createdAt,
+    this.targetValue,
+    this.targetUnit,
+    this.metadata,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory TaskTemplateDto.fromJson(Map<String, dynamic> json) {
     return TaskTemplateDto(
       id: json['id'] as String? ?? '',
-      familyId: json['family_id'] as String? ?? '',
+      childId: json['child_id'] as String?,
+      source: json['source'] as String?,
+      taskType: json['task_type'] as String?,
       title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
-      category: json['category'] as String? ?? '',
-      coinsReward: json['coins_reward'] as int? ?? 0,
+      description: json['description'] as String?,
+      category: json['category'] as String?,
+      proofMode: json['proof_mode'] as String?,
+      verificationMode: json['verification_mode'] as String?,
+      recurrenceRule: json['recurrence_rule'] as String?,
+      coinReward: json['coin_reward'] as int? ?? 0,
       xpReward: json['xp_reward'] as int? ?? 0,
-      isStarter: json['is_starter'] as bool? ?? false,
+      targetValue: json['target_value'] as int?,
+      targetUnit: json['target_unit'] as String?,
+      metadata: json['metadata'] as Map<String, dynamic>?,
+      status: json['status'] as String?,
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
-          : DateTime.now(),
+          ? DateTime.tryParse(json['created_at'] as String)
+          : null,
+      updatedAt: json['updated_at'] != null
+          ? DateTime.tryParse(json['updated_at'] as String)
+          : null,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'family_id': familyId,
-      'title': title,
-      'description': description,
-      'category': category,
-      'coins_reward': coinsReward,
-      'xp_reward': xpReward,
-      'is_starter': isStarter,
-      'created_at': createdAt.toIso8601String(),
-    };
   }
 
   TaskTemplateModel toDomain() {
     return TaskTemplateModel(
       id: id,
-      familyId: familyId,
+      childId: childId,
+      source: source,
+      taskType: taskType,
       title: title,
       description: description,
       category: category,
-      coinsReward: coinsReward,
+      proofMode: proofMode,
+      verificationMode: verificationMode,
+      recurrenceRule: recurrenceRule,
+      coinReward: coinReward,
       xpReward: xpReward,
-      isStarter: isStarter,
+      targetValue: targetValue,
+      targetUnit: targetUnit,
+      metadata: metadata,
+      status: status,
       createdAt: createdAt,
+      updatedAt: updatedAt,
     );
+  }
+}
+
+class TaskTemplateCreateRequestDto {
+  final String title;
+  final String category;
+  final String taskType;
+  final String proofMode;
+  final String recurrenceRule;
+  final String verificationMode;
+  final int coinReward;
+  final int xpReward;
+  final String? description;
+  final int? targetValue;
+  final String? targetUnit;
+  final String? contentRef;
+  final Map<String, dynamic>? metadata;
+
+  const TaskTemplateCreateRequestDto({
+    required this.title,
+    required this.category,
+    required this.taskType,
+    required this.proofMode,
+    required this.recurrenceRule,
+    required this.verificationMode,
+    required this.coinReward,
+    required this.xpReward,
+    this.description,
+    this.targetValue,
+    this.targetUnit,
+    this.contentRef,
+    this.metadata,
+  });
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'title': title,
+      'category': category,
+      'task_type': taskType,
+      'proof_mode': proofMode,
+      'recurrence_rule': recurrenceRule,
+      'verification_mode': verificationMode,
+      'coin_reward': coinReward,
+      'xp_reward': xpReward,
+    };
+
+    void addOptional(String key, Object? value) {
+      if (value == null) return;
+      if (value is String && value.trim().isEmpty) return;
+      json[key] = value;
+    }
+
+    addOptional('description', description);
+    addOptional('target_value', targetValue);
+    addOptional('target_unit', targetUnit);
+    addOptional('content_ref', contentRef);
+    addOptional('metadata', metadata);
+    return json;
   }
 }
 

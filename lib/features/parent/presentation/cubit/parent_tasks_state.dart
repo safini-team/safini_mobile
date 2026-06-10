@@ -48,3 +48,35 @@ class ParentTasksError extends ParentTasksState {
     this.canRetry = true,
   });
 }
+
+class ParentTaskTemplateCreateInFlight extends ParentTasksState {
+  final ParentTasksLoaded base;
+
+  const ParentTaskTemplateCreateInFlight(this.base);
+}
+
+class ParentTaskTemplateCreateFailed extends ParentTasksState {
+  final ParentTasksLoaded base;
+  final String message;
+  final bool isUnauthorized;
+  final bool isServiceUnavailable;
+  final Map<String, String> fieldErrors;
+
+  const ParentTaskTemplateCreateFailed({
+    required this.base,
+    required this.message,
+    this.isUnauthorized = false,
+    this.isServiceUnavailable = false,
+    this.fieldErrors = const {},
+  });
+}
+
+class ParentTaskTemplateCreateSucceeded extends ParentTasksState {
+  final ParentTasksLoaded data;
+  final String message;
+
+  const ParentTaskTemplateCreateSucceeded(
+    this.data, {
+    this.message = 'Task template created.',
+  });
+}

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../models/task_model.dart';
 import '../../../../core/utils/error/failures.dart';
+import '../../data/dto/task_dto.dart';
 
 abstract class ITaskRepository {
   Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates();
@@ -15,5 +16,9 @@ abstract class ITaskRepository {
     String instanceId,
     String status,
     String? parentNote,
+  );
+  Future<Either<Failure, TaskTemplateModel>> createTaskTemplate(
+    String childId,
+    TaskTemplateCreateRequestDto request,
   );
 }

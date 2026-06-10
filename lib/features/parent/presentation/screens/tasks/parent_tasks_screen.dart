@@ -4,13 +4,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/core/theme/app_spacing.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
-import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class ParentTasksScreen extends StatelessWidget {
   const ParentTasksScreen({super.key});
@@ -20,195 +23,255 @@ class ParentTasksScreen extends StatelessWidget {
     final s = S.of(context);
     return BlocProvider(
       create: (context) => getIt<ParentTasksCubit>()..loadTasks(),
-      child: Scaffold(
-        backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
-        body: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    context.colorScheme.primary.withValues(alpha: 0.8),
-                    context.colorScheme.primary,
-                  ],
-                ),
-              ),
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 20, 24),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          s.tasksAndRewards,
-                          style: context.textTheme.displaySmall?.copyWith(
-                            color: context.colorScheme.onPrimary,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Flexible(
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colorScheme.onPrimary.withValues(
-                                alpha: 0.15,
-                              ),
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    s.newBtn,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: context.colorScheme.onPrimary,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+      child: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
+          body: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      context.colorScheme.primary.withValues(alpha: 0.8),
+                      context.colorScheme.primary,
                     ],
                   ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(36),
-                    topRight: Radius.circular(36),
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 20, 24),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            s.tasksAndRewards,
+                            style: context.textTheme.displaySmall?.copyWith(
+                              color: context.colorScheme.onPrimary,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: () => _openCreateTaskSheet(context),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.colorScheme.onPrimary
+                                    .withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      s.newBtn,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: context.colorScheme.onPrimary,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                child: BlocConsumer<ParentTasksCubit, ParentTasksState>(
-                  listener: (context, state) {
-                    if (state is ParentTasksError && state.isUnauthorized) {
-                      unawaited(
-                        context.read<AuthSessionCubit>().forceSignOut(
-                          state.message,
-                        ),
-                      );
-                      context.router.replace(const NamedRoute('login'));
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is ParentTasksLoading ||
-                        state is ParentTasksInitial) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.surface,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(36),
+                      topRight: Radius.circular(36),
+                    ),
+                  ),
+                  child: BlocConsumer<ParentTasksCubit, ParentTasksState>(
+                    listener: (context, state) {
+                      if (state is ParentTasksError && state.isUnauthorized) {
+                        unawaited(
+                          context.read<AuthSessionCubit>().forceSignOut(
+                            state.message,
+                          ),
+                        );
+                        context.router.replace(const NamedRoute('login'));
+                      }
+                      if (state is ParentTaskTemplateCreateFailed &&
+                          state.isUnauthorized) {
+                        unawaited(
+                          context.read<AuthSessionCubit>().forceSignOut(
+                            state.message,
+                          ),
+                        );
+                        context.router.replace(const NamedRoute('login'));
+                      }
+                      if (state is ParentTaskTemplateCreateSucceeded) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message)),
+                        );
+                        context.read<ParentTasksCubit>().clearCreateOutcome();
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is ParentTasksLoading ||
+                          state is ParentTasksInitial) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-                    if (state is ParentTasksError) {
-                      return _ErrorState(
-                        message: state.message,
-                        canRetry: state.canRetry && !state.isUnauthorized,
-                        onRetry: () =>
-                            context.read<ParentTasksCubit>().loadTasks(),
-                      );
-                    }
+                      if (state is ParentTasksError) {
+                        return _ErrorState(
+                          message: state.message,
+                          canRetry: state.canRetry && !state.isUnauthorized,
+                          onRetry: () =>
+                              context.read<ParentTasksCubit>().loadTasks(),
+                        );
+                      }
 
-                    if (state is ParentTasksLoaded) {
-                      return RefreshIndicator(
-                        onRefresh: () =>
-                            context.read<ParentTasksCubit>().loadTasks(),
-                        child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(20, 28, 20, 100),
-                          children: [
-                            Text(
-                              state.childName,
-                              style: context.textTheme.labelLarge?.copyWith(
-                                color: context.colorScheme.onSurface.withValues(
-                                  alpha: 0.55,
+                      final loadedState = switch (state) {
+                        ParentTasksLoaded s => s,
+                        ParentTaskTemplateCreateInFlight s => s.base,
+                        ParentTaskTemplateCreateFailed s => s.base,
+                        ParentTaskTemplateCreateSucceeded s => s.data,
+                        _ => null,
+                      };
+
+                      if (loadedState != null) {
+                        return RefreshIndicator(
+                          onRefresh: () =>
+                              context.read<ParentTasksCubit>().loadTasks(),
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.fromLTRB(20, 28, 20, 100),
+                            children: [
+                              Text(
+                                loadedState.childName,
+                                style: context.textTheme.labelLarge?.copyWith(
+                                  color: context.colorScheme.onSurface
+                                      .withValues(alpha: 0.55),
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                fontWeight: FontWeight.w700,
                               ),
-                            ),
-                            const SizedBox(height: 18),
-                            _buildSectionHeader(
-                              context,
-                              icon: Icons.repeat_rounded,
-                              iconColor: const Color(0xFF8B46FF),
-                              title: 'Templates',
-                              badgeCount: state.templates.length,
-                              badgeColor: const Color(0xFFF2F0FF),
-                              badgeTextColor: const Color(0xFF8B46FF),
-                            ),
-                            const SizedBox(height: 16),
-                            if (state.templates.isEmpty)
-                              _EmptySection(message: 'No task templates found.')
-                            else
-                              ...state.templates.map(_buildTemplateTile),
-                            const SizedBox(height: 32),
-                            if (state.pendingApproval.isNotEmpty) ...[
+                              const SizedBox(height: 18),
                               _buildSectionHeader(
                                 context,
-                                icon: Icons.access_time_filled,
-                                iconColor: Colors.amber,
-                                title: s.pendingApproval,
-                                badgeCount: state.pendingApproval.length,
-                                badgeColor: Colors.amber,
+                                icon: Icons.repeat_rounded,
+                                iconColor: const Color(0xFF8B46FF),
+                                title: 'Templates',
+                                badgeCount: loadedState.templates.length,
+                                badgeColor: const Color(0xFFF2F0FF),
+                                badgeTextColor: const Color(0xFF8B46FF),
                               ),
                               const SizedBox(height: 16),
-                              ...state.pendingApproval.map(_buildInstanceTile),
+                              if (loadedState.templates.isEmpty)
+                                const _EmptySection(
+                                  message: 'No task templates found.',
+                                )
+                              else
+                                ...loadedState.templates.map(
+                                  _buildTemplateTile,
+                                ),
                               const SizedBox(height: 32),
+                              if (loadedState.pendingApproval.isNotEmpty) ...[
+                                _buildSectionHeader(
+                                  context,
+                                  icon: Icons.access_time_filled,
+                                  iconColor: Colors.amber,
+                                  title: s.pendingApproval,
+                                  badgeCount:
+                                      loadedState.pendingApproval.length,
+                                  badgeColor: Colors.amber,
+                                ),
+                                const SizedBox(height: 16),
+                                ...loadedState.pendingApproval.map(
+                                  _buildInstanceTile,
+                                ),
+                                const SizedBox(height: 32),
+                              ],
+                              _buildSectionHeader(
+                                context,
+                                icon: Icons.today_rounded,
+                                iconColor: context.colorScheme.tertiary,
+                                title: 'Today',
+                                badgeCount: loadedState.todayInstances.length,
+                                badgeColor: const Color(0xFFF2F0FF),
+                                badgeTextColor: const Color(0xFF8B46FF),
+                              ),
+                              const SizedBox(height: 16),
+                              if (loadedState.todayInstances.isEmpty)
+                                const _EmptySection(
+                                  message: 'No task instances found for today.',
+                                )
+                              else ...[
+                                ...loadedState.activeTasks.map(
+                                  _buildInstanceTile,
+                                ),
+                                ...loadedState.completedTasks.map(
+                                  _buildInstanceTile,
+                                ),
+                              ],
                             ],
-                            _buildSectionHeader(
-                              context,
-                              icon: Icons.today_rounded,
-                              iconColor: context.colorScheme.tertiary,
-                              title: 'Today',
-                              badgeCount: state.todayInstances.length,
-                              badgeColor: const Color(0xFFF2F0FF),
-                              badgeTextColor: const Color(0xFF8B46FF),
-                            ),
-                            const SizedBox(height: 16),
-                            if (state.todayInstances.isEmpty)
-                              _EmptySection(
-                                message: 'No task instances found for today.',
-                              )
-                            else ...[
-                              ...state.activeTasks.map(_buildInstanceTile),
-                              ...state.completedTasks.map(_buildInstanceTile),
-                            ],
-                          ],
-                        ),
-                      );
-                    }
+                          ),
+                        );
+                      }
 
-                    return const SizedBox.shrink();
-                  },
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Future<void> _openCreateTaskSheet(BuildContext context) async {
+    final cubit = context.read<ParentTasksCubit>();
+    final state = cubit.state;
+
+    final loaded = switch (state) {
+      ParentTasksLoaded s => s,
+      ParentTaskTemplateCreateInFlight s => s.base,
+      ParentTaskTemplateCreateFailed s => s.base,
+      ParentTaskTemplateCreateSucceeded s => s.data,
+      _ => null,
+    };
+    if (loaded == null) return;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => BlocProvider.value(
+        value: cubit,
+        child: const CreateTaskBottomSheet(),
       ),
     );
   }
@@ -276,6 +339,8 @@ class ParentTasksScreen extends StatelessWidget {
   }
 }
 
+// ── List helper widgets ───────────────────────────────────────────────────────
+
 class _ErrorState extends StatelessWidget {
   final String message;
   final bool canRetry;
@@ -339,6 +404,453 @@ class _EmptySection extends StatelessWidget {
         style: context.textTheme.bodyMedium?.copyWith(
           color: context.colorScheme.onSurface.withValues(alpha: 0.55),
           fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+// ── Create Task bottom sheet ──────────────────────────────────────────────────
+
+class CreateTaskBottomSheet extends StatefulWidget {
+  // child_id is not a constructor param — the cubit already holds it in
+  // ParentTasksLoaded.childId, resolved during loadTasks().
+  const CreateTaskBottomSheet({super.key});
+
+  @override
+  State<CreateTaskBottomSheet> createState() => _CreateTaskBottomSheetState();
+}
+
+class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
+  final _titleController = TextEditingController();
+  String? _selectedEmoji;
+  String? _selectedCategory;
+  int? _selectedCoins;
+
+  static const _emojis = [
+    '🧹',
+    '📚',
+    '✏️',
+    '🎹',
+    '🏃',
+    '🔍',
+    '🧮',
+    '🎨',
+    '⚽',
+    '🛏️',
+  ];
+  static const _coinOptions = [10, 20, 30, 40, 50];
+
+  bool get _canSubmit =>
+      _titleController.text.trim().isNotEmpty && _selectedCoins != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final title = _titleController.text.trim();
+    if (title.isEmpty || _selectedCoins == null) return;
+    final coins = _selectedCoins!;
+    final request = ParentTaskTemplateCreateRequest(
+      title: title,
+      category: _selectedCategory ?? 'other',
+      taskType: 'custom',
+      proofMode: 'text_image',
+      recurrenceRule: 'daily',
+      verificationMode: 'parent_approval',
+      coinReward: coins,
+      xpReward: coins,
+      metadata: _selectedEmoji != null ? {'emoji': _selectedEmoji} : null,
+    );
+    await context.read<ParentTasksCubit>().createTaskTemplate(request);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return BlocListener<ParentTasksCubit, ParentTasksState>(
+      listener: (context, state) {
+        if (state is ParentTaskTemplateCreateSucceeded) {
+          Navigator.of(context).pop();
+        } else if (state is ParentTaskTemplateCreateFailed &&
+            !state.isUnauthorized) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: BlocBuilder<ParentTasksCubit, ParentTasksState>(
+        builder: (context, state) {
+          final isSubmitting = state is ParentTaskTemplateCreateInFlight;
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppRadius.xl),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                    vertical: AppSpacing.xl,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Drag handle
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.border,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Header
+                      Row(
+                        children: [
+                          Text(
+                            s.createTaskSheetTitle,
+                            style: context.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textPrimary,
+                              fontSize: 22,
+                            ),
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF2F2F5),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 18,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // ── Task Name ─────────────────────────────────────────
+                      _SectionLabel(s.createTaskNameLabel),
+                      const SizedBox(height: AppSpacing.sm),
+                      TextField(
+                        controller: _titleController,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: InputDecoration(
+                          hintText: s.createTaskNameHint,
+                          hintStyle: context.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.background,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.lg),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.lg),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.lg),
+                            borderSide: const BorderSide(
+                              color: AppColors.primary,
+                              width: 1.5,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.lg,
+                            vertical: AppSpacing.md,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // ── Emoji Picker ──────────────────────────────────────
+                      _SectionLabel(s.createTaskPickEmojiLabel),
+                      const SizedBox(height: AppSpacing.sm),
+                      SizedBox(
+                        height: 56,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _emojis.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: AppSpacing.sm),
+                          itemBuilder: (context, i) {
+                            final emoji = _emojis[i];
+                            final selected = _selectedEmoji == emoji;
+                            return GestureDetector(
+                              onTap: () =>
+                                  setState(() => _selectedEmoji = emoji),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  color: selected
+                                      ? AppColors.primaryLight
+                                      : const Color(0xFFF5F5F7),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: selected
+                                      ? Border.all(
+                                          color: AppColors.primary,
+                                          width: 2,
+                                        )
+                                      : null,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  emoji,
+                                  style: const TextStyle(fontSize: 24),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // ── Category ──────────────────────────────────────────
+                      _SectionLabel(s.createTaskCategoryTitle),
+                      const SizedBox(height: AppSpacing.sm),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: _buildCategoryChips(s),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // ── Reward ────────────────────────────────────────────
+                      _SectionLabel(s.createTaskRewardLabel),
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        children: List.generate(_coinOptions.length, (i) {
+                          final coins = _coinOptions[i];
+                          final selected = _selectedCoins == coins;
+                          return Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: i < _coinOptions.length - 1
+                                    ? AppSpacing.xs
+                                    : 0,
+                              ),
+                              child: GestureDetector(
+                                onTap: () =>
+                                    setState(() => _selectedCoins = coins),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: selected
+                                        ? AppColors.primaryLight
+                                        : const Color(0xFFF5F5F7),
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.pill),
+                                    border: selected
+                                        ? Border.all(
+                                            color: AppColors.primary,
+                                            width: 1.5,
+                                          )
+                                        : null,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Text(
+                                        '🪙',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '$coins',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: selected
+                                              ? AppColors.primary
+                                              : AppColors.textPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // ── Submit ────────────────────────────────────────────
+                      _GradientButton(
+                        label: s.createTaskAddButton,
+                        isLoading: isSubmitting,
+                        isEnabled: _canSubmit && !isSubmitting,
+                        onTap: _canSubmit && !isSubmitting ? _submit : null,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  List<Widget> _buildCategoryChips(S s) {
+    final labels = <String>[
+      s.createTaskCategoryDailyChore,
+      s.createTaskCategoryEducational,
+      s.createTaskCategoryHobby,
+      s.categoryFitness,
+      s.categoryLogic,
+      s.createTaskCategoryOther,
+    ];
+    const apiValues = <String>[
+      'chore',
+      'learn',
+      'hobby',
+      'fitness',
+      'logic',
+      'other',
+    ];
+    return List.generate(labels.length, (i) {
+      final label = labels[i];
+      final apiValue = apiValues[i];
+      final selected = _selectedCategory == apiValue;
+      return GestureDetector(
+        onTap: () => setState(() => _selectedCategory = apiValue),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color:
+                selected ? AppColors.primaryLight : const Color(0xFFF5F5F7),
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+            border: selected
+                ? Border.all(color: AppColors.primary, width: 1.5)
+                : null,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+              color: selected ? AppColors.primary : AppColors.textSecondary,
+            ),
+          ),
+        ),
+      );
+    });
+  }
+}
+
+// ── Shared sheet sub-widgets ──────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  final String text;
+
+  const _SectionLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: context.textTheme.labelLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+        fontSize: 14,
+      ),
+    );
+  }
+}
+
+class _GradientButton extends StatelessWidget {
+  final String label;
+  final bool isLoading;
+  final bool isEnabled;
+  final VoidCallback? onTap;
+
+  const _GradientButton({
+    required this.label,
+    required this.isLoading,
+    required this.isEnabled,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: isEnabled ? 1.0 : 0.55,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.brandGradient,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            onTap: onTap,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              alignment: Alignment.center,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+            ),
+          ),
         ),
       ),
     );

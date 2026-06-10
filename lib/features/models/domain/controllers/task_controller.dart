@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../models/task_model.dart';
 import '../repositories/i_task_repository.dart';
 import '../../../../core/utils/error/failures.dart';
+import '../../data/dto/task_dto.dart';
 
 @lazySingleton
 class TaskController {
@@ -12,16 +13,24 @@ class TaskController {
 
   Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates() =>
       _repository.getTaskTemplates();
+
   Future<Either<Failure, List<TaskInstanceModel>>> getChildTasks(
     String childId,
   ) => _repository.getChildTasks(childId);
+
   Future<Either<Failure, TaskInstanceModel>> submitTask(
     String instanceId,
     String proofUrl,
   ) => _repository.submitTask(instanceId, proofUrl);
+
   Future<Either<Failure, TaskInstanceModel>> reviewTask(
     String instanceId,
     String status,
     String? parentNote,
   ) => _repository.reviewTask(instanceId, status, parentNote);
+
+  Future<Either<Failure, TaskTemplateModel>> createTaskTemplate(
+    String childId,
+    TaskTemplateCreateRequestDto request,
+  ) => _repository.createTaskTemplate(childId, request);
 }

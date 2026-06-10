@@ -229,5 +229,50 @@
   "familyDecisionSubtitle": "Создайте семейное пространство и пригласите детей зарабатывать экранное время.",
   "signInError": "Не удалось войти. Попробуйте ещё раз.",
   "networkError": "Ошибка сети. Проверьте подключение.",
-  "retry": "Повторить"
+  "retry": "Повторить",
+  "createTaskForChild": "Создать задание для {childName}",
+  "@createTaskForChild": {
+    "placeholders": {
+      "childName": {
+        "type": "String"
+      }
+    }
+  },
+  "createTaskStep1Title": "Шаг 1 — Основное",
+  "createTaskTitleLabel": "Что нужно сделать?",
+  "createTaskFieldRequired": "Обязательное поле",
+  "createTaskTitleMaxChars": "Максимум 120 символов",
+  "createTaskCategoryTitle": "Категория",
+  "createTaskCategoryOther": "Другое",
+  "createTaskRepeatsTitle": "Повторение",
+  "createTaskRecurrenceDaily": "Ежедневно",
+  "createTaskRecurrenceOnce": "Один раз",
+  "createTaskRecurrenceManual": "Вручную",
+  "createTaskRewardsTitle": "Награды",
+  "createTaskXpLabel": "ОП",
+  "createTaskStep2Title": "Шаг 2 — Как ребёнок выполняет задание?",
+  "createTaskProofTitle": "Подтверждение",
+  "createTaskProofPhotoText": "Фото + Текст",
+  "createTaskProofMetric": "Ввести число",
+  "createTaskProofNone": "Просто отметить выполнено",
+  "createTaskApprovedByTitle": "Проверяет",
+  "createTaskVerificationParent": "Родитель проверяет",
+  "createTaskVerificationAuto": "Автоодобрение",
+  "createTaskStep3Title": "Шаг 3 — Дополнительно",
+  "createTaskTargetTitle": "Цель",
+  "createTaskTargetNumber": "Число",
+  "createTaskTargetUnitHint": "Единица (напр. минуты)",
+  "createTaskHideDetails": "Скрыть детали",
+  "createTaskAddDetails": "+ Добавить описание",
+  "createTaskDescriptionLabel": "Описание (необязательно)",
+  "createTaskSubmitButton": "Создать шаблон задания",
+  "createTaskSheetTitle": "Новое задание",
+  "createTaskNameLabel": "Название",
+  "createTaskNameHint": "напр. Убраться в комнате",
+  "createTaskPickEmojiLabel": "Выберите эмодзи",
+  "createTaskRewardLabel": "Награда (Монеты времени)",
+  "createTaskAddButton": "Добавить задание",
+  "createTaskCategoryDailyChore": "Дело по дому",
+  "createTaskCategoryEducational": "Обучение",
+  "createTaskCategoryHobby": "Хобби"
 }
