@@ -1,7 +1,12 @@
-import 'package:safini/features/parent/domain/models/parent_task_model.dart';
+import 'package:dartz/dartz.dart';
+import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 
 abstract class IParentTaskRepository {
-  Future<List<ParentTaskModel>> fetchTasks(String childId);
-  Future<void> completeTask(String taskId);
-  Future<void> addTask(ParentTaskModel task);
+  Future<Either<Failure, ParentTasksResponseModel>> fetchTasks(String childId);
+
+  Future<Either<Failure, ParentTaskTemplateCreateResult>> createTaskTemplate(
+    String childId,
+    ParentTaskTemplateCreateRequest request,
+  );
 }

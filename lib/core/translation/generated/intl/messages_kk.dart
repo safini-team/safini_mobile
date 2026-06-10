@@ -62,6 +62,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Күнделікті экран уақытының шектеуін орнатыңыз"),
         "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
         "appTimeTab": MessageLookupByLibrary.simpleMessage("Қолданба уақыты"),
+        "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
+            "Бекітілген тапсырмаларды өзгертуге немесе жоюға болмайды."),
         "apps": MessageLookupByLibrary.simpleMessage("Қолданбалар"),
         "avatarItemsTab":
             MessageLookupByLibrary.simpleMessage("Аватар заттары"),
@@ -87,11 +89,38 @@ class MessageLookup extends MessageLookupByLibrary {
         "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
             "Көбірек монета табу үшін күнделікті тапсырмаларды орында!"),
         "completed": MessageLookupByLibrary.simpleMessage("Орындалды"),
+        "createTaskAddButton":
+            MessageLookupByLibrary.simpleMessage("Тапсырма қосу"),
+        "createTaskCategoryDailyChore":
+            MessageLookupByLibrary.simpleMessage("Үй жұмысы"),
+        "createTaskCategoryEducational":
+            MessageLookupByLibrary.simpleMessage("Оқу"),
+        "createTaskCategoryHobby":
+            MessageLookupByLibrary.simpleMessage("Хобби"),
+        "createTaskCategoryOther":
+            MessageLookupByLibrary.simpleMessage("Басқа"),
+        "createTaskCategoryTitle":
+            MessageLookupByLibrary.simpleMessage("Санат"),
+        "createTaskNameHint":
+            MessageLookupByLibrary.simpleMessage("мыс. Бөлмені жина"),
+        "createTaskNameLabel": MessageLookupByLibrary.simpleMessage("Атауы"),
+        "createTaskPickEmojiLabel":
+            MessageLookupByLibrary.simpleMessage("Эмодзи таңда"),
+        "createTaskRewardLabel":
+            MessageLookupByLibrary.simpleMessage("Марапат (Уақыт монеталары)"),
+        "createTaskSaveButton": MessageLookupByLibrary.simpleMessage("Сақтау"),
+        "createTaskSheetTitle":
+            MessageLookupByLibrary.simpleMessage("Жаңа тапсырма"),
         "customizeAvatar":
             MessageLookupByLibrary.simpleMessage("Аватарды баптау"),
         "dailyChore": MessageLookupByLibrary.simpleMessage("Күнделікті жұмыс"),
         "dailyLimit": MessageLookupByLibrary.simpleMessage("Күндік шектеу"),
         "dayStreak": MessageLookupByLibrary.simpleMessage("Күндік серия"),
+        "deleteTaskBody":
+            MessageLookupByLibrary.simpleMessage("Мұны қайтару мүмкін емес."),
+        "deleteTaskButton": MessageLookupByLibrary.simpleMessage("Жою"),
+        "deleteTaskTitle":
+            MessageLookupByLibrary.simpleMessage("Тапсырманы жою?"),
         "doHomework":
             MessageLookupByLibrary.simpleMessage("Үй тапсырмасын орында"),
         "doneToday": MessageLookupByLibrary.simpleMessage("Бүгін орындалды"),
@@ -99,6 +128,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Көбірек монета тап"),
         "earnedToday": MessageLookupByLibrary.simpleMessage("Бүгін табылды"),
         "edit": MessageLookupByLibrary.simpleMessage("Өңдеу"),
+        "editTaskSheetTitle":
+            MessageLookupByLibrary.simpleMessage("Тапсырманы өзгерту"),
         "educational": MessageLookupByLibrary.simpleMessage("Білім беру"),
         "english": MessageLookupByLibrary.simpleMessage("Ағылшын"),
         "equipped": MessageLookupByLibrary.simpleMessage("ҚОЛДАНЫЛУДА"),
@@ -146,6 +177,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "newTask": MessageLookupByLibrary.simpleMessage("Жаңа тапсырма"),
         "noQuestsInCategory":
             MessageLookupByLibrary.simpleMessage("Бұл санатта тапсырма жоқ"),
+        "noTasksYet": MessageLookupByLibrary.simpleMessage(
+            "Бұл күнге әзірге тапсырма жоқ."),
         "notEnoughCoins":
             MessageLookupByLibrary.simpleMessage("Монеталар жеткіліксіз!"),
         "ok": MessageLookupByLibrary.simpleMessage("Жарайды"),
@@ -211,6 +244,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Үйрен. Табыс тап. Ойна."),
         "taskChessSub": MessageLookupByLibrary.simpleMessage("Ойынды меңгер"),
         "taskChessTitle": MessageLookupByLibrary.simpleMessage("Шахмат сабағы"),
+        "taskCreatedMessage":
+            MessageLookupByLibrary.simpleMessage("Тапсырма жасалды!"),
+        "taskDeletedMessage":
+            MessageLookupByLibrary.simpleMessage("Тапсырма жойылды."),
         "taskDuolingoSub":
             MessageLookupByLibrary.simpleMessage("Күндік серия бонусы!"),
         "taskDuolingoTitle":
@@ -228,6 +265,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Қозғалысты тоқтатпа!"),
         "taskStepsTitle":
             MessageLookupByLibrary.simpleMessage("5 000 қадам жүр"),
+        "taskUpdatedMessage":
+            MessageLookupByLibrary.simpleMessage("Тапсырма жаңартылды!"),
         "tasks": MessageLookupByLibrary.simpleMessage("Тапсырмалар"),
         "tasksAndRewards":
             MessageLookupByLibrary.simpleMessage("Тапсырмалар мен марапаттар"),

@@ -60,6 +60,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Set daily screen time limits"),
         "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
         "appTimeTab": MessageLookupByLibrary.simpleMessage("App Time"),
+        "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
+            "Approved tasks can\'t be edited or deleted."),
         "apps": MessageLookupByLibrary.simpleMessage("Apps"),
         "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar Items"),
         "buyIt": MessageLookupByLibrary.simpleMessage("Buy it! 🎉"),
@@ -85,17 +87,44 @@ class MessageLookup extends MessageLookupByLibrary {
         "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
             "Complete your daily quests to earn more coins!"),
         "completed": MessageLookupByLibrary.simpleMessage("Completed"),
+        "createTaskAddButton": MessageLookupByLibrary.simpleMessage("Add Task"),
+        "createTaskCategoryDailyChore":
+            MessageLookupByLibrary.simpleMessage("Daily Chore"),
+        "createTaskCategoryEducational":
+            MessageLookupByLibrary.simpleMessage("Educational"),
+        "createTaskCategoryHobby":
+            MessageLookupByLibrary.simpleMessage("Hobby"),
+        "createTaskCategoryOther":
+            MessageLookupByLibrary.simpleMessage("Other"),
+        "createTaskCategoryTitle":
+            MessageLookupByLibrary.simpleMessage("Category"),
+        "createTaskNameHint":
+            MessageLookupByLibrary.simpleMessage("e.g. Clean your room"),
+        "createTaskNameLabel":
+            MessageLookupByLibrary.simpleMessage("Task Name"),
+        "createTaskPickEmojiLabel":
+            MessageLookupByLibrary.simpleMessage("Pick an Emoji"),
+        "createTaskRewardLabel":
+            MessageLookupByLibrary.simpleMessage("Reward (Time Coins)"),
+        "createTaskSaveButton": MessageLookupByLibrary.simpleMessage("Save"),
+        "createTaskSheetTitle":
+            MessageLookupByLibrary.simpleMessage("New Task"),
         "customizeAvatar":
             MessageLookupByLibrary.simpleMessage("Customize Avatar"),
         "dailyChore": MessageLookupByLibrary.simpleMessage("Daily Chore"),
         "dailyLimit": MessageLookupByLibrary.simpleMessage("Daily Limit"),
         "dayStreak": MessageLookupByLibrary.simpleMessage("Day Streak"),
+        "deleteTaskBody":
+            MessageLookupByLibrary.simpleMessage("This can\'t be undone."),
+        "deleteTaskButton": MessageLookupByLibrary.simpleMessage("Delete"),
+        "deleteTaskTitle": MessageLookupByLibrary.simpleMessage("Delete task?"),
         "doHomework": MessageLookupByLibrary.simpleMessage("Do homework"),
         "doneToday": MessageLookupByLibrary.simpleMessage("Done Today"),
         "earnMoreCoins":
             MessageLookupByLibrary.simpleMessage("Earn More Coins"),
         "earnedToday": MessageLookupByLibrary.simpleMessage("Earned Today"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "editTaskSheetTitle": MessageLookupByLibrary.simpleMessage("Edit Task"),
         "educational": MessageLookupByLibrary.simpleMessage("Educational"),
         "english": MessageLookupByLibrary.simpleMessage("English"),
         "equipped": MessageLookupByLibrary.simpleMessage("EQUIPPED"),
@@ -143,6 +172,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "newTask": MessageLookupByLibrary.simpleMessage("New Task"),
         "noQuestsInCategory":
             MessageLookupByLibrary.simpleMessage("No quests in this category"),
+        "noTasksYet":
+            MessageLookupByLibrary.simpleMessage("No tasks for this day yet."),
         "notEnoughCoins":
             MessageLookupByLibrary.simpleMessage("Not enough coins!"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
@@ -207,6 +238,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "taskChessSub":
             MessageLookupByLibrary.simpleMessage("Master the board"),
         "taskChessTitle": MessageLookupByLibrary.simpleMessage("Chess Lesson"),
+        "taskCreatedMessage":
+            MessageLookupByLibrary.simpleMessage("Task created!"),
+        "taskDeletedMessage":
+            MessageLookupByLibrary.simpleMessage("Task deleted."),
         "taskDuolingoSub":
             MessageLookupByLibrary.simpleMessage("Daily streak bonus!"),
         "taskDuolingoTitle":
@@ -225,6 +260,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "taskStepsSub": MessageLookupByLibrary.simpleMessage("Keep it moving!"),
         "taskStepsTitle":
             MessageLookupByLibrary.simpleMessage("Walk 5,000 Steps"),
+        "taskUpdatedMessage":
+            MessageLookupByLibrary.simpleMessage("Task updated!"),
         "tasks": MessageLookupByLibrary.simpleMessage("Tasks"),
         "tasksAndRewards":
             MessageLookupByLibrary.simpleMessage("Tasks & Rewards"),

@@ -1575,6 +1575,216 @@ class S {
       args: [],
     );
   }
+
+  /// `Category`
+  String get createTaskCategoryTitle {
+    return Intl.message(
+      'Category',
+      name: 'createTaskCategoryTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get createTaskCategoryOther {
+    return Intl.message(
+      'Other',
+      name: 'createTaskCategoryOther',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New Task`
+  String get createTaskSheetTitle {
+    return Intl.message(
+      'New Task',
+      name: 'createTaskSheetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task Name`
+  String get createTaskNameLabel {
+    return Intl.message(
+      'Task Name',
+      name: 'createTaskNameLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Clean your room`
+  String get createTaskNameHint {
+    return Intl.message(
+      'e.g. Clean your room',
+      name: 'createTaskNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick an Emoji`
+  String get createTaskPickEmojiLabel {
+    return Intl.message(
+      'Pick an Emoji',
+      name: 'createTaskPickEmojiLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reward (Time Coins)`
+  String get createTaskRewardLabel {
+    return Intl.message(
+      'Reward (Time Coins)',
+      name: 'createTaskRewardLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Task`
+  String get createTaskAddButton {
+    return Intl.message(
+      'Add Task',
+      name: 'createTaskAddButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily Chore`
+  String get createTaskCategoryDailyChore {
+    return Intl.message(
+      'Daily Chore',
+      name: 'createTaskCategoryDailyChore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Educational`
+  String get createTaskCategoryEducational {
+    return Intl.message(
+      'Educational',
+      name: 'createTaskCategoryEducational',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hobby`
+  String get createTaskCategoryHobby {
+    return Intl.message(
+      'Hobby',
+      name: 'createTaskCategoryHobby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task created!`
+  String get taskCreatedMessage {
+    return Intl.message(
+      'Task created!',
+      name: 'taskCreatedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task updated!`
+  String get taskUpdatedMessage {
+    return Intl.message(
+      'Task updated!',
+      name: 'taskUpdatedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task deleted.`
+  String get taskDeletedMessage {
+    return Intl.message(
+      'Task deleted.',
+      name: 'taskDeletedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No tasks for this day yet.`
+  String get noTasksYet {
+    return Intl.message(
+      'No tasks for this day yet.',
+      name: 'noTasksYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Task`
+  String get editTaskSheetTitle {
+    return Intl.message(
+      'Edit Task',
+      name: 'editTaskSheetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get createTaskSaveButton {
+    return Intl.message(
+      'Save',
+      name: 'createTaskSaveButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get deleteTaskButton {
+    return Intl.message(
+      'Delete',
+      name: 'deleteTaskButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete task?`
+  String get deleteTaskTitle {
+    return Intl.message(
+      'Delete task?',
+      name: 'deleteTaskTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This can't be undone.`
+  String get deleteTaskBody {
+    return Intl.message(
+      'This can\'t be undone.',
+      name: 'deleteTaskBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approved tasks can't be edited or deleted.`
+  String get approvedTaskConflict {
+    return Intl.message(
+      'Approved tasks can\'t be edited or deleted.',
+      name: 'approvedTaskConflict',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,71 +1,204 @@
 import '../../domain/models/task_model.dart';
 
-class TaskTemplateDto {
+class TaskDto {
   final String id;
-  final String familyId;
+  final String? childId;
+  final String? source;
+  final String? taskType;
   final String title;
-  final String description;
-  final String category;
-  final int coinsReward;
+  final String? description;
+  final String? category;
+  final String? proofMode;
+  final String? verificationMode;
+  final int coinReward;
   final int xpReward;
-  final bool isStarter;
-  final DateTime createdAt;
+  final int? targetValue;
+  final String? targetUnit;
+  final Map<String, dynamic>? metadata;
+  final String? dueOn;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  TaskTemplateDto({
+  TaskDto({
     required this.id,
-    required this.familyId,
+    this.childId,
+    this.source,
+    this.taskType,
     required this.title,
-    required this.description,
-    required this.category,
-    required this.coinsReward,
+    this.description,
+    this.category,
+    this.proofMode,
+    this.verificationMode,
+    required this.coinReward,
     required this.xpReward,
-    required this.isStarter,
-    required this.createdAt,
+    this.targetValue,
+    this.targetUnit,
+    this.metadata,
+    this.dueOn,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  factory TaskTemplateDto.fromJson(Map<String, dynamic> json) {
-    return TaskTemplateDto(
+  factory TaskDto.fromJson(Map<String, dynamic> json) {
+    return TaskDto(
       id: json['id'] as String? ?? '',
-      familyId: json['family_id'] as String? ?? '',
+      childId: json['child_id'] as String?,
+      source: json['source'] as String?,
+      taskType: json['task_type'] as String?,
       title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
-      category: json['category'] as String? ?? '',
-      coinsReward: json['coins_reward'] as int? ?? 0,
+      description: json['description'] as String?,
+      category: json['category'] as String?,
+      proofMode: json['proof_mode'] as String?,
+      verificationMode: json['verification_mode'] as String?,
+      coinReward: json['coin_reward'] as int? ?? 0,
       xpReward: json['xp_reward'] as int? ?? 0,
-      isStarter: json['is_starter'] as bool? ?? false,
+      targetValue: json['target_value'] as int?,
+      targetUnit: json['target_unit'] as String?,
+      metadata: json['metadata'] as Map<String, dynamic>?,
+      dueOn: json['due_on'] as String?,
+      status: json['status'] as String?,
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
-          : DateTime.now(),
+          ? DateTime.tryParse(json['created_at'] as String)
+          : null,
+      updatedAt: json['updated_at'] != null
+          ? DateTime.tryParse(json['updated_at'] as String)
+          : null,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'family_id': familyId,
-      'title': title,
-      'description': description,
-      'category': category,
-      'coins_reward': coinsReward,
-      'xp_reward': xpReward,
-      'is_starter': isStarter,
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
-
-  TaskTemplateModel toDomain() {
-    return TaskTemplateModel(
+  TaskModel toDomain() {
+    return TaskModel(
       id: id,
-      familyId: familyId,
+      childId: childId,
+      source: source,
+      taskType: taskType,
       title: title,
       description: description,
       category: category,
-      coinsReward: coinsReward,
+      proofMode: proofMode,
+      verificationMode: verificationMode,
+      coinReward: coinReward,
       xpReward: xpReward,
-      isStarter: isStarter,
+      targetValue: targetValue,
+      targetUnit: targetUnit,
+      metadata: metadata,
+      dueOn: dueOn,
+      status: status,
       createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
+}
+
+class TaskCreateRequestDto {
+  final String title;
+  final String category;
+  final String taskType;
+  final String proofMode;
+  final String verificationMode;
+  final int coinReward;
+  final int xpReward;
+  final String? description;
+  final int? targetValue;
+  final String? targetUnit;
+  final String? contentRef;
+  final String? dueOn;
+  final Map<String, dynamic>? metadata;
+
+  const TaskCreateRequestDto({
+    required this.title,
+    required this.category,
+    required this.taskType,
+    required this.proofMode,
+    required this.verificationMode,
+    required this.coinReward,
+    required this.xpReward,
+    this.description,
+    this.targetValue,
+    this.targetUnit,
+    this.contentRef,
+    this.dueOn,
+    this.metadata,
+  });
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'title': title,
+      'category': category,
+      'task_type': taskType,
+      'proof_mode': proofMode,
+      'verification_mode': verificationMode,
+      'coin_reward': coinReward.clamp(0, 100000),
+      'xp_reward': xpReward.clamp(0, 100000),
+    };
+
+    void addOptional(String key, Object? value) {
+      if (value == null) return;
+      if (value is String && value.trim().isEmpty) return;
+      json[key] = value;
+    }
+
+    addOptional('description', description);
+    addOptional('target_value', targetValue);
+    addOptional('target_unit', targetUnit);
+    addOptional('content_ref', contentRef);
+    addOptional('due_on', dueOn);
+    addOptional('metadata', metadata);
+    return json;
+  }
+}
+
+/// PATCH /v1/tasks/{id}. Every field is nullable; [toJson] emits ONLY the
+/// fields that were explicitly provided so unchanged fields are omitted.
+class TaskUpdateRequestDto {
+  final String? title;
+  final String? category;
+  final int? coinReward;
+  final int? xpReward;
+  final String? proofMode;
+  final String? verificationMode;
+  final String? description;
+  final int? targetValue;
+  final String? targetUnit;
+  final String? contentRef;
+  final String? dueOn;
+  final Map<String, dynamic>? metadata;
+
+  const TaskUpdateRequestDto({
+    this.title,
+    this.category,
+    this.coinReward,
+    this.xpReward,
+    this.proofMode,
+    this.verificationMode,
+    this.description,
+    this.targetValue,
+    this.targetUnit,
+    this.contentRef,
+    this.dueOn,
+    this.metadata,
+  });
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (title != null) json['title'] = title;
+    if (category != null) json['category'] = category;
+    if (coinReward != null) json['coin_reward'] = coinReward!.clamp(0, 100000);
+    if (xpReward != null) json['xp_reward'] = xpReward!.clamp(0, 100000);
+    if (proofMode != null) json['proof_mode'] = proofMode;
+    if (verificationMode != null) json['verification_mode'] = verificationMode;
+    if (description != null) json['description'] = description;
+    if (targetValue != null) json['target_value'] = targetValue;
+    if (targetUnit != null) json['target_unit'] = targetUnit;
+    if (contentRef != null) json['content_ref'] = contentRef;
+    if (dueOn != null) json['due_on'] = dueOn;
+    if (metadata != null) json['metadata'] = metadata;
+    return json;
+  }
+
+  bool get isEmpty => toJson().isEmpty;
 }
 
 class TaskInstanceDto {

@@ -1,53 +1,85 @@
 class TaskTemplateModel {
   final String id;
-  final String familyId;
+  final String? childId;
+  final String? source;
+  final String? taskType;
   final String title;
-  final String description;
-  final String category;
-  final int coinsReward;
+  final String? description;
+  final String? category;
+  final String? proofMode;
+  final String? verificationMode;
+  final String? recurrenceRule;
+  final int coinReward;
   final int xpReward;
-  final bool isStarter;
-  final DateTime createdAt;
+  final int? targetValue;
+  final String? targetUnit;
+  final Map<String, dynamic>? metadata;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const TaskTemplateModel({
     required this.id,
-    required this.familyId,
+    this.childId,
+    this.source,
+    this.taskType,
     required this.title,
-    required this.description,
-    required this.category,
-    required this.coinsReward,
+    this.description,
+    this.category,
+    this.proofMode,
+    this.verificationMode,
+    this.recurrenceRule,
+    required this.coinReward,
     required this.xpReward,
-    required this.isStarter,
-    required this.createdAt,
+    this.targetValue,
+    this.targetUnit,
+    this.metadata,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
   });
+}
 
-  factory TaskTemplateModel.fromJson(Map<String, dynamic> json) {
-    return TaskTemplateModel(
-      id: json['id'] as String,
-      familyId: json['familyId'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      category: json['category'] as String,
-      coinsReward: json['coinsReward'] as int,
-      xpReward: json['xpReward'] as int,
-      isStarter: json['isStarter'] as bool,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-    );
-  }
+class TaskModel {
+  final String id;
+  final String? childId;
+  final String? source;
+  final String? taskType;
+  final String title;
+  final String? description;
+  final String? category;
+  final String? proofMode;
+  final String? verificationMode;
+  final int coinReward;
+  final int xpReward;
+  final int? targetValue;
+  final String? targetUnit;
+  final Map<String, dynamic>? metadata;
+  final String? dueOn;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'familyId': familyId,
-      'title': title,
-      'description': description,
-      'category': category,
-      'coinsReward': coinsReward,
-      'xpReward': xpReward,
-      'isStarter': isStarter,
-      'createdAt': createdAt.toIso8601String(),
-    };
-  }
+  const TaskModel({
+    required this.id,
+    this.childId,
+    this.source,
+    this.taskType,
+    required this.title,
+    this.description,
+    this.category,
+    this.proofMode,
+    this.verificationMode,
+    required this.coinReward,
+    required this.xpReward,
+    this.targetValue,
+    this.targetUnit,
+    this.metadata,
+    this.dueOn,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+  });
 }
 
 class TaskInstanceModel {
@@ -74,36 +106,4 @@ class TaskInstanceModel {
     required this.createdAt,
     required this.updatedAt,
   });
-
-  factory TaskInstanceModel.fromJson(Map<String, dynamic> json) {
-    return TaskInstanceModel(
-      id: json['id'] as String,
-      childId: json['childId'] as String,
-      templateId: json['templateId'] as String,
-      status: json['status'] as String,
-      dueDate: DateTime.parse(json['dueDate'] as String),
-      completedAt: json['completedAt'] != null
-          ? DateTime.parse(json['completedAt'] as String)
-          : null,
-      proofUrl: json['proofUrl'] as String?,
-      parentNote: json['parentNote'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'childId': childId,
-      'templateId': templateId,
-      'status': status,
-      'dueDate': dueDate.toIso8601String(),
-      'completedAt': completedAt?.toIso8601String(),
-      'proofUrl': proofUrl,
-      'parentNote': parentNote,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-    };
-  }
 }

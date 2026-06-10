@@ -5,6 +5,8 @@ class ApiConst {
   static const String children = '/v1/families/current/children';
 
   static String childById(String childId) => '/v1/children/$childId';
+  static String childTasks(String childId) => '/v1/children/$childId/tasks';
+  static String task(String taskId) => '/v1/tasks/$taskId';
   static String childDashboard(String childId) =>
       '/v1/children/$childId/dashboard';
 }
