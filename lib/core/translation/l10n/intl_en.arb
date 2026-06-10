@@ -230,42 +230,8 @@
   "signInError": "Sign in failed. Please try again.",
   "networkError": "Network error. Check your connection.",
   "retry": "Retry",
-  "createTaskForChild": "Create Task for {childName}",
-  "@createTaskForChild": {
-    "placeholders": {
-      "childName": {
-        "type": "String"
-      }
-    }
-  },
-  "createTaskStep1Title": "Step 1 — The basics",
-  "createTaskTitleLabel": "What's the task?",
-  "createTaskFieldRequired": "Required",
-  "createTaskTitleMaxChars": "Max 120 characters",
   "createTaskCategoryTitle": "Category",
   "createTaskCategoryOther": "Other",
-  "createTaskRepeatsTitle": "Repeats",
-  "createTaskRecurrenceDaily": "Daily",
-  "createTaskRecurrenceOnce": "Once",
-  "createTaskRecurrenceManual": "Manual",
-  "createTaskRewardsTitle": "Rewards",
-  "createTaskXpLabel": "XP",
-  "createTaskStep2Title": "Step 2 — How does the child complete it?",
-  "createTaskProofTitle": "Proof",
-  "createTaskProofPhotoText": "Photo + Text",
-  "createTaskProofMetric": "Enter a number",
-  "createTaskProofNone": "Just mark done",
-  "createTaskApprovedByTitle": "Approved by",
-  "createTaskVerificationParent": "Parent reviews",
-  "createTaskVerificationAuto": "Auto-approve",
-  "createTaskStep3Title": "Step 3 — Optional details",
-  "createTaskTargetTitle": "Target",
-  "createTaskTargetNumber": "Number",
-  "createTaskTargetUnitHint": "Unit (e.g. minutes)",
-  "createTaskHideDetails": "Hide details",
-  "createTaskAddDetails": "+ Add details",
-  "createTaskDescriptionLabel": "Description (optional)",
-  "createTaskSubmitButton": "Create Task Template",
   "createTaskSheetTitle": "New Task",
   "createTaskNameLabel": "Task Name",
   "createTaskNameHint": "e.g. Clean your room",
@@ -274,5 +240,7 @@
   "createTaskAddButton": "Add Task",
   "createTaskCategoryDailyChore": "Daily Chore",
   "createTaskCategoryEducational": "Educational",
-  "createTaskCategoryHobby": "Hobby"
+  "createTaskCategoryHobby": "Hobby",
+  "taskCreatedMessage": "Task created!",
+  "noTasksYet": "No tasks for this day yet."
 }

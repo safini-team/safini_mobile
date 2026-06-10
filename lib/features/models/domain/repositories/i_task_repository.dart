@@ -17,8 +17,8 @@ abstract class ITaskRepository {
     String status,
     String? parentNote,
   );
-  Future<Either<Failure, TaskTemplateModel>> createTaskTemplate(
+  Future<Either<Failure, TaskModel>> createTask(
     String childId,
-    TaskTemplateCreateRequestDto request,
+    TaskCreateRequestDto request,
   );
 }

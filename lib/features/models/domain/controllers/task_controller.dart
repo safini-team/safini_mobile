@@ -29,8 +29,8 @@ class TaskController {
     String? parentNote,
   ) => _repository.reviewTask(instanceId, status, parentNote);
 
-  Future<Either<Failure, TaskTemplateModel>> createTaskTemplate(
+  Future<Either<Failure, TaskModel>> createTask(
     String childId,
-    TaskTemplateCreateRequestDto request,
-  ) => _repository.createTaskTemplate(childId, request);
+    TaskCreateRequestDto request,
+  ) => _repository.createTask(childId, request);
 }

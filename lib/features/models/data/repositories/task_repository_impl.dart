@@ -43,20 +43,20 @@ class TaskRepositoryImpl implements ITaskRepository {
   }
 
   @override
-  Future<Either<Failure, TaskTemplateModel>> createTaskTemplate(
+  Future<Either<Failure, TaskModel>> createTask(
     String childId,
-    TaskTemplateCreateRequestDto request,
+    TaskCreateRequestDto request,
   ) async {
     try {
       final response = await _dio.post(
-        ApiConst.childTaskTemplates(childId),
+        ApiConst.childTasks(childId),
         data: request.toJson(),
       );
       final raw = response.data;
       final map = raw is Map<String, dynamic>
           ? raw
           : (raw as Map).map((k, v) => MapEntry(k.toString(), v));
-      return Right(TaskTemplateDto.fromJson(map).toDomain());
+      return Right(TaskDto.fromJson(map).toDomain());
     } on DioException catch (e) {
       final status = e.response?.statusCode;
       if (status == 401) {
@@ -91,7 +91,7 @@ class TaskRepositoryImpl implements ITaskRepository {
         );
       }
       return Left(
-        ServerFailure(e.message ?? 'Unable to create task template.'),
+        ServerFailure(e.message ?? 'Unable to create task.'),
       );
     } catch (e) {
       return Left(ServerFailure(e.toString()));

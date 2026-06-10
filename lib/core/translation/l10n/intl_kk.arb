@@ -229,42 +229,8 @@
   "signInError": "Кіру сәтсіз. Қайта байқап көріңіз.",
   "networkError": "Желі қатесі. Байланысыңызды тексеріңіз.",
   "retry": "Қайталау",
-  "createTaskForChild": "{childName} үшін тапсырма жасау",
-  "@createTaskForChild": {
-    "placeholders": {
-      "childName": {
-        "type": "String"
-      }
-    }
-  },
-  "createTaskStep1Title": "1-қадам — Негізгі ақпарат",
-  "createTaskTitleLabel": "Не жасау керек?",
-  "createTaskFieldRequired": "Міндетті өріс",
-  "createTaskTitleMaxChars": "Ең көбі 120 таңба",
   "createTaskCategoryTitle": "Санат",
   "createTaskCategoryOther": "Басқа",
-  "createTaskRepeatsTitle": "Қайталану",
-  "createTaskRecurrenceDaily": "Күн сайын",
-  "createTaskRecurrenceOnce": "Бір рет",
-  "createTaskRecurrenceManual": "Қолмен",
-  "createTaskRewardsTitle": "Марапаттар",
-  "createTaskXpLabel": "ТН",
-  "createTaskStep2Title": "2-қадам — Бала тапсырманы қалай орындайды?",
-  "createTaskProofTitle": "Дәлел",
-  "createTaskProofPhotoText": "Фото + Мәтін",
-  "createTaskProofMetric": "Сан енгізу",
-  "createTaskProofNone": "Жай орындалды деп белгілеу",
-  "createTaskApprovedByTitle": "Тексереді",
-  "createTaskVerificationParent": "Ата-ана тексереді",
-  "createTaskVerificationAuto": "Автомат бекіту",
-  "createTaskStep3Title": "3-қадам — Қосымша мәліметтер",
-  "createTaskTargetTitle": "Мақсат",
-  "createTaskTargetNumber": "Сан",
-  "createTaskTargetUnitHint": "Бірлік (мыс. минут)",
-  "createTaskHideDetails": "Мәліметтерді жасыру",
-  "createTaskAddDetails": "+ Сипаттама қосу",
-  "createTaskDescriptionLabel": "Сипаттама (міндетті емес)",
-  "createTaskSubmitButton": "Тапсырма үлгісін жасау",
   "createTaskSheetTitle": "Жаңа тапсырма",
   "createTaskNameLabel": "Атауы",
   "createTaskNameHint": "мыс. Бөлмені жина",
@@ -273,5 +239,7 @@
   "createTaskAddButton": "Тапсырма қосу",
   "createTaskCategoryDailyChore": "Үй жұмысы",
   "createTaskCategoryEducational": "Оқу",
-  "createTaskCategoryHobby": "Хобби"
+  "createTaskCategoryHobby": "Хобби",
+  "taskCreatedMessage": "Тапсырма жасалды!",
+  "noTasksYet": "Бұл күнге әзірге тапсырма жоқ."
 }

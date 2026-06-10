@@ -1,20 +1,18 @@
 class ParentTasksResponseModel {
-  final List<ParentTaskTemplateModel> templates;
-  final List<ParentTaskInstanceModel> todayInstances;
+  /// The day this payload represents (YYYY-MM-DD), echoed by the API.
+  final String? date;
 
-  const ParentTasksResponseModel({
-    required this.templates,
-    required this.todayInstances,
-  });
+  /// Flat list of tasks for the child on [date]. Each carries its own status;
+  /// the UI groups them into pending / active / completed.
+  final List<ParentTaskInstanceModel> tasks;
+
+  const ParentTasksResponseModel({this.date, required this.tasks});
 
   factory ParentTasksResponseModel.fromJson(Map<String, dynamic> json) {
     return ParentTasksResponseModel(
-      templates: _listFromJson(
-        json['templates'],
-        ParentTaskTemplateModel.fromJson,
-      ),
-      todayInstances: _listFromJson(
-        json['today_instances'] ?? json['todayInstances'],
+      date: _nullableStringValue(json, ['date']),
+      tasks: _listFromJson(
+        json['tasks'] ?? json['today_instances'] ?? json['todayInstances'],
         ParentTaskInstanceModel.fromJson,
       ),
     );
@@ -193,6 +191,7 @@ class ParentTaskInstanceModel {
       ]),
       category: _nullableStringValue(json, ['category', 'type']),
       rewardCoins: _intValue(json, [
+        'coin_reward',
         'reward_coins',
         'rewardCoins',
         'coins_reward',

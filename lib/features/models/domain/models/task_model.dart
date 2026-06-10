@@ -40,6 +40,48 @@ class TaskTemplateModel {
   });
 }
 
+class TaskModel {
+  final String id;
+  final String? childId;
+  final String? source;
+  final String? taskType;
+  final String title;
+  final String? description;
+  final String? category;
+  final String? proofMode;
+  final String? verificationMode;
+  final int coinReward;
+  final int xpReward;
+  final int? targetValue;
+  final String? targetUnit;
+  final Map<String, dynamic>? metadata;
+  final String? dueOn;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  const TaskModel({
+    required this.id,
+    this.childId,
+    this.source,
+    this.taskType,
+    required this.title,
+    this.description,
+    this.category,
+    this.proofMode,
+    this.verificationMode,
+    required this.coinReward,
+    required this.xpReward,
+    this.targetValue,
+    this.targetUnit,
+    this.metadata,
+    this.dueOn,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+  });
+}
+
 class TaskInstanceModel {
   final String id;
   final String childId;

@@ -10,9 +10,11 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
+import 'package:safini/features/parent/presentation/widgets/selectable_pill.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
 
 class ParentTasksScreen extends StatelessWidget {
@@ -120,7 +122,7 @@ class ParentTasksScreen extends StatelessWidget {
                         );
                         context.router.replace(const NamedRoute('login'));
                       }
-                      if (state is ParentTaskTemplateCreateFailed &&
+                      if (state is ParentTaskCreateError &&
                           state.isUnauthorized) {
                         unawaited(
                           context.read<AuthSessionCubit>().forceSignOut(
@@ -129,11 +131,10 @@ class ParentTasksScreen extends StatelessWidget {
                         );
                         context.router.replace(const NamedRoute('login'));
                       }
-                      if (state is ParentTaskTemplateCreateSucceeded) {
+                      if (state is ParentTaskCreated) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
+                          SnackBar(content: Text(s.taskCreatedMessage)),
                         );
-                        context.read<ParentTasksCubit>().clearCreateOutcome();
                       }
                     },
                     builder: (context, state) {
@@ -155,9 +156,9 @@ class ParentTasksScreen extends StatelessWidget {
 
                       final loadedState = switch (state) {
                         ParentTasksLoaded s => s,
-                        ParentTaskTemplateCreateInFlight s => s.base,
-                        ParentTaskTemplateCreateFailed s => s.base,
-                        ParentTaskTemplateCreateSucceeded s => s.data,
+                        ParentTaskCreating s => s.base,
+                        ParentTaskCreated s => s.base,
+                        ParentTaskCreateError s => s.base,
                         _ => null,
                       };
 
@@ -178,25 +179,6 @@ class ParentTasksScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 18),
-                              _buildSectionHeader(
-                                context,
-                                icon: Icons.repeat_rounded,
-                                iconColor: const Color(0xFF8B46FF),
-                                title: 'Templates',
-                                badgeCount: loadedState.templates.length,
-                                badgeColor: const Color(0xFFF2F0FF),
-                                badgeTextColor: const Color(0xFF8B46FF),
-                              ),
-                              const SizedBox(height: 16),
-                              if (loadedState.templates.isEmpty)
-                                const _EmptySection(
-                                  message: 'No task templates found.',
-                                )
-                              else
-                                ...loadedState.templates.map(
-                                  _buildTemplateTile,
-                                ),
-                              const SizedBox(height: 32),
                               if (loadedState.pendingApproval.isNotEmpty) ...[
                                 _buildSectionHeader(
                                   context,
@@ -217,16 +199,17 @@ class ParentTasksScreen extends StatelessWidget {
                                 context,
                                 icon: Icons.today_rounded,
                                 iconColor: context.colorScheme.tertiary,
-                                title: 'Today',
-                                badgeCount: loadedState.todayInstances.length,
+                                title: s.tasks,
+                                badgeCount:
+                                    loadedState.activeTasks.length +
+                                    loadedState.completedTasks.length,
                                 badgeColor: const Color(0xFFF2F0FF),
                                 badgeTextColor: const Color(0xFF8B46FF),
                               ),
                               const SizedBox(height: 16),
-                              if (loadedState.todayInstances.isEmpty)
-                                const _EmptySection(
-                                  message: 'No task instances found for today.',
-                                )
+                              if (loadedState.activeTasks.isEmpty &&
+                                  loadedState.completedTasks.isEmpty)
+                                _EmptySection(message: s.noTasksYet)
                               else ...[
                                 ...loadedState.activeTasks.map(
                                   _buildInstanceTile,
@@ -258,9 +241,9 @@ class ParentTasksScreen extends StatelessWidget {
 
     final loaded = switch (state) {
       ParentTasksLoaded s => s,
-      ParentTaskTemplateCreateInFlight s => s.base,
-      ParentTaskTemplateCreateFailed s => s.base,
-      ParentTaskTemplateCreateSucceeded s => s.data,
+      ParentTaskCreating s => s.base,
+      ParentTaskCreated s => s.base,
+      ParentTaskCreateError s => s.base,
       _ => null,
     };
     if (loaded == null) return;
@@ -271,17 +254,8 @@ class ParentTasksScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => BlocProvider.value(
         value: cubit,
-        child: const CreateTaskBottomSheet(),
+        child: CreateTaskBottomSheet(childId: loaded.childId),
       ),
-    );
-  }
-
-  ParentTaskTile _buildTemplateTile(ParentTaskTemplateModel template) {
-    return ParentTaskTile(
-      title: template.displayTitle,
-      category: template.category,
-      rewardCoins: template.rewardCoins,
-      statusLabel: template.status,
     );
   }
 
@@ -413,9 +387,9 @@ class _EmptySection extends StatelessWidget {
 // ── Create Task bottom sheet ──────────────────────────────────────────────────
 
 class CreateTaskBottomSheet extends StatefulWidget {
-  // child_id is not a constructor param — the cubit already holds it in
-  // ParentTasksLoaded.childId, resolved during loadTasks().
-  const CreateTaskBottomSheet({super.key});
+  final String childId;
+
+  const CreateTaskBottomSheet({super.key, required this.childId});
 
   @override
   State<CreateTaskBottomSheet> createState() => _CreateTaskBottomSheetState();
@@ -459,19 +433,20 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
   Future<void> _submit() async {
     final title = _titleController.text.trim();
     if (title.isEmpty || _selectedCoins == null) return;
-    final coins = _selectedCoins!;
-    final request = ParentTaskTemplateCreateRequest(
+    final coins = _selectedCoins!.clamp(0, 100000);
+    final request = TaskCreateRequestDto(
       title: title,
       category: _selectedCategory ?? 'other',
       taskType: 'custom',
       proofMode: 'text_image',
-      recurrenceRule: 'daily',
       verificationMode: 'parent_approval',
       coinReward: coins,
       xpReward: coins,
       metadata: _selectedEmoji != null ? {'emoji': _selectedEmoji} : null,
     );
-    await context.read<ParentTasksCubit>().createTaskTemplate(request);
+    await context
+        .read<ParentTasksCubit>()
+        .createTask(widget.childId, request);
   }
 
   @override
@@ -479,10 +454,9 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final s = S.of(context);
     return BlocListener<ParentTasksCubit, ParentTasksState>(
       listener: (context, state) {
-        if (state is ParentTaskTemplateCreateSucceeded) {
+        if (state is ParentTaskCreated) {
           Navigator.of(context).pop();
-        } else if (state is ParentTaskTemplateCreateFailed &&
-            !state.isUnauthorized) {
+        } else if (state is ParentTaskCreateError && !state.isUnauthorized) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
           );
@@ -490,7 +464,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
       },
       child: BlocBuilder<ParentTasksCubit, ParentTasksState>(
         builder: (context, state) {
-          final isSubmitting = state is ParentTaskTemplateCreateInFlight;
+          final isSubmitting = state is ParentTaskCreating;
           return Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -570,24 +544,21 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                           filled: true,
                           fillColor: AppColors.background,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.lg),
+                            borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.lg),
+                            borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.lg),
+                            borderRadius: BorderRadius.circular(14),
                             borderSide: const BorderSide(
                               color: AppColors.primary,
                               width: 1.5,
                             ),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.lg,
-                            vertical: AppSpacing.md,
-                          ),
+                          contentPadding: const EdgeInsets.all(AppSpacing.lg),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
@@ -600,35 +571,18 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: _emojis.length,
-                          separatorBuilder: (_, __) =>
+                          separatorBuilder: (_, _) =>
                               const SizedBox(width: AppSpacing.sm),
                           itemBuilder: (context, i) {
                             final emoji = _emojis[i];
-                            final selected = _selectedEmoji == emoji;
-                            return GestureDetector(
+                            return SelectablePill(
+                              selected: _selectedEmoji == emoji,
+                              isSquare: true,
                               onTap: () =>
                                   setState(() => _selectedEmoji = emoji),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 150),
-                                width: 52,
-                                height: 52,
-                                decoration: BoxDecoration(
-                                  color: selected
-                                      ? AppColors.primaryLight
-                                      : const Color(0xFFF5F5F7),
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: selected
-                                      ? Border.all(
-                                          color: AppColors.primary,
-                                          width: 2,
-                                        )
-                                      : null,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  emoji,
-                                  style: const TextStyle(fontSize: 24),
-                                ),
+                              child: Text(
+                                emoji,
+                                style: const TextStyle(fontSize: 24),
                               ),
                             );
                           },
@@ -649,63 +603,31 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                       // ── Reward ────────────────────────────────────────────
                       _SectionLabel(s.createTaskRewardLabel),
                       const SizedBox(height: AppSpacing.sm),
-                      Row(
-                        children: List.generate(_coinOptions.length, (i) {
-                          final coins = _coinOptions[i];
-                          final selected = _selectedCoins == coins;
-                          return Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: i < _coinOptions.length - 1
-                                    ? AppSpacing.xs
-                                    : 0,
-                              ),
-                              child: GestureDetector(
-                                onTap: () =>
-                                    setState(() => _selectedCoins = coins),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 150),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: selected
-                                        ? AppColors.primaryLight
-                                        : const Color(0xFFF5F5F7),
-                                    borderRadius:
-                                        BorderRadius.circular(AppRadius.pill),
-                                    border: selected
-                                        ? Border.all(
-                                            color: AppColors.primary,
-                                            width: 1.5,
-                                          )
-                                        : null,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text(
-                                        '🪙',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        '$coins',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: selected
-                                              ? AppColors.primary
-                                              : AppColors.textPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: _coinOptions.map((coins) {
+                          return SelectablePill(
+                            selected: _selectedCoins == coins,
+                            onTap: () =>
+                                setState(() => _selectedCoins = coins),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.md,
+                              vertical: AppSpacing.sm,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  '🪙',
+                                  style: TextStyle(fontSize: 14),
                                 ),
-                              ),
+                                const SizedBox(width: 4),
+                                Text('$coins'),
+                              ],
                             ),
                           );
-                        }),
+                        }).toList(),
                       ),
                       const SizedBox(height: AppSpacing.xl),
 
@@ -746,34 +668,11 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
       'other',
     ];
     return List.generate(labels.length, (i) {
-      final label = labels[i];
       final apiValue = apiValues[i];
-      final selected = _selectedCategory == apiValue;
-      return GestureDetector(
+      return SelectablePill(
+        selected: _selectedCategory == apiValue,
         onTap: () => setState(() => _selectedCategory = apiValue),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color:
-                selected ? AppColors.primaryLight : const Color(0xFFF5F5F7),
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-            border: selected
-                ? Border.all(color: AppColors.primary, width: 1.5)
-                : null,
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-              color: selected ? AppColors.primary : AppColors.textSecondary,
-            ),
-          ),
-        ),
+        child: Text(labels[i], style: const TextStyle(fontSize: 13)),
       );
     });
   }

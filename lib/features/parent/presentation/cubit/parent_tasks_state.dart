@@ -15,26 +15,23 @@ class ParentTasksLoading extends ParentTasksState {
 class ParentTasksLoaded extends ParentTasksState {
   final String childId;
   final String childName;
-  final List<ParentTaskTemplateModel> templates;
-  final List<ParentTaskInstanceModel> todayInstances;
+  final List<ParentTaskInstanceModel> tasks;
 
   const ParentTasksLoaded({
     required this.childId,
     required this.childName,
-    required this.templates,
-    required this.todayInstances,
+    required this.tasks,
   });
 
-  List<ParentTaskInstanceModel> get pendingApproval => todayInstances
-      .where((task) => task.isPendingApproval)
-      .toList(growable: false);
+  List<ParentTaskInstanceModel> get pendingApproval =>
+      tasks.where((task) => task.isPendingApproval).toList(growable: false);
 
-  List<ParentTaskInstanceModel> get activeTasks => todayInstances
+  List<ParentTaskInstanceModel> get activeTasks => tasks
       .where((task) => !task.isPendingApproval && !task.isCompleted)
       .toList(growable: false);
 
   List<ParentTaskInstanceModel> get completedTasks =>
-      todayInstances.where((task) => task.isCompleted).toList(growable: false);
+      tasks.where((task) => task.isCompleted).toList(growable: false);
 }
 
 class ParentTasksError extends ParentTasksState {
@@ -49,34 +46,26 @@ class ParentTasksError extends ParentTasksState {
   });
 }
 
-class ParentTaskTemplateCreateInFlight extends ParentTasksState {
+class ParentTaskCreating extends ParentTasksState {
   final ParentTasksLoaded base;
 
-  const ParentTaskTemplateCreateInFlight(this.base);
+  const ParentTaskCreating(this.base);
 }
 
-class ParentTaskTemplateCreateFailed extends ParentTasksState {
+class ParentTaskCreated extends ParentTasksState {
+  final ParentTasksLoaded base;
+
+  const ParentTaskCreated(this.base);
+}
+
+class ParentTaskCreateError extends ParentTasksState {
   final ParentTasksLoaded base;
   final String message;
   final bool isUnauthorized;
-  final bool isServiceUnavailable;
-  final Map<String, String> fieldErrors;
 
-  const ParentTaskTemplateCreateFailed({
+  const ParentTaskCreateError({
     required this.base,
     required this.message,
     this.isUnauthorized = false,
-    this.isServiceUnavailable = false,
-    this.fieldErrors = const {},
-  });
-}
-
-class ParentTaskTemplateCreateSucceeded extends ParentTasksState {
-  final ParentTasksLoaded data;
-  final String message;
-
-  const ParentTaskTemplateCreateSucceeded(
-    this.data, {
-    this.message = 'Task template created.',
   });
 }

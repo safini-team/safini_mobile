@@ -1,6 +1,6 @@
 import '../../domain/models/task_model.dart';
 
-class TaskTemplateDto {
+class TaskDto {
   final String id;
   final String? childId;
   final String? source;
@@ -10,17 +10,17 @@ class TaskTemplateDto {
   final String? category;
   final String? proofMode;
   final String? verificationMode;
-  final String? recurrenceRule;
   final int coinReward;
   final int xpReward;
   final int? targetValue;
   final String? targetUnit;
   final Map<String, dynamic>? metadata;
+  final String? dueOn;
   final String? status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  TaskTemplateDto({
+  TaskDto({
     required this.id,
     this.childId,
     this.source,
@@ -30,19 +30,19 @@ class TaskTemplateDto {
     this.category,
     this.proofMode,
     this.verificationMode,
-    this.recurrenceRule,
     required this.coinReward,
     required this.xpReward,
     this.targetValue,
     this.targetUnit,
     this.metadata,
+    this.dueOn,
     this.status,
     this.createdAt,
     this.updatedAt,
   });
 
-  factory TaskTemplateDto.fromJson(Map<String, dynamic> json) {
-    return TaskTemplateDto(
+  factory TaskDto.fromJson(Map<String, dynamic> json) {
+    return TaskDto(
       id: json['id'] as String? ?? '',
       childId: json['child_id'] as String?,
       source: json['source'] as String?,
@@ -52,12 +52,12 @@ class TaskTemplateDto {
       category: json['category'] as String?,
       proofMode: json['proof_mode'] as String?,
       verificationMode: json['verification_mode'] as String?,
-      recurrenceRule: json['recurrence_rule'] as String?,
       coinReward: json['coin_reward'] as int? ?? 0,
       xpReward: json['xp_reward'] as int? ?? 0,
       targetValue: json['target_value'] as int?,
       targetUnit: json['target_unit'] as String?,
       metadata: json['metadata'] as Map<String, dynamic>?,
+      dueOn: json['due_on'] as String?,
       status: json['status'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'] as String)
@@ -68,8 +68,8 @@ class TaskTemplateDto {
     );
   }
 
-  TaskTemplateModel toDomain() {
-    return TaskTemplateModel(
+  TaskModel toDomain() {
+    return TaskModel(
       id: id,
       childId: childId,
       source: source,
@@ -79,12 +79,12 @@ class TaskTemplateDto {
       category: category,
       proofMode: proofMode,
       verificationMode: verificationMode,
-      recurrenceRule: recurrenceRule,
       coinReward: coinReward,
       xpReward: xpReward,
       targetValue: targetValue,
       targetUnit: targetUnit,
       metadata: metadata,
+      dueOn: dueOn,
       status: status,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -92,12 +92,11 @@ class TaskTemplateDto {
   }
 }
 
-class TaskTemplateCreateRequestDto {
+class TaskCreateRequestDto {
   final String title;
   final String category;
   final String taskType;
   final String proofMode;
-  final String recurrenceRule;
   final String verificationMode;
   final int coinReward;
   final int xpReward;
@@ -105,14 +104,14 @@ class TaskTemplateCreateRequestDto {
   final int? targetValue;
   final String? targetUnit;
   final String? contentRef;
+  final String? dueOn;
   final Map<String, dynamic>? metadata;
 
-  const TaskTemplateCreateRequestDto({
+  const TaskCreateRequestDto({
     required this.title,
     required this.category,
     required this.taskType,
     required this.proofMode,
-    required this.recurrenceRule,
     required this.verificationMode,
     required this.coinReward,
     required this.xpReward,
@@ -120,6 +119,7 @@ class TaskTemplateCreateRequestDto {
     this.targetValue,
     this.targetUnit,
     this.contentRef,
+    this.dueOn,
     this.metadata,
   });
 
@@ -129,10 +129,9 @@ class TaskTemplateCreateRequestDto {
       'category': category,
       'task_type': taskType,
       'proof_mode': proofMode,
-      'recurrence_rule': recurrenceRule,
       'verification_mode': verificationMode,
-      'coin_reward': coinReward,
-      'xp_reward': xpReward,
+      'coin_reward': coinReward.clamp(0, 100000),
+      'xp_reward': xpReward.clamp(0, 100000),
     };
 
     void addOptional(String key, Object? value) {
@@ -145,6 +144,7 @@ class TaskTemplateCreateRequestDto {
     addOptional('target_value', targetValue);
     addOptional('target_unit', targetUnit);
     addOptional('content_ref', contentRef);
+    addOptional('due_on', dueOn);
     addOptional('metadata', metadata);
     return json;
   }
