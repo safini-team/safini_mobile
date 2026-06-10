@@ -242,5 +242,13 @@
   "createTaskCategoryEducational": "Educational",
   "createTaskCategoryHobby": "Hobby",
   "taskCreatedMessage": "Task created!",
-  "noTasksYet": "No tasks for this day yet."
+  "taskUpdatedMessage": "Task updated!",
+  "taskDeletedMessage": "Task deleted.",
+  "noTasksYet": "No tasks for this day yet.",
+  "editTaskSheetTitle": "Edit Task",
+  "createTaskSaveButton": "Save",
+  "deleteTaskButton": "Delete",
+  "deleteTaskTitle": "Delete task?",
+  "deleteTaskBody": "This can't be undone.",
+  "approvedTaskConflict": "Approved tasks can't be edited or deleted."
 }

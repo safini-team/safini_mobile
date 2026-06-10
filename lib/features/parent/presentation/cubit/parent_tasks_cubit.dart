@@ -48,27 +48,71 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     );
   }
 
-  Future<void> createTask(String childId, TaskCreateRequestDto request) async {
+  ParentTasksLoaded? get _loaded {
     final current = state;
-    if (current is! ParentTasksLoaded) return;
+    if (current is ParentTasksLoaded) return current;
+    if (current is ParentTaskSaving) return current.base;
+    if (current is ParentTaskSaved) return current.base;
+    if (current is ParentTaskDeleting) return current.base;
+    if (current is ParentTaskDeleted) return current.base;
+    if (current is ParentTaskActionError) return current.base;
+    return null;
+  }
 
-    emit(ParentTaskCreating(current));
+  Future<void> createTask(String childId, TaskCreateRequestDto request) async {
+    final current = _loaded;
+    if (current == null) return;
+
+    emit(ParentTaskSaving(current));
 
     final result = await _taskController.createTask(childId, request);
     await result.fold(
-      (failure) async {
-        emit(
-          ParentTaskCreateError(
-            base: current,
-            message: failure.message,
-            isUnauthorized: failure is UnauthorizedFailure,
-          ),
-        );
-      },
+      (failure) async => emit(_actionError(current, failure)),
       (created) async {
-        emit(ParentTaskCreated(current));
+        emit(ParentTaskSaved(current, wasCreate: true));
         await loadTasks();
       },
+    );
+  }
+
+  Future<void> updateTask(String taskId, TaskUpdateRequestDto request) async {
+    final current = _loaded;
+    if (current == null) return;
+
+    emit(ParentTaskSaving(current));
+
+    final result = await _taskController.updateTask(taskId, request);
+    await result.fold(
+      (failure) async => emit(_actionError(current, failure)),
+      (updated) async {
+        emit(ParentTaskSaved(current, wasCreate: false));
+        await loadTasks();
+      },
+    );
+  }
+
+  Future<void> deleteTask(String taskId) async {
+    final current = _loaded;
+    if (current == null) return;
+
+    emit(ParentTaskDeleting(current));
+
+    final result = await _taskController.deleteTask(taskId);
+    await result.fold(
+      (failure) async => emit(_actionError(current, failure)),
+      (_) async {
+        emit(ParentTaskDeleted(current));
+        await loadTasks();
+      },
+    );
+  }
+
+  ParentTaskActionError _actionError(ParentTasksLoaded base, Failure failure) {
+    return ParentTaskActionError(
+      base: base,
+      message: failure.message,
+      isConflict: failure is ConflictFailure,
+      isUnauthorized: failure is UnauthorizedFailure,
     );
   }
 

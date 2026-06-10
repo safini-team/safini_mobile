@@ -46,26 +46,44 @@ class ParentTasksError extends ParentTasksState {
   });
 }
 
-class ParentTaskCreating extends ParentTasksState {
+/// Create OR update in flight (the sheet shows a spinner).
+class ParentTaskSaving extends ParentTasksState {
   final ParentTasksLoaded base;
 
-  const ParentTaskCreating(this.base);
+  const ParentTaskSaving(this.base);
 }
 
-class ParentTaskCreated extends ParentTasksState {
+/// Create OR update succeeded. [wasCreate] distinguishes the toast wording.
+class ParentTaskSaved extends ParentTasksState {
+  final ParentTasksLoaded base;
+  final bool wasCreate;
+
+  const ParentTaskSaved(this.base, {required this.wasCreate});
+}
+
+class ParentTaskDeleting extends ParentTasksState {
   final ParentTasksLoaded base;
 
-  const ParentTaskCreated(this.base);
+  const ParentTaskDeleting(this.base);
 }
 
-class ParentTaskCreateError extends ParentTasksState {
+class ParentTaskDeleted extends ParentTasksState {
+  final ParentTasksLoaded base;
+
+  const ParentTaskDeleted(this.base);
+}
+
+/// Any create/update/delete failure. [isConflict] is a 409 (approved task).
+class ParentTaskActionError extends ParentTasksState {
   final ParentTasksLoaded base;
   final String message;
+  final bool isConflict;
   final bool isUnauthorized;
 
-  const ParentTaskCreateError({
+  const ParentTaskActionError({
     required this.base,
     required this.message,
+    this.isConflict = false,
     this.isUnauthorized = false,
   });
 }

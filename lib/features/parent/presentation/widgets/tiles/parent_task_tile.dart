@@ -11,6 +11,7 @@ class ParentTaskTile extends StatelessWidget {
   final bool isCompleted;
   final VoidCallback? onApprove;
   final VoidCallback? onDelete;
+  final VoidCallback? onTap;
 
   const ParentTaskTile({
     super.key,
@@ -22,6 +23,7 @@ class ParentTaskTile extends StatelessWidget {
     this.isCompleted = false,
     this.onApprove,
     this.onDelete,
+    this.onTap,
   });
 
   @override
@@ -61,21 +63,23 @@ class ParentTaskTile extends StatelessWidget {
         categoryIcon = Icons.task_alt_rounded;
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: context.colorScheme.shadow.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
@@ -212,7 +216,8 @@ class ParentTaskTile extends StatelessWidget {
               ],
             ],
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

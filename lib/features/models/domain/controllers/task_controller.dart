@@ -33,4 +33,12 @@ class TaskController {
     String childId,
     TaskCreateRequestDto request,
   ) => _repository.createTask(childId, request);
+
+  Future<Either<Failure, TaskModel>> updateTask(
+    String taskId,
+    TaskUpdateRequestDto request,
+  ) => _repository.updateTask(taskId, request);
+
+  Future<Either<Failure, bool>> deleteTask(String taskId) =>
+      _repository.deleteTask(taskId);
 }

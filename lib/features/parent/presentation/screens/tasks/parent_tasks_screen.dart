@@ -11,6 +11,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
+import 'package:safini/features/models/domain/models/task_model.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
@@ -122,7 +123,7 @@ class ParentTasksScreen extends StatelessWidget {
                         );
                         context.router.replace(const NamedRoute('login'));
                       }
-                      if (state is ParentTaskCreateError &&
+                      if (state is ParentTaskActionError &&
                           state.isUnauthorized) {
                         unawaited(
                           context.read<AuthSessionCubit>().forceSignOut(
@@ -131,9 +132,25 @@ class ParentTasksScreen extends StatelessWidget {
                         );
                         context.router.replace(const NamedRoute('login'));
                       }
-                      if (state is ParentTaskCreated) {
+                      if (state is ParentTaskActionError && state.isConflict) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(s.taskCreatedMessage)),
+                          SnackBar(content: Text(s.approvedTaskConflict)),
+                        );
+                      }
+                      if (state is ParentTaskSaved) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              state.wasCreate
+                                  ? s.taskCreatedMessage
+                                  : s.taskUpdatedMessage,
+                            ),
+                          ),
+                        );
+                      }
+                      if (state is ParentTaskDeleted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(s.taskDeletedMessage)),
                         );
                       }
                     },
@@ -156,9 +173,11 @@ class ParentTasksScreen extends StatelessWidget {
 
                       final loadedState = switch (state) {
                         ParentTasksLoaded s => s,
-                        ParentTaskCreating s => s.base,
-                        ParentTaskCreated s => s.base,
-                        ParentTaskCreateError s => s.base,
+                        ParentTaskSaving s => s.base,
+                        ParentTaskSaved s => s.base,
+                        ParentTaskDeleting s => s.base,
+                        ParentTaskDeleted s => s.base,
+                        ParentTaskActionError s => s.base,
                         _ => null,
                       };
 
@@ -191,7 +210,7 @@ class ParentTasksScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 16),
                                 ...loadedState.pendingApproval.map(
-                                  _buildInstanceTile,
+                                  (t) => _buildInstanceTile(context, t),
                                 ),
                                 const SizedBox(height: 32),
                               ],
@@ -212,10 +231,10 @@ class ParentTasksScreen extends StatelessWidget {
                                 _EmptySection(message: s.noTasksYet)
                               else ...[
                                 ...loadedState.activeTasks.map(
-                                  _buildInstanceTile,
+                                  (t) => _buildInstanceTile(context, t),
                                 ),
                                 ...loadedState.completedTasks.map(
-                                  _buildInstanceTile,
+                                  (t) => _buildInstanceTile(context, t),
                                 ),
                               ],
                             ],
@@ -237,29 +256,15 @@ class ParentTasksScreen extends StatelessWidget {
 
   Future<void> _openCreateTaskSheet(BuildContext context) async {
     final cubit = context.read<ParentTasksCubit>();
-    final state = cubit.state;
-
-    final loaded = switch (state) {
-      ParentTasksLoaded s => s,
-      ParentTaskCreating s => s.base,
-      ParentTaskCreated s => s.base,
-      ParentTaskCreateError s => s.base,
-      _ => null,
-    };
+    final loaded = _loadedOf(cubit.state);
     if (loaded == null) return;
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: cubit,
-        child: CreateTaskBottomSheet(childId: loaded.childId),
-      ),
-    );
+    await showTaskSheet(context, cubit: cubit, childId: loaded.childId);
   }
 
-  ParentTaskTile _buildInstanceTile(ParentTaskInstanceModel task) {
+  ParentTaskTile _buildInstanceTile(
+    BuildContext context,
+    ParentTaskInstanceModel task,
+  ) {
     return ParentTaskTile(
       title: task.displayTitle,
       category: task.category,
@@ -267,6 +272,19 @@ class ParentTasksScreen extends StatelessWidget {
       statusLabel: task.status,
       isPending: task.isPendingApproval,
       isCompleted: task.isCompleted,
+      onTap: task.isEditable
+          ? () {
+              final cubit = context.read<ParentTasksCubit>();
+              final loaded = _loadedOf(cubit.state);
+              if (loaded == null) return;
+              showTaskSheet(
+                context,
+                cubit: cubit,
+                childId: loaded.childId,
+                task: task.toTaskModel(),
+              );
+            }
+          : null,
     );
   }
 
@@ -384,18 +402,54 @@ class _EmptySection extends StatelessWidget {
   }
 }
 
-// ── Create Task bottom sheet ──────────────────────────────────────────────────
+// ── Task bottom sheet (create + edit) ─────────────────────────────────────────
 
-class CreateTaskBottomSheet extends StatefulWidget {
-  final String childId;
-
-  const CreateTaskBottomSheet({super.key, required this.childId});
-
-  @override
-  State<CreateTaskBottomSheet> createState() => _CreateTaskBottomSheetState();
+/// Opens the create/edit task sheet. [task] == null → CREATE; otherwise EDIT.
+Future<void> showTaskSheet(
+  BuildContext context, {
+  required ParentTasksCubit cubit,
+  required String childId,
+  TaskModel? task,
+}) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => BlocProvider.value(
+      value: cubit,
+      child: TaskSheet(childId: childId, task: task),
+    ),
+  );
 }
 
-class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
+/// Pulls the underlying loaded snapshot out of any task state.
+ParentTasksLoaded? _loadedOf(ParentTasksState state) {
+  return switch (state) {
+    ParentTasksLoaded s => s,
+    ParentTaskSaving s => s.base,
+    ParentTaskSaved s => s.base,
+    ParentTaskDeleting s => s.base,
+    ParentTaskDeleted s => s.base,
+    ParentTaskActionError s => s.base,
+    _ => null,
+  };
+}
+
+class TaskSheet extends StatefulWidget {
+  final String childId;
+
+  /// When non-null the sheet is in EDIT mode, prefilled from this task.
+  final TaskModel? task;
+
+  const TaskSheet({super.key, required this.childId, this.task});
+
+  bool get isEdit => task != null;
+
+  @override
+  State<TaskSheet> createState() => _TaskSheetState();
+}
+
+class _TaskSheetState extends State<TaskSheet> {
   final _titleController = TextEditingController();
   String? _selectedEmoji;
   String? _selectedCategory;
@@ -421,6 +475,16 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
   @override
   void initState() {
     super.initState();
+    final task = widget.task;
+    if (task != null) {
+      _titleController.text = task.title;
+      _selectedCategory = task.category;
+      _selectedCoins = task.coinReward;
+      final emoji = task.metadata?['emoji'];
+      if (emoji is String && emoji.trim().isNotEmpty) {
+        _selectedEmoji = emoji.trim();
+      }
+    }
     _titleController.addListener(() => setState(() {}));
   }
 
@@ -434,19 +498,85 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final title = _titleController.text.trim();
     if (title.isEmpty || _selectedCoins == null) return;
     final coins = _selectedCoins!.clamp(0, 100000);
-    final request = TaskCreateRequestDto(
-      title: title,
-      category: _selectedCategory ?? 'other',
-      taskType: 'custom',
-      proofMode: 'text_image',
-      verificationMode: 'parent_approval',
-      coinReward: coins,
-      xpReward: coins,
-      metadata: _selectedEmoji != null ? {'emoji': _selectedEmoji} : null,
+    final cubit = context.read<ParentTasksCubit>();
+
+    final original = widget.task;
+    if (original == null) {
+      // CREATE
+      final request = TaskCreateRequestDto(
+        title: title,
+        category: _selectedCategory ?? 'other',
+        taskType: 'custom',
+        proofMode: 'text_image',
+        verificationMode: 'parent_approval',
+        coinReward: coins,
+        xpReward: coins,
+        metadata: _selectedEmoji != null ? {'emoji': _selectedEmoji} : null,
+      );
+      await cubit.createTask(widget.childId, request);
+      return;
+    }
+
+    // EDIT — diff against the original task; send only what changed.
+    final newCategory = _selectedCategory ?? original.category;
+    final coinsChanged = coins != original.coinReward;
+    final originalEmoji = original.metadata?['emoji'];
+    final emojiChanged =
+        _selectedEmoji != null && _selectedEmoji != originalEmoji;
+
+    final request = TaskUpdateRequestDto(
+      title: title != original.title ? title : null,
+      category: newCategory != original.category ? newCategory : null,
+      coinReward: coinsChanged ? coins : null,
+      xpReward: coinsChanged ? coins : null,
+      metadata: emojiChanged ? {'emoji': _selectedEmoji} : null,
     );
-    await context
-        .read<ParentTasksCubit>()
-        .createTask(widget.childId, request);
+
+    if (request.isEmpty) {
+      Navigator.of(context).pop();
+      return;
+    }
+    await cubit.updateTask(original.id, request);
+  }
+
+  Future<void> _confirmAndDelete() async {
+    final s = S.of(context);
+    final cubit = context.read<ParentTasksCubit>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
+        title: Text(
+          s.deleteTaskTitle,
+          style: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+        content: Text(s.deleteTaskBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(
+              s.cancel,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              s.deleteTaskButton,
+              style: const TextStyle(
+                color: AppColors.error,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      await cubit.deleteTask(widget.task!.id);
+    }
   }
 
   @override
@@ -454,17 +584,24 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final s = S.of(context);
     return BlocListener<ParentTasksCubit, ParentTasksState>(
       listener: (context, state) {
-        if (state is ParentTaskCreated) {
+        if (state is ParentTaskSaved || state is ParentTaskDeleted) {
           Navigator.of(context).pop();
-        } else if (state is ParentTaskCreateError && !state.isUnauthorized) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+        } else if (state is ParentTaskActionError) {
+          // Conflicts (approved task) close the sheet; the list screen shows
+          // the message. Other errors stay so the parent can retry.
+          if (state.isConflict) {
+            Navigator.of(context).pop();
+          } else if (!state.isUnauthorized) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
         }
       },
       child: BlocBuilder<ParentTasksCubit, ParentTasksState>(
         builder: (context, state) {
-          final isSubmitting = state is ParentTaskCreating;
+          final isBusy =
+              state is ParentTaskSaving || state is ParentTaskDeleting;
           return Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -502,7 +639,9 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                       Row(
                         children: [
                           Text(
-                            s.createTaskSheetTitle,
+                            widget.isEdit
+                                ? s.editTaskSheetTitle
+                                : s.createTaskSheetTitle,
                             style: context.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: AppColors.textPrimary,
@@ -510,6 +649,45 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                             ),
                           ),
                           const Spacer(),
+                          if (widget.isEdit) ...[
+                            GestureDetector(
+                              onTap: isBusy ? null : _confirmAndDelete,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.error.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.pill,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.delete_outline_rounded,
+                                      size: 16,
+                                      color: AppColors.error,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      s.deleteTaskButton,
+                                      style: const TextStyle(
+                                        color: AppColors.error,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                          ],
                           GestureDetector(
                             onTap: () => Navigator.of(context).pop(),
                             child: Container(
@@ -633,10 +811,12 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
 
                       // ── Submit ────────────────────────────────────────────
                       _GradientButton(
-                        label: s.createTaskAddButton,
-                        isLoading: isSubmitting,
-                        isEnabled: _canSubmit && !isSubmitting,
-                        onTap: _canSubmit && !isSubmitting ? _submit : null,
+                        label: widget.isEdit
+                            ? s.createTaskSaveButton
+                            : s.createTaskAddButton,
+                        isLoading: state is ParentTaskSaving,
+                        isEnabled: _canSubmit && !isBusy,
+                        onTap: _canSubmit && !isBusy ? _submit : null,
                       ),
                       const SizedBox(height: AppSpacing.lg),
                     ],

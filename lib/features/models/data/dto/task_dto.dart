@@ -150,6 +150,57 @@ class TaskCreateRequestDto {
   }
 }
 
+/// PATCH /v1/tasks/{id}. Every field is nullable; [toJson] emits ONLY the
+/// fields that were explicitly provided so unchanged fields are omitted.
+class TaskUpdateRequestDto {
+  final String? title;
+  final String? category;
+  final int? coinReward;
+  final int? xpReward;
+  final String? proofMode;
+  final String? verificationMode;
+  final String? description;
+  final int? targetValue;
+  final String? targetUnit;
+  final String? contentRef;
+  final String? dueOn;
+  final Map<String, dynamic>? metadata;
+
+  const TaskUpdateRequestDto({
+    this.title,
+    this.category,
+    this.coinReward,
+    this.xpReward,
+    this.proofMode,
+    this.verificationMode,
+    this.description,
+    this.targetValue,
+    this.targetUnit,
+    this.contentRef,
+    this.dueOn,
+    this.metadata,
+  });
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (title != null) json['title'] = title;
+    if (category != null) json['category'] = category;
+    if (coinReward != null) json['coin_reward'] = coinReward!.clamp(0, 100000);
+    if (xpReward != null) json['xp_reward'] = xpReward!.clamp(0, 100000);
+    if (proofMode != null) json['proof_mode'] = proofMode;
+    if (verificationMode != null) json['verification_mode'] = verificationMode;
+    if (description != null) json['description'] = description;
+    if (targetValue != null) json['target_value'] = targetValue;
+    if (targetUnit != null) json['target_unit'] = targetUnit;
+    if (contentRef != null) json['content_ref'] = contentRef;
+    if (dueOn != null) json['due_on'] = dueOn;
+    if (metadata != null) json['metadata'] = metadata;
+    return json;
+  }
+
+  bool get isEmpty => toJson().isEmpty;
+}
+
 class TaskInstanceDto {
   final String id;
   final String childId;

@@ -21,4 +21,9 @@ abstract class ITaskRepository {
     String childId,
     TaskCreateRequestDto request,
   );
+  Future<Either<Failure, TaskModel>> updateTask(
+    String taskId,
+    TaskUpdateRequestDto request,
+  );
+  Future<Either<Failure, bool>> deleteTask(String taskId);
 }

@@ -58,44 +58,108 @@ class TaskRepositoryImpl implements ITaskRepository {
           : (raw as Map).map((k, v) => MapEntry(k.toString(), v));
       return Right(TaskDto.fromJson(map).toDomain());
     } on DioException catch (e) {
-      final status = e.response?.statusCode;
-      if (status == 401) {
-        return const Left(
-          UnauthorizedFailure('Missing, expired, or invalid token.'),
-        );
-      }
-      if (status == 403) {
-        return const Left(
-          ServerFailure('Access to this child is not allowed.'),
-        );
-      }
-      if (status == 404) {
-        return const Left(NotFoundFailure('Child not found.'));
-      }
-      if (status == 422) {
-        final body = e.response?.data;
-        final fieldErrors = _extractFieldErrors(body);
-        return Left(
-          FieldValidationFailure(
-            _extractErrorMessage(
-              body,
-              defaultMessage: 'Please check the form fields.',
-            ),
-            fieldErrors,
-          ),
-        );
-      }
-      if (status == 503) {
-        return const Left(
-          ServerFailure('Service unavailable. Please try again later.'),
-        );
-      }
       return Left(
-        ServerFailure(e.message ?? 'Unable to create task.'),
+        _mapDioError(
+          e,
+          defaultMessage: 'Unable to create task.',
+          notFoundMessage: 'Child not found.',
+        ),
       );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
+  }
+
+  @override
+  Future<Either<Failure, TaskModel>> updateTask(
+    String taskId,
+    TaskUpdateRequestDto request,
+  ) async {
+    try {
+      final response = await _dio.patch(
+        ApiConst.task(taskId),
+        data: request.toJson(),
+      );
+      final raw = response.data;
+      final map = raw is Map<String, dynamic>
+          ? raw
+          : (raw as Map).map((k, v) => MapEntry(k.toString(), v));
+      return Right(TaskDto.fromJson(map).toDomain());
+    } on DioException catch (e) {
+      return Left(
+        _mapDioError(
+          e,
+          defaultMessage: 'Unable to update task.',
+          notFoundMessage: 'Task not found.',
+          conflictMessage: 'Approved tasks can\'t be edited.',
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteTask(String taskId) async {
+    try {
+      final response = await _dio.delete(ApiConst.task(taskId));
+      final raw = response.data;
+      if (raw is Map && raw['deleted'] == false) {
+        return const Right(false);
+      }
+      return const Right(true);
+    } on DioException catch (e) {
+      return Left(
+        _mapDioError(
+          e,
+          defaultMessage: 'Unable to delete task.',
+          notFoundMessage: 'Task not found.',
+          conflictMessage: 'Approved tasks can\'t be deleted.',
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Failure _mapDioError(
+    DioException e, {
+    required String defaultMessage,
+    required String notFoundMessage,
+    String? conflictMessage,
+  }) {
+    final status = e.response?.statusCode;
+    if (status == 401) {
+      return const UnauthorizedFailure('Missing, expired, or invalid token.');
+    }
+    if (status == 403) {
+      return const ServerFailure('Access to this resource is not allowed.');
+    }
+    if (status == 404) {
+      return NotFoundFailure(notFoundMessage);
+    }
+    if (status == 409) {
+      return ConflictFailure(
+        _extractErrorMessage(
+          e.response?.data,
+          defaultMessage: conflictMessage ?? 'This task can no longer change.',
+        ),
+      );
+    }
+    if (status == 422) {
+      final body = e.response?.data;
+      return FieldValidationFailure(
+        _extractErrorMessage(
+          body,
+          defaultMessage: 'Please check the form fields.',
+        ),
+        _extractFieldErrors(body),
+      );
+    }
+    if (status == 503) {
+      return const ServerFailure('Service unavailable. Please try again later.');
+    }
+    return ServerFailure(e.message ?? defaultMessage);
   }
 
   Map<String, String> _extractFieldErrors(dynamic body) {

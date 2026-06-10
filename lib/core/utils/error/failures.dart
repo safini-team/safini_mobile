@@ -32,3 +32,8 @@ class FieldValidationFailure extends ValidationFailure {
 class NotFoundFailure extends Failure {
   const NotFoundFailure(super.message);
 }
+
+/// 409 Conflict — e.g. an approved task can no longer be edited or deleted.
+class ConflictFailure extends Failure {
+  const ConflictFailure(super.message);
+}

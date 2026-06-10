@@ -60,6 +60,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Установите дневные лимиты экранного времени"),
         "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
         "appTimeTab": MessageLookupByLibrary.simpleMessage("Приложения"),
+        "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
+            "Одобренные задания нельзя изменить или удалить."),
         "apps": MessageLookupByLibrary.simpleMessage("Приложения"),
         "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Предметы"),
         "buyIt": MessageLookupByLibrary.simpleMessage("Купить! 🎉"),
@@ -103,6 +105,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Выберите эмодзи"),
         "createTaskRewardLabel":
             MessageLookupByLibrary.simpleMessage("Награда (Монеты времени)"),
+        "createTaskSaveButton":
+            MessageLookupByLibrary.simpleMessage("Сохранить"),
         "createTaskSheetTitle":
             MessageLookupByLibrary.simpleMessage("Новое задание"),
         "customizeAvatar":
@@ -110,12 +114,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "dailyChore": MessageLookupByLibrary.simpleMessage("Ежедневное дело"),
         "dailyLimit": MessageLookupByLibrary.simpleMessage("Дневной лимит"),
         "dayStreak": MessageLookupByLibrary.simpleMessage("Дней подряд"),
+        "deleteTaskBody":
+            MessageLookupByLibrary.simpleMessage("Это нельзя отменить."),
+        "deleteTaskButton": MessageLookupByLibrary.simpleMessage("Удалить"),
+        "deleteTaskTitle":
+            MessageLookupByLibrary.simpleMessage("Удалить задание?"),
         "doHomework": MessageLookupByLibrary.simpleMessage("Сделать уроки"),
         "doneToday": MessageLookupByLibrary.simpleMessage("Сделано"),
         "earnMoreCoins":
             MessageLookupByLibrary.simpleMessage("Заработать больше монет"),
         "earnedToday": MessageLookupByLibrary.simpleMessage("Заработано"),
         "edit": MessageLookupByLibrary.simpleMessage("Изменить"),
+        "editTaskSheetTitle":
+            MessageLookupByLibrary.simpleMessage("Изменить задание"),
         "educational": MessageLookupByLibrary.simpleMessage("Образование"),
         "english": MessageLookupByLibrary.simpleMessage("Английский"),
         "equipped": MessageLookupByLibrary.simpleMessage("НАДЕТО"),
@@ -230,6 +241,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "taskChessTitle": MessageLookupByLibrary.simpleMessage("Урок шахмат"),
         "taskCreatedMessage":
             MessageLookupByLibrary.simpleMessage("Задание создано!"),
+        "taskDeletedMessage":
+            MessageLookupByLibrary.simpleMessage("Задание удалено."),
         "taskDuolingoSub":
             MessageLookupByLibrary.simpleMessage("Бонус за серию!"),
         "taskDuolingoTitle":
@@ -249,6 +262,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Больше движения!"),
         "taskStepsTitle":
             MessageLookupByLibrary.simpleMessage("Пройти 5,000 шагов"),
+        "taskUpdatedMessage":
+            MessageLookupByLibrary.simpleMessage("Задание обновлено!"),
         "tasks": MessageLookupByLibrary.simpleMessage("Задания"),
         "tasksAndRewards":
             MessageLookupByLibrary.simpleMessage("Задания и награды"),

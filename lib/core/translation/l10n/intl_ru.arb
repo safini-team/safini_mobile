@@ -242,5 +242,13 @@
   "createTaskCategoryEducational": "Обучение",
   "createTaskCategoryHobby": "Хобби",
   "taskCreatedMessage": "Задание создано!",
-  "noTasksYet": "На этот день заданий пока нет."
+  "taskUpdatedMessage": "Задание обновлено!",
+  "taskDeletedMessage": "Задание удалено.",
+  "noTasksYet": "На этот день заданий пока нет.",
+  "editTaskSheetTitle": "Изменить задание",
+  "createTaskSaveButton": "Сохранить",
+  "deleteTaskButton": "Удалить",
+  "deleteTaskTitle": "Удалить задание?",
+  "deleteTaskBody": "Это нельзя отменить.",
+  "approvedTaskConflict": "Одобренные задания нельзя изменить или удалить."
 }

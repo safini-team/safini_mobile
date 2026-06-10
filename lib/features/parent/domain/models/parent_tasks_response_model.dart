@@ -1,3 +1,5 @@
+import 'package:safini/features/models/domain/models/task_model.dart';
+
 class ParentTasksResponseModel {
   /// The day this payload represents (YYYY-MM-DD), echoed by the API.
   final String? date;
@@ -169,6 +171,16 @@ class ParentTaskInstanceModel {
   final String? title;
   final String? category;
   final int? rewardCoins;
+  final int? xpReward;
+  final String? childId;
+  final String? taskType;
+  final String? proofMode;
+  final String? verificationMode;
+  final String? description;
+  final int? targetValue;
+  final String? targetUnit;
+  final String? dueOn;
+  final Map<String, dynamic>? metadata;
 
   const ParentTaskInstanceModel({
     required this.id,
@@ -176,9 +188,20 @@ class ParentTaskInstanceModel {
     this.title,
     this.category,
     this.rewardCoins,
+    this.xpReward,
+    this.childId,
+    this.taskType,
+    this.proofMode,
+    this.verificationMode,
+    this.description,
+    this.targetValue,
+    this.targetUnit,
+    this.dueOn,
+    this.metadata,
   });
 
   factory ParentTaskInstanceModel.fromJson(Map<String, dynamic> json) {
+    final rawMetadata = json['metadata'];
     return ParentTaskInstanceModel(
       id: _stringValue(json, ['id', 'instance_id', 'task_instance_id']),
       status: _stringValue(json, ['status']),
@@ -198,11 +221,33 @@ class ParentTaskInstanceModel {
         'coins',
         'points',
       ]),
+      xpReward: _intValue(json, ['xp_reward', 'xpReward']),
+      childId: _nullableStringValue(json, ['child_id', 'childId']),
+      taskType: _nullableStringValue(json, ['task_type', 'taskType']),
+      proofMode: _nullableStringValue(json, ['proof_mode', 'proofMode']),
+      verificationMode: _nullableStringValue(json, [
+        'verification_mode',
+        'verificationMode',
+      ]),
+      description: _nullableStringValue(json, ['description']),
+      targetValue: _intValue(json, ['target_value', 'targetValue']),
+      targetUnit: _nullableStringValue(json, ['target_unit', 'targetUnit']),
+      dueOn: _nullableStringValue(json, ['due_on', 'dueOn']),
+      metadata: rawMetadata is Map
+          ? rawMetadata.map((key, value) => MapEntry(key.toString(), value))
+          : null,
     );
   }
 
   String get displayTitle =>
       title?.trim().isNotEmpty == true ? title!.trim() : id;
+
+  /// Emoji the parent picked when creating the task (stored in metadata).
+  String? get emoji {
+    final value = metadata?['emoji'];
+    if (value is String && value.trim().isNotEmpty) return value.trim();
+    return null;
+  }
 
   bool get isPendingApproval {
     final normalized = status.toLowerCase();
@@ -217,6 +262,31 @@ class ParentTaskInstanceModel {
     return normalized == 'completed' ||
         normalized == 'done' ||
         normalized == 'approved';
+  }
+
+  /// Whether the parent may still edit/delete this task. Approved/completed
+  /// tasks are locked (the backend rejects edits with 409).
+  bool get isEditable => !isCompleted;
+
+  /// Build a [TaskModel] for prefilling the edit sheet and diffing the PATCH.
+  TaskModel toTaskModel() {
+    return TaskModel(
+      id: id,
+      childId: childId,
+      taskType: taskType,
+      title: displayTitle,
+      description: description,
+      category: category,
+      proofMode: proofMode,
+      verificationMode: verificationMode,
+      coinReward: rewardCoins ?? 0,
+      xpReward: xpReward ?? (rewardCoins ?? 0),
+      targetValue: targetValue,
+      targetUnit: targetUnit,
+      metadata: metadata,
+      dueOn: dueOn,
+      status: status,
+    );
   }
 }
 

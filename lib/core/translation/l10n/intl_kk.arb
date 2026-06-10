@@ -241,5 +241,13 @@
   "createTaskCategoryEducational": "Оқу",
   "createTaskCategoryHobby": "Хобби",
   "taskCreatedMessage": "Тапсырма жасалды!",
-  "noTasksYet": "Бұл күнге әзірге тапсырма жоқ."
+  "taskUpdatedMessage": "Тапсырма жаңартылды!",
+  "taskDeletedMessage": "Тапсырма жойылды.",
+  "noTasksYet": "Бұл күнге әзірге тапсырма жоқ.",
+  "editTaskSheetTitle": "Тапсырманы өзгерту",
+  "createTaskSaveButton": "Сақтау",
+  "deleteTaskButton": "Жою",
+  "deleteTaskTitle": "Тапсырманы жою?",
+  "deleteTaskBody": "Мұны қайтару мүмкін емес.",
+  "approvedTaskConflict": "Бекітілген тапсырмаларды өзгертуге немесе жоюға болмайды."
 }
