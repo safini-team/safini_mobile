@@ -153,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'SAFINIO',
+                  'SAFINI',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
