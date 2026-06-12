@@ -4,14 +4,25 @@ import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_model.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_state.dart';
 
+import 'package:safini/features/models/domain/controllers/task_controller.dart';
+import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
+import 'package:safini/core/utils/error/failures.dart';
+
 class TasksCubit extends Cubit<TasksState> {
   final CoinsCubit _coins;
+  final TaskController _taskController;
+  final ProfileController _profileController;
 
-  TasksCubit(this._coins) : super(const TasksState.initial()) {
-    _loadHardcodedData();
+  TasksCubit(this._coins, this._taskController, this._profileController) : super(const TasksState.initial()) {
+    _loadData();
   }
 
-  void _loadHardcodedData() {
+  Future<void> _loadData() async {
+    // We need child ID. Let's get it from ProfileController.
+    final profileResult = await _profileController.fetchMe();
+    
+    // ... we will fill this out fully. For now let's just make sure we have the dependencies.
+
     emit(
       state.copyWith(
         tasks: const [

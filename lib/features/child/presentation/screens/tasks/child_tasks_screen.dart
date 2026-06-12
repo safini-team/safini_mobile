@@ -11,6 +11,7 @@ import 'package:safini/features/child/presentation/widgets/tiles/task_item_tile.
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
 import 'package:safini/features/child/presentation/widgets/utils/tasks_category_filter.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/di/injection.dart';
 
 class ChildTasksScreen extends StatelessWidget {
   const ChildTasksScreen({super.key});
@@ -18,7 +19,7 @@ class ChildTasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (ctx) => TasksCubit(ctx.read<CoinsCubit>()),
+      create: (ctx) => getIt<TasksCubit>(),
       child: const _TasksView(),
     );
   }
@@ -148,13 +149,10 @@ class _TasksBody extends StatelessWidget {
           child: Column(
             children: [
               // Category filter row
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                child: TasksCategoryFilter(
-                  selectedCategory: state.selectedCategory,
-                  onChanged: (cat) =>
-                      context.read<TasksCubit>().selectCategory(cat),
-                ),
+              TasksCategoryFilter(
+                selectedCategory: state.selectedCategory,
+                onChanged: (cat) =>
+                    context.read<TasksCubit>().selectCategory(cat),
               ),
               // Quest list
               Expanded(

@@ -4,12 +4,14 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 
 class AppNavBarItem {
   final IconData icon;
+  final IconData? activeIcon;
   final String label;
   final bool isSelected;
   final VoidCallback? onTap;
 
   const AppNavBarItem({
     required this.icon,
+    this.activeIcon,
     required this.label,
     this.isSelected = false,
     this.onTap,
@@ -26,13 +28,12 @@ class AppNavBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, -2),
+        border: Border(
+          top: BorderSide(
+            color: context.colorScheme.onSurface.withValues(alpha: 0.05),
+            width: 1,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -59,19 +60,22 @@ class _NavItem extends StatelessWidget {
         ? context.colorScheme.primary
         : context.colorScheme.onSurface.withValues(alpha: 0.4);
 
+    final currentIcon = item.isSelected ? (item.activeIcon ?? item.icon) : item.icon;
+
     return GestureDetector(
       onTap: item.onTap,
+      behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(item.icon, color: color, size: 26),
+          Icon(currentIcon, color: color, size: 26),
           const SizedBox(height: 3),
           Text(
             item.label,
             style: context.textTheme.bodyMedium?.copyWith(
               color: color,
               fontSize: 11,
-              fontWeight: item.isSelected ? FontWeight.w600 : FontWeight.w400,
+              fontWeight: item.isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
         ],

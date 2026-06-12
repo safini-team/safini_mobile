@@ -123,4 +123,14 @@ class AuthGoogleSignInService {
         suffix.length <= 8 ? suffix : suffix.substring(suffix.length - 8);
     return '${parts.first}-...$visibleSuffix';
   }
+
+  Future<void> signOut() async {
+    try {
+      await _ensureGoogleSignInInitialized();
+      await GoogleSignIn.instance.signOut();
+      await Supabase.instance.client.auth.signOut();
+    } catch (e) {
+      debugPrint('[GoogleSignIn] signOut error: $e');
+    }
+  }
 }

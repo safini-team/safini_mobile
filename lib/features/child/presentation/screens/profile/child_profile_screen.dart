@@ -16,6 +16,8 @@ import 'package:safini/features/child/presentation/widgets/cards/profile_stat_ca
 import 'package:safini/features/child/presentation/widgets/dialogs/achievements_dialog.dart';
 import 'package:safini/features/child/presentation/widgets/tiles/profile_menu_tile.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart' as safini_auth;
+import 'package:shared_preferences/shared_preferences.dart' as safini_prefs;
 
 class ChildProfileScreen extends StatelessWidget {
   const ChildProfileScreen({super.key});
@@ -184,19 +186,49 @@ class _ProfileHeader extends StatelessWidget {
                           fontWeight: FontWeight.w800,
                         ),
                       ),
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.4),
+                      GestureDetector(
+                        onTap: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Log Out'),
+                              content: const Text('Are you sure you want to log out?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  child: const Text('Log Out', style: TextStyle(color: Colors.red)),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            try {
+                              await getIt<safini_auth.AuthGoogleSignInService>().signOut();
+                            } catch (_) {}
+                            await getIt<safini_prefs.SharedPreferences>().remove('access_token');
+                            if (context.mounted) {
+                              context.router.replaceAll([const NamedRoute('login')]);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.4),
+                            ),
                           ),
-                        ),
-                        child: const Icon(
-                          Icons.logout_rounded,
-                          color: Colors.white,
-                          size: 18,
+                          child: const Icon(
+                            Icons.logout_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
