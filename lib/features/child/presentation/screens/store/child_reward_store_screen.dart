@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
@@ -23,7 +24,7 @@ class ChildRewardStoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (ctx) => RewardStoreCubit(ctx.read<CoinsCubit>()),
+      create: (ctx) => getIt<RewardStoreCubit>(),
       child: const _RewardStoreView(),
     );
   }
@@ -297,4 +298,3 @@ class _AvatarContent extends StatelessWidget {
 }
 
 // ─── Bottom Nav ───────────────────────────────────────────────────────────────
-

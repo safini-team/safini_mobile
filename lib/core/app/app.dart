@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     final appRouter = getIt<AppRouter>();
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => CoinsCubit()),
+        BlocProvider.value(value: getIt<CoinsCubit>()),
         BlocProvider(create: (_) => LocaleCubit()),
         BlocProvider.value(value: getIt<AuthSessionCubit>()),
         BlocProvider.value(value: getIt<ChildClaimCubit>()),

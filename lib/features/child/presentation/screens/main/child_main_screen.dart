@@ -54,25 +54,29 @@ class _ChildMainView extends StatelessWidget {
           bottomNavigationBar: AppNavBar(
             items: [
               AppNavBarItem(
-                icon: Icons.home_rounded,
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home_rounded,
                 label: s.home,
                 isSelected: state.selectedIndex == 0,
                 onTap: () => cubit.selectTab(0),
               ),
               AppNavBarItem(
-                icon: Icons.check_box_rounded,
+                icon: Icons.check_box_outlined,
+                activeIcon: Icons.check_box_rounded,
                 label: s.tasks,
                 isSelected: state.selectedIndex == 1,
                 onTap: () => cubit.selectTab(1),
               ),
               AppNavBarItem(
-                icon: Icons.shopping_bag_rounded,
+                icon: Icons.shopping_bag_outlined,
+                activeIcon: Icons.shopping_bag_rounded,
                 label: s.store,
                 isSelected: state.selectedIndex == 2,
                 onTap: () => cubit.selectTab(2),
               ),
               AppNavBarItem(
-                icon: Icons.person_rounded,
+                icon: Icons.person_outline_rounded,
+                activeIcon: Icons.person_rounded,
                 label: s.profile,
                 isSelected: state.selectedIndex == 3,
                 onTap: () => cubit.selectTab(3),

@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/utils/constants/api_const.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/child/domain/controllers/child_controller.dart';
 import 'package:safini/features/child/domain/models/child_model.dart';
@@ -7,6 +9,8 @@ import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_model.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
+import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart'
+    as common_profile;
 import 'package:safini/features/models/domain/models/child_model.dart'
     as claimed_child;
 
@@ -149,7 +153,12 @@ class ProfileCubit extends Cubit<ProfileState> {
         questsDone: child.tasksCompletedCount,
         dayStreak: child.currentStreakDays,
         level: child.level,
-        xpProgress: (child.xp % 1000) / 1000.0, // Example: 1000 XP per level
+        xpProgress: (child.xp % 1000) / 1000.0,
+        equippedFaceEmoji: _avatarEmoji(child.avatarState, 'face') ?? '😊',
+        equippedBadgeEmoji:
+            _avatarEmoji(child.avatarState, 'outfit') ??
+            _avatarEmoji(child.avatarState, 'outfits') ??
+            '🚀',
       ),
     );
   }
@@ -167,8 +176,42 @@ class ProfileCubit extends Cubit<ProfileState> {
         dayStreak: child.currentStreakDays,
         level: child.level,
         xpProgress: (child.xp % 1000) / 1000.0,
+        equippedFaceEmoji:
+            _avatarEmoji(child.avatarState.toJson(), 'face') ?? '😊',
+        equippedBadgeEmoji:
+            _avatarEmoji(child.avatarState.toJson(), 'outfit') ??
+            _avatarEmoji(child.avatarState.toJson(), 'outfits') ??
+            '🚀',
       ),
     );
+  }
+
+  String? _avatarEmoji(Map<String, dynamic>? avatarState, String slot) {
+    if (avatarState == null) return null;
+    final emojis = avatarState['emojis'];
+    if (emojis is Map) {
+      final emoji = emojis[slot]?.toString().trim();
+      if (emoji != null && emoji.isNotEmpty) return emoji;
+    }
+    final equipped = avatarState['equipped'];
+    if (equipped is Map) {
+      final key = equipped[slot]?.toString().trim();
+      if (key != null && key.isNotEmpty) return _emojiForAvatarKey(key);
+    }
+    return null;
+  }
+
+  String _emojiForAvatarKey(String key) {
+    final value = key.toLowerCase();
+    if (value.contains('cape') || value.contains('hero')) return '🦸';
+    if (value.contains('rocket')) return '🚀';
+    if (value.contains('sword')) return '⚔️';
+    if (value.contains('robot')) return '🤖';
+    if (value.contains('star')) return '🤩';
+    if (value.contains('cool')) return '😎';
+    if (value.contains('hair')) return '👦';
+    if (value.contains('shirt') || value.contains('outfit')) return '👕';
+    return '😊';
   }
 
   void startEditing() =>
@@ -228,159 +271,162 @@ class ProfileCubit extends Cubit<ProfileState> {
 
 class AvatarCubit extends Cubit<AvatarState> {
   final CoinsCubit _coins;
+  final Dio _dio;
+  final common_profile.ProfileController _profileController;
+  String? _childId;
 
-  AvatarCubit(this._coins) : super(const AvatarState.initial()) {
-    _loadItems();
+  AvatarCubit(this._coins, this._dio, this._profileController)
+    : super(const AvatarState.initial()) {
+    loadItems();
   }
 
-  void _loadItems() {
-    emit(
-      state.copyWith(
-        avatarItems: const [
-          // Outfits
-          AvatarGridItem(
-            id: 'outfit_tshirt',
-            emoji: '👕',
-            category: AvatarCategory.outfits,
-          ),
-          AvatarGridItem(
-            id: 'outfit_avatar',
-            emoji: '🧑',
-            category: AvatarCategory.outfits,
-            cost: 450,
-          ),
-          AvatarGridItem(
-            id: 'outfit_rocket',
-            emoji: '🚀',
-            category: AvatarCategory.outfits,
-            isEquipped: true,
-          ),
-          AvatarGridItem(
-            id: 'outfit_hero',
-            emoji: '🦸',
-            category: AvatarCategory.outfits,
-            cost: 300,
-          ),
-          AvatarGridItem(
-            id: 'outfit_swords',
-            emoji: '⚔️',
-            category: AvatarCategory.outfits,
-            isLocked: true,
-            lockLabel: 'LV.25',
-          ),
-          AvatarGridItem(
-            id: 'outfit_robot',
-            emoji: '🤖',
-            category: AvatarCategory.outfits,
-            cost: 500,
-          ),
-          // Face
-          AvatarGridItem(
-            id: 'face_smile',
-            emoji: '😊',
-            category: AvatarCategory.face,
-            isEquipped: true,
-          ),
-          AvatarGridItem(
-            id: 'face_cool',
-            emoji: '😎',
-            category: AvatarCategory.face,
-            cost: 100,
-          ),
-          AvatarGridItem(
-            id: 'face_star',
-            emoji: '🤩',
-            category: AvatarCategory.face,
-            cost: 200,
-          ),
-          AvatarGridItem(
-            id: 'face_think',
-            emoji: '🤔',
-            category: AvatarCategory.face,
-            cost: 150,
-          ),
-          AvatarGridItem(
-            id: 'face_shock',
-            emoji: '😮',
-            category: AvatarCategory.face,
-            cost: 250,
-          ),
-          AvatarGridItem(
-            id: 'face_locked',
-            emoji: '🔒',
-            category: AvatarCategory.face,
-            isLocked: true,
-            lockLabel: 'LV.10',
-          ),
-          // Hair
-          AvatarGridItem(
-            id: 'hair_default',
-            emoji: '👦',
-            category: AvatarCategory.hair,
-            isEquipped: true,
-          ),
-          AvatarGridItem(
-            id: 'hair_blonde',
-            emoji: '👱',
-            category: AvatarCategory.hair,
-            cost: 100,
-          ),
-          AvatarGridItem(
-            id: 'hair_red',
-            emoji: '🧑‍🦰',
-            category: AvatarCategory.hair,
-            cost: 150,
-          ),
-          AvatarGridItem(
-            id: 'hair_curly',
-            emoji: '🧑‍🦱',
-            category: AvatarCategory.hair,
-            cost: 200,
-          ),
-          AvatarGridItem(
-            id: 'hair_locked',
-            emoji: '🔒',
-            category: AvatarCategory.hair,
-            isLocked: true,
-            lockLabel: 'LV.8',
-          ),
-          // Back
-          AvatarGridItem(
-            id: 'back_default',
-            emoji: '🎒',
-            category: AvatarCategory.back,
-            isEquipped: true,
-          ),
-          AvatarGridItem(
-            id: 'back_wings',
-            emoji: '🦋',
-            category: AvatarCategory.back,
-            cost: 200,
-          ),
-          AvatarGridItem(
-            id: 'back_cape',
-            emoji: '🦸',
-            category: AvatarCategory.back,
-            cost: 300,
-          ),
-        ],
-      ),
-    );
+  Future<void> loadItems() async {
+    final childId = await _resolveChildId();
+    if (childId == null) {
+      emit(state.copyWith(avatarItems: const []));
+      return;
+    }
+
+    try {
+      final response = await _dio.get(ApiConst.childStore(childId));
+      final data = _asMap(response.data);
+      final level = await _loadLevel(childId);
+      final balance = _intValue(data, ['balance', 'coins_balance']);
+      if (balance != null) {
+        _coins.set(balance);
+      }
+      final equipped = _extractEquipped(data['avatar_state']);
+      emit(
+        state.copyWith(
+          avatarItems: _parseAvatarItems(data['avatar_items'], equipped),
+          level: level,
+        ),
+      );
+    } catch (_) {
+      emit(state.copyWith(avatarItems: const []));
+    }
+  }
+
+  Future<int> _loadLevel(String childId) async {
+    try {
+      final response = await _dio.get(ApiConst.childDashboard(childId));
+      final data = _asMap(response.data);
+      final child = _asMap(data['child']);
+      return _intValue(child, ['level']) ?? 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  Future<String?> _resolveChildId() async {
+    if (_childId != null && _childId!.isNotEmpty) return _childId;
+    final profileResult = await _profileController.fetchMe();
+    _childId = profileResult.fold((_) => null, (profile) {
+      final childId = profile.childId?.trim();
+      return childId == null || childId.isEmpty ? null : childId;
+    });
+    return _childId;
+  }
+
+  Map<String, String> _extractEquipped(dynamic raw) {
+    final state = _asMap(raw);
+    final equipped = state['equipped'];
+    if (equipped is Map) {
+      return equipped.map(
+        (key, value) => MapEntry(key.toString(), value.toString()),
+      );
+    }
+    return const {};
+  }
+
+  List<AvatarGridItem> _parseAvatarItems(
+    dynamic raw,
+    Map<String, String> equipped,
+  ) {
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map((item) {
+          final map = item.map((key, value) => MapEntry(key.toString(), value));
+          final key = _stringValue(map, ['item_key', 'id', 'avatar_item_id']);
+          final category = _categoryForKey(key);
+          final owned = map['is_owned'] == true || map['owned'] == true;
+          final isEquipped =
+              map['is_equipped'] == true ||
+              equipped[_slotForCategory(category)] == key;
+          return AvatarGridItem(
+            id: key,
+            emoji: _emojiForAvatarKey(key),
+            category: category,
+            cost: owned || isEquipped
+                ? null
+                : _intValue(map, ['coin_cost', 'cost']),
+            isEquipped: isEquipped,
+            isLocked: map['is_locked'] == true || map['locked'] == true,
+            lockLabel: map['lock_label']?.toString(),
+          );
+        })
+        .where((item) => item.id.isNotEmpty)
+        .toList();
+  }
+
+  AvatarCategory _categoryForKey(String key) {
+    final value = key.toLowerCase();
+    if (value.contains('face') ||
+        value.contains('smile') ||
+        value.contains('cool')) {
+      return AvatarCategory.face;
+    }
+    if (value.contains('hair')) return AvatarCategory.hair;
+    if (value.contains('back') ||
+        value.contains('wing') ||
+        value.contains('cape')) {
+      return AvatarCategory.back;
+    }
+    return AvatarCategory.outfits;
+  }
+
+  String _slotForCategory(AvatarCategory category) {
+    switch (category) {
+      case AvatarCategory.outfits:
+        return 'outfit';
+      case AvatarCategory.face:
+        return 'face';
+      case AvatarCategory.hair:
+        return 'hair';
+      case AvatarCategory.back:
+        return 'back';
+    }
+  }
+
+  String _emojiForAvatarKey(String key) {
+    final value = key.toLowerCase();
+    if (value.contains('cape') || value.contains('hero')) return '🦸';
+    if (value.contains('rocket')) return '🚀';
+    if (value.contains('sword')) return '⚔️';
+    if (value.contains('robot')) return '🤖';
+    if (value.contains('star')) return '🤩';
+    if (value.contains('cool')) return '😎';
+    if (value.contains('hair')) return '👦';
+    if (value.contains('shirt') || value.contains('outfit')) return '👕';
+    return '😊';
   }
 
   void selectCategory(AvatarCategory category) =>
       emit(state.copyWith(selectedCategory: category));
 
-  void equipItem(String id) {
+  Future<void> equipItem(String id) async {
     final target = state.avatarItems.firstWhere((i) => i.id == id);
     if (target.isLocked || target.isEquipped) return;
 
     final cost = target.cost ?? 0;
     if (cost > 0 && _coins.state < cost) {
-      return; // not enough coins
+      return;
     }
 
-    _coins.subtract(cost);
+    if (cost > 0) {
+      _coins.subtract(cost);
+    }
     final updated = state.avatarItems.map((item) {
       if (item.id == id) {
         return item.copyWith(isEquipped: true, clearCost: true);
@@ -391,5 +437,65 @@ class AvatarCubit extends Cubit<AvatarState> {
       return item;
     }).toList();
     emit(state.copyWith(avatarItems: updated));
+    await _saveAvatarState(updated);
+  }
+
+  Future<void> _saveAvatarState(List<AvatarGridItem> items) async {
+    final childId = await _resolveChildId();
+    if (childId == null) {
+      return;
+    }
+    final equipped = <String, String>{};
+    final emojis = <String, String>{};
+    for (final item in items.where((item) => item.isEquipped)) {
+      final slot = _slotForCategory(item.category);
+      equipped[slot] = item.id;
+      emojis[slot] = item.emoji;
+    }
+    try {
+      await _dio.patch(
+        ApiConst.childAvatar(childId),
+        data: {
+          'avatar_state': {'equipped': equipped, 'emojis': emojis},
+        },
+      );
+    } catch (_) {}
+  }
+
+  Map<String, dynamic> _asMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) {
+      return raw;
+    }
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(key.toString(), value));
+    }
+    return const {};
+  }
+
+  String _stringValue(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      final value = json[key]?.toString().trim();
+      if (value != null && value.isNotEmpty) {
+        return value;
+      }
+    }
+    return '';
+  }
+
+  int? _intValue(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      final value = json[key];
+      if (value is int) {
+        return value;
+      }
+      if (value is num) {
+        return value.toInt();
+      }
+      final parsed = int.tryParse(value?.toString() ?? '');
+      if (parsed != null) {
+        return parsed;
+      }
+    }
+    return null;
   }
 }

@@ -8,6 +8,8 @@ class QuestModel {
   final Color iconColor;
   final Color iconBackground;
   final bool isCompleted;
+  final int coins;
+  final int xp;
 
   const QuestModel({
     required this.id,
@@ -17,6 +19,8 @@ class QuestModel {
     required this.iconColor,
     required this.iconBackground,
     this.isCompleted = false,
+    this.coins = 0,
+    this.xp = 0,
   });
 
   QuestModel copyWith({bool? isCompleted}) {
@@ -28,6 +32,8 @@ class QuestModel {
       iconColor: iconColor,
       iconBackground: iconBackground,
       isCompleted: isCompleted ?? this.isCompleted,
+      coins: coins,
+      xp: xp,
     );
   }
 }

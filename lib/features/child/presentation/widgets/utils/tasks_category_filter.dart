@@ -16,22 +16,35 @@ class TasksCategoryFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      child: Row(
-        children: TaskCategory.values
-            .map(
-              (cat) => Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: _CategoryPill(
-                  category: cat,
-                  isSelected: cat == selectedCategory,
-                  onTap: () => onChanged(cat),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            offset: const Offset(0, 4),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        child: Row(
+          children: TaskCategory.values
+              .map(
+                (cat) => Padding(
+                  padding: const EdgeInsets.only(right: AppSpacing.sm),
+                  child: _CategoryPill(
+                    category: cat,
+                    isSelected: cat == selectedCategory,
+                    onTap: () => onChanged(cat),
+                  ),
                 ),
-              ),
-            )
-            .toList(),
+              )
+              .toList(),
+        ),
       ),
     );
   }

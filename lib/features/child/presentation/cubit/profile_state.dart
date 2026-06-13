@@ -73,15 +73,18 @@ class ProfileState {
 class AvatarState {
   final List<AvatarGridItem> avatarItems;
   final AvatarCategory selectedCategory;
+  final int level;
 
   const AvatarState({
     required this.avatarItems,
     this.selectedCategory = AvatarCategory.outfits,
+    this.level = 0,
   });
 
   const AvatarState.initial()
     : avatarItems = const [],
-      selectedCategory = AvatarCategory.outfits;
+      selectedCategory = AvatarCategory.outfits,
+      level = 0;
 
   List<AvatarGridItem> get currentItems =>
       avatarItems.where((i) => i.category == selectedCategory).toList();
@@ -103,10 +106,12 @@ class AvatarState {
   AvatarState copyWith({
     List<AvatarGridItem>? avatarItems,
     AvatarCategory? selectedCategory,
+    int? level,
   }) {
     return AvatarState(
       avatarItems: avatarItems ?? this.avatarItems,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      level: level ?? this.level,
     );
   }
 }
