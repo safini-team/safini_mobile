@@ -12,8 +12,9 @@ import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
-import 'package:safini/features/models/domain/controllers/task_controller.dart' as safini_task;
-import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart' as safini_profile;
+import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart'
+    as safini_profile;
+import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 
 void registerChildDependencies(GetIt sl) {
   // Data sources
@@ -35,11 +36,13 @@ void registerChildDependencies(GetIt sl) {
 
   sl.registerFactory<ChildCubit>(() => ChildCubit(sl<ChildController>()));
   sl.registerFactory<ChildHomeCubit>(() => ChildHomeCubit());
-  sl.registerFactory<TasksCubit>(() => TasksCubit(
-        sl<CoinsCubit>(),
-        sl<safini_task.TaskController>(),
-        sl<safini_profile.ProfileController>(),
-      ));
+  sl.registerFactory<TasksCubit>(
+    () => TasksCubit(
+      sl<CoinsCubit>(),
+      sl<safini_profile.ProfileController>(),
+      sl<IParentTaskRepository>(),
+    ),
+  );
   sl.registerFactory<ProfileCubit>(
     () => ProfileCubit(
       sl<ChildController>(),
@@ -47,9 +50,24 @@ void registerChildDependencies(GetIt sl) {
       sl<CoinsCubit>(),
     ),
   );
-  sl.registerFactory<AvatarCubit>(() => AvatarCubit(sl<CoinsCubit>()));
-  sl.registerFactory<QuestCubit>(() => QuestCubit());
+  sl.registerFactory<AvatarCubit>(
+    () => AvatarCubit(
+      sl<CoinsCubit>(),
+      sl<Dio>(),
+      sl<safini_profile.ProfileController>(),
+    ),
+  );
+  sl.registerFactory<QuestCubit>(
+    () => QuestCubit(
+      sl<safini_profile.ProfileController>(),
+      sl<IParentTaskRepository>(),
+    ),
+  );
   sl.registerFactory<RewardStoreCubit>(
-    () => RewardStoreCubit(sl<CoinsCubit>()),
+    () => RewardStoreCubit(
+      sl<CoinsCubit>(),
+      sl<Dio>(),
+      sl<safini_profile.ProfileController>(),
+    ),
   );
 }

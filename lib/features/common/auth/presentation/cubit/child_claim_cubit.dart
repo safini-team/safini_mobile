@@ -60,6 +60,10 @@ class ChildClaimCubit extends Cubit<ChildClaimState> {
     emit(state.copyWith(status: ChildClaimStatus.initial, errorMessage: null));
   }
 
+  void reset() {
+    emit(const ChildClaimState.initial());
+  }
+
   String _toUiMessage(Failure failure) {
     if (failure is UnauthorizedFailure) {
       return 'Invalid or expired token. Please sign in again.';

@@ -74,7 +74,7 @@ class TaskDetailDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 // Rewards or details can go here
-                _RewardRow(coins: 20, xp: 30), // Example rewards
+                _RewardRow(coins: quest.coins, xp: quest.xp),
                 const SizedBox(height: AppSpacing.xl),
                 SizedBox(
                   width: double.infinity,
@@ -90,7 +90,7 @@ class TaskDetailDialog extends StatelessWidget {
                       elevation: 0,
                     ),
                     child: Text(
-                      quest.isCompleted ? s.ok : s.gotIt,
+                      s.ok,
                       style: context.textTheme.labelLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -118,9 +118,17 @@ class _RewardRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _RewardPill(emoji: '🪙', label: '$coins', color: const Color(0xFFF5A623)),
+        _RewardPill(
+          emoji: '🪙',
+          label: '$coins',
+          color: const Color(0xFFF5A623),
+        ),
         const SizedBox(width: AppSpacing.md),
-        _RewardPill(emoji: '⭐', label: '$xp XP', color: const Color(0xFF7B6EF6)),
+        _RewardPill(
+          emoji: '⭐',
+          label: '$xp XP',
+          color: const Color(0xFF7B6EF6),
+        ),
       ],
     );
   }

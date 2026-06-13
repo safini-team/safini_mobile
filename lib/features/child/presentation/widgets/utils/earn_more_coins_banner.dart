@@ -17,49 +17,61 @@ class EarnMoreCoinsBanner extends StatelessWidget {
         horizontal: AppSpacing.xl,
         vertical: AppSpacing.xl,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            s.earnMoreCoins,
-            style: context.textTheme.headlineSmall?.copyWith(
-              color: context.colorScheme.primary,
-              fontWeight: FontWeight.w700,
-            ),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: context.colorScheme.primary.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(
+            color: context.colorScheme.primary.withValues(alpha: 0.12),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            s.completeDailyQuests,
-            textAlign: TextAlign.center,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: context.colorScheme.onSurface.withValues(alpha: 0.55),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: onGoToTasks,
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  color: context.colorScheme.primary,
-                  width: 1.5,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-              ),
-              child: Text(
-                s.goToTasks,
-                style: context.textTheme.labelLarge?.copyWith(
-                  color: context.colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              s.earnMoreCoins,
+              style: context.textTheme.titleLarge?.copyWith(
+                color: context.colorScheme.primary,
+                fontWeight: FontWeight.w700,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              s.completeDailyQuests,
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colorScheme.onSurface.withValues(alpha: 0.55),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: onGoToTasks,
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: BorderSide(
+                    color: context.colorScheme.primary,
+                    width: 1.5,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                ),
+                child: Text(
+                  s.goToTasks,
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: context.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

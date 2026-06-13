@@ -16,7 +16,8 @@ import 'package:safini/features/child/presentation/widgets/cards/profile_stat_ca
 import 'package:safini/features/child/presentation/widgets/dialogs/achievements_dialog.dart';
 import 'package:safini/features/child/presentation/widgets/tiles/profile_menu_tile.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart' as safini_auth;
+import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart'
+    as safini_auth;
 import 'package:shared_preferences/shared_preferences.dart' as safini_prefs;
 
 class ChildProfileScreen extends StatelessWidget {
@@ -192,7 +193,9 @@ class _ProfileHeader extends StatelessWidget {
                             context: context,
                             builder: (ctx) => AlertDialog(
                               title: const Text('Log Out'),
-                              content: const Text('Are you sure you want to log out?'),
+                              content: const Text(
+                                'Are you sure you want to log out?',
+                              ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(ctx, false),
@@ -200,18 +203,25 @@ class _ProfileHeader extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('Log Out', style: TextStyle(color: Colors.red)),
+                                  child: const Text(
+                                    'Log Out',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ),
                               ],
                             ),
                           );
                           if (confirm == true) {
                             try {
-                              await getIt<safini_auth.AuthGoogleSignInService>().signOut();
+                              await getIt<safini_auth.AuthGoogleSignInService>()
+                                  .signOut();
                             } catch (_) {}
-                            await getIt<safini_prefs.SharedPreferences>().remove('access_token');
+                            await getIt<safini_prefs.SharedPreferences>()
+                                .remove('access_token');
                             if (context.mounted) {
-                              context.router.replaceAll([const NamedRoute('login')]);
+                              context.router.replaceAll([
+                                const NamedRoute('login'),
+                              ]);
                             }
                           }
                         },
@@ -299,51 +309,54 @@ class _AvatarCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 96,
-      height: 96,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              border: Border.all(color: Colors.white, width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 12,
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(faceEmoji, style: const TextStyle(fontSize: 48)),
-            ),
-          ),
-          // Badge at bottom right
-          Positioned(
-            bottom: -4,
-            right: -4,
-            child: Container(
-              width: 28,
-              height: 28,
+    return Hero(
+      tag: 'child-avatar-hero',
+      child: SizedBox(
+        width: 96,
+        height: 96,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: 96,
+              height: 96,
               decoration: BoxDecoration(
-                color: const Color(0xFFF5A623),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: context.colorScheme.onPrimary,
-                  width: 2,
-                ),
+                color: Colors.white,
+                border: Border.all(color: Colors.white, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                  ),
+                ],
               ),
               child: Center(
-                child: Text(badgeEmoji, style: const TextStyle(fontSize: 14)),
+                child: Text(faceEmoji, style: const TextStyle(fontSize: 48)),
               ),
             ),
-          ),
-        ],
+            // Badge at bottom right
+            Positioned(
+              bottom: -4,
+              right: -4,
+              child: Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5A623),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: context.colorScheme.onPrimary,
+                    width: 2,
+                  ),
+                ),
+                child: Center(
+                  child: Text(badgeEmoji, style: const TextStyle(fontSize: 14)),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

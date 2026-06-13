@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_state.dart';
 import 'package:safini/features/child/presentation/widgets/cards/reward_store_card.dart';
+import 'package:safini/features/child/presentation/widgets/dialogs/task_detail_dialog.dart';
 import 'package:safini/features/child/presentation/widgets/tiles/quest_tile.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
@@ -15,7 +17,7 @@ class ChildHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QuestCubit(),
+      create: (_) => getIt<QuestCubit>(),
       child: const _ChildHomeView(),
     );
   }
@@ -81,6 +83,17 @@ class _QuestListBody extends StatelessWidget {
     final s = S.of(context);
     return BlocBuilder<QuestCubit, QuestState>(
       builder: (context, state) {
+        if (state.quests.isEmpty) {
+          return Center(
+            child: Text(
+              s.noQuestsInCategory,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colorScheme.onSurface.withValues(alpha: 0.45),
+              ),
+            ),
+          );
+        }
+
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -115,7 +128,7 @@ class _QuestListBody extends StatelessWidget {
                 return QuestTile(
                   quest: quest,
                   isHighlighted: index == 0,
-                  onTap: () => context.read<QuestCubit>().toggleQuest(quest.id),
+                  onTap: () => TaskDetailDialog.show(context, quest),
                 );
               }, childCount: state.quests.length),
             ),

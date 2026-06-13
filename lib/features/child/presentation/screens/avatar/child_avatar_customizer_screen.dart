@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
@@ -24,7 +25,7 @@ class ChildAvatarCustomizerScreen extends StatelessWidget {
           context: context,
           locale: locale,
           child: BlocProvider(
-            create: (ctx) => AvatarCubit(ctx.read<CoinsCubit>()),
+            create: (ctx) => getIt<AvatarCubit>(),
             child: const _AvatarCustomizerView(),
           ),
         );
@@ -121,7 +122,7 @@ class _AvatarHeader extends StatelessWidget {
                 _AvatarPreview(
                   faceEmoji: state.equippedFaceEmoji,
                   badgeEmoji: state.equippedBadgeEmoji,
-                  level: 5,
+                  level: state.level,
                 ),
                 const SizedBox(height: AppSpacing.xl),
               ],
@@ -149,61 +150,64 @@ class _AvatarPreview extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: 120,
-          height: 120,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(AppRadius.xl),
-                ),
-                child: Center(
-                  child: Text(faceEmoji, style: const TextStyle(fontSize: 60)),
-                ),
-              ),
-              Positioned(
-                bottom: -6,
-                right: -6,
-                child: Container(
-                  width: 32,
-                  height: 32,
+        Hero(
+          tag: 'child-avatar-hero',
+          child: SizedBox(
+            width: 120,
+            height: 120,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF5A623),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(AppRadius.xl),
                   ),
                   child: Center(
                     child: Text(
-                      badgeEmoji,
-                      style: const TextStyle(fontSize: 16),
+                      faceEmoji,
+                      style: const TextStyle(fontSize: 60),
                     ),
                   ),
                 ),
-              ),
-            ],
+                Positioned(
+                  bottom: -6,
+                  right: -6,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5A623),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: Center(
+                      child: Text(
+                        badgeEmoji,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
         Container(
-          width: 36,
-          height: 36,
-          decoration: const BoxDecoration(
-            color: Color(0xFFF5A623),
-            shape: BoxShape.circle,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5A623),
+            borderRadius: BorderRadius.circular(AppRadius.pill),
           ),
-          child: Center(
-            child: Text(
-              '$level',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
-              ),
+          child: Text(
+            level > 0 ? 'Level $level' : 'Level',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
             ),
           ),
         ),
@@ -320,7 +324,6 @@ class _AvatarGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
     final isEquipped = item.isEquipped;
     final bgColor = isEquipped
         ? context.colorScheme.primary

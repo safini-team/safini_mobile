@@ -17,9 +17,9 @@ class StoreCoinBadge extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 150),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
+            border: Border.all(color: Colors.white),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -29,7 +29,7 @@ class StoreCoinBadge extends StatelessWidget {
               Text(
                 '$coins',
                 style: context.textTheme.labelLarge?.copyWith(
-                  color: Colors.white,
+                  color: context.colorScheme.primary,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -40,7 +40,9 @@ class StoreCoinBadge extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white70,
+                    color: context.colorScheme.onSurface.withValues(
+                      alpha: 0.55,
+                    ),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
