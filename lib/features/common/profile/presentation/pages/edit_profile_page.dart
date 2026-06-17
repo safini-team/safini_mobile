@@ -10,6 +10,7 @@ import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/common/profile/data/datasources/local/profile_local_datasource.dart';
 import 'package:safini/features/common/profile/domain/models/profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -20,14 +21,15 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  final _displayNameController = TextEditingController();
-  final _bioController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _surnameController = TextEditingController();
 
   bool _isLoading = true;
   bool _isSaving = false;
   String? _errorMessage;
+  String? _initialName;
+  String? _initialSurname;
   String? _initialDisplayName;
-  String? _initialBio;
 
   @override
   void initState() {
@@ -37,8 +39,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void dispose() {
-    _displayNameController.dispose();
-    _bioController.dispose();
+    _nameController.dispose();
+    _surnameController.dispose();
     super.dispose();
   }
 
@@ -87,9 +89,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       final profile = ProfileModel.fromJson(decoded);
       _initialDisplayName = profile.displayName;
-      _initialBio = profile.bio ?? '';
-      _displayNameController.text = _initialDisplayName!;
-      _bioController.text = _initialBio!;
+      final parts = _initialDisplayName!.split(' ');
+      _initialName = parts.first;
+      _initialSurname = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+      _nameController.text = _initialName!;
+      _surnameController.text = _initialSurname!;
 
       if (mounted) {
         setState(() {
@@ -138,13 +142,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     final changedPayload = <String, dynamic>{};
-    final displayName = _displayNameController.text.trim();
-    final bio = _bioController.text.trim();
-    if (displayName != (_initialDisplayName ?? '')) {
-      changedPayload['display_name'] = displayName;
-    }
-    if (bio != (_initialBio ?? '')) {
-      changedPayload['bio'] = bio;
+    final name = _nameController.text.trim();
+    final surname = _surnameController.text.trim();
+    final newDisplayName = surname.isEmpty ? name : '$name $surname';
+    
+    if (newDisplayName != (_initialDisplayName ?? '')) {
+      changedPayload['display_name'] = newDisplayName;
     }
 
     try {
@@ -182,7 +185,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         await getIt<ProfileLocalDataSource>().cache(updated);
       }
       if (!mounted) return;
-      context.router.maybePop();
+      context.router.maybePop(true);
     } on SocketException {
       setState(() {
         _isSaving = false;
@@ -223,9 +226,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text(s.editProfile),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.router.maybePop(),
@@ -233,8 +237,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(20),
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -255,25 +260,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       const SizedBox(height: 12),
                     ],
                     TextFormField(
-                      controller: _displayNameController,
-                      maxLength: 120,
-                      decoration: const InputDecoration(labelText: 'Name'),
+                      controller: _nameController,
+                      maxLength: 60,
+                      decoration: InputDecoration(labelText: s.name),
                       validator: (value) {
                         final text = value?.trim() ?? '';
-                        if (text.isEmpty) return 'Name is required.';
-                        if (text.length > 120) return 'Max 120 characters.';
+                        if (text.isEmpty) return '${s.name} is required.';
+                        if (text.length > 60) return 'Max 60 characters.';
                         return null;
                       },
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
-                      controller: _bioController,
-                      maxLines: 6,
-                      maxLength: 2000,
-                      decoration: const InputDecoration(labelText: 'Bio'),
+                      controller: _surnameController,
+                      maxLength: 60,
+                      decoration: InputDecoration(labelText: s.surname),
                       validator: (value) {
                         final text = value?.trim() ?? '';
-                        if (text.length > 2000) return 'Max 2000 characters.';
+                        if (text.length > 60) return 'Max 60 characters.';
                         return null;
                       },
                     ),
@@ -286,16 +290,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               width: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Save'),
+                          : Text(s.save),
                     ),
                     const SizedBox(height: 12),
                     OutlinedButton(
                       onPressed: _isSaving
                           ? null
                           : () => context.router.maybePop(),
-                      child: const Text('Cancel'),
+                      child: Text(s.cancel),
                     ),
                   ],
+                ),
                 ),
               ),
             ),

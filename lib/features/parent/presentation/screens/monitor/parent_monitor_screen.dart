@@ -9,6 +9,7 @@ import 'package:safini/features/parent/presentation/widgets/charts/parent_screen
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_header.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_stats_row.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_app_limits_section.dart';
+import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_tasks_section.dart';
 
 class ParentMonitorScreen extends StatelessWidget {
@@ -18,7 +19,6 @@ class ParentMonitorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => getIt<ParentCubit>()..loadProfile()),
         BlocProvider(
           create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
         ),
@@ -34,11 +34,11 @@ class _ParentMonitorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF43008F),
+      backgroundColor: context.colorScheme.primary,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: 340,
             floating: false,
             pinned: true,
             backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),

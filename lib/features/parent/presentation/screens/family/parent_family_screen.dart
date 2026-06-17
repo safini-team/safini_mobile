@@ -4,13 +4,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/parent/presentation/screens/family/edit_child_page.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 class ParentFamilyScreen extends StatefulWidget {
@@ -49,26 +50,35 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
               return BlocBuilder<ParentFamilyCubit, ParentFamilyState>(
                 builder: (context, state) {
                   return Scaffold(
-                    backgroundColor: context.colorScheme.surface,
+                    backgroundColor: context.colorScheme.primary,
                     appBar: AppBar(
+                      toolbarHeight: 100,
                       backgroundColor: Colors.transparent,
                       elevation: 0,
-                      title: Text(
-                        state.family?.name ?? s.family,
-                        style: context.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      title: Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          s.myFamily,
+                          style: context.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       actions: [
-                        IconButton(
-                          icon: const Icon(Icons.language, color: Colors.white),
-                          onPressed: () => _showLanguageDialog(context),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: IconButton(
+                          icon: const Icon(Icons.settings, color: Colors.white),
+                          onPressed: () async {
+                            final result = await context.router.push<bool>(
+                              const NamedRoute('parentSettings'),
+                            );
+                            if (result == true && context.mounted) {
+                              context.read<ParentCubit>().loadProfile();
+                            }
+                          },
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.logout, color: Colors.white),
-                          onPressed: () =>
-                              context.read<AuthSessionCubit>().signOut(),
                         ),
                       ],
                       flexibleSpace: Container(
@@ -84,7 +94,18 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                         ),
                       ),
                     ),
-                    body: _buildBody(context, state, s),
+                    body: Container(
+                      width: double.infinity,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.surface,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(36),
+                          topRight: Radius.circular(36),
+                        ),
+                      ),
+                      child: _buildBody(context, state, s),
+                    ),
                   );
                 },
               );
@@ -159,12 +180,12 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: _openAddChildPage,
-                child: const Text('Add Child'),
+                child: Text(s.addChild),
               ),
             ),
           ],
           const SizedBox(height: 24),
-          if (state.errorMessage != null)
+          if (state.errorMessage != null) ...[
             _InlineErrorBanner(
               message: state.errorMessage!,
               onRetry: state.canRetry
@@ -173,12 +194,8 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                     )
                   : null,
             ),
-          const SizedBox(height: 24),
-          _buildEditProfileTile(context),
-          const SizedBox(height: 16),
-          _buildLanguageTile(context, s),
-          const SizedBox(height: 24),
-          const _LogoutButton(),
+            const SizedBox(height: 24),
+          ],
           const SizedBox(height: 100),
         ],
       ),
@@ -244,147 +261,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     }
   }
 
-  String _getLanguageName(String code, S s) {
-    switch (code) {
-      case 'kk':
-        return s.kazakh;
-      case 'ru':
-        return s.russian;
-      default:
-        return s.english;
-    }
-  }
-
-  Widget _buildLanguageTile(BuildContext context, S s) {
-    return InkWell(
-      onTap: () => _showLanguageDialog(context),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: context.colorScheme.surface,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: context.infoColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(Icons.language, color: context.infoColor),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    s.changeLanguage,
-                    style: context.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    _getLanguageName(
-                      Localizations.localeOf(context).languageCode,
-                      s,
-                    ),
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colorScheme.onSurface.withValues(
-                        alpha: 0.6,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: context.colorScheme.onSurface.withValues(alpha: 0.4),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEditProfileTile(BuildContext context) {
-    return InkWell(
-      onTap: () => context.router.push(const NamedRoute('editProfile')),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: context.colorScheme.surface,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: context.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(
-                Icons.edit_rounded,
-                color: context.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                'Edit Profile',
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: context.colorScheme.onSurface.withValues(alpha: 0.4),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showLanguageDialog(BuildContext context) {
-    final s = S.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(s.selectLanguage),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(s.english),
-              onTap: () {
-                context.read<LocaleCubit>().setLocale(const Locale('en'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text(s.russian),
-              onTap: () {
-                context.read<LocaleCubit>().setLocale(const Locale('ru'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text(s.kazakh),
-              onTap: () {
-                context.read<LocaleCubit>().setLocale(const Locale('kk'));
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _ParentManagementCard extends StatelessWidget {
@@ -417,14 +293,14 @@ class _ParentManagementCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Parents',
+            S.of(context).parents,
             style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 12),
           if (family.parents.isEmpty)
-            const _ParentListTile(displayName: 'Parent', role: 'admin')
+             _ParentListTile(displayName: S.of(context).parentAccount, role: S.of(context).admin)
           else
             ...family.parents.map(
               (parent) => Padding(
@@ -446,7 +322,7 @@ class _ParentManagementCard extends StatelessWidget {
                       width: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Create Parent Invite Code'),
+                  : Text(S.of(context).createParentInviteCode),
             ),
           ),
         ],
@@ -469,7 +345,7 @@ class _ParentInviteCodeDialog extends StatelessWidget {
     ).formatTimeOfDay(TimeOfDay.fromDateTime(expiryLocal));
 
     return AlertDialog(
-      title: const Text('Parent Invite Code'),
+      title: Text(S.of(context).parentInviteCodeTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -484,7 +360,7 @@ class _ParentInviteCodeDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text('Expires: $date, $time'),
+          Text(S.of(context).expiresLabel(date, time)),
         ],
       ),
       actions: [
@@ -597,7 +473,7 @@ class _ChildSummaryCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Age: ${child.age}',
+                      S.of(context).ageLabel(child.age),
                       style: context.textTheme.bodySmall,
                     ),
                   ],
@@ -626,8 +502,8 @@ class _ChildSummaryCard extends StatelessWidget {
                   : onEditChild,
               child: Text(
                 child.claimedByUserId == null
-                    ? 'Create Child Invite Code'
-                    : 'Edit Child',
+                    ? S.of(context).createChildInviteCode
+                    : S.of(context).editChild,
               ),
             ),
           ),
@@ -651,7 +527,7 @@ class _ChildInviteCodeDialog extends StatelessWidget {
     ).formatTimeOfDay(TimeOfDay.fromDateTime(expiryLocal));
 
     return AlertDialog(
-      title: const Text('Child Invite Code'),
+      title: Text(S.of(context).childInviteCodeTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,7 +542,7 @@ class _ChildInviteCodeDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text('Expires: $date, $time'),
+          Text(S.of(context).expiresLabel(date, time)),
         ],
       ),
       actions: [
@@ -709,10 +585,10 @@ class _EmptyState extends StatelessWidget {
               color: context.colorScheme.primary,
             ),
             const SizedBox(height: 16),
-            Text('No family set up yet', style: context.textTheme.titleLarge),
+            Text(S.of(context).noFamilySetupYet, style: context.textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              'Create a family or join one with an invite code.',
+              S.of(context).createOrJoinFamily,
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium,
             ),
@@ -740,15 +616,15 @@ class _EmptyChildrenState extends StatelessWidget {
         children: [
           const Icon(Icons.child_care_rounded, size: 40),
           const SizedBox(height: 12),
-          Text('No children found yet', style: context.textTheme.titleMedium),
+          Text(S.of(context).noChildrenFoundYet, style: context.textTheme.titleMedium),
           const SizedBox(height: 6),
           Text(
-            'Invite a child or refresh after linking a family member.',
+            S.of(context).inviteChildOrRefresh,
             textAlign: TextAlign.center,
             style: context.textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
-          OutlinedButton(onPressed: onAddChild, child: const Text('Add Child')),
+          OutlinedButton(onPressed: onAddChild, child: Text(S.of(context).addChild)),
         ],
       ),
     );
@@ -814,46 +690,6 @@ class _ErrorState extends StatelessWidget {
             if (canRetry)
               ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => context.read<AuthSessionCubit>().signOut(),
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            color: context.colorScheme.surface,
-            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.logout, color: Colors.red),
-              const SizedBox(width: 12),
-              Text(
-                s.switchToKidMode,
-                style: context.textTheme.titleMedium?.copyWith(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
