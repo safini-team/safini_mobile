@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_app_limit_tile.dart';
 
 class MonitorAppLimitsSection extends StatelessWidget {
@@ -31,7 +34,8 @@ class MonitorAppLimitsSection extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () =>
+                  context.read<ParentHomeCubit>().selectTab(2),
               child: Text(
                 s.manageAll,
                 maxLines: 1,
@@ -52,6 +56,12 @@ class MonitorAppLimitsSection extends StatelessWidget {
             usedMinutes: app['used'],
             limitMinutes: app['limit'],
             iconPath: app['icon'],
+            isEnabled: app['isEnabled'] ?? true,
+            onToggle: (val) =>
+                context.read<ParentMonitorCubit>().toggleAppLimit(
+                      app['name'] as String,
+                      val,
+                    ),
           ),
         ),
       ],

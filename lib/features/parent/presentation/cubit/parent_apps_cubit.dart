@@ -53,6 +53,16 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   }
 
   void toggleApp(String appName, bool isEnabled) {
-    // Toggle app restriction via controller
+    final current = state;
+    if (current is! ParentAppsLoaded) return;
+
+    final updatedLimits = current.appLimits.map((app) {
+      if (app['name'] == appName) {
+        return {...app, 'isEnabled': isEnabled};
+      }
+      return app;
+    }).toList();
+
+    emit(ParentAppsLoaded(appLimits: updatedLimits));
   }
 }

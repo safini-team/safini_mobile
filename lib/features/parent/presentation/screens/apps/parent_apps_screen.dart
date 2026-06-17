@@ -123,6 +123,9 @@ class ParentAppsScreen extends StatelessWidget {
                               limitMinutes: app['limit'],
                               iconPath: app['icon'],
                               isEnabled: app['isEnabled'] ?? true,
+                              onToggle: (val) => context
+                                  .read<ParentAppsCubit>()
+                                  .toggleApp(app['name'] as String, val),
                             ),
                           ),
                           const SizedBox(height: 12),

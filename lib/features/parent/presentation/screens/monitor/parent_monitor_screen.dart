@@ -5,6 +5,7 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_header.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_stats_row.dart';
@@ -21,6 +22,9 @@ class ParentMonitorScreen extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
+        ),
+        BlocProvider(
+          create: (context) => getIt<ParentTasksCubit>()..loadTasks(),
         ),
       ],
       child: const _ParentMonitorView(),
