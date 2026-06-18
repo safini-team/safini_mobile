@@ -294,5 +294,11 @@
   "close": "Закрыть",
   "copy": "Копировать",
   "noChildrenFoundYet": "Дети пока не добавлены",
-  "inviteChildOrRefresh": "Пригласите ребенка или обновите страницу."
+  "inviteChildOrRefresh": "Пригласите ребенка или обновите страницу.",
+  "deleteAccount": "Удалить аккаунт",
+  "deleteAccountConfirmTitle": "Удалить аккаунт?",
+  "deleteAccountConfirmBody": "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
+  "removeParent": "Удалить из семьи",
+  "removeParentConfirmTitle": "Удалить родителя?",
+  "removeParentConfirmBody": "Вы уверены, что хотите удалить этого родителя из семьи?"
 }

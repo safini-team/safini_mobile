@@ -135,6 +135,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyChore": MessageLookupByLibrary.simpleMessage("Daily Chore"),
     "dailyLimit": MessageLookupByLibrary.simpleMessage("Daily Limit"),
     "dayStreak": MessageLookupByLibrary.simpleMessage("Day Streak"),
+    "deleteAccount": MessageLookupByLibrary.simpleMessage("Delete Account"),
+    "deleteAccountConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to delete your account? This action cannot be undone.",
+    ),
+    "deleteAccountConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Delete Account?",
+    ),
     "deleteTaskBody": MessageLookupByLibrary.simpleMessage(
       "This can\'t be undone.",
     ),
@@ -246,6 +253,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Real-world Tasks"),
     "remaining": MessageLookupByLibrary.simpleMessage("Remaining"),
     "remainingTime": m10,
+    "removeParent": MessageLookupByLibrary.simpleMessage("Remove from Family"),
+    "removeParentConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to remove this parent from the family?",
+    ),
+    "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Remove Parent?",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Reward Store"),
     "roleSelectionSubtitle": MessageLookupByLibrary.simpleMessage(

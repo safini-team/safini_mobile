@@ -65,16 +65,23 @@ class ParentAppsScreen extends StatelessWidget {
             ),
             // ── Content ─────────────────────────────────────────
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(36),
-                    topRight: Radius.circular(36),
+              child: Transform.translate(
+                offset: const Offset(0, -1), // Fix sub-pixel white line gap
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.surface,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(36),
+                      topRight: Radius.circular(36),
+                    ),
                   ),
-                ),
-                child: BlocBuilder<ParentAppsCubit, ParentAppsState>(
-                  builder: (context, state) {
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(36),
+                      topRight: Radius.circular(36),
+                    ),
+                    child: BlocBuilder<ParentAppsCubit, ParentAppsState>(
+                      builder: (context, state) {
                     if (state is ParentAppsLoading) {
                       return const Center(
                         child: CircularProgressIndicator(
@@ -85,7 +92,7 @@ class ParentAppsScreen extends StatelessWidget {
 
                     if (state is ParentAppsLoaded) {
                       return ListView(
-                        padding: const EdgeInsets.fromLTRB(20, 28, 20, 80),
+                        padding: const EdgeInsets.fromLTRB(32, 28, 32, 80),
                         children: [
                           // Tip Banner
                           Container(
@@ -172,6 +179,8 @@ class ParentAppsScreen extends StatelessWidget {
                     }
                     return const SizedBox.shrink();
                   },
+                ),
+                ),
                 ),
               ),
             ),

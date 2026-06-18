@@ -1594,6 +1594,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Delete Account`
+  String get deleteAccount {
+    return Intl.message(
+      'Delete Account',
+      name: 'deleteAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Account?`
+  String get deleteAccountConfirmTitle {
+    return Intl.message(
+      'Delete Account?',
+      name: 'deleteAccountConfirmTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete your account? This action cannot be undone.`
+  String get deleteAccountConfirmBody {
+    return Intl.message(
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      name: 'deleteAccountConfirmBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove from Family`
+  String get removeParent {
+    return Intl.message(
+      'Remove from Family',
+      name: 'removeParent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove Parent?`
+  String get removeParentConfirmTitle {
+    return Intl.message(
+      'Remove Parent?',
+      name: 'removeParentConfirmTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to remove this parent from the family?`
+  String get removeParentConfirmBody {
+    return Intl.message(
+      'Are you sure you want to remove this parent from the family?',
+      name: 'removeParentConfirmBody',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

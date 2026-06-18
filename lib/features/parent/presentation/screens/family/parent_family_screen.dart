@@ -9,7 +9,9 @@ import 'package:safini/features/models/domain/models/child_invite_code_model.dar
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/parent/presentation/screens/family/edit_child_page.dart';
+import 'package:safini/features/parent/presentation/screens/family/parent_profile_page.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -153,6 +155,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             onCreateParentInviteCode: state.isParentInviteCodeLoading
                 ? null
                 : _createParentInviteCode,
+            onParentTap: _onParentTap,
           ),
           const SizedBox(height: 24),
           Text(
@@ -261,17 +264,37 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     }
   }
 
+  Future<void> _onParentTap(ParentSummaryModel parent) async {
+    final currentUserId = Supabase.instance.client.auth.currentSession?.user.id;
+    if (parent.userId == currentUserId) {
+      final result = await context.router.push<bool>(const NamedRoute('editProfile'));
+      if (result == true && mounted) {
+        context.read<ParentCubit>().loadProfile();
+        context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+      }
+    } else {
+      final updated = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(builder: (_) => ParentProfilePage(parentModel: parent)),
+      );
+      if (updated == true && mounted) {
+        context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
+      }
+    }
+  }
+
 }
 
 class _ParentManagementCard extends StatelessWidget {
   final FamilyModel family;
   final bool isLoading;
   final VoidCallback? onCreateParentInviteCode;
+  final void Function(ParentSummaryModel) onParentTap;
 
   const _ParentManagementCard({
     required this.family,
     required this.isLoading,
     required this.onCreateParentInviteCode,
+    required this.onParentTap,
   });
 
   @override
@@ -300,7 +323,7 @@ class _ParentManagementCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           if (family.parents.isEmpty)
-             _ParentListTile(displayName: S.of(context).parentAccount, role: S.of(context).admin)
+             _ParentListTile(displayName: S.of(context).parentAccount, role: S.of(context).admin, onTap: () {})
           else
             ...family.parents.map(
               (parent) => Padding(
@@ -308,6 +331,7 @@ class _ParentManagementCard extends StatelessWidget {
                 child: _ParentListTile(
                   displayName: parent.displayName,
                   role: parent.role,
+                  onTap: () => onParentTap(parent),
                 ),
               ),
             ),
@@ -387,8 +411,9 @@ class _ParentInviteCodeDialog extends StatelessWidget {
 class _ParentListTile extends StatelessWidget {
   final String displayName;
   final String role;
+  final VoidCallback onTap;
 
-  const _ParentListTile({required this.displayName, required this.role});
+  const _ParentListTile({required this.displayName, required this.role, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -396,16 +421,19 @@ class _ParentListTile extends StatelessWidget {
         ? displayName[0].toUpperCase()
         : 'P';
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surfaceContainerHighest.withValues(
-          alpha: 0.35,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.35,
+          ),
+          borderRadius: BorderRadius.circular(16),
         ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
+        child: Row(
+          children: [
           CircleAvatar(radius: 18, child: Text(initials)),
           const SizedBox(width: 12),
           Expanded(
@@ -424,7 +452,7 @@ class _ParentListTile extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 

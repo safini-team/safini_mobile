@@ -143,6 +143,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyChore": MessageLookupByLibrary.simpleMessage("Күнделікті жұмыс"),
     "dailyLimit": MessageLookupByLibrary.simpleMessage("Күндік шектеу"),
     "dayStreak": MessageLookupByLibrary.simpleMessage("Күндік серия"),
+    "deleteAccount": MessageLookupByLibrary.simpleMessage("Аккаунтты жою"),
+    "deleteAccountConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Аккаунтыңызды жойғыңыз келетініне сенімдісіз бе? Бұл әрекетті қайтару мүмкін емес.",
+    ),
+    "deleteAccountConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Аккаунтты жою керек пе?",
+    ),
     "deleteTaskBody": MessageLookupByLibrary.simpleMessage(
       "Мұны қайтару мүмкін емес.",
     ),
@@ -264,6 +271,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "remaining": MessageLookupByLibrary.simpleMessage("Қалды"),
     "remainingTime": m10,
+    "removeParent": MessageLookupByLibrary.simpleMessage("Отбасынан жою"),
+    "removeParentConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Бұл ата-ананы отбасынан жойғыңыз келетініне сенімдісіз бе?",
+    ),
+    "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Ата-ананы жою керек пе?",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("Қайталау"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Сыйлықтар дүкені"),
     "roleSelectionSubtitle": MessageLookupByLibrary.simpleMessage(

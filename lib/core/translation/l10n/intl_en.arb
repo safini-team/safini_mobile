@@ -294,5 +294,11 @@
   "close": "Close",
   "copy": "Copy",
   "noChildrenFoundYet": "No children found yet",
-  "inviteChildOrRefresh": "Invite a child or refresh after linking a family member."
+  "inviteChildOrRefresh": "Invite a child or refresh after linking a family member.",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirmTitle": "Delete Account?",
+  "deleteAccountConfirmBody": "Are you sure you want to delete your account? This action cannot be undone.",
+  "removeParent": "Remove from Family",
+  "removeParentConfirmTitle": "Remove Parent?",
+  "removeParentConfirmBody": "Are you sure you want to remove this parent from the family?"
 }

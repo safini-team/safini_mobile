@@ -45,23 +45,35 @@ class _ParentMonitorView extends StatelessWidget {
             expandedHeight: 340,
             floating: false,
             pinned: true,
-            backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
+            backgroundColor: context.colorScheme.primary,
             elevation: 0,
+            scrolledUnderElevation: 0,
             automaticallyImplyLeading: false,
             flexibleSpace: const FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: MonitorHeader(),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(36),
-                  topRight: Radius.circular(36),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(36),
+              child: Container(
+                height: 36,
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(36),
+                    topRight: Radius.circular(36),
+                  ),
                 ),
               ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Transform.translate(
+              offset: const Offset(0, -1), // Fix any sub-pixel gap
+              child: Container(
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
+                ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -99,6 +111,7 @@ class _ParentMonitorView extends StatelessWidget {
 
                     return const SizedBox.shrink();
                   },
+                ),
                 ),
               ),
             ),

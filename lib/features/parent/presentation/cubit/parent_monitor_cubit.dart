@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/features/parent/domain/controllers/parent_controller.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -6,9 +8,38 @@ import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.d
 class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   final ParentController _controller;
   final ParentFamilyCubit _familyCubit;
+  StreamSubscription? _familySub;
 
   ParentMonitorCubit(this._controller, this._familyCubit)
-      : super(const ParentMonitorInitial());
+      : super(const ParentMonitorInitial()) {
+    _familySub = _familyCubit.stream.listen((familyState) {
+      if (familyState.family != null && state is ParentMonitorLoaded) {
+        final child = familyState.family!.children.where((c) => c.id.isNotEmpty).firstOrNull;
+        if (child != null) {
+          final current = state as ParentMonitorLoaded;
+          emit(
+            ParentMonitorLoaded(
+              childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
+              level: child.level ?? current.level,
+              timeCoins: child.coinsBalance ?? current.timeCoins,
+              stepsToday: current.stepsToday,
+              stepsChange: current.stepsChange,
+              lessonsToday: current.lessonsToday,
+              lessonsChange: current.lessonsChange,
+              weeklyUsage: current.weeklyUsage,
+              appLimits: current.appLimits,
+            ),
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _familySub?.cancel();
+    return super.close();
+  }
 
   Future<void> loadMonitorData() async {
     emit(const ParentMonitorLoading());

@@ -141,6 +141,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyChore": MessageLookupByLibrary.simpleMessage("Ежедневное дело"),
     "dailyLimit": MessageLookupByLibrary.simpleMessage("Дневной лимит"),
     "dayStreak": MessageLookupByLibrary.simpleMessage("Дней подряд"),
+    "deleteAccount": MessageLookupByLibrary.simpleMessage("Удалить аккаунт"),
+    "deleteAccountConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
+    ),
+    "deleteAccountConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Удалить аккаунт?",
+    ),
     "deleteTaskBody": MessageLookupByLibrary.simpleMessage(
       "Это нельзя отменить.",
     ),
@@ -264,6 +271,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Задания в жизни"),
     "remaining": MessageLookupByLibrary.simpleMessage("Осталось"),
     "remainingTime": m10,
+    "removeParent": MessageLookupByLibrary.simpleMessage("Удалить из семьи"),
+    "removeParentConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Вы уверены, что хотите удалить этого родителя из семьи?",
+    ),
+    "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Удалить родителя?",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Магазин наград"),
     "roleSelectionSubtitle": MessageLookupByLibrary.simpleMessage(

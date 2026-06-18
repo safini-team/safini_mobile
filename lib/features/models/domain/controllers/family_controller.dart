@@ -42,4 +42,6 @@ class FamilyController {
     age: age,
     gender: gender,
   );
+  Future<Either<Failure, void>> removeParent(String parentUserId) =>
+      _repository.removeParent(parentUserId);
 }
