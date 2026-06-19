@@ -56,7 +56,10 @@
   "noQuestsInCategory": "No quests in this category",
   "selectLanguage": "Select Language",
   "goodMorning": "Good morning 👋",
-  "parentName": "Safinio Parent",
+  "goodAfternoon": "Good afternoon 👋",
+  "goodEvening": "Good evening 👋",
+  "goodNight": "Good night 🌙",
+  "parentName": "Safini Parent",
   "childProgressTitle": "{name}'s Progress",
   "@childProgressTitle": {
     "placeholders": {
@@ -300,5 +303,7 @@
   "deleteAccountConfirmBody": "Are you sure you want to delete your account? This action cannot be undone.",
   "removeParent": "Remove from Family",
   "removeParentConfirmTitle": "Remove Parent?",
-  "removeParentConfirmBody": "Are you sure you want to remove this parent from the family?"
+  "removeParentConfirmBody": "Are you sure you want to remove this parent from the family?",
+  "logoutConfirmTitle": "Log out?",
+  "logoutConfirmBody": "Are you sure you want to log out?"
 }

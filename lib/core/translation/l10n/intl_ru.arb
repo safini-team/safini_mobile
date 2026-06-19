@@ -56,6 +56,9 @@
   "noQuestsInCategory": "Нет квестов в этой категории",
   "selectLanguage": "Выберите язык",
   "goodMorning": "Доброе утро 👋",
+  "goodAfternoon": "Добрый день 👋",
+  "goodEvening": "Добрый вечер 👋",
+  "goodNight": "Доброй ночи 🌙",
   "parentName": "Родитель Safini",
   "childProgressTitle": "Прогресс {name}",
   "@childProgressTitle": {
@@ -300,5 +303,7 @@
   "deleteAccountConfirmBody": "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
   "removeParent": "Удалить из семьи",
   "removeParentConfirmTitle": "Удалить родителя?",
-  "removeParentConfirmBody": "Вы уверены, что хотите удалить этого родителя из семьи?"
+  "removeParentConfirmBody": "Вы уверены, что хотите удалить этого родителя из семьи?",
+  "logoutConfirmTitle": "Выйти?",
+  "logoutConfirmBody": "Вы уверены, что хотите выйти из аккаунта?"
 }
