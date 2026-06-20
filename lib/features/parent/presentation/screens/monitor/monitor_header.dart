@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -62,18 +63,6 @@ class MonitorHeader extends StatelessWidget {
                           },
                         ),
                       ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.onPrimary.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.settings_outlined,
-                      color: context.colorScheme.onPrimary,
-                      size: 26,
                     ),
                   ),
                 ],

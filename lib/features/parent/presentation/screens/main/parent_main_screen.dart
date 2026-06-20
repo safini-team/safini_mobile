@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/core/utils/widgets/layout/app_nav_bar.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_monitor_screen.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_screen.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_apps_screen.dart';
@@ -22,16 +27,18 @@ class ParentMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ParentHomeCubit(),
-      child: BlocBuilder<LocaleCubit, Locale>(
-        builder: (context, locale) {
-          return Localizations.override(
-            context: context,
-            locale: locale,
-            child: const _ParentMainView(),
-          );
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ParentHomeCubit()),
+        BlocProvider(create: (_) => getIt<ParentCubit>()..loadProfile()),
+      ],
+      child: BlocListener<AuthSessionCubit, AuthSessionState>(
+        listener: (context, state) {
+          if (state.status == AuthSessionStatus.unauthenticated) {
+            context.router.replaceAll([const NamedRoute('roleSelection')]);
+          }
         },
+        child: const _ParentMainView(),
       ),
     );
   }
@@ -73,7 +80,7 @@ class _ParentMainView extends StatelessWidget {
               ),
               AppNavBarItem(
                 icon: Icons.people_alt_rounded,
-                label: s.family,
+                label: s.myFamily,
                 isSelected: state.selectedIndex == 3,
                 onTap: () => cubit.selectTab(3),
               ),

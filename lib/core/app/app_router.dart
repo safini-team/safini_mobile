@@ -13,6 +13,7 @@ import 'package:safini/features/child/presentation/screens/main/child_main_scree
 import 'package:safini/features/child/presentation/screens/avatar/child_avatar_customizer_screen.dart';
 import 'package:safini/features/parent/presentation/screens/family/add_child_page.dart';
 import 'package:safini/features/parent/presentation/screens/main/parent_main_screen.dart';
+import 'package:safini/features/parent/presentation/screens/settings/parent_settings_screen.dart';
 
 class AppRouter {
   late final RootStackRouter _router = RootStackRouter.build(
@@ -81,6 +82,11 @@ class AppRouter {
         name: 'avatar',
         path: '/avatar',
         builder: (context, data) => const ChildAvatarCustomizerScreen(),
+      ),
+      NamedRouteDef(
+        name: 'parentSettings',
+        path: '/parent-settings',
+        builder: (context, data) => const ParentSettingsScreen(),
       ),
     ],
   );

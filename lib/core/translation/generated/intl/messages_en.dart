@@ -22,28 +22,32 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(age, gender) => "Age ${age} • ${gender}";
 
-  static String m1(name) => "${name}\'s Progress";
+  static String m1(age) => "Age: ${age}";
 
-  static String m2(count) =>
+  static String m2(name) => "${name}\'s Progress";
+
+  static String m3(count) =>
       "${Intl.plural(count, one: '${count} coin', other: '${count} coins')}";
 
-  static String m3(count) => "${count} coins";
+  static String m4(count) => "${count} coins";
 
-  static String m4(count) =>
+  static String m5(count) =>
       "${Intl.plural(count, one: '${count} coin reward', other: '${count} coins reward')}";
 
-  static String m5(level) => "Level ${level} Hero";
+  static String m6(date, time) => "Expires: ${date}, ${time}";
 
-  static String m6(count) =>
+  static String m7(level) => "Level ${level} Hero";
+
+  static String m8(count) =>
       "${Intl.plural(count, one: '${count} minute', other: '${count} minutes')}";
 
-  static String m7(minutes) => "${minutes} minutes remaining";
+  static String m9(minutes) => "${minutes} minutes remaining";
 
-  static String m8(minutes) => "${minutes}m remaining";
+  static String m10(minutes) => "${minutes}m remaining";
 
-  static String m9(used, limit) => "${used} used / ${limit} limit";
+  static String m11(used, limit) => "${used} used / ${limit} limit";
 
-  static String m10(count) => "You need ${count} more coins.";
+  static String m12(count) => "You need ${count} more coins.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{

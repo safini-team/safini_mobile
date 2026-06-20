@@ -162,7 +162,6 @@
   "questsText": "Quests",
   "streakText": "Streak",
   "coinsText": "Coins",
-  "parentHomeScreen": "Parent Home Screen",
   "spendYourTimeCoins": "Spend your Time Coins",
   "categoryAll": "All",
   "categoryLearn": "Learn",
@@ -202,14 +201,20 @@
   "usedLimit": "{used} used / {limit} limit",
   "@usedLimit": {
     "placeholders": {
-      "used": { "type": "int" },
-      "limit": { "type": "int" }
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
     }
   },
   "minutesRemainingLong": "{minutes} minutes remaining",
   "@minutesRemainingLong": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "statusPending": "PENDING",
@@ -257,4 +262,49 @@
   "taskApprovedMessage": "Task approved!",
   "taskRejectedMessage": "Task rejected.",
   "reviewNoteHint": "Add a note (optional)"
+  "settings": "Settings",
+  "editProfile": "Edit Profile",
+  "logout": "Logout",
+  "myFamily": "My Family",
+  "parents": "Parents",
+  "createParentInviteCode": "Create Parent Invite Code",
+  "editChild": "Edit Child",
+  "ageLabel": "Age: {age}",
+  "@ageLabel": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "createChildInviteCode": "Create Child Invite Code",
+  "addChild": "Add Child",
+  "name": "Name",
+  "surname": "Surname",
+  "noFamilySetupYet": "No family set up yet",
+  "createOrJoinFamily": "Create a family or join one with an invite code.",
+  "parentInviteCodeTitle": "Parent Invite Code",
+  "childInviteCodeTitle": "Child Invite Code",
+  "expiresLabel": "Expires: {date}, {time}",
+  "@expiresLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteCodeCopied": "Invite code copied",
+  "close": "Close",
+  "copy": "Copy",
+  "noChildrenFoundYet": "No children found yet",
+  "inviteChildOrRefresh": "Invite a child or refresh after linking a family member.",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirmTitle": "Delete Account?",
+  "deleteAccountConfirmBody": "Are you sure you want to delete your account? This action cannot be undone.",
+  "removeParent": "Remove from Family",
+  "removeParentConfirmTitle": "Remove Parent?",
+  "removeParentConfirmBody": "Are you sure you want to remove this parent from the family?"
 }

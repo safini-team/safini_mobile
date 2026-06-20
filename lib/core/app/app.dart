@@ -26,24 +26,23 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: getIt<ChildClaimCubit>()),
         BlocProvider.value(value: getIt<ParentFamilyCubit>()),
       ],
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: AppConstants.appName,
-        theme: AppTheme.light,
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        localeListResolutionCallback: (locales, supportedLocales) {
-          // This is where we handle independent locales for different parts of the app
-          // However, MaterialApp only takes ONE locale.
-          // We will use a Builder in specific pages to override the locale.
-          return null;
+      child: BlocBuilder<LocaleCubit, Locale>(
+        builder: (context, locale) {
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: AppConstants.appName,
+            theme: AppTheme.light,
+            locale: locale,
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            routerConfig: appRouter.config(),
+          );
         },
-        routerConfig: appRouter.config(),
       ),
     );
   }

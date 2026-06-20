@@ -49,7 +49,7 @@ void registerParentDependencies(GetIt sl) {
   );
   sl.registerFactory<ParentHomeCubit>(() => ParentHomeCubit());
   sl.registerFactory<ParentMonitorCubit>(
-    () => ParentMonitorCubit(sl<ParentController>()),
+    () => ParentMonitorCubit(sl<ParentController>(), sl<ParentFamilyCubit>()),
   );
   sl.registerFactory<ParentAppsCubit>(
     () => ParentAppsCubit(sl<ParentController>()),
