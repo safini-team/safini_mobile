@@ -164,6 +164,27 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     );
   }
 
+  @override
+  Future<Either<Failure, void>> removeParent(String parentUserId) async {
+    final response = await _request(
+      () => _client.delete(
+        _uri('/v1/families/parents/$parentUserId'),
+        headers: _headers(),
+      ),
+      statusMessages: {
+        401: 'Invalid or expired token.',
+        403: 'You do not have permission to remove this parent.',
+        404: 'Parent not found.',
+        503: 'Service unavailable.',
+      },
+    );
+
+    return response.fold(
+      (failure) => Left(failure),
+      (_) => const Right(null),
+    );
+  }
+
   Future<Either<Failure, FamilyModel>> _postFamily(
     String path, {
     required Map<String, dynamic> payload,

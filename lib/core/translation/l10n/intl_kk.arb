@@ -201,14 +201,20 @@
   "usedLimit": "{used} қолданылды / {limit} лимит",
   "@usedLimit": {
     "placeholders": {
-      "used": { "type": "int" },
-      "limit": { "type": "int" }
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
     }
   },
   "minutesRemainingLong": "{minutes} минут қалды",
   "@minutesRemainingLong": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "statusPending": "КҮТУДЕ",
@@ -249,5 +255,50 @@
   "deleteTaskButton": "Жою",
   "deleteTaskTitle": "Тапсырманы жою?",
   "deleteTaskBody": "Мұны қайтару мүмкін емес.",
-  "approvedTaskConflict": "Бекітілген тапсырмаларды өзгертуге немесе жоюға болмайды."
+  "approvedTaskConflict": "Бекітілген тапсырмаларды өзгертуге немесе жоюға болмайды.",
+  "settings": "Баптаулар",
+  "editProfile": "Профильді өңдеу",
+  "logout": "Шығу",
+  "myFamily": "Менің отбасым",
+  "parents": "Ата-аналар",
+  "createParentInviteCode": "Ата-анаға шақыру кодын жасау",
+  "editChild": "Баланы өңдеу",
+  "ageLabel": "Жасы: {age}",
+  "@ageLabel": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "createChildInviteCode": "Балаға шақыру кодын жасау",
+  "addChild": "Бала қосу",
+  "name": "Аты",
+  "surname": "Тегі",
+  "noFamilySetupYet": "Отбасы әлі құрылмаған",
+  "createOrJoinFamily": "Отбасын құрыңыз немесе шақыру кодымен қосылыңыз.",
+  "parentInviteCodeTitle": "Ата-ананың шақыру коды",
+  "childInviteCodeTitle": "Баланың шақыру коды",
+  "expiresLabel": "Мерзімі: {date}, {time}",
+  "@expiresLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteCodeCopied": "Код көшірілді",
+  "close": "Жабу",
+  "copy": "Көшіру",
+  "noChildrenFoundYet": "Балалар әлі табылмады",
+  "inviteChildOrRefresh": "Баланы шақырыңыз немесе бетті жаңартыңыз.",
+  "deleteAccount": "Аккаунтты жою",
+  "deleteAccountConfirmTitle": "Аккаунтты жою керек пе?",
+  "deleteAccountConfirmBody": "Аккаунтыңызды жойғыңыз келетініне сенімдісіз бе? Бұл әрекетті қайтару мүмкін емес.",
+  "removeParent": "Отбасынан жою",
+  "removeParentConfirmTitle": "Ата-ананы жою керек пе?",
+  "removeParentConfirmBody": "Бұл ата-ананы отбасынан жойғыңыз келетініне сенімдісіз бе?"
 }

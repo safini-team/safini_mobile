@@ -359,6 +359,27 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     return capturedFailure;
   }
 
+  Future<Failure?> removeParent(String parentUserId) async {
+    final result = await _controller.removeParent(parentUserId);
+
+    Failure? capturedFailure;
+    await result.fold(
+      (failure) async {
+        if (failure is UnauthorizedFailure) {
+          await _signOutAndRedirect(failure.message);
+          capturedFailure = failure;
+          return;
+        }
+        capturedFailure = failure;
+      },
+      (_) async {
+        capturedFailure = null;
+      },
+    );
+
+    return capturedFailure;
+  }
+
   Future<void> loadCurrentFamily({bool refresh = false}) async {
     if (!refresh && state.family == null) {
       return;

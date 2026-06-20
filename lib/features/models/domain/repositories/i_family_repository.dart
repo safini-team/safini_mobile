@@ -27,4 +27,5 @@ abstract class IFamilyRepository {
     int? age,
     String? gender,
   });
+  Future<Either<Failure, void>> removeParent(String parentUserId);
 }
