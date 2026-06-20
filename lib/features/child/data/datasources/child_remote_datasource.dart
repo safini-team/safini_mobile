@@ -135,6 +135,33 @@ class ChildRemoteDataSource {
     }
   }
 
+  /// Submits proof for a task. Only [note] is required for text-mode tasks.
+  Future<void> submitTask(String taskId, {String? note}) async {
+    final path = ApiConst.submitTask(taskId);
+    debugPrint('[ChildRemoteDataSource] POST ${ApiConst.baseUrl}$path');
+    try {
+      final body = <String, dynamic>{};
+      if (note != null && note.trim().isNotEmpty) body['note'] = note.trim();
+      await _dio.post<dynamic>(path, data: body);
+    } on DioException catch (e) {
+      debugPrint(
+        '[ChildRemoteDataSource] DioException ${e.response?.statusCode}: ${e.message}',
+      );
+      final code = e.response?.statusCode;
+      if (code == 403) throw const ServerException('Access denied.');
+      if (code == 404) throw const ServerException('Task not found.');
+      if (code == 409) throw const ServerException('Task already submitted.');
+      if (code == 422) throw const ServerException('Invalid request.');
+      if (code == 503) {
+        throw const ServerException('Service unavailable. Please try again later.');
+      }
+      throw ServerException(e.message ?? 'Server error');
+    } catch (e) {
+      debugPrint('[ChildRemoteDataSource] Unexpected error: $e');
+      throw ServerException(e.toString());
+    }
+  }
+
   /// Fetches child dashboard summary and returns child identity/progression data.
   Future<ChildModel> fetchChildDashboard(String childId) async {
     final path = ApiConst.childDashboard(childId);

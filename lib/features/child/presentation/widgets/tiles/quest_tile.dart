@@ -101,7 +101,7 @@ class QuestTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            _CompletionBadge(isCompleted: quest.isCompleted),
+            _CompletionBadge(isCompleted: quest.isCompleted, isSubmitted: quest.isSubmitted),
           ],
         ),
       ),
@@ -177,30 +177,47 @@ class _QuestLabels extends StatelessWidget {
 
 class _CompletionBadge extends StatelessWidget {
   final bool isCompleted;
+  final bool isSubmitted;
 
-  const _CompletionBadge({required this.isCompleted});
+  const _CompletionBadge({required this.isCompleted, this.isSubmitted = false});
 
   @override
   Widget build(BuildContext context) {
+    if (isCompleted) {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: context.successColor,
+        ),
+        child: Icon(Icons.check_rounded, color: context.colorScheme.onPrimary, size: 16),
+      );
+    }
+    if (isSubmitted) {
+      return Container(
+        width: 30,
+        height: 30,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color(0xFFFFF8E1),
+        ),
+        child: const Icon(Icons.hourglass_top_rounded, size: 16, color: Color(0xFFF59E0B)),
+      );
+    }
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       width: 30,
       height: 30,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isCompleted
-            ? context.successColor
-            : context.colorScheme.surface,
-        border: isCompleted
-            ? null
-            : Border.all(
-                color: context.colorScheme.onSurface.withValues(alpha: 0.2),
-                width: 1.5,
-              ),
+        color: context.colorScheme.surface,
+        border: Border.all(
+          color: context.colorScheme.onSurface.withValues(alpha: 0.2),
+          width: 1.5,
+        ),
       ),
-      child: isCompleted
-          ? Icon(Icons.check_rounded, color: context.colorScheme.onPrimary, size: 16)
-          : null,
     );
   }
 }

@@ -9,6 +9,8 @@ class ApiConst {
   static String task(String taskId) => '/v1/tasks/$taskId';
   static String childHome(String childId) => '/v1/children/$childId/home';
   static String childToday(String childId) => '/v1/children/$childId/today';
+  static String submitTask(String taskId) => '/v1/tasks/$taskId/submit';
+  static String reviewTask(String taskId) => '/v1/tasks/$taskId/review';
   static String childDashboard(String childId) =>
       '/v1/children/$childId/dashboard';
   static String childAvatar(String childId) => '/v1/children/$childId/avatar';

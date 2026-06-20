@@ -5,22 +5,66 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
 
-class TaskDetailDialog extends StatelessWidget {
+class TaskDetailDialog extends StatefulWidget {
   final QuestModel quest;
 
-  const TaskDetailDialog({super.key, required this.quest});
+  /// If provided, the dialog shows a submit flow for available tasks.
+  /// Return value: null = success, non-null = error message.
+  final Future<String?> Function(String? note)? onSubmit;
 
-  static Future<void> show(BuildContext context, QuestModel quest) {
+  const TaskDetailDialog({super.key, required this.quest, this.onSubmit});
+
+  static Future<void> show(
+    BuildContext context,
+    QuestModel quest, {
+    Future<String?> Function(String? note)? onSubmit,
+  }) {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
-      builder: (_) => TaskDetailDialog(quest: quest),
+      builder: (_) => TaskDetailDialog(quest: quest, onSubmit: onSubmit),
     );
+  }
+
+  @override
+  State<TaskDetailDialog> createState() => _TaskDetailDialogState();
+}
+
+class _TaskDetailDialogState extends State<TaskDetailDialog> {
+  final _noteController = TextEditingController();
+  bool _submitting = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSubmit() async {
+    if (_submitting) return;
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    final error = await widget.onSubmit!(_noteController.text.trim().isEmpty ? null : _noteController.text.trim());
+    if (!mounted) return;
+    if (error == null) {
+      Navigator.of(context).pop();
+    } else {
+      setState(() {
+        _submitting = false;
+        _error = error;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final quest = widget.quest;
+    final canSubmit = widget.onSubmit != null && !quest.isSubmitted && !quest.isCompleted;
+
     return AlertDialog(
       backgroundColor: context.colorScheme.surface,
       shape: RoundedRectangleBorder(
@@ -30,7 +74,7 @@ class TaskDetailDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Header with icon
+          // ── Icon header ──────────────────────────────────────────────────
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
@@ -56,7 +100,9 @@ class TaskDetailDialog extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // ── Title + subtitle ──────────────────────────────────────
                 Text(
                   quest.title,
                   textAlign: TextAlign.center,
@@ -73,29 +119,129 @@ class TaskDetailDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                // Rewards or details can go here
+                // ── Reward pills ─────────────────────────────────────────
                 _RewardRow(coins: quest.coins, xp: quest.xp),
                 const SizedBox(height: AppSpacing.xl),
+
+                // ── Submitted banner ─────────────────────────────────────
+                if (quest.isSubmitted) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF8E1),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: const Color(0xFFFFE082)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.hourglass_top_rounded,
+                            size: 16, color: Color(0xFFF59E0B)),
+                        const SizedBox(width: AppSpacing.xs),
+                        Expanded(
+                          child: Text(
+                            'Awaiting parent approval',
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFF92400E),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+
+                // ── Note field (available tasks only) ─────────────────────
+                if (canSubmit) ...[
+                  TextField(
+                    controller: _noteController,
+                    maxLines: 3,
+                    maxLength: 200,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      hintText: 'Add a note (optional)',
+                      hintStyle: context.textTheme.bodyMedium?.copyWith(
+                        color: context.colorScheme.onSurface.withValues(alpha: 0.4),
+                      ),
+                      filled: true,
+                      fillColor: context.colorScheme.surface,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.sm,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        borderSide: BorderSide(
+                          color: context.colorScheme.onSurface.withValues(alpha: 0.15),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        borderSide: BorderSide(
+                          color: context.colorScheme.onSurface.withValues(alpha: 0.15),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        borderSide: BorderSide(
+                          color: context.colorScheme.primary,
+                        ),
+                      ),
+                      counterStyle: context.textTheme.bodySmall?.copyWith(
+                        color: context.colorScheme.onSurface.withValues(alpha: 0.4),
+                      ),
+                    ),
+                  ),
+                  if (_error != null) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      _error!,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: context.colorScheme.error,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.md),
+                ],
+
+                // ── Action button ─────────────────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: canSubmit
+                        ? (_submitting ? null : _handleSubmit)
+                        : () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.colorScheme.primary,
                       foregroundColor: Colors.white,
+                      disabledBackgroundColor:
+                          context.colorScheme.primary.withValues(alpha: 0.5),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.pill),
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
-                      s.ok,
-                      style: context.textTheme.labelLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    child: _submitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            canSubmit ? 'Submit Task' : s.ok,
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -118,17 +264,9 @@ class _RewardRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _RewardPill(
-          emoji: '🪙',
-          label: '$coins',
-          color: const Color(0xFFF5A623),
-        ),
+        _RewardPill(emoji: '🪙', label: '$coins', color: const Color(0xFFF5A623)),
         const SizedBox(width: AppSpacing.md),
-        _RewardPill(
-          emoji: '⭐',
-          label: '$xp XP',
-          color: const Color(0xFF7B6EF6),
-        ),
+        _RewardPill(emoji: '⭐', label: '$xp XP', color: const Color(0xFF7B6EF6)),
       ],
     );
   }
@@ -139,11 +277,7 @@ class _RewardPill extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _RewardPill({
-    required this.emoji,
-    required this.label,
-    required this.color,
-  });
+  const _RewardPill({required this.emoji, required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {

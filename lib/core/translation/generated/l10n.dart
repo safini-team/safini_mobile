@@ -1785,6 +1785,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Review Task`
+  String get reviewTaskSheetTitle {
+    return Intl.message(
+      'Review Task',
+      name: 'reviewTaskSheetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approve`
+  String get approve {
+    return Intl.message(
+      'Approve',
+      name: 'approve',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reject`
+  String get reject {
+    return Intl.message(
+      'Reject',
+      name: 'reject',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task approved!`
+  String get taskApprovedMessage {
+    return Intl.message(
+      'Task approved!',
+      name: 'taskApprovedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task rejected.`
+  String get taskRejectedMessage {
+    return Intl.message(
+      'Task rejected.',
+      name: 'taskRejectedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a note (optional)`
+  String get reviewNoteHint {
+    return Intl.message(
+      'Add a note (optional)',
+      name: 'reviewNoteHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

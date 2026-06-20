@@ -9,4 +9,10 @@ abstract class IParentTaskRepository {
     String childId,
     ParentTaskTemplateCreateRequest request,
   );
+
+  Future<Either<Failure, void>> reviewTask(
+    String taskId, {
+    required String decision,
+    String? note,
+  });
 }

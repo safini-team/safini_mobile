@@ -65,6 +65,23 @@ class TasksCubit extends Cubit<TasksState> {
       coins: coins,
       xp: task.xpReward ?? 0,
       isCompleted: task.isCompleted,
+      status: task.status,
+    );
+  }
+
+  /// Returns an error message on failure, or null on success.
+  Future<String?> submitTask(String taskId, {String? note}) async {
+    final result = await _childRepository.submitTask(taskId, note: note);
+    return result.fold(
+      (failure) => failure.message,
+      (_) {
+        final updated = state.tasks.map((t) {
+          if (t.id == taskId) return t.copyWith(status: 'submitted');
+          return t;
+        }).toList();
+        emit(state.copyWith(tasks: _sortTasks(updated)));
+        return null;
+      },
     );
   }
 
@@ -105,8 +122,9 @@ class TasksCubit extends Cubit<TasksState> {
 
   List<TaskItem> _sortTasks(List<TaskItem> tasks) {
     return [...tasks]..sort((a, b) {
-        if (a.isCompleted == b.isCompleted) return 0;
-        return a.isCompleted ? 1 : -1;
+        final aRank = a.isCompleted ? 2 : (a.isSubmitted ? 1 : 0);
+        final bRank = b.isCompleted ? 2 : (b.isSubmitted ? 1 : 0);
+        return aRank.compareTo(bRank);
       });
   }
 

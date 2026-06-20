@@ -95,4 +95,22 @@ class ChildRepositoryImpl implements IChildRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> submitTask(
+    String taskId, {
+    String? note,
+  }) async {
+    debugPrint('[ChildRepositoryImpl] submitTask called for $taskId');
+    try {
+      await _remote.submitTask(taskId, note: note);
+      return const Right(null);
+    } on ServerException catch (e) {
+      debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      debugPrint('[ChildRepositoryImpl] Unexpected error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

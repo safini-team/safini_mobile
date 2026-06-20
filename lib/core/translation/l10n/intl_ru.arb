@@ -250,5 +250,11 @@
   "deleteTaskButton": "Удалить",
   "deleteTaskTitle": "Удалить задание?",
   "deleteTaskBody": "Это нельзя отменить.",
-  "approvedTaskConflict": "Одобренные задания нельзя изменить или удалить."
+  "approvedTaskConflict": "Одобренные задания нельзя изменить или удалить.",
+  "reviewTaskSheetTitle": "Проверить задание",
+  "approve": "Одобрить",
+  "reject": "Отклонить",
+  "taskApprovedMessage": "Задание одобрено!",
+  "taskRejectedMessage": "Задание отклонено.",
+  "reviewNoteHint": "Добавить заметку (необязательно)"
 }

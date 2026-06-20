@@ -39,7 +39,40 @@ class TaskRepositoryImpl implements ITaskRepository {
     String status,
     String? parentNote,
   ) async {
-    return const Left(ServerFailure('Not implemented'));
+    try {
+      final body = <String, dynamic>{'decision': status};
+      if (parentNote != null && parentNote.trim().isNotEmpty) {
+        body['note'] = parentNote.trim();
+      }
+      final response = await _dio.post(ApiConst.reviewTask(instanceId), data: body);
+      final raw = response.data is Map<String, dynamic>
+          ? response.data as Map<String, dynamic>
+          : (response.data as Map).map((k, v) => MapEntry(k.toString(), v));
+      final taskRaw = raw['task'];
+      final taskMap = taskRaw is Map<String, dynamic>
+          ? taskRaw
+          : (taskRaw as Map).map((k, v) => MapEntry(k.toString(), v));
+      return Right(TaskInstanceModel(
+        id: taskMap['id']?.toString() ?? instanceId,
+        childId: '',
+        templateId: '',
+        status: taskMap['status']?.toString() ?? status,
+        dueDate: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ));
+    } on DioException catch (e) {
+      return Left(
+        _mapDioError(
+          e,
+          defaultMessage: 'Unable to review task.',
+          notFoundMessage: 'Task not found.',
+          conflictMessage: 'This task can no longer be reviewed.',
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
   }
 
   @override

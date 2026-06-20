@@ -62,6 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Күнделікті экран уақытының шектеуін орнатыңыз"),
         "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
         "appTimeTab": MessageLookupByLibrary.simpleMessage("Қолданба уақыты"),
+        "approve": MessageLookupByLibrary.simpleMessage("Бекіту"),
         "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
             "Бекітілген тапсырмаларды өзгертуге немесе жоюға болмайды."),
         "apps": MessageLookupByLibrary.simpleMessage("Қолданбалар"),
@@ -203,9 +204,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Монеталарды жұмсауға дайынсыз ба?"),
         "realWorldTasks":
             MessageLookupByLibrary.simpleMessage("Шынайы өмір тапсырмалары"),
+        "reject": MessageLookupByLibrary.simpleMessage("Қабылдамау"),
         "remaining": MessageLookupByLibrary.simpleMessage("Қалды"),
         "remainingTime": m8,
         "retry": MessageLookupByLibrary.simpleMessage("Қайталау"),
+        "reviewNoteHint":
+            MessageLookupByLibrary.simpleMessage("Жазба қосу (міндетті емес)"),
+        "reviewTaskSheetTitle":
+            MessageLookupByLibrary.simpleMessage("Тапсырманы тексеру"),
         "rewardStore": MessageLookupByLibrary.simpleMessage("Сыйлықтар дүкені"),
         "roleSelectionSubtitle":
             MessageLookupByLibrary.simpleMessage("Safini-ді қалай қолданасыз?"),
@@ -242,6 +248,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Бала режиміне өту / Шығу"),
         "tagline":
             MessageLookupByLibrary.simpleMessage("Үйрен. Табыс тап. Ойна."),
+        "taskApprovedMessage":
+            MessageLookupByLibrary.simpleMessage("Тапсырма бекітілді!"),
         "taskChessSub": MessageLookupByLibrary.simpleMessage("Ойынды меңгер"),
         "taskChessTitle": MessageLookupByLibrary.simpleMessage("Шахмат сабағы"),
         "taskCreatedMessage":
@@ -259,6 +267,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Ой-өрісіңді кеңейт"),
         "taskReadingTitle":
             MessageLookupByLibrary.simpleMessage("20 минут оқы"),
+        "taskRejectedMessage":
+            MessageLookupByLibrary.simpleMessage("Тапсырма қабылданбады."),
         "taskRoomSub": MessageLookupByLibrary.simpleMessage("Күнделікті жұмыс"),
         "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Бөлмеңді жина"),
         "taskStepsSub":

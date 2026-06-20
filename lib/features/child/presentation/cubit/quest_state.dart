@@ -17,7 +17,7 @@ class QuestState {
         doneToday = null;
 
   int get completedCount =>
-      doneToday ?? quests.where((q) => q.isCompleted).length;
+      doneToday ?? quests.where((q) => q.isCompleted || q.isSubmitted).length;
 
   int get totalCount => quests.length;
 

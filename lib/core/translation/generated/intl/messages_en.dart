@@ -60,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Set daily screen time limits"),
         "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
         "appTimeTab": MessageLookupByLibrary.simpleMessage("App Time"),
+        "approve": MessageLookupByLibrary.simpleMessage("Approve"),
         "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
             "Approved tasks can\'t be edited or deleted."),
         "apps": MessageLookupByLibrary.simpleMessage("Apps"),
@@ -197,9 +198,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Ready to spend your coins?"),
         "realWorldTasks":
             MessageLookupByLibrary.simpleMessage("Real-world Tasks"),
+        "reject": MessageLookupByLibrary.simpleMessage("Reject"),
         "remaining": MessageLookupByLibrary.simpleMessage("Remaining"),
         "remainingTime": m8,
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+        "reviewNoteHint":
+            MessageLookupByLibrary.simpleMessage("Add a note (optional)"),
+        "reviewTaskSheetTitle":
+            MessageLookupByLibrary.simpleMessage("Review Task"),
         "rewardStore": MessageLookupByLibrary.simpleMessage("Reward Store"),
         "roleSelectionSubtitle":
             MessageLookupByLibrary.simpleMessage("How will you use Safini?"),
@@ -235,6 +241,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "switchToKidMode":
             MessageLookupByLibrary.simpleMessage("Switch to Kid Mode / Logout"),
         "tagline": MessageLookupByLibrary.simpleMessage("Learn. Earn. Play."),
+        "taskApprovedMessage":
+            MessageLookupByLibrary.simpleMessage("Task approved!"),
         "taskChessSub":
             MessageLookupByLibrary.simpleMessage("Master the board"),
         "taskChessTitle": MessageLookupByLibrary.simpleMessage("Chess Lesson"),
@@ -254,6 +262,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Expand your mind"),
         "taskReadingTitle":
             MessageLookupByLibrary.simpleMessage("Read for 20 mins"),
+        "taskRejectedMessage":
+            MessageLookupByLibrary.simpleMessage("Task rejected."),
         "taskRoomSub": MessageLookupByLibrary.simpleMessage("Daily chore"),
         "taskRoomTitle":
             MessageLookupByLibrary.simpleMessage("Clean your room"),

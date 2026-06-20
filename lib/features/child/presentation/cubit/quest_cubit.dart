@@ -70,8 +70,9 @@ class QuestCubit extends Cubit<QuestState> {
 
   List<QuestModel> _sortQuests(List<QuestModel> quests) {
     return [...quests]..sort((a, b) {
-        if (a.isCompleted == b.isCompleted) return 0;
-        return a.isCompleted ? 1 : -1;
+        final aRank = a.isCompleted ? 2 : (a.isSubmitted ? 1 : 0);
+        final bRank = b.isCompleted ? 2 : (b.isSubmitted ? 1 : 0);
+        return aRank.compareTo(bRank);
       });
   }
 
@@ -90,6 +91,23 @@ class QuestCubit extends Cubit<QuestState> {
       isCompleted: task.isCompleted,
       coins: task.rewardCoins ?? 0,
       xp: task.xpReward ?? 0,
+      status: task.status,
+    );
+  }
+
+  /// Returns an error message on failure, or null on success.
+  Future<String?> submitQuest(String questId, {String? note}) async {
+    final result = await _childRepository.submitTask(questId, note: note);
+    return result.fold(
+      (failure) => failure.message,
+      (_) {
+        final updated = state.quests.map((q) {
+          if (q.id == questId) return q.copyWith(status: 'submitted');
+          return q;
+        }).toList();
+        emit(state.copyWith(quests: _sortQuests(updated)));
+        return null;
+      },
     );
   }
 

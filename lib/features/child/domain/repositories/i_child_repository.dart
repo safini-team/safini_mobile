@@ -13,4 +13,5 @@ abstract class IChildRepository {
     String childId, {
     String? date,
   });
+  Future<Either<Failure, void>> submitTask(String taskId, {String? note});
 }

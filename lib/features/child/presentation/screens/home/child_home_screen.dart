@@ -151,10 +151,17 @@ class _QuestListBody extends StatelessWidget {
             SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final quest = state.quests[index];
+                final cubit = context.read<QuestCubit>();
                 return QuestTile(
                   quest: quest,
                   isHighlighted: index == 0,
-                  onTap: () => TaskDetailDialog.show(context, quest),
+                  onTap: () => TaskDetailDialog.show(
+                    context,
+                    quest,
+                    onSubmit: quest.isCompleted || quest.isSubmitted
+                        ? null
+                        : (note) => cubit.submitQuest(quest.id, note: note),
+                  ),
                 );
               }, childCount: state.quests.length),
             ),

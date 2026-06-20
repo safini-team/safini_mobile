@@ -41,6 +41,12 @@ class TaskItem {
   final int coins;
   final int xp;
   final bool isCompleted;
+  final String status;
+
+  bool get isSubmitted {
+    final s = status.toLowerCase();
+    return s == 'submitted' || s == 'pending' || s == 'pending_approval' || s == 'awaiting_approval';
+  }
 
   const TaskItem({
     required this.id,
@@ -53,9 +59,10 @@ class TaskItem {
     required this.coins,
     required this.xp,
     this.isCompleted = false,
+    this.status = 'available',
   });
 
-  TaskItem copyWith({bool? isCompleted}) {
+  TaskItem copyWith({bool? isCompleted, String? status}) {
     return TaskItem(
       id: id,
       title: title,
@@ -67,6 +74,7 @@ class TaskItem {
       coins: coins,
       xp: xp,
       isCompleted: isCompleted ?? this.isCompleted,
+      status: status ?? this.status,
     );
   }
 }

@@ -60,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Установите дневные лимиты экранного времени"),
         "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
         "appTimeTab": MessageLookupByLibrary.simpleMessage("Приложения"),
+        "approve": MessageLookupByLibrary.simpleMessage("Одобрить"),
         "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
             "Одобренные задания нельзя изменить или удалить."),
         "apps": MessageLookupByLibrary.simpleMessage("Приложения"),
@@ -199,9 +200,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Готовы потратить монеты?"),
         "realWorldTasks":
             MessageLookupByLibrary.simpleMessage("Задания в жизни"),
+        "reject": MessageLookupByLibrary.simpleMessage("Отклонить"),
         "remaining": MessageLookupByLibrary.simpleMessage("Осталось"),
         "remainingTime": m8,
         "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
+        "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
+            "Добавить заметку (необязательно)"),
+        "reviewTaskSheetTitle":
+            MessageLookupByLibrary.simpleMessage("Проверить задание"),
         "rewardStore": MessageLookupByLibrary.simpleMessage("Магазин наград"),
         "roleSelectionSubtitle": MessageLookupByLibrary.simpleMessage(
             "Как вы будете использовать Safini?"),
@@ -237,6 +243,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Режим ребенка / Выход"),
         "tagline":
             MessageLookupByLibrary.simpleMessage("Учись. Зарабатывай. Играй."),
+        "taskApprovedMessage":
+            MessageLookupByLibrary.simpleMessage("Задание одобрено!"),
         "taskChessSub": MessageLookupByLibrary.simpleMessage("Освой доску"),
         "taskChessTitle": MessageLookupByLibrary.simpleMessage("Урок шахмат"),
         "taskCreatedMessage":
@@ -255,6 +263,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Расширяй кругозор"),
         "taskReadingTitle":
             MessageLookupByLibrary.simpleMessage("Читать 20 мин"),
+        "taskRejectedMessage":
+            MessageLookupByLibrary.simpleMessage("Задание отклонено."),
         "taskRoomSub": MessageLookupByLibrary.simpleMessage("Ежедневное дело"),
         "taskRoomTitle":
             MessageLookupByLibrary.simpleMessage("Убраться в комнате"),

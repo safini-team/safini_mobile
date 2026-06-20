@@ -73,6 +73,17 @@ class ParentTaskDeleted extends ParentTasksState {
   const ParentTaskDeleted(this.base);
 }
 
+class ParentTaskReviewing extends ParentTasksState {
+  final ParentTasksLoaded base;
+  const ParentTaskReviewing(this.base);
+}
+
+class ParentTaskReviewed extends ParentTasksState {
+  final ParentTasksLoaded base;
+  final bool isApproved;
+  const ParentTaskReviewed(this.base, {required this.isApproved});
+}
+
 /// Any create/update/delete failure. [isConflict] is a 409 (approved task).
 class ParentTaskActionError extends ParentTasksState {
   final ParentTasksLoaded base;

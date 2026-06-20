@@ -250,5 +250,11 @@
   "deleteTaskButton": "Delete",
   "deleteTaskTitle": "Delete task?",
   "deleteTaskBody": "This can't be undone.",
-  "approvedTaskConflict": "Approved tasks can't be edited or deleted."
+  "approvedTaskConflict": "Approved tasks can't be edited or deleted.",
+  "reviewTaskSheetTitle": "Review Task",
+  "approve": "Approve",
+  "reject": "Reject",
+  "taskApprovedMessage": "Task approved!",
+  "taskRejectedMessage": "Task rejected.",
+  "reviewNoteHint": "Add a note (optional)"
 }
