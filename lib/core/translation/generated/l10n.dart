@@ -363,10 +363,40 @@ class S {
     );
   }
 
-  /// `Safinio Parent`
+  /// `Good afternoon 👋`
+  String get goodAfternoon {
+    return Intl.message(
+      'Good afternoon 👋',
+      name: 'goodAfternoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good evening 👋`
+  String get goodEvening {
+    return Intl.message(
+      'Good evening 👋',
+      name: 'goodEvening',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good night 🌙`
+  String get goodNight {
+    return Intl.message(
+      'Good night 🌙',
+      name: 'goodNight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safini Parent`
   String get parentName {
     return Intl.message(
-      'Safinio Parent',
+      'Safini Parent',
       name: 'parentName',
       desc: '',
       args: [],
@@ -1680,6 +1710,26 @@ class S {
     return Intl.message(
       'Are you sure you want to remove this parent from the family?',
       name: 'removeParentConfirmBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Log out?`
+  String get logoutConfirmTitle {
+    return Intl.message(
+      'Log out?',
+      name: 'logoutConfirmTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to log out?`
+  String get logoutConfirmBody {
+    return Intl.message(
+      'Are you sure you want to log out?',
+      name: 'logoutConfirmBody',
       desc: '',
       args: [],
     );

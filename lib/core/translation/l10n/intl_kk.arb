@@ -56,6 +56,9 @@
   "noQuestsInCategory": "Бұл санатта тапсырма жоқ",
   "selectLanguage": "Тілді таңдаңыз",
   "goodMorning": "Қайырлы таң 👋",
+  "goodAfternoon": "Қайырлы күн 👋",
+  "goodEvening": "Қайырлы кеш 👋",
+  "goodNight": "Қайырлы түн 🌙",
   "parentName": "Safini ата-анасы",
   "childProgressTitle": "{name} прогресі",
   "@childProgressTitle": {
@@ -306,5 +309,7 @@
   "deleteAccountConfirmBody": "Аккаунтыңызды жойғыңыз келетініне сенімдісіз бе? Бұл әрекетті қайтару мүмкін емес.",
   "removeParent": "Отбасынан жою",
   "removeParentConfirmTitle": "Ата-ананы жою керек пе?",
-  "removeParentConfirmBody": "Бұл ата-ананы отбасынан жойғыңыз келетініне сенімдісіз бе?"
+  "removeParentConfirmBody": "Бұл ата-ананы отбасынан жойғыңыз келетініне сенімдісіз бе?",
+  "logoutConfirmTitle": "Шығу керек пе?",
+  "logoutConfirmBody": "Аккаунттан шыққыңыз келетініне сенімдісіз бе?"
 }
