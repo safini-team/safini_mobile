@@ -56,7 +56,33 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     if (current is ParentTaskDeleting) return current.base;
     if (current is ParentTaskDeleted) return current.base;
     if (current is ParentTaskActionError) return current.base;
+    if (current is ParentTaskReviewing) return current.base;
+    if (current is ParentTaskReviewed) return current.base;
     return null;
+  }
+
+  Future<void> reviewTask(
+    String taskId, {
+    required bool approve,
+    String? note,
+  }) async {
+    final current = _loaded;
+    if (current == null) return;
+
+    emit(ParentTaskReviewing(current));
+
+    final result = await _repository.reviewTask(
+      taskId,
+      decision: approve ? 'approved' : 'rejected',
+      note: note,
+    );
+    await result.fold(
+      (failure) async => emit(_actionError(current, failure)),
+      (_) async {
+        emit(ParentTaskReviewed(current, isApproved: approve));
+        await loadTasks();
+      },
+    );
   }
 
   Future<void> createTask(String childId, TaskCreateRequestDto request) async {

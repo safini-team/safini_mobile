@@ -47,30 +47,56 @@ class _ChildHomeView extends StatelessWidget {
 class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            context.colorScheme.primary.withValues(alpha: 0.9),
-            context.colorScheme.primary,
-          ],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.md,
-            bottom: AppSpacing.xl,
+    return BlocBuilder<QuestCubit, QuestState>(
+      buildWhen: (prev, curr) => prev.childNickname != curr.childNickname,
+      builder: (context, state) {
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                context.colorScheme.primary.withValues(alpha: 0.9),
+                context.colorScheme.primary,
+              ],
+            ),
           ),
-          child: RewardStoreCard(
-            onTap: () => context.read<ChildHomeCubit>().selectTab(2),
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: AppSpacing.md,
+                bottom: AppSpacing.xl,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (state.childNickname != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                      ),
+                      child: Text(
+                        'Hi, ${state.childNickname}!',
+                        style: context.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                  ],
+                  RewardStoreCard(
+                    onTap: () =>
+                        context.read<ChildHomeCubit>().selectTab(2),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -125,10 +151,17 @@ class _QuestListBody extends StatelessWidget {
             SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final quest = state.quests[index];
+                final cubit = context.read<QuestCubit>();
                 return QuestTile(
                   quest: quest,
                   isHighlighted: index == 0,
-                  onTap: () => TaskDetailDialog.show(context, quest),
+                  onTap: () => TaskDetailDialog.show(
+                    context,
+                    quest,
+                    onSubmit: quest.isCompleted || quest.isSubmitted
+                        ? null
+                        : (note) => cubit.submitQuest(quest.id, note: note),
+                  ),
                 );
               }, childCount: state.quests.length),
             ),

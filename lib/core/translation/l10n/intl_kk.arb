@@ -259,6 +259,12 @@
   "deleteTaskTitle": "Тапсырманы жою?",
   "deleteTaskBody": "Мұны қайтару мүмкін емес.",
   "approvedTaskConflict": "Бекітілген тапсырмаларды өзгертуге немесе жоюға болмайды.",
+  "reviewTaskSheetTitle": "Тапсырманы тексеру",
+  "approve": "Бекіту",
+  "reject": "Қабылдамау",
+  "taskApprovedMessage": "Тапсырма бекітілді!",
+  "taskRejectedMessage": "Тапсырма қабылданбады.",
+  "reviewNoteHint": "Жазба қосу (міндетті емес)"
   "settings": "Баптаулар",
   "editProfile": "Профильді өңдеу",
   "logout": "Шығу",

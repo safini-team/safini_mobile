@@ -185,6 +185,115 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
     );
   }
 
+  @override
+  Future<Either<Failure, void>> reviewTask(
+    String taskId, {
+    required String decision,
+    String? note,
+  }) async {
+    final token = Supabase.instance.client.auth.currentSession?.accessToken;
+    if (token == null || token.isEmpty) {
+      return const Left(
+        UnauthorizedFailure('Missing, expired, or invalid token.'),
+      );
+    }
+
+    final body = <String, dynamic>{'decision': decision};
+    if (note != null && note.trim().isNotEmpty) body['note'] = note.trim();
+
+    late final http.Response response;
+    try {
+      response = await _client
+          .post(
+            _uri('/v1/tasks/$taskId/review'),
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(body),
+          )
+          .timeout(AppConstants.apiTimeout);
+    } on SocketException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on HttpException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on http.ClientException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+
+    if (response.statusCode == 401) {
+      return const Left(
+        UnauthorizedFailure('Missing, expired, or invalid token.'),
+      );
+    }
+
+    if (response.statusCode == 403) {
+      return Left(
+        ServerFailure(
+          _extractErrorMessage(
+            response.body,
+            defaultMessage: 'Access to this resource is not allowed.',
+          ),
+        ),
+      );
+    }
+
+    if (response.statusCode == 404) {
+      return Left(
+        ServerFailure(
+          _extractErrorMessage(
+            response.body,
+            defaultMessage: 'Task not found.',
+          ),
+        ),
+      );
+    }
+
+    if (response.statusCode == 409) {
+      return Left(
+        ConflictFailure(
+          _extractErrorMessage(
+            response.body,
+            defaultMessage: 'This task can no longer be reviewed.',
+          ),
+        ),
+      );
+    }
+
+    if (response.statusCode == 422) {
+      return Left(
+        ValidationFailure(
+          _extractErrorMessage(
+            response.body,
+            defaultMessage: 'Invalid review request.',
+          ),
+        ),
+      );
+    }
+
+    if (response.statusCode == 503) {
+      return const Left(
+        ServerFailure('Service unavailable. Please try again later.'),
+      );
+    }
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      return Left(
+        ServerFailure(
+          _extractErrorMessage(
+            response.body,
+            defaultMessage: 'Unable to review task. Please try again.',
+          ),
+        ),
+      );
+    }
+
+    return const Right(null);
+  }
+
   Uri _uri(String path) {
     return Uri.parse('${SupabaseConfig.apiBaseUrl}$path');
   }

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
+import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
 import 'package:safini/features/child/presentation/cubit/quest_state.dart';
+import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
-import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 
 class QuestCubit extends Cubit<QuestState> {
   final ProfileController _profileController;
-  final IParentTaskRepository _taskRepository;
+  final IChildRepository _childRepository;
 
-  QuestCubit(this._profileController, this._taskRepository)
-    : super(const QuestState.initial()) {
+  QuestCubit(
+    this._profileController,
+    this._childRepository,
+  ) : super(const QuestState.initial()) {
     loadQuests();
   }
 
@@ -22,18 +26,41 @@ class QuestCubit extends Cubit<QuestState> {
       return;
     }
 
-    final result = await _taskRepository.fetchTasks(childId);
-    result.fold(
-      (_) => emit(state.copyWith(quests: const [])),
+    // Fire both requests in parallel.
+    final homeFuture = _childRepository.fetchChildHome(childId);
+    final tasksFuture = _childRepository.fetchChildToday(childId);
+    final homeResult = await homeFuture;
+    final tasksResult = await tasksFuture;
+
+    String? nickname;
+    int? doneToday;
+    homeResult.fold((_) {}, (home) {
+      if (home.childNickname.isNotEmpty) nickname = home.childNickname;
+      doneToday = home.doneToday;
+    });
+
+    tasksResult.fold(
+      (_) => emit(
+        state.copyWith(
+          quests: const [],
+          childNickname: nickname,
+          doneToday: doneToday,
+        ),
+      ),
       (response) => emit(
         state.copyWith(
           quests: _sortQuests(response.tasks.map(_questFromTask).toList()),
+          childNickname: nickname,
+          doneToday: doneToday,
         ),
       ),
     );
   }
 
   Future<String?> _resolveChildId() async {
+    final claimChild = getIt<ChildClaimCubit>().state.child;
+    if (claimChild != null) return claimChild.id;
+
     final profileResult = await _profileController.fetchMe();
     return profileResult.fold((_) => null, (profile) {
       final childId = profile.childId?.trim();
@@ -43,9 +70,10 @@ class QuestCubit extends Cubit<QuestState> {
 
   List<QuestModel> _sortQuests(List<QuestModel> quests) {
     return [...quests]..sort((a, b) {
-      if (a.isCompleted == b.isCompleted) return 0;
-      return a.isCompleted ? 1 : -1;
-    });
+        final aRank = a.isCompleted ? 2 : (a.isSubmitted ? 1 : 0);
+        final bRank = b.isCompleted ? 2 : (b.isSubmitted ? 1 : 0);
+        return aRank.compareTo(bRank);
+      });
   }
 
   QuestModel _questFromTask(ParentTaskInstanceModel task) {
@@ -63,6 +91,23 @@ class QuestCubit extends Cubit<QuestState> {
       isCompleted: task.isCompleted,
       coins: task.rewardCoins ?? 0,
       xp: task.xpReward ?? 0,
+      status: task.status,
+    );
+  }
+
+  /// Returns an error message on failure, or null on success.
+  Future<String?> submitQuest(String questId, {String? note}) async {
+    final result = await _childRepository.submitTask(questId, note: note);
+    return result.fold(
+      (failure) => failure.message,
+      (_) {
+        final updated = state.quests.map((q) {
+          if (q.id == questId) return q.copyWith(status: 'submitted');
+          return q;
+        }).toList();
+        emit(state.copyWith(quests: _sortQuests(updated)));
+        return null;
+      },
     );
   }
 
@@ -102,11 +147,21 @@ class QuestCubit extends Cubit<QuestState> {
   }
 
   void toggleQuest(String questId) {
+    final quest = state.quests.firstWhere((q) => q.id == questId);
+    final wasCompleted = quest.isCompleted;
     final updated = state.quests.map((q) {
       if (q.id == questId) return q.copyWith(isCompleted: !q.isCompleted);
       return q;
     }).toList();
-    emit(state.copyWith(quests: _sortQuests(updated)));
+
+    int? newDoneToday = state.doneToday;
+    if (newDoneToday != null) {
+      newDoneToday = wasCompleted
+          ? (newDoneToday - 1).clamp(0, updated.length)
+          : (newDoneToday + 1).clamp(0, updated.length);
+    }
+
+    emit(state.copyWith(quests: _sortQuests(updated), doneToday: newDoneToday));
   }
 }
 

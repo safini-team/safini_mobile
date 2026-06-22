@@ -10,6 +10,12 @@ class QuestModel {
   final bool isCompleted;
   final int coins;
   final int xp;
+  final String status;
+
+  bool get isSubmitted {
+    final s = status.toLowerCase();
+    return s == 'submitted' || s == 'pending' || s == 'pending_approval' || s == 'awaiting_approval';
+  }
 
   const QuestModel({
     required this.id,
@@ -21,9 +27,10 @@ class QuestModel {
     this.isCompleted = false,
     this.coins = 0,
     this.xp = 0,
+    this.status = 'available',
   });
 
-  QuestModel copyWith({bool? isCompleted}) {
+  QuestModel copyWith({bool? isCompleted, String? status}) {
     return QuestModel(
       id: id,
       title: title,
@@ -34,6 +41,7 @@ class QuestModel {
       isCompleted: isCompleted ?? this.isCompleted,
       coins: coins,
       xp: xp,
+      status: status ?? this.status,
     );
   }
 }

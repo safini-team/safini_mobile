@@ -176,6 +176,7 @@ class _TasksBody extends StatelessWidget {
                         itemCount: state.filteredTasks.length,
                         itemBuilder: (context, index) {
                           final task = state.filteredTasks[index];
+                          final cubit = context.read<TasksCubit>();
                           return TaskItemTile(
                             task: task,
                             onTap: () => TaskDetailDialog.show(
@@ -190,7 +191,11 @@ class _TasksBody extends StatelessWidget {
                                 isCompleted: task.isCompleted,
                                 coins: task.coins,
                                 xp: task.xp,
+                                status: task.status,
                               ),
+                              onSubmit: task.isCompleted || task.isSubmitted
+                                  ? null
+                                  : (note) => cubit.submitTask(task.id, note: note),
                             ),
                           );
                         },

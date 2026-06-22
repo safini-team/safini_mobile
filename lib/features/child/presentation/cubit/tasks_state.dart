@@ -17,8 +17,8 @@ class TasksState {
       ? tasks
       : tasks.where((t) => t.category == selectedCategory).toList();
 
-  int get doneToday => tasks.where((t) => t.isCompleted).length;
-  int get remaining => tasks.where((t) => !t.isCompleted).length;
+  int get doneToday => tasks.where((t) => t.isCompleted || t.isSubmitted).length;
+  int get remaining => tasks.where((t) => !t.isCompleted && !t.isSubmitted).length;
 
   /// Sum of coins from completed tasks — shown as "Earned Today" stat.
   int get earnedToday =>
