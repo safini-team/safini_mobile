@@ -157,13 +157,51 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             onParentTap: _onParentTap,
           ),
           const SizedBox(height: 24),
-          Text(
-            s.yourChildren,
-            style: context.textTheme.labelMedium?.copyWith(
-              color: Colors.grey[600],
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  s.yourChildren,
+                  style: context.textTheme.labelMedium?.copyWith(
+                    color: Colors.grey[600],
+                    letterSpacing: 1.2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (family.children.isNotEmpty)
+                GestureDetector(
+                  onTap: _openAddChildPage,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.add_rounded,
+                          size: 16,
+                          color: context.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          s.addChild,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 16),
           if (family.children.isEmpty)
@@ -176,16 +214,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                 onEditChild: () => _openEditChildPage(child),
               ),
             ),
-          if (family.children.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _openAddChildPage,
-                child: Text(s.addChild),
-              ),
-            ),
-          ],
           const SizedBox(height: 24),
           if (state.errorMessage != null) ...[
             _InlineErrorBanner(
