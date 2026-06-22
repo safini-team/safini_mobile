@@ -171,6 +171,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fri": MessageLookupByLibrary.simpleMessage("FRI"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Go to Tasks"),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Good morning 👋"),
+    "goodAfternoon": MessageLookupByLibrary.simpleMessage("Good afternoon 👋"),
+    "goodEvening": MessageLookupByLibrary.simpleMessage("Good evening 👋"),
+    "goodNight": MessageLookupByLibrary.simpleMessage("Good night 🌙"),
     "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
       "Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).",
     ),
@@ -239,7 +242,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "parentInviteCodeTitle": MessageLookupByLibrary.simpleMessage(
       "Parent Invite Code",
     ),
-    "parentName": MessageLookupByLibrary.simpleMessage("Safinio Parent"),
+    "parentName": MessageLookupByLibrary.simpleMessage("Safini Parent"),
     "parentSubtitle": MessageLookupByLibrary.simpleMessage("Monitor & reward"),
     "parents": MessageLookupByLibrary.simpleMessage("Parents"),
     "pendingApproval": MessageLookupByLibrary.simpleMessage("Pending Approval"),
@@ -259,6 +262,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Remove Parent?",
+    ),
+    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Log out?"),
+    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to log out?",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Reward Store"),

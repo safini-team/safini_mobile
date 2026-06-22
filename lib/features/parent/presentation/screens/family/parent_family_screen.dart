@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
@@ -158,13 +157,51 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             onParentTap: _onParentTap,
           ),
           const SizedBox(height: 24),
-          Text(
-            s.yourChildren,
-            style: context.textTheme.labelMedium?.copyWith(
-              color: Colors.grey[600],
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  s.yourChildren,
+                  style: context.textTheme.labelMedium?.copyWith(
+                    color: Colors.grey[600],
+                    letterSpacing: 1.2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (family.children.isNotEmpty)
+                GestureDetector(
+                  onTap: _openAddChildPage,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.add_rounded,
+                          size: 16,
+                          color: context.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          s.addChild,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 16),
           if (family.children.isEmpty)
@@ -177,16 +214,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                 onEditChild: () => _openEditChildPage(child),
               ),
             ),
-          if (family.children.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _openAddChildPage,
-                child: Text(s.addChild),
-              ),
-            ),
-          ],
           const SizedBox(height: 24),
           if (state.errorMessage != null) ...[
             _InlineErrorBanner(
@@ -368,42 +395,11 @@ class _ParentInviteCodeDialog extends StatelessWidget {
       context,
     ).formatTimeOfDay(TimeOfDay.fromDateTime(expiryLocal));
 
-    return AlertDialog(
-      title: Text(S.of(context).parentInviteCodeTitle),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: SelectableText(
-              inviteCode.inviteCode,
-              style: context.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.6,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(S.of(context).expiresLabel(date, time)),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () async {
-            await Clipboard.setData(ClipboardData(text: inviteCode.inviteCode));
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Invite code copied')),
-              );
-            }
-          },
-          child: const Text('Copy'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
-        ),
-      ],
+    return _InviteCodeDialog(
+      title: S.of(context).parentInviteCodeTitle,
+      code: inviteCode.inviteCode,
+      expiresLabel: S.of(context).expiresLabel(date, time),
+      icon: Icons.supervisor_account_rounded,
     );
   }
 }
@@ -554,42 +550,135 @@ class _ChildInviteCodeDialog extends StatelessWidget {
       context,
     ).formatTimeOfDay(TimeOfDay.fromDateTime(expiryLocal));
 
-    return AlertDialog(
-      title: Text(S.of(context).childInviteCodeTitle),
-      content: Column(
+    return _InviteCodeDialog(
+      title: S.of(context).childInviteCodeTitle,
+      code: inviteCode.inviteCode,
+      expiresLabel: S.of(context).expiresLabel(date, time),
+      icon: Icons.child_care_rounded,
+    );
+  }
+}
+
+class _InviteCodeDialog extends StatelessWidget {
+  final String title;
+  final String code;
+  final String expiresLabel;
+  final IconData icon;
+
+  const _InviteCodeDialog({
+    required this.title,
+    required this.code,
+    required this.expiresLabel,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = context.colorScheme.primary;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: SelectableText(
-              inviteCode.inviteCode,
-              style: context.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.6,
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [primary, primary.withValues(alpha: 0.8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 28),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          Text(S.of(context).expiresLabel(date, time)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 8),
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: primary.withValues(alpha: 0.07),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: primary.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: SelectableText(
+                    code,
+                    textAlign: TextAlign.center,
+                    style: context.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 3,
+                      color: primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  expiresLabel,
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colorScheme.onSurface.withValues(alpha: 0.55),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: code));
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(S.of(context).inviteCodeCopied),
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.copy_rounded, size: 16),
+                    label: Text(S.of(context).copy),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(S.of(context).close),
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
         ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () async {
-            await Clipboard.setData(ClipboardData(text: inviteCode.inviteCode));
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Invite code copied')),
-              );
-            }
-          },
-          child: const Text('Copy'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
-        ),
-      ],
     );
   }
 }

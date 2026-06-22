@@ -38,133 +38,275 @@ class _AddChildPageState extends State<AddChildPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Child')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: EdgeInsets.fromLTRB(
-            20,
-            20,
-            20,
-            20 + MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Create a child profile',
-                  style: context.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+      backgroundColor: context.colorScheme.primary,
+      body: Column(
+        children: [
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4, 8, 24, 28),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => context.router.maybePop(),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Fill out the details below to add a child to your family.',
-                  style: context.textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _nicknameController,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Nickname',
-                    hintText: 'e.g. Alex',
-                  ),
-                  validator: (value) {
-                    final nickname = value?.trim() ?? '';
-                    if (nickname.isEmpty) {
-                      return 'Nickname is required.';
-                    }
-                    if (nickname.length > 80) {
-                      return 'Nickname must be at most 80 characters.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _ageController,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Age',
-                    hintText: '0 - 18',
-                  ),
-                  validator: (value) {
-                    final input = value?.trim() ?? '';
-                    if (input.isEmpty) {
-                      return 'Age is required.';
-                    }
-                    final parsed = int.tryParse(input);
-                    if (parsed == null) {
-                      return 'Age must be an integer.';
-                    }
-                    if (parsed < 0 || parsed > 18) {
-                      return 'Age must be between 0 and 18.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                InkWell(
-                  onTap: _openGenderSelector,
-                  borderRadius: BorderRadius.circular(12),
-                  child: InputDecorator(
-                    decoration: InputDecoration(
-                      labelText: 'Gender (optional)',
-                      hintText: 'Select gender',
-                      suffixIcon: const Icon(Icons.arrow_drop_down),
-                      helperText: _selectedGender == null
-                          ? 'No selection'
-                          : 'Selected: ${_selectedGender!.label}',
-                    ),
-                    child: Text(
-                      _selectedGender?.label ?? 'Tap to select',
-                      style: _selectedGender == null
-                          ? context.textTheme.bodyMedium?.copyWith(
-                              color: context.colorScheme.onSurface.withValues(
-                                alpha: 0.6,
-                              ),
-                            )
-                          : context.textTheme.bodyMedium,
-                    ),
-                  ),
-                ),
-                if (_errorMessage != null) ...[
-                  const SizedBox(height: 14),
+                  const SizedBox(width: 4),
                   Text(
-                    _errorMessage!,
-                    style: TextStyle(
-                      color: context.colorScheme.error,
-                      fontWeight: FontWeight.w600,
+                    'Add Child',
+                    style: context.textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submit,
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Create Child'),
-                ),
-              ],
+              ),
             ),
           ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(36),
+                  topRight: Radius.circular(36),
+                ),
+              ),
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  32,
+                  24,
+                  24 + MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Create a child profile',
+                        style: context.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Fill out the details below to add a child to your family.',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: context.colorScheme.onSurface.withValues(
+                            alpha: 0.55,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      _FormCard(
+                        child: TextFormField(
+                          controller: _nicknameController,
+                          textInputAction: TextInputAction.next,
+                          decoration: _inputDecoration(
+                            context,
+                            label: 'Nickname',
+                            hint: 'e.g. Alex',
+                            icon: Icons.person_outline_rounded,
+                          ),
+                          validator: (value) {
+                            final v = value?.trim() ?? '';
+                            if (v.isEmpty) return 'Nickname is required.';
+                            if (v.length > 80) {
+                              return 'Nickname must be at most 80 characters.';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _FormCard(
+                        child: TextFormField(
+                          controller: _ageController,
+                          textInputAction: TextInputAction.done,
+                          keyboardType: TextInputType.number,
+                          decoration: _inputDecoration(
+                            context,
+                            label: 'Age',
+                            hint: '0 – 18',
+                            icon: Icons.cake_outlined,
+                          ),
+                          validator: (value) {
+                            final input = value?.trim() ?? '';
+                            if (input.isEmpty) return 'Age is required.';
+                            final parsed = int.tryParse(input);
+                            if (parsed == null) {
+                              return 'Age must be an integer.';
+                            }
+                            if (parsed < 0 || parsed > 18) {
+                              return 'Age must be between 0 and 18.';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _FormCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.wc_outlined,
+                                  size: 20,
+                                  color: context.colorScheme.primary,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Gender (optional)',
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: context.colorScheme.onSurface
+                                        .withValues(alpha: 0.55),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: _GenderOption.values.map((option) {
+                                final selected = _selectedGender == option;
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: GestureDetector(
+                                    onTap: () => setState(() {
+                                      _selectedGender =
+                                          selected ? null : option;
+                                    }),
+                                    child: AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 180),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                        vertical: 9,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: selected
+                                            ? context.colorScheme.primary
+                                            : context.colorScheme.primary
+                                                .withValues(alpha: 0.07),
+                                        borderRadius:
+                                            BorderRadius.circular(24),
+                                        border: Border.all(
+                                          color: selected
+                                              ? context.colorScheme.primary
+                                              : context.colorScheme.primary
+                                                  .withValues(alpha: 0.25),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        option.label,
+                                        style: context.textTheme.labelLarge
+                                            ?.copyWith(
+                                          color: selected
+                                              ? Colors.white
+                                              : context.colorScheme.primary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (_errorMessage != null) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            _errorMessage!,
+                            style: TextStyle(
+                              color: context.colorScheme.error,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 32),
+                      ElevatedButton(
+                        onPressed: _isSubmitting ? null : _submit,
+                        child: _isSubmitting
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text('Create Child'),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(
+    BuildContext context, {
+    required String label,
+    required String hint,
+    required IconData icon,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint,
+      prefixIcon: Icon(icon, color: context.colorScheme.primary, size: 20),
+      filled: true,
+      fillColor: context.colorScheme.primary.withValues(alpha: 0.05),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+          color: context.colorScheme.primary.withValues(alpha: 0.15),
         ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+          color: context.colorScheme.primary.withValues(alpha: 0.15),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+          color: context.colorScheme.primary,
+          width: 1.5,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: context.colorScheme.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: context.colorScheme.error, width: 1.5),
       ),
     );
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     FocusScope.of(context).unfocus();
     final age = int.parse(_ageController.text.trim());
@@ -174,10 +316,10 @@ class _AddChildPageState extends State<AddChildPage> {
     });
 
     final failure = await context.read<ParentFamilyCubit>().createChild(
-      nickname: _nicknameController.text.trim(),
-      age: age,
-      gender: _selectedGender?.apiValue,
-    );
+          nickname: _nicknameController.text.trim(),
+          age: age,
+          gender: _selectedGender?.apiValue,
+        );
 
     if (!mounted) return;
 
@@ -199,50 +341,39 @@ class _AddChildPageState extends State<AddChildPage> {
     if (failure is UnauthorizedFailure) {
       return 'Session expired. Please sign in again.';
     }
-    if (failure is ValidationFailure) {
-      return failure.message;
-    }
-    if (failure is ServerFailure) {
-      return failure.message;
-    }
+    if (failure is ValidationFailure) return failure.message;
+    if (failure is ServerFailure) return failure.message;
     return 'Unable to create child right now. Please try again.';
   }
+}
 
-  Future<void> _openGenderSelector() async {
-    final selected = await showDialog<_GenderOption>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Select Gender'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _GenderOption.values
-                .map(
-                  (option) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(option.label),
-                    trailing: _selectedGender == option
-                        ? const Icon(Icons.check)
-                        : null,
-                    onTap: () => Navigator.of(context).pop(option),
-                  ),
-                )
-                .toList(),
+class _FormCard extends StatelessWidget {
+  final Widget child;
+  const _FormCard({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: context.colorScheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        );
-      },
+        ],
+      ),
+      child: child,
     );
-
-    if (selected == null || !mounted) return;
-    setState(() {
-      _selectedGender = selected;
-    });
   }
 }
 
 enum _GenderOption {
-  girl('Girl', 'girl'),
   boy('Boy', 'boy'),
+  girl('Girl', 'girl'),
   other('Other', 'other');
 
   final String label;

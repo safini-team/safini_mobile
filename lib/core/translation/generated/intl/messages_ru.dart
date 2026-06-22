@@ -183,6 +183,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Перейти к заданиям"),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Доброе утро 👋"),
+    "goodAfternoon": MessageLookupByLibrary.simpleMessage("Добрый день 👋"),
+    "goodEvening": MessageLookupByLibrary.simpleMessage("Добрый вечер 👋"),
+    "goodNight": MessageLookupByLibrary.simpleMessage("Доброй ночи 🌙"),
     "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
       "Не задан Google Web Client ID. Укажите GOOGLE_WEB_CLIENT_ID (OAuth Web в Google Cloud).",
     ),
@@ -277,6 +280,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Удалить родителя?",
+    ),
+    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Выйти?"),
+    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Вы уверены, что хотите выйти из аккаунта?",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Магазин наград"),

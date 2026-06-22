@@ -186,6 +186,31 @@ class _LogoutButton extends StatelessWidget {
 
   const _LogoutButton({required this.s});
 
+  Future<void> _confirmAndLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(S.of(ctx).logoutConfirmTitle),
+        content: Text(S.of(ctx).logoutConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(S.of(ctx).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(S.of(ctx).logout),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      context.read<AuthSessionCubit>().signOut();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -196,7 +221,7 @@ class _LogoutButton extends StatelessWidget {
         side: BorderSide(color: Colors.red.withValues(alpha: 0.2)),
       ),
       child: InkWell(
-        onTap: () => context.read<AuthSessionCubit>().signOut(),
+        onTap: () => _confirmAndLogout(context),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 16),

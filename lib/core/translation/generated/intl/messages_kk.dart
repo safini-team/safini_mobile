@@ -181,6 +181,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fri": MessageLookupByLibrary.simpleMessage("ЖМ"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Тапсырмаларға өту"),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Қайырлы таң 👋"),
+    "goodAfternoon": MessageLookupByLibrary.simpleMessage("Қайырлы күн 👋"),
+    "goodEvening": MessageLookupByLibrary.simpleMessage("Қайырлы кеш 👋"),
+    "goodNight": MessageLookupByLibrary.simpleMessage("Қайырлы түн 🌙"),
     "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
       "Google Web Client ID жоқ. GOOGLE_WEB_CLIENT_ID орнатыңыз (Google Cloud OAuth Web client)",
     ),
@@ -277,6 +280,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Ата-ананы жою керек пе?",
+    ),
+    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Шығу керек пе?",
+    ),
+    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Аккаунттан шыққыңыз келетініне сенімдісіз бе?",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("Қайталау"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Сыйлықтар дүкені"),
