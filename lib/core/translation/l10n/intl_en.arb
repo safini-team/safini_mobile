@@ -264,7 +264,7 @@
   "reject": "Reject",
   "taskApprovedMessage": "Task approved!",
   "taskRejectedMessage": "Task rejected.",
-  "reviewNoteHint": "Add a note (optional)"
+  "reviewNoteHint": "Add a note (optional)",
   "settings": "Settings",
   "editProfile": "Edit Profile",
   "logout": "Logout",

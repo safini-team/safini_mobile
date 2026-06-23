@@ -264,7 +264,7 @@
   "reject": "Қабылдамау",
   "taskApprovedMessage": "Тапсырма бекітілді!",
   "taskRejectedMessage": "Тапсырма қабылданбады.",
-  "reviewNoteHint": "Жазба қосу (міндетті емес)"
+  "reviewNoteHint": "Жазба қосу (міндетті емес)",
   "settings": "Баптаулар",
   "editProfile": "Профильді өңдеу",
   "logout": "Шығу",

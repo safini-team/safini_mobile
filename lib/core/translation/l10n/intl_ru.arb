@@ -264,7 +264,7 @@
   "reject": "Отклонить",
   "taskApprovedMessage": "Задание одобрено!",
   "taskRejectedMessage": "Задание отклонено.",
-  "reviewNoteHint": "Добавить заметку (необязательно)"
+  "reviewNoteHint": "Добавить заметку (необязательно)",
   "settings": "Настройки",
   "editProfile": "Редактировать профиль",
   "logout": "Выйти",

@@ -7,6 +7,8 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:shared_preferences/shared_preferences.dart' as safini_prefs;
+import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart'
+    as safini_auth;
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/parent/presentation/screens/family/edit_child_page.dart';
@@ -72,15 +74,19 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: IconButton(
-                          icon: const Icon(Icons.settings, color: Colors.white),
-                          onPressed: () async {
-                            final result = await context.router.push<bool>(
-                              const NamedRoute('parentSettings'),
-                            );
-                            if (result == true && context.mounted) {
-                              context.read<ParentCubit>().loadProfile();
-                            }
-                          },
+                            icon: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                            onPressed: () async {
+                              final result = await context.router.push<bool>(
+                                const NamedRoute('parentSettings'),
+                              );
+                              if (result == true && context.mounted) {
+                                context.read<ParentCubit>().loadProfile();
+                              }
+                            },
+                          ),
                         ),
                         IconButton(
                           icon: const Icon(Icons.logout, color: Colors.white),

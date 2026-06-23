@@ -385,12 +385,7 @@ class S {
 
   /// `Good night 🌙`
   String get goodNight {
-    return Intl.message(
-      'Good night 🌙',
-      name: 'goodNight',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Good night 🌙', name: 'goodNight', desc: '', args: []);
   }
 
   /// `Safini Parent`
@@ -1465,6 +1460,51 @@ class S {
     return Intl.message(
       'Review Task',
       name: 'reviewTaskSheetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approve`
+  String get approve {
+    return Intl.message('Approve', name: 'approve', desc: '', args: []);
+  }
+
+  /// `Reject`
+  String get reject {
+    return Intl.message('Reject', name: 'reject', desc: '', args: []);
+  }
+
+  /// `Task approved!`
+  String get taskApprovedMessage {
+    return Intl.message(
+      'Task approved!',
+      name: 'taskApprovedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task rejected.`
+  String get taskRejectedMessage {
+    return Intl.message(
+      'Task rejected.',
+      name: 'taskRejectedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a note (optional)`
+  String get reviewNoteHint {
+    return Intl.message(
+      'Add a note (optional)',
+      name: 'reviewNoteHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Settings`
   String get settings {
     return Intl.message('Settings', name: 'settings', desc: '', args: []);
@@ -1640,11 +1680,6 @@ class S {
     );
   }
 
-  /// `Approve`
-  String get approve {
-    return Intl.message(
-      'Approve',
-      name: 'approve',
   /// `Delete Account?`
   String get deleteAccountConfirmTitle {
     return Intl.message(
@@ -1655,11 +1690,6 @@ class S {
     );
   }
 
-  /// `Reject`
-  String get reject {
-    return Intl.message(
-      'Reject',
-      name: 'reject',
   /// `Are you sure you want to delete your account? This action cannot be undone.`
   String get deleteAccountConfirmBody {
     return Intl.message(
@@ -1670,11 +1700,6 @@ class S {
     );
   }
 
-  /// `Task approved!`
-  String get taskApprovedMessage {
-    return Intl.message(
-      'Task approved!',
-      name: 'taskApprovedMessage',
   /// `Remove from Family`
   String get removeParent {
     return Intl.message(
@@ -1685,11 +1710,6 @@ class S {
     );
   }
 
-  /// `Task rejected.`
-  String get taskRejectedMessage {
-    return Intl.message(
-      'Task rejected.',
-      name: 'taskRejectedMessage',
   /// `Remove Parent?`
   String get removeParentConfirmTitle {
     return Intl.message(
@@ -1700,11 +1720,6 @@ class S {
     );
   }
 
-  /// `Add a note (optional)`
-  String get reviewNoteHint {
-    return Intl.message(
-      'Add a note (optional)',
-      name: 'reviewNoteHint',
   /// `Are you sure you want to remove this parent from the family?`
   String get removeParentConfirmBody {
     return Intl.message(
