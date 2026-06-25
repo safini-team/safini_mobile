@@ -53,7 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "achievements": MessageLookupByLibrary.simpleMessage("Achievements"),
     "activeTasks": MessageLookupByLibrary.simpleMessage("Active Tasks"),
-    "addAnotherApp": MessageLookupByLibrary.simpleMessage("Add Another App"),
+    "addAnotherApp": MessageLookupByLibrary.simpleMessage("Add App"),
     "addAnotherChild": MessageLookupByLibrary.simpleMessage(
       "Add Another Child",
     ),

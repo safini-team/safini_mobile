@@ -15,9 +15,9 @@ class ParentAppsScreen extends StatelessWidget {
     final s = S.of(context);
     return BlocProvider(
       create: (context) => getIt<ParentAppsCubit>()..loadAppLimits(),
-      child: Scaffold(
-        backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
-        body: Column(
+      child: ColoredBox(
+        color: context.colorScheme.surface,
+        child: Column(
           children: [
             // ── Header ──────────────────────────────────────────
             Container(
@@ -33,54 +33,57 @@ class ParentAppsScreen extends StatelessWidget {
               ),
               child: SafeArea(
                 bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        s.appLimits,
-                        style: context.textTheme.displaySmall?.copyWith(
-                          color: context.colorScheme.onPrimary,
-                          fontSize: 30,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            s.appLimits,
+                            style: context.textTheme.displaySmall?.copyWith(
+                              color: context.colorScheme.onPrimary,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            s.appLimitsSubtitle,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Rounded white cap — seamless transition into content
+                    Container(
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.surface,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(36),
+                          topRight: Radius.circular(36),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        s.appLimitsSubtitle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
             // ── Content ─────────────────────────────────────────
             Expanded(
-              child: Transform.translate(
-                offset: const Offset(0, -1), // Fix sub-pixel white line gap
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(36),
-                      topRight: Radius.circular(36),
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(36),
-                      topRight: Radius.circular(36),
-                    ),
-                    child: BlocBuilder<ParentAppsCubit, ParentAppsState>(
+              child: Container(
+                  color: context.colorScheme.surface,
+                  child: BlocBuilder<ParentAppsCubit, ParentAppsState>(
                       builder: (context, state) {
                     if (state is ParentAppsLoading) {
                       return const Center(
@@ -93,7 +96,7 @@ class ParentAppsScreen extends StatelessWidget {
                     if (state is ParentAppsLoaded) {
                       final cubit = context.read<ParentAppsCubit>();
                       return ListView(
-                        padding: const EdgeInsets.fromLTRB(32, 28, 32, 80),
+                        padding: EdgeInsets.fromLTRB(32, 28, 32, 32 + MediaQuery.of(context).padding.bottom),
                         children: [
                           if (state.appLimits.isNotEmpty) ...[
                             // Tip Banner
@@ -126,15 +129,62 @@ class ParentAppsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 24),
                             ...state.appLimits.map(
-                              (app) => ParentAppLimitTile(
-                                appName: app['name'],
-                                usedMinutes: app['used'],
-                                limitMinutes: app['limit'],
-                                iconPath: app['icon'],
-                                isEnabled: app['isEnabled'] ?? true,
-                                onToggle: (val) => cubit.toggleApp(
+                              (app) => Dismissible(
+                                key: ValueKey(app['name']),
+                                direction: DismissDirection.endToStart,
+                                background: Container(
+                                  alignment: Alignment.centerRight,
+                                  margin: const EdgeInsets.only(bottom: 20),
+                                  padding: const EdgeInsets.only(right: 28),
+                                  decoration: BoxDecoration(
+                                    color: context.colorScheme.error.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(32),
+                                  ),
+                                  child: Icon(
+                                    Icons.delete_outline_rounded,
+                                    color: context.colorScheme.error,
+                                    size: 28,
+                                  ),
+                                ),
+                                onDismissed: (_) => cubit.removeApp(
                                   app['name'] as String,
-                                  val,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: ParentAppLimitTile(
+                                        appName: app['name'],
+                                        usedMinutes: app['used'],
+                                        limitMinutes: app['limit'],
+                                        iconPath: app['icon'],
+                                        isEnabled: app['isEnabled'] ?? true,
+                                        onToggle: (val) => cubit.toggleApp(
+                                          app['name'] as String,
+                                          val,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    IconButton(
+                                      onPressed: () => _confirmDelete(
+                                        context,
+                                        cubit,
+                                        app['name'] as String,
+                                      ),
+                                      icon: Icon(
+                                        Icons.delete_outline_rounded,
+                                        color: context.colorScheme.error,
+                                        size: 22,
+                                      ),
+                                      tooltip: 'Delete',
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: context.colorScheme.error.withValues(alpha: 0.08),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -203,8 +253,6 @@ class ParentAppsScreen extends StatelessWidget {
                     return const SizedBox.shrink();
                   },
                 ),
-                ),
-                ),
               ),
             ),
           ],
@@ -219,7 +267,40 @@ void _showAddAppSheet(BuildContext context, ParentAppsCubit cubit) {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.25),
+    useSafeArea: false,
     builder: (_) => _AddAppSheet(cubit: cubit),
+  );
+}
+
+void _confirmDelete(
+  BuildContext context,
+  ParentAppsCubit cubit,
+  String appName,
+) {
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: const Text('Remove App'),
+      content: Text('Remove "$appName" from the limits list?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () {
+            cubit.removeApp(appName);
+            Navigator.of(ctx).pop();
+          },
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(ctx).colorScheme.error,
+          ),
+          child: const Text('Remove'),
+        ),
+      ],
+    ),
   );
 }
 
@@ -255,20 +336,20 @@ class _AddAppSheetState extends State<_AddAppSheet> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final bottomPadding = bottomInset > 0
+        ? bottomInset
+        : MediaQuery.of(context).padding.bottom + 16;
+    return Container(
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      padding: EdgeInsets.fromLTRB(24, 20, 24, bottomPadding),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
             Center(
               child: Container(
                 width: 40,
@@ -358,7 +439,6 @@ class _AddAppSheetState extends State<_AddAppSheet> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

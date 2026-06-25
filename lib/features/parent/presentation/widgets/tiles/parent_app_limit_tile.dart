@@ -2,6 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
+String _emojiForApp(String name) {
+  final n = name.toLowerCase();
+  if (_matches(n, ['game', 'roblox', 'minecraft', 'brawl', 'fortnite', 'pubg', 'clash', 'among', 'gaming', 'steam', 'valorant', 'fifa'])) return '🎮';
+  if (_matches(n, ['youtube', 'netflix', 'tiktok', 'video', 'movie', 'twitch', 'hulu', 'disney', 'watch', 'film', 'kino'])) return '📺';
+  if (_matches(n, ['instagram', 'facebook', 'snapchat', 'twitter', 'whatsapp', 'telegram', 'vk', 'social', 'chat', 'message', 'discord'])) return '💬';
+  if (_matches(n, ['spotify', 'music', 'soundcloud', 'apple music', 'deezer', 'audio', 'podcast'])) return '🎵';
+  if (_matches(n, ['book', 'read', 'learn', 'school', 'duolingo', 'education', 'study', 'class', 'math', 'science'])) return '📚';
+  if (_matches(n, ['photo', 'camera', 'gallery', 'picture', 'vsco', 'lightroom', 'снимок'])) return '📷';
+  if (_matches(n, ['browser', 'chrome', 'safari', 'firefox', 'internet', 'web', 'yandex'])) return '🌐';
+  if (_matches(n, ['shop', 'store', 'amazon', 'ebay', 'buy', 'market', 'aliexpress'])) return '🛒';
+  return '📱';
+}
+
+bool _matches(String name, List<String> keywords) =>
+    keywords.any((k) => name.contains(k));
+
 class ParentAppLimitTile extends StatelessWidget {
   final String appName;
   final int usedMinutes;
@@ -54,13 +70,13 @@ class ParentAppLimitTile extends StatelessWidget {
                         child: Image.asset(
                           iconPath!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Center(
-                            child: Text('🎮', style: TextStyle(fontSize: 24)),
+                          errorBuilder: (_, __, ___) => Center(
+                            child: Text(_emojiForApp(appName), style: const TextStyle(fontSize: 24)),
                           ),
                         ),
                       )
-                    : const Center(
-                        child: Text('🎮', style: TextStyle(fontSize: 24)),
+                    : Center(
+                        child: Text(_emojiForApp(appName), style: const TextStyle(fontSize: 24)),
                       ),
               ),
               const SizedBox(width: 16),
