@@ -22,11 +22,6 @@ class ParentAppLimitTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = (usedMinutes / limitMinutes).clamp(0.0, 1.0);
-    final remaining = limitMinutes - usedMinutes;
-    final Color progressColor =
-        progress > 0.8 ? context.colorScheme.error : context.successColor;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(24),
@@ -98,40 +93,6 @@ class ParentAppLimitTile extends StatelessWidget {
                 onChanged: onToggle,
                 activeTrackColor: context.colorScheme.primary,
                 activeColor: context.colorScheme.onPrimary,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 12,
-              backgroundColor: context.colorScheme.onSurface.withValues(alpha: 0.05),
-              valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Text(
-                S.of(context).dailyLimit,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colorScheme.onSurface.withValues(alpha: 0.5),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  S.of(context).minutesRemainingLong(remaining),
-                  style: context.textTheme.labelSmall?.copyWith(
-                    color: progressColor,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  textAlign: TextAlign.end,
-                  overflow: TextOverflow.ellipsis,
-                ),
               ),
             ],
           ),

@@ -9,39 +9,22 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
 
   Future<void> loadAppLimits() async {
     emit(const ParentAppsLoading());
+    emit(const ParentAppsLoaded(appLimits: []));
+  }
 
-    await Future.delayed(const Duration(milliseconds: 600));
-
+  void addApp(String appName, int limitMinutes) {
+    final current = state;
+    if (current is! ParentAppsLoaded) return;
     emit(
-      const ParentAppsLoaded(
+      ParentAppsLoaded(
         appLimits: [
+          ...current.appLimits,
           {
-            "name": "YouTube Kids",
-            "used": 48,
-            "limit": 60,
-            "icon": "assets/icons/youtube_kids.png",
-            "isEnabled": true,
-          },
-          {
-            "name": "Roblox",
-            "used": 15,
-            "limit": 60,
-            "icon": "assets/icons/roblox.png",
-            "isEnabled": true,
-          },
-          {
-            "name": "Brawl Stars",
-            "used": 5,
-            "limit": 45,
-            "icon": "assets/icons/brawl_stars.png",
-            "isEnabled": true,
-          },
-          {
-            "name": "Minecraft",
-            "used": 30,
-            "limit": 90,
-            "icon": "assets/icons/minecraft.png",
-            "isEnabled": true,
+            'name': appName,
+            'used': 0,
+            'limit': limitMinutes,
+            'icon': null,
+            'isEnabled': true,
           },
         ],
       ),

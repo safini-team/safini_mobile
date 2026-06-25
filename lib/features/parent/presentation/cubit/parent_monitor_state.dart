@@ -34,6 +34,10 @@ class ParentMonitorLoaded extends ParentMonitorState {
   });
 }
 
+class ParentMonitorNoChild extends ParentMonitorState {
+  const ParentMonitorNoChild();
+}
+
 class ParentMonitorError extends ParentMonitorState {
   final String message;
   const ParentMonitorError(this.message);

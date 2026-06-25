@@ -13,24 +13,29 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   ParentMonitorCubit(this._controller, this._familyCubit)
       : super(const ParentMonitorInitial()) {
     _familySub = _familyCubit.stream.listen((familyState) {
-      if (familyState.family != null && state is ParentMonitorLoaded) {
-        final child = familyState.family!.children.where((c) => c.id.isNotEmpty).firstOrNull;
-        if (child != null) {
-          final current = state as ParentMonitorLoaded;
-          emit(
-            ParentMonitorLoaded(
-              childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
-              level: child.level ?? current.level,
-              timeCoins: child.coinsBalance ?? current.timeCoins,
-              stepsToday: current.stepsToday,
-              stepsChange: current.stepsChange,
-              lessonsToday: current.lessonsToday,
-              lessonsChange: current.lessonsChange,
-              weeklyUsage: current.weeklyUsage,
-              appLimits: current.appLimits,
-            ),
-          );
-        }
+      if (familyState.family == null) return;
+      final child = familyState.family!.children
+          .where((c) => c.id.isNotEmpty)
+          .firstOrNull;
+      if (child == null) {
+        emit(const ParentMonitorNoChild());
+        return;
+      }
+      if (state is ParentMonitorLoaded) {
+        final current = state as ParentMonitorLoaded;
+        emit(
+          ParentMonitorLoaded(
+            childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
+            level: child.level,
+            timeCoins: child.coinsBalance,
+            stepsToday: current.stepsToday,
+            stepsChange: current.stepsChange,
+            lessonsToday: current.lessonsToday,
+            lessonsChange: current.lessonsChange,
+            weeklyUsage: current.weeklyUsage,
+            appLimits: current.appLimits,
+          ),
+        );
       }
     });
   }
@@ -52,32 +57,22 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         .where((c) => c.id.isNotEmpty)
         .firstOrNull;
 
+    if (child == null) {
+      emit(const ParentMonitorNoChild());
+      return;
+    }
+
     emit(
       ParentMonitorLoaded(
-        childName: child?.nickname ?? 'Child',
-        level: child?.level ?? 0,
-        timeCoins: child?.coinsBalance ?? 0,
-        stepsToday: 4230,
-        stepsChange: '+12% vs yesterday',
-        lessonsToday: '1/8',
-        lessonsChange: '+1 today',
-        weeklyUsage: [0.4, 0.5, 0.3, 0.7, 1.0, 0.8, 0.6],
-        appLimits: [
-          {
-            "name": "YouTube Kids",
-            "used": 48,
-            "limit": 60,
-            "icon": "assets/icons/youtube_kids.png",
-            "isEnabled": true,
-          },
-          {
-            "name": "Roblox",
-            "used": 15,
-            "limit": 60,
-            "icon": "assets/icons/roblox.png",
-            "isEnabled": true,
-          },
-        ],
+        childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
+        level: child.level,
+        timeCoins: child.coinsBalance,
+        stepsToday: 0,
+        stepsChange: '',
+        lessonsToday: '—',
+        lessonsChange: '',
+        weeklyUsage: [0, 0, 0, 0, 0, 0, 0],
+        appLimits: [],
       ),
     );
   }
