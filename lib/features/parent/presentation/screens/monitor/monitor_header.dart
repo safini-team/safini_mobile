@@ -87,9 +87,9 @@ class MonitorFlexBackground extends StatelessWidget {
               builder: (context, state) {
                 if (state is ParentMonitorLoaded) {
                   return ParentProgressCard(
-                    name: state.childName,
-                    level: state.level,
-                    coins: state.timeCoins,
+                    name: state.monitorModel.childName,
+                    level: state.monitorModel.level,
+                    coins: state.monitorModel.timeCoins,
                   );
                 }
                 if (state is ParentMonitorNoChild) {

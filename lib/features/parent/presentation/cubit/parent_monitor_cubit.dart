@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/features/parent/domain/controllers/parent_controller.dart';
+import 'package:safini/features/parent/domain/models/parent_monitor_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 
@@ -25,15 +26,11 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         final current = state as ParentMonitorLoaded;
         emit(
           ParentMonitorLoaded(
-            childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
-            level: child.level,
-            timeCoins: child.coinsBalance,
-            stepsToday: current.stepsToday,
-            stepsChange: current.stepsChange,
-            lessonsToday: current.lessonsToday,
-            lessonsChange: current.lessonsChange,
-            weeklyUsage: current.weeklyUsage,
-            appLimits: current.appLimits,
+            current.monitorModel.copyWith(
+              childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
+              level: child.level,
+              timeCoins: child.coinsBalance,
+            ),
           ),
         );
       }
@@ -64,15 +61,17 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
     emit(
       ParentMonitorLoaded(
-        childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
-        level: child.level,
-        timeCoins: child.coinsBalance,
-        stepsToday: 0,
-        stepsChange: '',
-        lessonsToday: '—',
-        lessonsChange: '',
-        weeklyUsage: [0, 0, 0, 0, 0, 0, 0],
-        appLimits: [],
+        ParentMonitorModel(
+          childName: child.nickname.isNotEmpty ? child.nickname : 'Child',
+          level: child.level,
+          timeCoins: child.coinsBalance,
+          stepsToday: 0,
+          stepsChange: '',
+          lessonsToday: '—',
+          lessonsChange: '',
+          weeklyUsage: const [0, 0, 0, 0, 0, 0, 0],
+          appLimits: const [],
+        ),
       ),
     );
   }
@@ -81,7 +80,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     final current = state;
     if (current is! ParentMonitorLoaded) return;
 
-    final updatedLimits = current.appLimits.map((app) {
+    final updatedLimits = current.monitorModel.appLimits.map((app) {
       if (app['name'] == appName) {
         return {...app, 'isEnabled': isEnabled};
       }
@@ -90,15 +89,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
     emit(
       ParentMonitorLoaded(
-        childName: current.childName,
-        level: current.level,
-        timeCoins: current.timeCoins,
-        stepsToday: current.stepsToday,
-        stepsChange: current.stepsChange,
-        lessonsToday: current.lessonsToday,
-        lessonsChange: current.lessonsChange,
-        weeklyUsage: current.weeklyUsage,
-        appLimits: updatedLimits,
+        current.monitorModel.copyWith(appLimits: updatedLimits),
       ),
     );
   }

@@ -107,13 +107,17 @@ class _ParentMonitorView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           MonitorStatsRow(
-                            stepsToday: state.stepsToday,
-                            lessonsToday: state.lessonsToday,
+                            stepsToday: state.monitorModel.stepsToday,
+                            lessonsToday: state.monitorModel.lessonsToday,
                           ),
                           const SizedBox(height: 24),
-                          ParentScreenTimeChart(weeklyUsage: state.weeklyUsage),
+                          ParentScreenTimeChart(
+                            weeklyUsage: state.monitorModel.weeklyUsage,
+                          ),
                           const SizedBox(height: 40),
-                          MonitorAppLimitsSection(appLimits: state.appLimits),
+                          MonitorAppLimitsSection(
+                            appLimits: state.monitorModel.appLimits,
+                          ),
                           const SizedBox(height: 40),
                           const MonitorTasksSection(),
                           const SizedBox(height: 100),
