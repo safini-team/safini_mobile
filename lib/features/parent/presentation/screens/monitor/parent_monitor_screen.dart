@@ -1,14 +1,12 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
-import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
+import 'package:safini/features/parent/presentation/widgets/layout/parent_no_child_empty_state.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_header.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_stats_row.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_app_limits_section.dart';
@@ -99,7 +97,7 @@ class _ParentMonitorView extends StatelessWidget {
                     }
 
                     if (state is ParentMonitorNoChild) {
-                      return _NoChildEmptyState();
+                      return const ParentNoChildEmptyState();
                     }
 
                     if (state is ParentMonitorLoaded) {
@@ -131,51 +129,6 @@ class _ParentMonitorView extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NoChildEmptyState extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 40),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Icon(
-            Icons.child_care_rounded,
-            size: 72,
-            color: context.colorScheme.primary.withValues(alpha: 0.25),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            s.noChildrenFoundYet,
-            style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: context.colorScheme.onSurface,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () async {
-              final result = await context.router.push<bool>(
-                const NamedRoute('addChild'),
-              );
-              if (result == true && context.mounted) {
-                context.read<ParentFamilyCubit>().loadCurrentFamily(
-                  refresh: true,
-                );
-              }
-            },
-            icon: const Icon(Icons.add_rounded),
-            label: Text(s.addChild),
-          ),
-          const SizedBox(height: 60),
         ],
       ),
     );
