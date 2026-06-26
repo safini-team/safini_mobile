@@ -69,6 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeTab": MessageLookupByLibrary.simpleMessage("Қолданба уақыты"),
+    "approve": MessageLookupByLibrary.simpleMessage("Бекіту"),
     "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
       "Бекітілген тапсырмаларды өзгертуге немесе жоюға болмайды.",
     ),
@@ -180,9 +181,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "free": MessageLookupByLibrary.simpleMessage("ТЕГІН"),
     "fri": MessageLookupByLibrary.simpleMessage("ЖМ"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Тапсырмаларға өту"),
-    "goodMorning": MessageLookupByLibrary.simpleMessage("Қайырлы таң 👋"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Қайырлы күн 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Қайырлы кеш 👋"),
+    "goodMorning": MessageLookupByLibrary.simpleMessage("Қайырлы таң 👋"),
     "goodNight": MessageLookupByLibrary.simpleMessage("Қайырлы түн 🌙"),
     "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
       "Google Web Client ID жоқ. GOOGLE_WEB_CLIENT_ID орнатыңыз (Google Cloud OAuth Web client)",
@@ -211,6 +212,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Google арқылы кіру",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Шығу"),
+    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Аккаунттан шыққыңыз келетініне сенімдісіз бе?",
+    ),
+    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Шығу керек пе?",
+    ),
     "manageAll": MessageLookupByLibrary.simpleMessage("Барлығын басқару"),
     "minuteCount": m8,
     "minutes": MessageLookupByLibrary.simpleMessage("Минут"),
@@ -272,6 +279,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "realWorldTasks": MessageLookupByLibrary.simpleMessage(
       "Шынайы өмір тапсырмалары",
     ),
+    "reject": MessageLookupByLibrary.simpleMessage("Қабылдамау"),
     "remaining": MessageLookupByLibrary.simpleMessage("Қалды"),
     "remainingTime": m10,
     "removeParent": MessageLookupByLibrary.simpleMessage("Отбасынан жою"),
@@ -281,13 +289,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Ата-ананы жою керек пе?",
     ),
-    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage(
-      "Шығу керек пе?",
-    ),
-    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
-      "Аккаунттан шыққыңыз келетініне сенімдісіз бе?",
-    ),
     "retry": MessageLookupByLibrary.simpleMessage("Қайталау"),
+    "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
+      "Жазба қосу (міндетті емес)",
+    ),
+    "reviewTaskSheetTitle": MessageLookupByLibrary.simpleMessage(
+      "Тапсырманы тексеру",
+    ),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Сыйлықтар дүкені"),
     "roleSelectionSubtitle": MessageLookupByLibrary.simpleMessage(
       "Safini-ді қалай қолданасыз?",
@@ -329,6 +337,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Бала режиміне өту / Шығу",
     ),
     "tagline": MessageLookupByLibrary.simpleMessage("Үйрен. Табыс тап. Ойна."),
+    "taskApprovedMessage": MessageLookupByLibrary.simpleMessage(
+      "Тапсырма бекітілді!",
+    ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Ойынды меңгер"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Шахмат сабағы"),
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage(
@@ -349,6 +360,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ой-өрісіңді кеңейт",
     ),
     "taskReadingTitle": MessageLookupByLibrary.simpleMessage("20 минут оқы"),
+    "taskRejectedMessage": MessageLookupByLibrary.simpleMessage(
+      "Тапсырма қабылданбады.",
+    ),
     "taskRoomSub": MessageLookupByLibrary.simpleMessage("Күнделікті жұмыс"),
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Бөлмеңді жина"),
     "taskStepsSub": MessageLookupByLibrary.simpleMessage(

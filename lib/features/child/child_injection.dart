@@ -14,7 +14,6 @@ import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart'
     as safini_profile;
-import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 
 void registerChildDependencies(GetIt sl) {
   // Data sources
@@ -40,7 +39,7 @@ void registerChildDependencies(GetIt sl) {
     () => TasksCubit(
       sl<CoinsCubit>(),
       sl<safini_profile.ProfileController>(),
-      sl<IParentTaskRepository>(),
+      sl<IChildRepository>(),
     ),
   );
   sl.registerFactory<ProfileCubit>(
@@ -60,7 +59,7 @@ void registerChildDependencies(GetIt sl) {
   sl.registerFactory<QuestCubit>(
     () => QuestCubit(
       sl<safini_profile.ProfileController>(),
-      sl<IParentTaskRepository>(),
+      sl<IChildRepository>(),
     ),
   );
   sl.registerFactory<RewardStoreCubit>(

@@ -385,12 +385,7 @@ class S {
 
   /// `Good night 🌙`
   String get goodNight {
-    return Intl.message(
-      'Good night 🌙',
-      name: 'goodNight',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Good night 🌙', name: 'goodNight', desc: '', args: []);
   }
 
   /// `Safini Parent`
@@ -1455,6 +1450,56 @@ class S {
     return Intl.message(
       'Approved tasks can\'t be edited or deleted.',
       name: 'approvedTaskConflict',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review Task`
+  String get reviewTaskSheetTitle {
+    return Intl.message(
+      'Review Task',
+      name: 'reviewTaskSheetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approve`
+  String get approve {
+    return Intl.message('Approve', name: 'approve', desc: '', args: []);
+  }
+
+  /// `Reject`
+  String get reject {
+    return Intl.message('Reject', name: 'reject', desc: '', args: []);
+  }
+
+  /// `Task approved!`
+  String get taskApprovedMessage {
+    return Intl.message(
+      'Task approved!',
+      name: 'taskApprovedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Task rejected.`
+  String get taskRejectedMessage {
+    return Intl.message(
+      'Task rejected.',
+      name: 'taskRejectedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a note (optional)`
+  String get reviewNoteHint {
+    return Intl.message(
+      'Add a note (optional)',
+      name: 'reviewNoteHint',
       desc: '',
       args: [],
     );

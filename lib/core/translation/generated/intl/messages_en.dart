@@ -67,6 +67,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeTab": MessageLookupByLibrary.simpleMessage("App Time"),
+    "approve": MessageLookupByLibrary.simpleMessage("Approve"),
     "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
       "Approved tasks can\'t be edited or deleted.",
     ),
@@ -170,9 +171,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "free": MessageLookupByLibrary.simpleMessage("FREE"),
     "fri": MessageLookupByLibrary.simpleMessage("FRI"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Go to Tasks"),
-    "goodMorning": MessageLookupByLibrary.simpleMessage("Good morning 👋"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Good afternoon 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Good evening 👋"),
+    "goodMorning": MessageLookupByLibrary.simpleMessage("Good morning 👋"),
     "goodNight": MessageLookupByLibrary.simpleMessage("Good night 🌙"),
     "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
       "Google Web Client ID is missing. Set GOOGLE_WEB_CLIENT_ID (OAuth Web client from Google Cloud).",
@@ -203,6 +204,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Continue with Google",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to log out?",
+    ),
+    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Log out?"),
     "manageAll": MessageLookupByLibrary.simpleMessage("Manage All"),
     "minuteCount": m8,
     "minutes": MessageLookupByLibrary.simpleMessage("Minutes"),
@@ -254,6 +259,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ready to spend your coins?",
     ),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Real-world Tasks"),
+    "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "remaining": MessageLookupByLibrary.simpleMessage("Remaining"),
     "remainingTime": m10,
     "removeParent": MessageLookupByLibrary.simpleMessage("Remove from Family"),
@@ -263,11 +269,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Remove Parent?",
     ),
-    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Log out?"),
-    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
-      "Are you sure you want to log out?",
-    ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
+      "Add a note (optional)",
+    ),
+    "reviewTaskSheetTitle": MessageLookupByLibrary.simpleMessage("Review Task"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Reward Store"),
     "roleSelectionSubtitle": MessageLookupByLibrary.simpleMessage(
       "How will you use Safini?",
@@ -313,6 +319,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Switch to Kid Mode / Logout",
     ),
     "tagline": MessageLookupByLibrary.simpleMessage("Learn. Earn. Play."),
+    "taskApprovedMessage": MessageLookupByLibrary.simpleMessage(
+      "Task approved!",
+    ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Master the board"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Chess Lesson"),
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage("Task created!"),
@@ -328,6 +337,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskReadingSub": MessageLookupByLibrary.simpleMessage("Expand your mind"),
     "taskReadingTitle": MessageLookupByLibrary.simpleMessage(
       "Read for 20 mins",
+    ),
+    "taskRejectedMessage": MessageLookupByLibrary.simpleMessage(
+      "Task rejected.",
     ),
     "taskRoomSub": MessageLookupByLibrary.simpleMessage("Daily chore"),
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Clean your room"),

@@ -67,6 +67,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeTab": MessageLookupByLibrary.simpleMessage("Приложения"),
+    "approve": MessageLookupByLibrary.simpleMessage("Одобрить"),
     "approvedTaskConflict": MessageLookupByLibrary.simpleMessage(
       "Одобренные задания нельзя изменить или удалить.",
     ),
@@ -182,9 +183,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "free": MessageLookupByLibrary.simpleMessage("БЕСПЛАТНО"),
     "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Перейти к заданиям"),
-    "goodMorning": MessageLookupByLibrary.simpleMessage("Доброе утро 👋"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Добрый день 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Добрый вечер 👋"),
+    "goodMorning": MessageLookupByLibrary.simpleMessage("Доброе утро 👋"),
     "goodNight": MessageLookupByLibrary.simpleMessage("Доброй ночи 🌙"),
     "googleClientIdMissing": MessageLookupByLibrary.simpleMessage(
       "Не задан Google Web Client ID. Укажите GOOGLE_WEB_CLIENT_ID (OAuth Web в Google Cloud).",
@@ -215,6 +216,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Продолжить с Google",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Выйти"),
+    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Вы уверены, что хотите выйти из аккаунта?",
+    ),
+    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Выйти?"),
     "manageAll": MessageLookupByLibrary.simpleMessage("Управлять всем"),
     "minuteCount": m8,
     "minutes": MessageLookupByLibrary.simpleMessage("Минуты"),
@@ -272,6 +277,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Готовы потратить монеты?",
     ),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Задания в жизни"),
+    "reject": MessageLookupByLibrary.simpleMessage("Отклонить"),
     "remaining": MessageLookupByLibrary.simpleMessage("Осталось"),
     "remainingTime": m10,
     "removeParent": MessageLookupByLibrary.simpleMessage("Удалить из семьи"),
@@ -281,11 +287,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Удалить родителя?",
     ),
-    "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Выйти?"),
-    "logoutConfirmBody": MessageLookupByLibrary.simpleMessage(
-      "Вы уверены, что хотите выйти из аккаунта?",
-    ),
     "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
+    "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
+      "Добавить заметку (необязательно)",
+    ),
+    "reviewTaskSheetTitle": MessageLookupByLibrary.simpleMessage(
+      "Проверить задание",
+    ),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Магазин наград"),
     "roleSelectionSubtitle": MessageLookupByLibrary.simpleMessage(
       "Как вы будете использовать Safini?",
@@ -329,6 +337,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tagline": MessageLookupByLibrary.simpleMessage(
       "Учись. Зарабатывай. Играй.",
     ),
+    "taskApprovedMessage": MessageLookupByLibrary.simpleMessage(
+      "Задание одобрено!",
+    ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Освой доску"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Урок шахмат"),
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage(
@@ -347,6 +358,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskReadingSub": MessageLookupByLibrary.simpleMessage("Расширяй кругозор"),
     "taskReadingTitle": MessageLookupByLibrary.simpleMessage("Читать 20 мин"),
+    "taskRejectedMessage": MessageLookupByLibrary.simpleMessage(
+      "Задание отклонено.",
+    ),
     "taskRoomSub": MessageLookupByLibrary.simpleMessage("Ежедневное дело"),
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Убраться в комнате"),
     "taskStepsSub": MessageLookupByLibrary.simpleMessage("Больше движения!"),

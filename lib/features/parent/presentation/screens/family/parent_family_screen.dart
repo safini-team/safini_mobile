@@ -3,8 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
+import 'package:shared_preferences/shared_preferences.dart' as safini_prefs;
+import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart'
+    as safini_auth;
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/parent/presentation/screens/family/edit_child_page.dart';
@@ -70,16 +74,62 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: IconButton(
-                          icon: const Icon(Icons.settings, color: Colors.white),
+                            icon: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                            onPressed: () async {
+                              final result = await context.router.push<bool>(
+                                const NamedRoute('parentSettings'),
+                              );
+                              if (result == true && context.mounted) {
+                                context.read<ParentCubit>().loadProfile();
+                              }
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.logout, color: Colors.white),
                           onPressed: () async {
-                            final result = await context.router.push<bool>(
-                              const NamedRoute('parentSettings'),
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Log Out'),
+                                content: const Text(
+                                  'Are you sure you want to log out?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(ctx, false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(ctx, true),
+                                    child: const Text(
+                                      'Log Out',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
-                            if (result == true && context.mounted) {
-                              context.read<ParentCubit>().loadProfile();
+                            if (confirm == true) {
+                              try {
+                                await getIt<
+                                  safini_auth.AuthGoogleSignInService
+                                >().signOut();
+                              } catch (_) {}
+                              await getIt<safini_prefs.SharedPreferences>()
+                                  .remove('access_token');
+                              if (context.mounted) {
+                                context.router.replaceAll([
+                                  const NamedRoute('login'),
+                                ]);
+                              }
                             }
                           },
-                        ),
                         ),
                       ],
                       flexibleSpace: Container(
@@ -807,6 +857,77 @@ class _ErrorState extends StatelessWidget {
             if (canRetry)
               ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LogoutButton extends StatelessWidget {
+  const _LogoutButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () async {
+          final confirm = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Log Out'),
+              content: const Text('Are you sure you want to log out?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text(
+                    'Log Out',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
+          );
+          if (confirm == true) {
+            try {
+              await getIt<safini_auth.AuthGoogleSignInService>().signOut();
+            } catch (_) {}
+            await getIt<safini_prefs.SharedPreferences>()
+                .remove('access_token');
+            if (context.mounted) {
+              context.router.replaceAll([const NamedRoute('login')]);
+            }
+          }
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.logout, color: Colors.red),
+              const SizedBox(width: 12),
+              Text(
+                s.switchToKidMode,
+                style: context.textTheme.titleMedium?.copyWith(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
