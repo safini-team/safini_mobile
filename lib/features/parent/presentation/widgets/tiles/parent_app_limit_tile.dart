@@ -4,6 +4,8 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 
 class ParentAppLimitTile extends StatelessWidget {
+  static const _emojiStyle = TextStyle(fontSize: 24);
+
   final String appName;
   final int usedMinutes;
   final int limitMinutes;
@@ -56,12 +58,12 @@ class ParentAppLimitTile extends StatelessWidget {
                           iconPath!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Center(
-                            child: Text(AppData.getEmojiForApp(appName), style: const TextStyle(fontSize: 24)),
+                            child: Text(AppData.getEmojiForApp(appName), style: _emojiStyle),
                           ),
                         ),
                       )
                     : Center(
-                        child: Text(AppData.getEmojiForApp(appName), style: const TextStyle(fontSize: 24)),
+                        child: Text(AppData.getEmojiForApp(appName), style: _emojiStyle),
                       ),
               ),
               const SizedBox(width: 16),
