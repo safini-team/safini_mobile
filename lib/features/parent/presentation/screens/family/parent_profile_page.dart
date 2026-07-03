@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
@@ -50,9 +51,7 @@ class _ParentProfilePageState extends State<ParentProfilePage> {
     setState(() => _isRemoving = false);
 
     if (failure != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(failure.message)),
-      );
+      AppSnackBar.error(context, failure.message);
     } else {
       context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
       context.router.maybePop(true);

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:shared_preferences/shared_preferences.dart' as safini_prefs;
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart'
@@ -289,9 +290,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     if (inviteCode == null) {
       final message = cubit.state.errorMessage;
       if (message != null && message.isNotEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+        AppSnackBar.error(context, message);
       }
       return;
     }
@@ -309,9 +308,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     if (inviteCode == null) {
       final message = cubit.state.errorMessage;
       if (message != null && message.isNotEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+        AppSnackBar.error(context, message);
       }
       return;
     }
@@ -704,10 +701,9 @@ class _InviteCodeDialog extends StatelessWidget {
                       await Clipboard.setData(ClipboardData(text: code));
                       if (context.mounted) {
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(S.of(context).inviteCodeCopied),
-                          ),
+                        AppSnackBar.success(
+                          context,
+                          S.of(context).inviteCodeCopied,
                         );
                       }
                     },

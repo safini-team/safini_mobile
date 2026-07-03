@@ -33,8 +33,23 @@ class ParentMonitorScreen extends StatelessWidget {
 class _ParentMonitorView extends StatelessWidget {
   const _ParentMonitorView();
 
+  // Base height of the progress-card block (padding + a 2-line title layout)
+  // at a text scale of 1.0. It grows with the device font-scale factor.
+  static const double _toolbarHeight = 80;
+  static const double _bottomStripHeight = 36;
+  static const double _cardBlockBaseHeight = 224;
+
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final topPadding = media.padding.top;
+    // Clamp so an extreme system font size can't blow the header height up.
+    final textScale = media.textScaler.scale(1.0).clamp(1.0, 1.3);
+    final expandedHeight = topPadding +
+        _toolbarHeight +
+        (_cardBlockBaseHeight * textScale) +
+        _bottomStripHeight;
+
     return Scaffold(
       backgroundColor: context.colorScheme.primary,
       body: CustomScrollView(
@@ -43,8 +58,8 @@ class _ParentMonitorView extends StatelessWidget {
             pinned: true,
             floating: false,
             // toolbarHeight covers greeting text + name (no overflow)
-            toolbarHeight: 80,
-            expandedHeight: 320,
+            toolbarHeight: _toolbarHeight,
+            expandedHeight: expandedHeight,
             backgroundColor: context.colorScheme.primary,
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -63,9 +78,9 @@ class _ParentMonitorView extends StatelessWidget {
             // always visible, keeping the rounded-corner transition in place
             // even when the progress card has scrolled away.
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(36),
+              preferredSize: const Size.fromHeight(_bottomStripHeight),
               child: Container(
-                height: 36,
+                height: _bottomStripHeight,
                 decoration: BoxDecoration(
                   color: context.colorScheme.surface,
                   borderRadius: const BorderRadius.only(
