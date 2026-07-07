@@ -9,6 +9,7 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/models/task_model.dart';
@@ -60,42 +61,38 @@ class ParentTasksScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () => _openCreateTaskSheet(context),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 18,
-                                vertical: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                color: context.colorScheme.onPrimary
-                                    .withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 18,
+                        GestureDetector(
+                          onTap: () => _openCreateTaskSheet(context),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: context.colorScheme.onPrimary
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  s.newBtn,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: context.colorScheme.onPrimary,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
                                   ),
-                                  const SizedBox(width: 6),
-                                  Flexible(
-                                    child: Text(
-                                      s.newBtn,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: context.colorScheme.onPrimary,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -133,36 +130,25 @@ class ParentTasksScreen extends StatelessWidget {
                         context.router.replace(const NamedRoute('login'));
                       }
                       if (state is ParentTaskActionError && state.isConflict) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(s.approvedTaskConflict)),
-                        );
+                        AppSnackBar.warning(context, s.approvedTaskConflict);
                       }
                       if (state is ParentTaskSaved) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              state.wasCreate
-                                  ? s.taskCreatedMessage
-                                  : s.taskUpdatedMessage,
-                            ),
-                          ),
+                        AppSnackBar.success(
+                          context,
+                          state.wasCreate
+                              ? s.taskCreatedMessage
+                              : s.taskUpdatedMessage,
                         );
                       }
                       if (state is ParentTaskDeleted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(s.taskDeletedMessage)),
-                        );
+                        AppSnackBar.info(context, s.taskDeletedMessage);
                       }
                       if (state is ParentTaskReviewed) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              state.isApproved
-                                  ? s.taskApprovedMessage
-                                  : s.taskRejectedMessage,
-                            ),
-                          ),
-                        );
+                        if (state.isApproved) {
+                          AppSnackBar.success(context, s.taskApprovedMessage);
+                        } else {
+                          AppSnackBar.error(context, s.taskRejectedMessage);
+                        }
                       }
                     },
                     builder: (context, state) {
@@ -497,9 +483,7 @@ class _ReviewSheetState extends State<ReviewSheet> {
             !state.isConflict &&
             !state.isUnauthorized) {
           setState(() => _approving = null);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          AppSnackBar.error(context, state.message);
         }
       },
       child: BlocBuilder<ParentTasksCubit, ParentTasksState>(
@@ -917,9 +901,7 @@ class _TaskSheetState extends State<TaskSheet> {
           if (state.isConflict) {
             Navigator.of(context).pop();
           } else if (!state.isUnauthorized) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            AppSnackBar.error(context, state.message);
           }
         }
       },

@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/widgets/buttons/google_sign_in_button.dart';
@@ -45,19 +46,16 @@ class _LoginView extends StatelessWidget {
                 listener: (context, state) {
                   // ── Authenticated → route by account_type ──────────────
                   if (state.status == AuthSessionStatus.authenticated) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(s.signedInSuccess)));
+                    AppSnackBar.success(context, s.signedInSuccess);
                     unawaited(_routeAuthenticated(context, state.accountType));
                   }
 
                   // 401 in profile fetch signs out and returns to login.
                   if (state.status == AuthSessionStatus.unauthenticated &&
                       state.isUnauthorized) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.errorMessage ?? s.signInError),
-                      ),
+                    AppSnackBar.error(
+                      context,
+                      state.errorMessage ?? s.signInError,
                     );
                   }
                 },

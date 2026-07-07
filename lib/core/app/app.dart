@@ -41,6 +41,19 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: S.delegate.supportedLocales,
             routerConfig: appRouter.config(),
+            builder: (context, child) {
+              // Clamp the device text scale so extreme accessibility font
+              // sizes can't overflow fixed-height layouts across the app.
+              final mediaQuery = MediaQuery.of(context);
+              final clampedScaler = mediaQuery.textScaler.clamp(
+                minScaleFactor: 1.0,
+                maxScaleFactor: 1.3,
+              );
+              return MediaQuery(
+                data: mediaQuery.copyWith(textScaler: clampedScaler),
+                child: child!,
+              );
+            },
           );
         },
       ),

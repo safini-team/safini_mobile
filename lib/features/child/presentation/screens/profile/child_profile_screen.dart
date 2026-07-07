@@ -6,6 +6,7 @@ import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/child/domain/controllers/child_controller.dart';
@@ -109,7 +110,7 @@ class _ProfileHeader extends StatelessWidget {
                     onPressed: profileState.isUpdatingName
                         ? null
                         : () => Navigator.of(dialogContext).pop(),
-                    child: const Text('Cancel'),
+                    child: Text(S.of(context).cancel),
                   ),
                   ElevatedButton(
                     onPressed: profileState.isUpdatingName
@@ -122,15 +123,9 @@ class _ProfileHeader extends StatelessWidget {
                             if (!dialogContext.mounted) return;
                             if (failure == null) {
                               Navigator.of(dialogContext).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Profile updated'),
-                                ),
-                              );
+                              AppSnackBar.success(context, 'Profile updated');
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(failure.message)),
-                              );
+                              AppSnackBar.error(context, failure.message);
                             }
                           },
                     child: profileState.isUpdatingName
@@ -139,7 +134,7 @@ class _ProfileHeader extends StatelessWidget {
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Save'),
+                        : Text(S.of(context).save),
                   ),
                 ],
               );
@@ -258,9 +253,9 @@ class _ProfileHeader extends StatelessWidget {
                       ? null
                       : () => _showEditNameDialog(context, state),
                   icon: const Icon(Icons.edit_rounded, color: Colors.white),
-                  label: const Text(
-                    'Edit Profile',
-                    style: TextStyle(color: Colors.white),
+                  label: Text(
+                    S.of(context).editProfile,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),

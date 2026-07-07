@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
@@ -392,9 +393,7 @@ class _EditChildPageState extends State<EditChildPage> {
     });
 
     if (failure == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Child profile updated successfully.')),
-      );
+      AppSnackBar.success(context, 'Child profile updated successfully.');
       Navigator.of(context).pop(true);
       return;
     }

@@ -11,6 +11,15 @@ import 'package:safini/features/child/presentation/widgets/dialogs/task_detail_d
 import 'package:safini/features/child/presentation/widgets/tiles/quest_tile.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
+/// Localized greeting based on the current time of day.
+String _timeBasedGreeting(S s) {
+  final hour = DateTime.now().hour;
+  if (hour >= 5 && hour < 12) return s.goodMorning;
+  if (hour >= 12 && hour < 17) return s.goodAfternoon;
+  if (hour >= 17 && hour < 21) return s.goodEvening;
+  return s.goodNight;
+}
+
 class ChildHomeScreen extends StatelessWidget {
   const ChildHomeScreen({super.key});
 
@@ -78,7 +87,7 @@ class _HomeHeader extends StatelessWidget {
                         horizontal: AppSpacing.lg,
                       ),
                       child: Text(
-                        'Hi, ${state.childNickname}!',
+                        '${_timeBasedGreeting(S.of(context))}, ${state.childNickname}!',
                         style: context.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
