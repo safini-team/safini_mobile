@@ -6,6 +6,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_state.dart';
+import 'package:safini/features/parent/presentation/widgets/cards/parent_add_child_card.dart';
 import 'package:safini/features/parent/presentation/widgets/cards/parent_progress_card.dart';
 
 String getTimeBasedGreeting(S s) {
@@ -37,8 +38,11 @@ class MonitorGreetingTitle extends StatelessWidget {
         const SizedBox(height: 2),
         BlocBuilder<ParentCubit, ParentState>(
           builder: (context, state) {
+            final name = state.user?.displayName?.trim().isNotEmpty == true
+                ? state.user!.displayName!
+                : state.user?.email?.split('@').first ?? s.parentName;
             return Text(
-              state.user?.displayName ?? s.parentName,
+              name,
               style: context.textTheme.displaySmall?.copyWith(
                 color: context.colorScheme.onPrimary,
                 fontSize: 28,
@@ -81,10 +85,13 @@ class MonitorFlexBackground extends StatelessWidget {
               builder: (context, state) {
                 if (state is ParentMonitorLoaded) {
                   return ParentProgressCard(
-                    name: state.childName,
-                    level: state.level,
-                    coins: state.timeCoins,
+                    name: state.monitorModel.childName,
+                    level: state.monitorModel.level,
+                    coins: state.monitorModel.timeCoins,
                   );
+                }
+                if (state is ParentMonitorNoChild) {
+                  return const ParentAddChildCard();
                 }
                 return const SizedBox.shrink();
               },

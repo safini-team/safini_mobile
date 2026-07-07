@@ -6,6 +6,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.d
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
+import 'package:safini/features/parent/presentation/widgets/layout/parent_no_child_empty_state.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_header.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_stats_row.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_app_limits_section.dart';
@@ -110,18 +111,26 @@ class _ParentMonitorView extends StatelessWidget {
                       );
                     }
 
+                    if (state is ParentMonitorNoChild) {
+                      return const ParentNoChildEmptyState();
+                    }
+
                     if (state is ParentMonitorLoaded) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           MonitorStatsRow(
-                            stepsToday: state.stepsToday,
-                            lessonsToday: state.lessonsToday,
+                            stepsToday: state.monitorModel.stepsToday,
+                            lessonsToday: state.monitorModel.lessonsToday,
                           ),
                           const SizedBox(height: 24),
-                          ParentScreenTimeChart(weeklyUsage: state.weeklyUsage),
+                          ParentScreenTimeChart(
+                            weeklyUsage: state.monitorModel.weeklyUsage,
+                          ),
                           const SizedBox(height: 40),
-                          MonitorAppLimitsSection(appLimits: state.appLimits),
+                          MonitorAppLimitsSection(
+                            appLimits: state.monitorModel.appLimits,
+                          ),
                           const SizedBox(height: 40),
                           const MonitorTasksSection(),
                           const SizedBox(height: 100),

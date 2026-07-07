@@ -1,3 +1,5 @@
+import 'package:safini/features/parent/domain/models/parent_monitor_model.dart';
+
 abstract class ParentMonitorState {
   const ParentMonitorState();
 }
@@ -11,27 +13,13 @@ class ParentMonitorLoading extends ParentMonitorState {
 }
 
 class ParentMonitorLoaded extends ParentMonitorState {
-  final String childName;
-  final int level;
-  final int timeCoins;
-  final int stepsToday;
-  final String stepsChange;
-  final String lessonsToday;
-  final String lessonsChange;
-  final List<double> weeklyUsage;
-  final List<Map<String, dynamic>> appLimits;
+  final ParentMonitorModel monitorModel;
 
-  const ParentMonitorLoaded({
-    required this.childName,
-    required this.level,
-    required this.timeCoins,
-    required this.stepsToday,
-    required this.stepsChange,
-    required this.lessonsToday,
-    required this.lessonsChange,
-    required this.weeklyUsage,
-    required this.appLimits,
-  });
+  const ParentMonitorLoaded(this.monitorModel);
+}
+
+class ParentMonitorNoChild extends ParentMonitorState {
+  const ParentMonitorNoChild();
 }
 
 class ParentMonitorError extends ParentMonitorState {

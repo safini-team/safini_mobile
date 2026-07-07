@@ -52,7 +52,7 @@ void registerParentDependencies(GetIt sl) {
     () => ParentMonitorCubit(sl<ParentController>(), sl<ParentFamilyCubit>()),
   );
   sl.registerFactory<ParentAppsCubit>(
-    () => ParentAppsCubit(sl<ParentController>()),
+    () => ParentAppsCubit(sl<ParentController>(), sl<SharedPreferences>()),
   );
   sl.registerLazySingleton<IParentTaskRepository>(
     () => ParentTaskRepositoryImpl(),
