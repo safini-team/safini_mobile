@@ -75,6 +75,11 @@ class ParentMonitorLoaded extends ParentMonitorState {
   }
 }
 
+/// The family has no child profile yet — the screen shows an empty state.
+class ParentMonitorNoChild extends ParentMonitorState {
+  const ParentMonitorNoChild();
+}
+
 class ParentMonitorError extends ParentMonitorState {
   final String message;
   const ParentMonitorError(this.message);

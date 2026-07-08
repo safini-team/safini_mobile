@@ -19,8 +19,13 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   ParentMonitorCubit(this._familyCubit, this._appUsageRepo)
     : super(const ParentMonitorInitial()) {
     _familySub = _familyCubit.stream.listen((familyState) {
-      if (familyState.family != null && state is ParentMonitorLoaded) {
-        _children = _childrenFromFamily(familyState.family);
+      if (familyState.family == null) return;
+      _children = _childrenFromFamily(familyState.family);
+      if (_children.isEmpty) {
+        emit(const ParentMonitorNoChild());
+        return;
+      }
+      if (state is ParentMonitorLoaded) {
         if (_selectedIndex >= _children.length) _selectedIndex = 0;
         emit(
           (state as ParentMonitorLoaded).copyWith(
@@ -53,13 +58,17 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     _children = _childrenFromFamily(_familyCubit.state.family);
     _selectedIndex = 0;
 
-    _appUsage = const [];
-    String? faceEmoji;
-    if (_children.isNotEmpty) {
-      final result = await _appUsageRepo.fetchAppUsage(_children.first.id);
-      result.fold((_) => _appUsage = const [], (apps) => _appUsage = apps);
-      faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(_children.first.id);
+    if (_children.isEmpty) {
+      emit(const ParentMonitorNoChild());
+      return;
     }
+
+    _appUsage = const [];
+    final result = await _appUsageRepo.fetchAppUsage(_children.first.id);
+    result.fold((_) => _appUsage = const [], (apps) => _appUsage = apps);
+    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
+      _children.first.id,
+    );
 
     emit(
       ParentMonitorLoaded(
