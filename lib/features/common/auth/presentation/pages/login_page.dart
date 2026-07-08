@@ -58,6 +58,20 @@ class _LoginView extends StatelessWidget {
                       state.errorMessage ?? s.signInError,
                     );
                   }
+
+                  if (state.status == AuthSessionStatus.signInError) {
+                    AppSnackBar.error(
+                      context,
+                      state.errorMessage ?? s.signInError,
+                    );
+                  }
+
+                  if (state.status == AuthSessionStatus.profileError) {
+                    AppSnackBar.error(
+                      context,
+                      state.errorMessage ?? s.networkError,
+                    );
+                  }
                 },
                 builder: (context, state) {
                   final loading =
@@ -96,14 +110,17 @@ class _LoginView extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Image.asset(
-                                'assets/logo/app_logo.png',
-                                width: 100,
-                                height: 100,
+                              Center(
+                                child: Image.asset(
+                                  'assets/logo/app_logo.png',
+                                  width: 100,
+                                  height: 100,
+                                ),
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 s.loginTitle,
+                                textAlign: TextAlign.center,
                                 style: context.textTheme.headlineMedium
                                     ?.copyWith(
                                       color: Colors.white,
@@ -113,6 +130,7 @@ class _LoginView extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 s.loginSubtitle,
+                                textAlign: TextAlign.center,
                                 style: context.textTheme.bodyLarge?.copyWith(
                                   color: Colors.white.withValues(alpha: 0.9),
                                 ),
@@ -121,6 +139,7 @@ class _LoginView extends StatelessWidget {
                               if (!SupabaseConfig.isSupabaseConfigured)
                                 Text(
                                   s.supabaseConfigMissing,
+                                  textAlign: TextAlign.center,
                                   style: context.textTheme.bodyMedium?.copyWith(
                                     color: Colors.white,
                                   ),
@@ -128,6 +147,7 @@ class _LoginView extends StatelessWidget {
                               else if (!SupabaseConfig.isGoogleConfigured)
                                 Text(
                                   s.googleClientIdMissing,
+                                  textAlign: TextAlign.center,
                                   style: context.textTheme.bodyMedium?.copyWith(
                                     color: Colors.white,
                                   ),
@@ -141,37 +161,11 @@ class _LoginView extends StatelessWidget {
                                       .read<AuthSessionCubit>()
                                       .signInWithGoogle(),
                                 ),
-                                // ── Sign-in error ──────────────────────
-                                if (state.status ==
-                                    AuthSessionStatus.signInError) ...[
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    state.errorMessage ?? s.signInError,
-                                    style: context.textTheme.bodySmall
-                                        ?.copyWith(color: Colors.red.shade100),
-                                  ),
-                                ],
-                                if (state.status ==
-                                        AuthSessionStatus.unauthenticated &&
-                                    state.isUnauthorized) ...[
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    state.errorMessage ?? s.signInError,
-                                    style: context.textTheme.bodySmall
-                                        ?.copyWith(color: Colors.red.shade100),
-                                  ),
-                                ],
                                 // ── Profile-fetch error (retryable) ───
                                 if (state.status ==
                                         AuthSessionStatus.profileError &&
                                     state.canRetry &&
                                     !state.isUnauthorized) ...[
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    state.errorMessage ?? s.networkError,
-                                    style: context.textTheme.bodySmall
-                                        ?.copyWith(color: Colors.red.shade100),
-                                  ),
                                   const SizedBox(height: 12),
                                   OutlinedButton(
                                     onPressed: () => context
