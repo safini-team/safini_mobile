@@ -12,8 +12,10 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
+import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/task_model.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/features/parent/presentation/widgets/selectable_pill.dart';
@@ -764,6 +766,10 @@ class _TaskSheetState extends State<TaskSheet> {
   String? _selectedCategory;
   int? _selectedCoins;
 
+  // Children this task can target. `_targetChildId == null` means "all children".
+  List<ChildSummaryModel> _children = const [];
+  String? _targetChildId;
+
   static const _emojis = [
     '🧹',
     '📚',
@@ -784,6 +790,17 @@ class _TaskSheetState extends State<TaskSheet> {
   @override
   void initState() {
     super.initState();
+    _children = context
+            .read<ParentFamilyCubit>()
+            .state
+            .family
+            ?.children
+            .where((c) => c.id.isNotEmpty)
+            .toList() ??
+        const [];
+    // Default target: the child the sheet was opened for.
+    _targetChildId = widget.childId;
+
     final task = widget.task;
     if (task != null) {
       _titleController.text = task.title;
@@ -822,7 +839,14 @@ class _TaskSheetState extends State<TaskSheet> {
         xpReward: coins,
         metadata: _selectedEmoji != null ? {'emoji': _selectedEmoji} : null,
       );
-      await cubit.createTask(widget.childId, request);
+      // `_targetChildId == null` → all children; otherwise the picked one.
+      final targetIds = _targetChildId == null
+          ? _children.map((c) => c.id).toList()
+          : <String>[_targetChildId!];
+      await cubit.createTaskForChildren(
+        targetIds.isEmpty ? [widget.childId] : targetIds,
+        request,
+      );
       return;
     }
 
@@ -1047,6 +1071,41 @@ class _TaskSheetState extends State<TaskSheet> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
+
+                      // ── Target child (create mode, 2+ children) ───────────
+                      if (!widget.isEdit && _children.length > 1) ...[
+                        const _SectionLabel('Кому задание'),
+                        const SizedBox(height: AppSpacing.sm),
+                        Wrap(
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.sm,
+                          children: [
+                            SelectablePill(
+                              selected: _targetChildId == null,
+                              onTap: () =>
+                                  setState(() => _targetChildId = null),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                                vertical: AppSpacing.sm,
+                              ),
+                              child: const Text('Все дети'),
+                            ),
+                            ..._children.map(
+                              (c) => SelectablePill(
+                                selected: _targetChildId == c.id,
+                                onTap: () =>
+                                    setState(() => _targetChildId = c.id),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.sm,
+                                ),
+                                child: Text(c.nickname),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.xl),
+                      ],
 
                       // ── Emoji Picker ──────────────────────────────────────
                       _SectionLabel(s.createTaskPickEmojiLabel),

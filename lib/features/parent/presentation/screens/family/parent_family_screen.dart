@@ -89,7 +89,9 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                             },
                           ),
                         ),
-                        IconButton(
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: IconButton(
                           icon: const Icon(Icons.logout, color: Colors.white),
                           onPressed: () async {
                             final confirm = await showDialog<bool>(
@@ -131,6 +133,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                               }
                             }
                           },
+                          ),
                         ),
                       ],
                       flexibleSpace: Container(

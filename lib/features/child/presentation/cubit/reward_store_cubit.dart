@@ -70,6 +70,13 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
             iconBackground: const Color(0xFFDEEEFB),
             cost:
                 _intValue(map, ['redeem_coin_cost', 'coin_cost', 'cost']) ?? 0,
+            // Absent/true → enabled; only an explicit false disables redemption.
+            isEnabled: map['is_enabled'] != false,
+            remainingMinutes: _intValue(map, [
+                  'remaining_minutes',
+                  'bonus_minutes_remaining',
+                ]) ??
+                0,
           );
         })
         .where((item) => item.id.isNotEmpty)
@@ -143,9 +150,25 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
         data: {'app_slug': id},
       );
       _applyBalanceAfter(response.data, fallbackCost: item.cost);
-    } catch (_) {
-      emit(state.copyWith(missingCoins: item.cost - _coins.state));
+      final remaining = _grantRemainingMinutes(response.data);
+      final updated = state.appTimeItems
+          .map(
+            (i) => i.id == id
+                ? i.copyWith(remainingMinutes: remaining ?? i.minutes)
+                : i,
+          )
+          .toList();
+      emit(state.copyWith(appTimeItems: updated));
+    } catch (e) {
+      emit(state.copyWith(purchaseError: _purchaseErrorMessage(e)));
     }
+  }
+
+  /// Reads the redeemed minutes still available from a redeem response's grant.
+  int? _grantRemainingMinutes(dynamic raw) {
+    final data = _asMap(raw);
+    final grant = _asMap(data['grant']);
+    return _intValue(grant, ['remaining_minutes', 'granted_minutes']);
   }
 
   Future<void> purchaseAvatarItem(String id) async {
@@ -172,8 +195,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           .map((i) => i.id == id ? i.copyWith(clearCost: true) : i)
           .toList();
       emit(state.copyWith(avatarItems: updated));
-    } catch (_) {
-      emit(state.copyWith(missingCoins: cost - _coins.state));
+    } catch (e) {
+      emit(state.copyWith(purchaseError: _purchaseErrorMessage(e)));
     }
   }
 
@@ -189,6 +212,24 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
 
   void clearInsufficientCoinsError() =>
       emit(state.copyWith(clearMissingCoins: true));
+
+  void clearPurchaseError() => emit(state.copyWith(clearPurchaseError: true));
+
+  /// Extracts a human-readable message from a failed redeem request.
+  String _purchaseErrorMessage(Object error) {
+    if (error is DioException) {
+      final data = error.response?.data;
+      final map = _asMap(data);
+      final detail = map['detail'] ?? map['message'] ?? map['error'];
+      if (detail is String && detail.trim().isNotEmpty) {
+        return detail.trim();
+      }
+      if (error.response?.statusCode == 401) {
+        return 'Your session expired. Please sign in again.';
+      }
+    }
+    return 'Purchase failed. Please try again.';
+  }
 
   Map<String, dynamic> _asMap(dynamic raw) {
     if (raw is Map<String, dynamic>) {

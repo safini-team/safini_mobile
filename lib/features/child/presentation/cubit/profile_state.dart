@@ -75,43 +75,38 @@ class AvatarState {
   final AvatarCategory selectedCategory;
   final int level;
 
+  /// The child's chosen face emoji (free pick, persisted to the backend).
+  final String selectedFaceEmoji;
+
   const AvatarState({
     required this.avatarItems,
-    this.selectedCategory = AvatarCategory.outfits,
+    this.selectedCategory = AvatarCategory.face,
     this.level = 0,
+    this.selectedFaceEmoji = '😊',
   });
 
   const AvatarState.initial()
     : avatarItems = const [],
-      selectedCategory = AvatarCategory.outfits,
-      level = 0;
+      selectedCategory = AvatarCategory.face,
+      level = 0,
+      selectedFaceEmoji = '😊';
 
   List<AvatarGridItem> get currentItems =>
       avatarItems.where((i) => i.category == selectedCategory).toList();
 
-  String get equippedFaceEmoji =>
-      avatarItems
-          .where((i) => i.category == AvatarCategory.face && i.isEquipped)
-          .firstOrNull
-          ?.emoji ??
-      '😊';
-
-  String get equippedBadgeEmoji =>
-      avatarItems
-          .where((i) => i.category == AvatarCategory.outfits && i.isEquipped)
-          .firstOrNull
-          ?.emoji ??
-      '🚀';
+  String get equippedFaceEmoji => selectedFaceEmoji;
 
   AvatarState copyWith({
     List<AvatarGridItem>? avatarItems,
     AvatarCategory? selectedCategory,
     int? level,
+    String? selectedFaceEmoji,
   }) {
     return AvatarState(
       avatarItems: avatarItems ?? this.avatarItems,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       level: level ?? this.level,
+      selectedFaceEmoji: selectedFaceEmoji ?? this.selectedFaceEmoji,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
@@ -37,6 +38,7 @@ class ChildProfileScreen extends StatelessWidget {
                   getIt<ChildController>(),
                   getIt<ProfileRepository>(),
                   getIt<CoinsCubit>(),
+                  getIt<Dio>(),
                 )..loadProfile(
                   fallbackChild: context.read<ChildClaimCubit>().state.child,
                 ),
@@ -479,7 +481,16 @@ class _ProfileBody extends StatelessWidget {
                   iconBg: context.colorScheme.primary.withValues(alpha: 0.1),
                   title: s.customizeAvatar,
                   subtitle: s.changeOutfit,
-                  onTap: () => context.router.push(const NamedRoute('avatar')),
+                  onTap: () async {
+                    await context.router.push(const NamedRoute('avatar'));
+                    // Refresh so the newly chosen face shows on the profile.
+                    if (context.mounted) {
+                      context.read<ProfileCubit>().loadProfile(
+                        fallbackChild:
+                            context.read<ChildClaimCubit>().state.child,
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 // Achievements

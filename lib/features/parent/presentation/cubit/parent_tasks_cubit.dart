@@ -101,6 +101,36 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     );
   }
 
+  /// Creates the same task for several children (e.g. "all children").
+  /// Emits one Saving/Saved cycle and reloads once at the end.
+  Future<void> createTaskForChildren(
+    List<String> childIds,
+    TaskCreateRequestDto request,
+  ) async {
+    final current = _loaded;
+    if (current == null || childIds.isEmpty) return;
+
+    if (childIds.length == 1) {
+      return createTask(childIds.first, request);
+    }
+
+    emit(ParentTaskSaving(current));
+
+    Failure? firstFailure;
+    for (final childId in childIds) {
+      final result = await _taskController.createTask(childId, request);
+      result.fold((failure) => firstFailure ??= failure, (_) {});
+    }
+
+    if (firstFailure != null) {
+      emit(_actionError(current, firstFailure!));
+      return;
+    }
+
+    emit(ParentTaskSaved(current, wasCreate: true));
+    await loadTasks();
+  }
+
   Future<void> updateTask(String taskId, TaskUpdateRequestDto request) async {
     final current = _loaded;
     if (current == null) return;
