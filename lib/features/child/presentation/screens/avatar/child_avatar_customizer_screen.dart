@@ -8,18 +8,11 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
+import 'package:safini/features/child/presentation/widgets/cards/avatar_preview_card.dart';
+import 'package:safini/features/child/presentation/widgets/cards/face_sticker_card.dart';
+import 'package:safini/features/child/presentation/widgets/utils/avatar_face_stickers.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-
-/// Face stickers the child can pick from (free — no coins required).
-const List<String> _faceStickers = [
-  '😀', '😁', '😂', '🤣', '😊', '😇', '🙂', '🙃',
-  '😉', '😌', '😍', '🥰', '😘', '😋', '😛', '😜',
-  '🤪', '🤨', '🧐', '🤓', '😎', '🥳', '🤩', '😏',
-  '😴', '🤤', '😪', '😷', '🤒', '🤕', '🤠', '😈',
-  '👻', '🤖', '👽', '🎃', '😺', '😸', '🙀', '😻',
-  '🦸', '🦹', '🧚', '🧙', '🧛', '🦄', '🐱', '🐶',
-];
 
 class ChildAvatarCustomizerScreen extends StatelessWidget {
   const ChildAvatarCustomizerScreen({super.key});
@@ -126,7 +119,7 @@ class _AvatarHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 // Avatar preview card
-                _AvatarPreview(
+                AvatarPreviewCard(
                   faceEmoji: state.selectedFaceEmoji,
                   level: state.level,
                 ),
@@ -136,58 +129,6 @@ class _AvatarHeader extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _AvatarPreview extends StatelessWidget {
-  final String faceEmoji;
-  final int level;
-
-  const _AvatarPreview({
-    required this.faceEmoji,
-    required this.level,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Hero(
-          tag: 'child-avatar-hero',
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-            ),
-            child: Center(
-              child: Text(
-                faceEmoji,
-                style: const TextStyle(fontSize: 60),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5A623),
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-          ),
-          child: Text(
-            level > 0 ? 'Level $level' : 'Level',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 13,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -241,10 +182,10 @@ class _AvatarBody extends StatelessWidget {
                     mainAxisSpacing: AppSpacing.sm,
                     childAspectRatio: 1.0,
                   ),
-                  itemCount: _faceStickers.length,
+                  itemCount: avatarFaceStickers.length,
                   itemBuilder: (context, index) {
-                    final emoji = _faceStickers[index];
-                    return _FaceStickerCard(
+                    final emoji = avatarFaceStickers[index];
+                    return FaceStickerCard(
                       emoji: emoji,
                       selected: state.selectedFaceEmoji == emoji,
                       onTap: () =>
@@ -294,41 +235,3 @@ class _AvatarBody extends StatelessWidget {
   }
 }
 
-// ─── Face Sticker Card ────────────────────────────────────────────────────────
-
-class _FaceStickerCard extends StatelessWidget {
-  final String emoji;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _FaceStickerCard({
-    required this.emoji,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        decoration: BoxDecoration(
-          color: selected
-              ? context.colorScheme.primary.withValues(alpha: 0.15)
-              : const Color(0xFFF6F3FB),
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(
-            color: selected
-                ? context.colorScheme.primary
-                : Colors.transparent,
-            width: 2,
-          ),
-        ),
-        child: Center(
-          child: Text(emoji, style: const TextStyle(fontSize: 28)),
-        ),
-      ),
-    );
-  }
-}
