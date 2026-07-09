@@ -89,49 +89,6 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                             },
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.logout, color: Colors.white),
-                          onPressed: () async {
-                            final confirm = await showDialog<bool>(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                title: const Text('Log Out'),
-                                content: const Text(
-                                  'Are you sure you want to log out?',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(ctx, false),
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(ctx, true),
-                                    child: const Text(
-                                      'Log Out',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                            if (confirm == true) {
-                              try {
-                                await getIt<
-                                  safini_auth.AuthGoogleSignInService
-                                >().signOut();
-                              } catch (_) {}
-                              await getIt<safini_prefs.SharedPreferences>()
-                                  .remove('access_token');
-                              if (context.mounted) {
-                                context.router.replaceAll([
-                                  const NamedRoute('login'),
-                                ]);
-                              }
-                            }
-                          },
-                        ),
                       ],
                       flexibleSpace: Container(
                         decoration: BoxDecoration(
