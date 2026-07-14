@@ -6,11 +6,11 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
-import 'package:safini/features/child/presentation/cubit/profile_model.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
-import 'package:safini/features/child/presentation/widgets/utils/avatar_category_tabs.dart';
+import 'package:safini/features/child/presentation/widgets/cards/avatar_preview_card.dart';
+import 'package:safini/features/child/presentation/widgets/cards/face_sticker_card.dart';
+import 'package:safini/features/child/presentation/widgets/utils/avatar_face_stickers.dart';
 import 'package:safini/features/child/presentation/widgets/utils/store_coin_badge.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
@@ -119,9 +119,8 @@ class _AvatarHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 // Avatar preview card
-                _AvatarPreview(
-                  faceEmoji: state.equippedFaceEmoji,
-                  badgeEmoji: state.equippedBadgeEmoji,
+                AvatarPreviewCard(
+                  faceEmoji: state.selectedFaceEmoji,
                   level: state.level,
                 ),
                 const SizedBox(height: AppSpacing.xl),
@@ -130,88 +129,6 @@ class _AvatarHeader extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _AvatarPreview extends StatelessWidget {
-  final String faceEmoji;
-  final String badgeEmoji;
-  final int level;
-
-  const _AvatarPreview({
-    required this.faceEmoji,
-    required this.badgeEmoji,
-    required this.level,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Hero(
-          tag: 'child-avatar-hero',
-          child: SizedBox(
-            width: 120,
-            height: 120,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(AppRadius.xl),
-                  ),
-                  child: Center(
-                    child: Text(
-                      faceEmoji,
-                      style: const TextStyle(fontSize: 60),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: -6,
-                  right: -6,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5A623),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: Center(
-                      child: Text(
-                        badgeEmoji,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5A623),
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-          ),
-          child: Text(
-            level > 0 ? 'Level $level' : 'Level',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 13,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -234,36 +151,45 @@ class _AvatarBody extends StatelessWidget {
         builder: (context, state) {
           return Column(
             children: [
-              // Category tabs
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                child: AvatarCategoryTabs(
-                  selectedCategory: state.selectedCategory,
-                  onChanged: (cat) =>
-                      context.read<AvatarCubit>().selectCategory(cat),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'FACE',
+                      style: context.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: context.colorScheme.primary,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const Divider(height: 1),
-              // Items grid
+              // Face sticker grid
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
+                    crossAxisCount: 5,
                     crossAxisSpacing: AppSpacing.sm,
                     mainAxisSpacing: AppSpacing.sm,
                     childAspectRatio: 1.0,
                   ),
-                  itemCount: state.currentItems.length,
+                  itemCount: avatarFaceStickers.length,
                   itemBuilder: (context, index) {
-                    final item = state.currentItems[index];
-                    return _AvatarGridCard(
-                      item: item,
-                      canAfford:
-                          item.cost == null ||
-                          context.read<CoinsCubit>().state >= item.cost!,
+                    final emoji = avatarFaceStickers[index];
+                    return FaceStickerCard(
+                      emoji: emoji,
+                      selected: state.selectedFaceEmoji == emoji,
                       onTap: () =>
-                          context.read<AvatarCubit>().equipItem(item.id),
+                          context.read<AvatarCubit>().selectFace(emoji),
                     );
                   },
                 ),
@@ -309,125 +235,3 @@ class _AvatarBody extends StatelessWidget {
   }
 }
 
-// ─── Grid Card ────────────────────────────────────────────────────────────────
-
-class _AvatarGridCard extends StatelessWidget {
-  final AvatarGridItem item;
-  final bool canAfford;
-  final VoidCallback? onTap;
-
-  const _AvatarGridCard({
-    required this.item,
-    required this.canAfford,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isEquipped = item.isEquipped;
-    final bgColor = isEquipped
-        ? context.colorScheme.primary
-        : item.isLocked
-        ? const Color(0xFFF0F0F0)
-        : const Color(0xFFF6F3FB);
-
-    return GestureDetector(
-      onTap: item.isLocked ? null : onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Opacity(
-              opacity: item.isLocked ? 0.35 : 1.0,
-              child: Text(item.emoji, style: const TextStyle(fontSize: 30)),
-            ),
-            const SizedBox(height: 4),
-            _GridItemLabel(item: item, canAfford: canAfford),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _GridItemLabel extends StatelessWidget {
-  final AvatarGridItem item;
-  final bool canAfford;
-
-  const _GridItemLabel({required this.item, required this.canAfford});
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    if (item.isEquipped) {
-      return Text(
-        s.on,
-        style: context.textTheme.labelLarge?.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-          fontSize: 10,
-          letterSpacing: 0.5,
-        ),
-      );
-    }
-    if (item.isFree) {
-      return Text(
-        s.free,
-        style: context.textTheme.labelLarge?.copyWith(
-          color: const Color(0xFF3EBF6A),
-          fontWeight: FontWeight.w700,
-          fontSize: 10,
-        ),
-      );
-    }
-    if (item.isLocked) {
-      return Column(
-        children: [
-          Icon(
-            Icons.lock_rounded,
-            size: 12,
-            color: context.colorScheme.onSurface.withValues(alpha: 0.35),
-          ),
-          if (item.lockLabel != null)
-            Text(
-              item.lockLabel!,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colorScheme.onSurface.withValues(alpha: 0.4),
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-        ],
-      );
-    }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text('🪙', style: TextStyle(fontSize: 10)),
-        const SizedBox(width: 2),
-        Text(
-          '${item.cost}',
-          style: context.textTheme.labelLarge?.copyWith(
-            color: canAfford
-                ? context.colorScheme.primary
-                : context.colorScheme.onSurface.withValues(alpha: 0.4),
-            fontWeight: FontWeight.w700,
-            fontSize: 10,
-          ),
-        ),
-      ],
-    );
-  }
-}

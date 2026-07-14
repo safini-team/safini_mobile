@@ -59,7 +59,7 @@ class MonitorAppLimitsSection extends StatelessWidget {
             isEnabled: app['isEnabled'] ?? true,
             onToggle: (val) =>
                 context.read<ParentMonitorCubit>().toggleAppLimit(
-                      app['name'] as String,
+                      app['slug'] as String,
                       val,
                     ),
           ),

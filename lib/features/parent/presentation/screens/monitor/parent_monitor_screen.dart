@@ -119,18 +119,20 @@ class _ParentMonitorView extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          MonitorStatsRow(
-                            stepsToday: state.monitorModel.stepsToday,
-                            lessonsToday: state.monitorModel.lessonsToday,
-                          ),
-                          const SizedBox(height: 24),
-                          ParentScreenTimeChart(
-                            weeklyUsage: state.monitorModel.weeklyUsage,
-                          ),
-                          const SizedBox(height: 40),
-                          MonitorAppLimitsSection(
-                            appLimits: state.monitorModel.appLimits,
-                          ),
+                          // Steps / lessons / weekly chart are hidden until the
+                          // backend exposes real data for them.
+                          if (state.hasActivityData) ...[
+                            MonitorStatsRow(
+                              stepsToday: state.stepsToday,
+                              lessonsToday: state.lessonsToday,
+                            ),
+                            const SizedBox(height: 24),
+                            ParentScreenTimeChart(
+                              weeklyUsage: state.weeklyUsage,
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                          MonitorAppLimitsSection(appLimits: state.appLimits),
                           const SizedBox(height: 40),
                           const MonitorTasksSection(),
                           const SizedBox(height: 100),

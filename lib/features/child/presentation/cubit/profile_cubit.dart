@@ -20,9 +20,14 @@ class ProfileCubit extends Cubit<ProfileState> {
   final ChildController _childController;
   final ProfileRepository _profileRepository;
   final CoinsCubit _coinsCubit;
+  final Dio _dio;
 
-  ProfileCubit(this._childController, this._profileRepository, this._coinsCubit)
-    : super(const ProfileState.initial());
+  ProfileCubit(
+    this._childController,
+    this._profileRepository,
+    this._coinsCubit,
+    this._dio,
+  ) : super(const ProfileState.initial());
 
   Future<void> loadProfile({claimed_child.ChildModel? fallbackChild}) async {
     debugPrint(
@@ -71,6 +76,9 @@ class ProfileCubit extends Cubit<ProfileState> {
         if (resolvedChildId != null && resolvedChildId.isNotEmpty) {
           debugPrint('[ProfileCubit] resolved child id: $resolvedChildId');
           await _loadByChildId(resolvedChildId);
+          // The parent-only /dashboard is 403 for a child; read the avatar
+          // face (and balance) from the child-accessible /store instead.
+          await _loadAvatarFaceFromStore(resolvedChildId);
         } else {
           // If no childId, try to get the first child from current family
           debugPrint(
@@ -139,7 +147,33 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
+  /// Reads the child's avatar face (and coin balance) from the child-accessible
+  /// `/store` endpoint, since the richer `/dashboard` is parent-only (403).
+  Future<void> _loadAvatarFaceFromStore(String childId) async {
+    try {
+      final response = await _dio.get(ApiConst.childStore(childId));
+      final raw = response.data;
+      final data = raw is Map
+          ? raw.map((k, v) => MapEntry(k.toString(), v))
+          : const <String, dynamic>{};
+
+      if (isClosed) return;
+      final avatarState = data['avatar_state'];
+      final emojis = avatarState is Map ? avatarState['emojis'] : null;
+      final face = emojis is Map ? emojis['face']?.toString().trim() : null;
+      if (face != null && face.isNotEmpty) {
+        emit(state.copyWith(equippedFaceEmoji: face));
+      }
+
+      final balance = data['balance'] ?? data['coins_balance'];
+      if (balance is num) {
+        _coinsCubit.set(balance.toInt());
+      }
+    } catch (_) {}
+  }
+
   void _updateFromChildModel(ChildModel child) {
+    if (isClosed) return;
     debugPrint(
       '[ProfileCubit] apply child model | nickname=${child.nickname} '
       '| level=${child.level} | xp=${child.xp} '
@@ -282,6 +316,7 @@ class AvatarCubit extends Cubit<AvatarState> {
 
   Future<void> loadItems() async {
     final childId = await _resolveChildId();
+    if (isClosed) return;
     if (childId == null) {
       emit(state.copyWith(avatarItems: const []));
       return;
@@ -291,6 +326,7 @@ class AvatarCubit extends Cubit<AvatarState> {
       final response = await _dio.get(ApiConst.childStore(childId));
       final data = _asMap(response.data);
       final level = await _loadLevel(childId);
+      if (isClosed) return;
       final balance = _intValue(data, ['balance', 'coins_balance']);
       if (balance != null) {
         _coins.set(balance);
@@ -300,11 +336,40 @@ class AvatarCubit extends Cubit<AvatarState> {
         state.copyWith(
           avatarItems: _parseAvatarItems(data['avatar_items'], equipped),
           level: level,
+          selectedFaceEmoji: _extractFaceEmoji(data['avatar_state']),
         ),
       );
     } catch (_) {
+      if (isClosed) return;
       emit(state.copyWith(avatarItems: const []));
     }
+  }
+
+  /// Reads the persisted face emoji from `avatar_state.emojis.face`.
+  String _extractFaceEmoji(dynamic raw) {
+    final state = _asMap(raw);
+    final emojis = _asMap(state['emojis']);
+    final face = emojis['face']?.toString().trim();
+    if (face != null && face.isNotEmpty) return face;
+    return this.state.selectedFaceEmoji;
+  }
+
+  /// Selects a face emoji and persists it so the parent can see it.
+  Future<void> selectFace(String emoji) async {
+    emit(state.copyWith(selectedFaceEmoji: emoji));
+    final childId = await _resolveChildId();
+    if (childId == null) return;
+    try {
+      await _dio.patch(
+        ApiConst.childAvatar(childId),
+        data: {
+          'avatar_state': {
+            'equipped': {'face': emoji},
+            'emojis': {'face': emoji},
+          },
+        },
+      );
+    } catch (_) {}
   }
 
   Future<int> _loadLevel(String childId) async {

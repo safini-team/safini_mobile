@@ -47,6 +47,7 @@ void registerChildDependencies(GetIt sl) {
       sl<ChildController>(),
       sl<ProfileRepository>(),
       sl<CoinsCubit>(),
+      sl<Dio>(),
     ),
   );
   sl.registerFactory<AvatarCubit>(
