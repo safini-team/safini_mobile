@@ -4,6 +4,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_state.dart';
 import 'package:safini/features/child/presentation/widgets/cards/reward_store_card.dart';
@@ -27,7 +28,15 @@ class ChildHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<QuestCubit>(),
-      child: const _ChildHomeView(),
+      // Reload when the Home tab becomes active so submissions made on the
+      // Tasks tab (a separate cubit) are reflected here.
+      child: BlocListener<ChildHomeCubit, ChildHomeState>(
+        listenWhen: (prev, curr) =>
+            prev.selectedIndex != curr.selectedIndex &&
+            curr.selectedIndex == 0,
+        listener: (ctx, _) => ctx.read<QuestCubit>().loadQuests(),
+        child: const _ChildHomeView(),
+      ),
     );
   }
 }

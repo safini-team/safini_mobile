@@ -6,7 +6,6 @@ import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_state.dart';
-import 'package:safini/features/parent/presentation/widgets/cards/parent_add_child_card.dart';
 import 'package:safini/features/parent/presentation/widgets/cards/parent_progress_card.dart';
 
 String getTimeBasedGreeting(S s) {
@@ -38,11 +37,8 @@ class MonitorGreetingTitle extends StatelessWidget {
         const SizedBox(height: 2),
         BlocBuilder<ParentCubit, ParentState>(
           builder: (context, state) {
-            final name = state.user?.displayName?.trim().isNotEmpty == true
-                ? state.user!.displayName!
-                : state.user?.email?.split('@').first ?? s.parentName;
             return Text(
-              name,
+              state.user?.displayName ?? s.parentName,
               style: context.textTheme.displaySmall?.copyWith(
                 color: context.colorScheme.onPrimary,
                 fontSize: 28,
@@ -57,12 +53,47 @@ class MonitorGreetingTitle extends StatelessWidget {
   }
 }
 
-class MonitorFlexBackground extends StatelessWidget {
+class MonitorFlexBackground extends StatefulWidget {
   const MonitorFlexBackground({super.key});
 
   @override
+  State<MonitorFlexBackground> createState() => _MonitorFlexBackgroundState();
+}
+
+class _MonitorFlexBackgroundState extends State<MonitorFlexBackground> {
+  // viewportFraction < 1 lets the next child's card peek, hinting "swipe".
+  final PageController _controller = PageController(viewportFraction: 0.94);
+  int _page = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
+    final media = MediaQuery.of(context);
+    final topPadding = media.padding.top;
+    // Grow the card viewport with the system font scale so a large font can't
+    // overflow the fixed-height PageView.
+    final textScale = media.textScaler.scale(1.0).clamp(1.0, 1.3);
+    final cardHeight = 190.0 * textScale + 12;
+
+    // Collapse progress of the header: 1.0 = fully expanded, 0.0 = collapsed.
+    final settings =
+        context.dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
+    var t = 1.0;
+    if (settings != null && settings.maxExtent > settings.minExtent) {
+      t = ((settings.currentExtent - settings.minExtent) /
+              (settings.maxExtent - settings.minExtent))
+          .clamp(0.0, 1.0)
+          .toDouble();
+    }
+    // Fade the card out during the first half of the collapse so it never
+    // reaches (and overlaps) the pinned greeting above it.
+    final cardOpacity = ((t - 0.5) / 0.5).clamp(0.0, 1.0).toDouble();
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -79,26 +110,90 @@ class MonitorFlexBackground extends StatelessWidget {
         children: [
           // Reserve space for the toolbar area
           SizedBox(height: topPadding + 80),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
-            child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
-              builder: (context, state) {
-                if (state is ParentMonitorLoaded) {
-                  return ParentProgressCard(
-                    name: state.monitorModel.childName,
-                    level: state.monitorModel.level,
-                    coins: state.monitorModel.timeCoins,
+          Opacity(
+            opacity: cardOpacity,
+            child: IgnorePointer(
+              ignoring: cardOpacity < 0.05,
+              child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
+                builder: (context, state) {
+                  if (state is! ParentMonitorLoaded ||
+                      state.children.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  final children = state.children;
+                  // Keep local page in sync if the list shrinks.
+                  if (_page >= children.length) _page = 0;
+
+                  return Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: cardHeight,
+                        child: PageView.builder(
+                          controller: _controller,
+                          itemCount: children.length,
+                          onPageChanged: (i) {
+                            setState(() => _page = i);
+                            context.read<ParentMonitorCubit>().selectChild(i);
+                          },
+                          itemBuilder: (context, i) {
+                            final child = children[i];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: ParentProgressCard(
+                                name: child.nickname,
+                                level: child.level,
+                                coins: child.coinsBalance,
+                                // Face is loaded for the selected child only.
+                                faceEmoji: i == state.selectedIndex
+                                    ? (state.faceEmoji ?? '👦')
+                                    : '👦',
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (children.length > 1) ...[
+                        const SizedBox(height: 10),
+                        _PageDots(count: children.length, active: _page),
+                      ],
+                      const SizedBox(height: 12),
+                    ],
                   );
-                }
-                if (state is ParentMonitorNoChild) {
-                  return const ParentAddChildCard();
-                }
-                return const SizedBox.shrink();
-              },
+                },
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PageDots extends StatelessWidget {
+  final int count;
+  final int active;
+
+  const _PageDots({required this.count, required this.active});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(count, (i) {
+        final selected = i == active;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          width: selected ? 20 : 7,
+          height: 7,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: selected ? 0.95 : 0.4),
+            borderRadius: BorderRadius.circular(999),
+          ),
+        );
+      }),
     );
   }
 }

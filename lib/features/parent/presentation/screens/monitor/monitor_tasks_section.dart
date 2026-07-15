@@ -5,7 +5,7 @@ import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
-import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_screen.dart';
+import 'package:safini/features/parent/presentation/widgets/tasks/task_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/tiles/parent_task_tile.dart';
 
 class MonitorTasksSection extends StatelessWidget {
