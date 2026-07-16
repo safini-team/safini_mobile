@@ -27,15 +27,17 @@ class ProfileState {
     required this.isUpdatingName,
   });
 
+  /// Empty starting state — every number is filled from the backend
+  /// (`GET /children/{id}/home`). Nothing here is placeholder data.
   const ProfileState.initial()
     : name = '',
       editingName = '',
       isEditing = false,
-      questsDone = 6,
-      dayStreak = 5,
-      level = 5,
-      levelLabel = 'Level 5 Hero',
-      xpProgress = 0.45,
+      questsDone = 0,
+      dayStreak = 0,
+      level = 0,
+      levelLabel = '',
+      xpProgress = 0,
       equippedFaceEmoji = '😊',
       equippedBadgeEmoji = '🚀',
       isUpdatingName = false;

@@ -80,6 +80,7 @@ class TaskItemTile extends StatelessWidget {
               icon: task.icon,
               iconColor: task.iconColor,
               iconBackground: task.iconBackground,
+              emoji: task.emoji,
               isCompleted: task.isCompleted,
             ),
             const SizedBox(width: AppSpacing.md),
@@ -145,6 +146,7 @@ class _TaskIcon extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final Color iconBackground;
+  final String? emoji;
   final bool isCompleted;
 
   const _TaskIcon({
@@ -152,6 +154,7 @@ class _TaskIcon extends StatelessWidget {
     required this.iconColor,
     required this.iconBackground,
     required this.isCompleted,
+    this.emoji,
   });
 
   @override
@@ -161,11 +164,14 @@ class _TaskIcon extends StatelessWidget {
       child: Container(
         width: 46,
         height: 46,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: iconBackground,
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
-        child: Icon(icon, color: iconColor, size: 24),
+        child: emoji != null && emoji!.trim().isNotEmpty
+            ? Text(emoji!.trim(), style: const TextStyle(fontSize: 24))
+            : Icon(icon, color: iconColor, size: 24),
       ),
     );
   }

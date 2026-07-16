@@ -111,8 +111,11 @@ class _TaskSheetState extends State<TaskSheet> {
   }
 
   Future<void> _submit() async {
-    final title = _titleController.text.trim();
-    if (title.isEmpty || _selectedCoins == null) return;
+    // The single text field is the task description; there is no separate
+    // title. We send it as both so the backend (title is required) is happy
+    // and the child sees the description when opening the task.
+    final description = _titleController.text.trim();
+    if (description.isEmpty || _selectedCoins == null) return;
     final coins = _selectedCoins!.clamp(0, 100000);
     final cubit = context.read<ParentTasksCubit>();
 
@@ -120,7 +123,8 @@ class _TaskSheetState extends State<TaskSheet> {
     if (original == null) {
       // CREATE
       final request = TaskCreateRequestDto(
-        title: title,
+        title: description,
+        description: description,
         category: _selectedCategory ?? 'other',
         taskType: 'custom',
         proofMode: 'text_image',
@@ -147,8 +151,10 @@ class _TaskSheetState extends State<TaskSheet> {
     final emojiChanged =
         _selectedEmoji != null && _selectedEmoji != originalEmoji;
 
+    final textChanged = description != original.title;
     final request = TaskUpdateRequestDto(
-      title: title != original.title ? title : null,
+      title: textChanged ? description : null,
+      description: textChanged ? description : null,
       category: newCategory != original.category ? newCategory : null,
       coinReward: coinsChanged ? coins : null,
       xpReward: coinsChanged ? coins : null,
@@ -259,17 +265,21 @@ class _TaskSheetState extends State<TaskSheet> {
                       // Header
                       Row(
                         children: [
-                          Text(
-                            widget.isEdit
-                                ? s.editTaskSheetTitle
-                                : s.createTaskSheetTitle,
-                            style: context.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
-                              fontSize: 22,
+                          Expanded(
+                            child: Text(
+                              widget.isEdit
+                                  ? s.editTaskSheetTitle
+                                  : s.createTaskSheetTitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.textPrimary,
+                                fontSize: 22,
+                              ),
                             ),
                           ),
-                          const Spacer(),
+                          const SizedBox(width: AppSpacing.sm),
                           if (widget.isEdit) ...[
                             GestureDetector(
                               onTap: isBusy ? null : _confirmAndDelete,
@@ -326,39 +336,6 @@ class _TaskSheetState extends State<TaskSheet> {
                             ),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // ── Task Name ─────────────────────────────────────────
-                      TaskSectionLabel(s.createTaskNameLabel),
-                      const SizedBox(height: AppSpacing.sm),
-                      TextField(
-                        controller: _titleController,
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
-                          hintText: s.createTaskNameHint,
-                          hintStyle: context.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          filled: true,
-                          fillColor: AppColors.background,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(
-                              color: AppColors.primary,
-                              width: 1.5,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(AppSpacing.lg),
-                        ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
 
@@ -431,6 +408,40 @@ class _TaskSheetState extends State<TaskSheet> {
                         spacing: AppSpacing.sm,
                         runSpacing: AppSpacing.sm,
                         children: _buildCategoryChips(s),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // ── Description (the child sees this) ─────────────────
+                      const TaskSectionLabel('Описание задания'),
+                      const SizedBox(height: AppSpacing.sm),
+                      TextField(
+                        controller: _titleController,
+                        maxLines: 3,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: InputDecoration(
+                          hintText: 'Что нужно сделать? Ребёнок это увидит',
+                          hintStyle: context.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.background,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.primary,
+                              width: 1.5,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.all(AppSpacing.lg),
+                        ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
 

@@ -22,7 +22,7 @@ class ParentTasksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     return BlocProvider(
-      create: (context) => getIt<ParentTasksCubit>()..loadTasks(),
+      create: (context) => getIt<ParentTasksCubit>()..loadAllTasks(),
       child: Builder(
         builder: (context) => Scaffold(
           backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
@@ -160,7 +160,7 @@ class ParentTasksScreen extends StatelessWidget {
                           message: state.message,
                           canRetry: state.canRetry && !state.isUnauthorized,
                           onRetry: () =>
-                              context.read<ParentTasksCubit>().loadTasks(),
+                              context.read<ParentTasksCubit>().loadAllTasks(),
                         );
                       }
 
@@ -179,7 +179,7 @@ class ParentTasksScreen extends StatelessWidget {
                       if (loadedState != null) {
                         return RefreshIndicator(
                           onRefresh: () =>
-                              context.read<ParentTasksCubit>().loadTasks(),
+                              context.read<ParentTasksCubit>().loadAllTasks(),
                           child: ListView(
                             physics: const AlwaysScrollableScrollPhysics(),
                             padding: const EdgeInsets.fromLTRB(20, 28, 20, 100),
@@ -260,13 +260,17 @@ class ParentTasksScreen extends StatelessWidget {
     BuildContext context,
     ParentTaskInstanceModel task,
   ) {
+    // In all-children mode this tells the tile which child the task belongs to.
+    final childName =
+        _loadedOf(context.read<ParentTasksCubit>().state)?.childNames[task.id];
     return ParentTaskTile(
       title: task.displayTitle,
       category: task.category,
       rewardCoins: task.rewardCoins,
-      statusLabel: task.status,
       isPending: task.isPendingApproval,
       isCompleted: task.isCompleted,
+      emoji: task.emoji,
+      childName: childName,
       onTap: task.isPendingApproval
           ? () {
               final cubit = context.read<ParentTasksCubit>();

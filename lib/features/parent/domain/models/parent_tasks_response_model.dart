@@ -182,6 +182,12 @@ class ParentTaskInstanceModel {
   final String? dueOn;
   final Map<String, dynamic>? metadata;
 
+  /// The note the child wrote when submitting the task for review.
+  final String? submissionNote;
+
+  /// The note the parent left when approving/rejecting the task.
+  final String? reviewNote;
+
   const ParentTaskInstanceModel({
     required this.id,
     required this.status,
@@ -198,6 +204,8 @@ class ParentTaskInstanceModel {
     this.targetUnit,
     this.dueOn,
     this.metadata,
+    this.submissionNote,
+    this.reviewNote,
   });
 
   factory ParentTaskInstanceModel.fromJson(Map<String, dynamic> json) {
@@ -236,6 +244,16 @@ class ParentTaskInstanceModel {
       metadata: rawMetadata is Map
           ? rawMetadata.map((key, value) => MapEntry(key.toString(), value))
           : null,
+      submissionNote: _nullableStringValue(json, [
+        'submission_note',
+        'submissionNote',
+        'note',
+      ]),
+      reviewNote: _nullableStringValue(json, [
+        'review_note',
+        'reviewNote',
+        'parent_note',
+      ]),
     );
   }
 

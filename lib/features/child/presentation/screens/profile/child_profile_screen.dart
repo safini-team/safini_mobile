@@ -440,7 +440,17 @@ class _ProfileBody extends StatelessWidget {
             ),
           ),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            // Always scrollable + bounce, with room at the bottom so the last
+            // tile clears the nav bar / system inset.
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.xl + MediaQuery.of(context).padding.bottom,
+            ),
             child: Column(
               children: [
                 const SizedBox(height: AppSpacing.sm),
