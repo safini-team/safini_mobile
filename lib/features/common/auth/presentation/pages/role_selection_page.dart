@@ -95,7 +95,7 @@ class RoleSelectionPage extends StatelessWidget {
                                   Color(0xFF27B08A),
                                 ],
                                 onTap: () {
-                                  context.router.replace(
+                                  context.router.push(
                                     const NamedRoute('familyDecision'),
                                   );
                                 },
@@ -112,7 +112,7 @@ class RoleSelectionPage extends StatelessWidget {
                                   Color(0xFF3F63E0),
                                 ],
                                 onTap: () {
-                                  context.router.replace(
+                                  context.router.push(
                                     const NamedRoute('enterInviteCode'),
                                   );
                                 },

@@ -20,9 +20,14 @@ class ProfileCubit extends Cubit<ProfileState> {
   final ChildController _childController;
   final ProfileRepository _profileRepository;
   final CoinsCubit _coinsCubit;
+  final Dio _dio;
 
-  ProfileCubit(this._childController, this._profileRepository, this._coinsCubit)
-    : super(const ProfileState.initial());
+  ProfileCubit(
+    this._childController,
+    this._profileRepository,
+    this._coinsCubit,
+    this._dio,
+  ) : super(const ProfileState.initial());
 
   Future<void> loadProfile({claimed_child.ChildModel? fallbackChild}) async {
     debugPrint(
@@ -70,7 +75,13 @@ class ProfileCubit extends Cubit<ProfileState> {
             : fallbackChild?.id;
         if (resolvedChildId != null && resolvedChildId.isNotEmpty) {
           debugPrint('[ProfileCubit] resolved child id: $resolvedChildId');
-          await _loadByChildId(resolvedChildId);
+          // `/home` is child-accessible and already carries the full child
+          // row. Only fall back to the parent-only `/dashboard` chain if it
+          // fails (e.g. a parent viewing this screen).
+          final loaded = await _loadFromHome(resolvedChildId);
+          if (!loaded) {
+            await _loadByChildId(resolvedChildId);
+          }
         } else {
           // If no childId, try to get the first child from current family
           debugPrint(
@@ -139,7 +150,52 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
+  /// Loads the child's real profile from `GET /children/{id}/home`.
+  ///
+  /// `/home` is the child-accessible endpoint and already returns the full
+  /// child row (level, xp, streak, tasks completed, coins, avatar_state).
+  /// `/dashboard` is parent-only and returns 403 for a child.
+  /// Returns true when the profile was applied.
+  Future<bool> _loadFromHome(String childId) async {
+    try {
+      final response = await _dio.get(ApiConst.childHome(childId));
+      final data = _asMapDynamic(response.data);
+      final child = _asMapDynamic(data['child']);
+      if (child.isEmpty || isClosed) return false;
+
+      final coins = _asInt(child['coins_balance']);
+      _coinsCubit.set(coins);
+
+      final xp = _asInt(child['xp']);
+      final nickname = (child['nickname'] ?? '').toString().trim();
+
+      emit(
+        state.copyWith(
+          name: nickname.isEmpty ? state.name : nickname,
+          questsDone: _asInt(child['tasks_completed_count']),
+          dayStreak: _asInt(child['current_streak_days']),
+          level: _asInt(child['level']),
+          xpProgress: (xp % 100) / 100.0,
+          equippedFaceEmoji:
+              _avatarEmoji(_asMapDynamic(child['avatar_state']), 'face') ?? '😊',
+        ),
+      );
+      return true;
+    } catch (e) {
+      debugPrint('[ProfileCubit] /home load failed: $e');
+      return false;
+    }
+  }
+
+  Map<String, dynamic> _asMapDynamic(dynamic raw) {
+    if (raw is Map) return raw.map((k, v) => MapEntry(k.toString(), v));
+    return const {};
+  }
+
+  int _asInt(dynamic raw) => raw is num ? raw.toInt() : 0;
+
   void _updateFromChildModel(ChildModel child) {
+    if (isClosed) return;
     debugPrint(
       '[ProfileCubit] apply child model | nickname=${child.nickname} '
       '| level=${child.level} | xp=${child.xp} '
@@ -153,7 +209,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         questsDone: child.tasksCompletedCount,
         dayStreak: child.currentStreakDays,
         level: child.level,
-        xpProgress: (child.xp % 1000) / 1000.0,
+        xpProgress: (child.xp % 100) / 100.0,
         equippedFaceEmoji: _avatarEmoji(child.avatarState, 'face') ?? '😊',
         equippedBadgeEmoji:
             _avatarEmoji(child.avatarState, 'outfit') ??
@@ -175,7 +231,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         questsDone: child.tasksCompletedCount,
         dayStreak: child.currentStreakDays,
         level: child.level,
-        xpProgress: (child.xp % 1000) / 1000.0,
+        xpProgress: (child.xp % 100) / 100.0,
         equippedFaceEmoji:
             _avatarEmoji(child.avatarState.toJson(), 'face') ?? '😊',
         equippedBadgeEmoji:
@@ -275,6 +331,11 @@ class AvatarCubit extends Cubit<AvatarState> {
   final common_profile.ProfileController _profileController;
   String? _childId;
 
+  /// Owned items the child currently has equipped, keyed by slot. Preserved so
+  /// saving a face never wipes them (the backend validates this map against the
+  /// child's owned inventory).
+  Map<String, String> _equipped = const {};
+
   AvatarCubit(this._coins, this._dio, this._profileController)
     : super(const AvatarState.initial()) {
     loadItems();
@@ -282,6 +343,7 @@ class AvatarCubit extends Cubit<AvatarState> {
 
   Future<void> loadItems() async {
     final childId = await _resolveChildId();
+    if (isClosed) return;
     if (childId == null) {
       emit(state.copyWith(avatarItems: const []));
       return;
@@ -291,25 +353,67 @@ class AvatarCubit extends Cubit<AvatarState> {
       final response = await _dio.get(ApiConst.childStore(childId));
       final data = _asMap(response.data);
       final level = await _loadLevel(childId);
+      if (isClosed) return;
       final balance = _intValue(data, ['balance', 'coins_balance']);
       if (balance != null) {
         _coins.set(balance);
       }
       final equipped = _extractEquipped(data['avatar_state']);
+      // Keep the owned/equipped items so saving a face never wipes them — the
+      // backend validates `equipped` against the child's owned inventory.
+      _equipped = equipped;
       emit(
         state.copyWith(
           avatarItems: _parseAvatarItems(data['avatar_items'], equipped),
           level: level,
+          selectedFaceEmoji: _extractFaceEmoji(data['avatar_state']),
         ),
       );
     } catch (_) {
+      if (isClosed) return;
       emit(state.copyWith(avatarItems: const []));
     }
   }
 
+  /// Reads the persisted face emoji from `avatar_state.emojis.face`.
+  String _extractFaceEmoji(dynamic raw) {
+    final state = _asMap(raw);
+    final emojis = _asMap(state['emojis']);
+    final face = emojis['face']?.toString().trim();
+    if (face != null && face.isNotEmpty) return face;
+    return this.state.selectedFaceEmoji;
+  }
+
+  /// Selects a face emoji and persists it so the parent can see it.
+  ///
+  /// The face goes into the free-form `emojis` map only. `equipped` is sent
+  /// back untouched because the backend validates it against the child's owned
+  /// inventory — putting a raw emoji there is rejected with
+  /// "Avatar state references items the child does not own".
+  Future<void> selectFace(String emoji) async {
+    emit(state.copyWith(selectedFaceEmoji: emoji));
+    final childId = await _resolveChildId();
+    if (childId == null) return;
+    try {
+      await _dio.patch(
+        ApiConst.childAvatar(childId),
+        data: {
+          'avatar_state': {
+            'equipped': _equipped,
+            'emojis': {'face': emoji},
+          },
+        },
+      );
+    } catch (e) {
+      debugPrint('[AvatarCubit] saving face failed: $e');
+    }
+  }
+
+  /// Reads the child's level from `/home` — the child-accessible endpoint.
+  /// `/dashboard` is parent-only and returns 403 for a child.
   Future<int> _loadLevel(String childId) async {
     try {
-      final response = await _dio.get(ApiConst.childDashboard(childId));
+      final response = await _dio.get(ApiConst.childHome(childId));
       final data = _asMap(response.data);
       final child = _asMap(data['child']);
       return _intValue(child, ['level']) ?? 0;

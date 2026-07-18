@@ -6,9 +6,15 @@ class ParentTaskTile extends StatelessWidget {
   final String title;
   final String? category;
   final int? rewardCoins;
-  final String? statusLabel;
   final bool isPending;
   final bool isCompleted;
+
+  /// The emoji the parent picked for this task. Shown instead of the generic
+  /// category icon when present.
+  final String? emoji;
+
+  /// Which child this task belongs to. Shown only in the all-children list.
+  final String? childName;
   final VoidCallback? onApprove;
   final VoidCallback? onDelete;
   final VoidCallback? onTap;
@@ -18,9 +24,10 @@ class ParentTaskTile extends StatelessWidget {
     required this.title,
     this.category,
     this.rewardCoins,
-    this.statusLabel,
     this.isPending = false,
     this.isCompleted = false,
+    this.emoji,
+    this.childName,
     this.onApprove,
     this.onDelete,
     this.onTap,
@@ -37,15 +44,15 @@ class ParentTaskTile extends StatelessWidget {
     if (isPending) {
       statusColor = context.colorScheme.primary;
       statusBg = context.colorScheme.primary.withValues(alpha: 0.1);
-      statusText = statusLabel ?? S.of(context).statusPending;
+      statusText = S.of(context).statusPending;
     } else if (isCompleted) {
       statusColor = context.successColor;
       statusBg = context.successColor.withValues(alpha: 0.1);
-      statusText = statusLabel ?? S.of(context).statusDone;
+      statusText = S.of(context).statusDone;
     } else {
       statusColor = context.colorScheme.tertiary;
       statusBg = context.colorScheme.tertiary.withValues(alpha: 0.1);
-      statusText = statusLabel ?? S.of(context).statusActive;
+      statusText = S.of(context).statusActive;
     }
 
     switch ((category ?? '').toLowerCase()) {
@@ -82,16 +89,20 @@ class ParentTaskTile extends StatelessWidget {
         child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            width: 50,
+            height: 50,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: context.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(
-              categoryIcon,
-              color: context.colorScheme.primary,
-              size: 26,
-            ),
+            child: emoji != null && emoji!.trim().isNotEmpty
+                ? Text(emoji!.trim(), style: const TextStyle(fontSize: 26))
+                : Icon(
+                    categoryIcon,
+                    color: context.colorScheme.primary,
+                    size: 26,
+                  ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -138,16 +149,49 @@ class ParentTaskTile extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      Text(
-                        s.coinsReward(rewardCoins!),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.textTheme.labelSmall?.copyWith(
-                          color: context.colorScheme.primary,
-                          fontWeight: FontWeight.w700,
+                      Flexible(
+                        child: Text(
+                          s.coinsReward(rewardCoins!),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],
+                  ),
+                ],
+                if (childName != null && childName!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.person_rounded,
+                          size: 12,
+                          color: context.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          childName!.trim(),
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ],

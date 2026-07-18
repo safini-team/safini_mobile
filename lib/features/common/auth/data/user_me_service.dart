@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -66,6 +67,10 @@ class UserMeService {
             },
           )
           .timeout(AppConstants.apiTimeout);
+    } on TimeoutException {
+      throw const NetworkException(
+        'Server is not responding. Please check your internet connection and try again.',
+      );
     } on SocketException catch (e) {
       throw NetworkException(e.message);
     } on HttpException catch (e) {
@@ -73,7 +78,6 @@ class UserMeService {
     } on http.ClientException catch (e) {
       throw NetworkException(e.message);
     } catch (e) {
-      // Covers TimeoutException and other transport errors.
       throw NetworkException(e.toString());
     }
 

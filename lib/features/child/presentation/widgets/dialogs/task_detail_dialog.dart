@@ -65,43 +65,52 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
     final quest = widget.quest;
     final canSubmit = widget.onSubmit != null && !quest.isSubmitted && !quest.isCompleted;
 
-    return AlertDialog(
+    return Dialog(
       backgroundColor: context.colorScheme.surface,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xl,
+        vertical: 40,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.xl),
       ),
-      contentPadding: EdgeInsets.zero,
-      content: Column(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Icon header ──────────────────────────────────────────────────
+          // ── Icon header (fixed) ──────────────────────────────────────────
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-            decoration: BoxDecoration(
-              color: quest.iconBackground.withValues(alpha: 0.5),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppRadius.xl),
-                topRight: Radius.circular(AppRadius.xl),
-              ),
-            ),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+            color: quest.iconBackground.withValues(alpha: 0.5),
             child: Center(
               child: Container(
-                width: 80,
-                height: 80,
+                width: 72,
+                height: 72,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: quest.iconBackground,
                   borderRadius: BorderRadius.circular(AppRadius.xl),
                 ),
-                child: Icon(quest.icon, color: quest.iconColor, size: 40),
+                child: quest.emoji != null && quest.emoji!.trim().isNotEmpty
+                    ? Text(quest.emoji!.trim(),
+                        style: const TextStyle(fontSize: 36))
+                    : Icon(quest.icon, color: quest.iconColor, size: 36),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+          // ── Scrollable middle (shrinks when the keyboard opens) ──────────
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.md,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
                 // ── Title + subtitle ──────────────────────────────────────
                 Text(
                   quest.title,
@@ -118,13 +127,55 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                     color: context.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.lg),
                 // ── Reward pills ─────────────────────────────────────────
                 _RewardRow(coins: quest.coins, xp: quest.xp),
-                const SizedBox(height: AppSpacing.xl),
+
+                // ── Parent's review note ─────────────────────────────────
+                if (quest.reviewNote?.trim().isNotEmpty == true) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.primary.withValues(
+                        alpha: 0.06,
+                      ),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.chat_bubble_outline_rounded,
+                              size: 14,
+                              color: context.colorScheme.primary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Комментарий родителя',
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: context.colorScheme.primary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          quest.reviewNote!.trim(),
+                          style: context.textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
 
                 // ── Submitted banner ─────────────────────────────────────
                 if (quest.isSubmitted) ...[
+                  const SizedBox(height: AppSpacing.lg),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.md,
@@ -152,11 +203,11 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
                 ],
 
                 // ── Note field (available tasks only) ─────────────────────
                 if (canSubmit) ...[
+                  const SizedBox(height: AppSpacing.lg),
                   TextField(
                     controller: _noteController,
                     maxLines: 3,
@@ -205,46 +256,53 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                       ),
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.md),
                 ],
-
-                // ── Action button ─────────────────────────────────────────
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: canSubmit
-                        ? (_submitting ? null : _handleSubmit)
-                        : () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                          context.colorScheme.primary.withValues(alpha: 0.5),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: _submitting
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(
-                            canSubmit ? 'Submit Task' : s.ok,
-                            style: context.textTheme.labelLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                  ),
-                ),
               ],
+              ),
+            ),
+          ),
+          // ── Action button (pinned to the bottom) ─────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              0,
+              AppSpacing.lg,
+              AppSpacing.lg,
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: canSubmit
+                    ? (_submitting ? null : _handleSubmit)
+                    : () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  disabledBackgroundColor:
+                      context.colorScheme.primary.withValues(alpha: 0.5),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                  elevation: 0,
+                ),
+                child: _submitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        canSubmit ? 'Submit Task' : s.ok,
+                        style: context.textTheme.labelLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+              ),
             ),
           ),
         ],

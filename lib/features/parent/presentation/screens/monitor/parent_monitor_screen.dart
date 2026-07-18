@@ -6,6 +6,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.d
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
+import 'package:safini/features/parent/presentation/widgets/layout/parent_no_child_empty_state.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_header.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_stats_row.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/monitor_app_limits_section.dart';
@@ -33,9 +34,37 @@ class ParentMonitorScreen extends StatelessWidget {
 class _ParentMonitorView extends StatelessWidget {
   const _ParentMonitorView();
 
+  // Base height of the progress-card block (padding + a 2-line title layout)
+  // at a text scale of 1.0. It grows with the device font-scale factor.
+  static const double _toolbarHeight = 80;
+  static const double _bottomStripHeight = 36;
+  static const double _cardBlockBaseHeight = 224;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final media = MediaQuery.of(context);
+    final topPadding = media.padding.top;
+    // Clamp so an extreme system font size can't blow the header height up.
+    final textScale = media.textScaler.scale(1.0).clamp(1.0, 1.3);
+    final expandedHeight = topPadding +
+        _toolbarHeight +
+        (_cardBlockBaseHeight * textScale) +
+        _bottomStripHeight;
+
+    return BlocListener<ParentMonitorCubit, ParentMonitorState>(
+      // When the parent swipes to another child, reload that child's tasks so
+      // the "tasks" section matches the child shown on the card.
+      listenWhen: (prev, curr) =>
+          curr is ParentMonitorLoaded &&
+          (prev is! ParentMonitorLoaded ||
+              prev.selectedChild?.id != curr.selectedChild?.id),
+      listener: (context, state) {
+        final childId = (state as ParentMonitorLoaded).selectedChild?.id;
+        if (childId != null) {
+          context.read<ParentTasksCubit>().loadTasks(childId: childId);
+        }
+      },
+      child: Scaffold(
       backgroundColor: context.colorScheme.primary,
       body: CustomScrollView(
         slivers: [
@@ -43,8 +72,8 @@ class _ParentMonitorView extends StatelessWidget {
             pinned: true,
             floating: false,
             // toolbarHeight covers greeting text + name (no overflow)
-            toolbarHeight: 80,
-            expandedHeight: 320,
+            toolbarHeight: _toolbarHeight,
+            expandedHeight: expandedHeight,
             backgroundColor: context.colorScheme.primary,
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -63,9 +92,9 @@ class _ParentMonitorView extends StatelessWidget {
             // always visible, keeping the rounded-corner transition in place
             // even when the progress card has scrolled away.
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(36),
+              preferredSize: const Size.fromHeight(_bottomStripHeight),
               child: Container(
-                height: 36,
+                height: _bottomStripHeight,
                 decoration: BoxDecoration(
                   color: context.colorScheme.surface,
                   borderRadius: const BorderRadius.only(
@@ -95,17 +124,27 @@ class _ParentMonitorView extends StatelessWidget {
                       );
                     }
 
+                    if (state is ParentMonitorNoChild) {
+                      return const ParentNoChildEmptyState();
+                    }
+
                     if (state is ParentMonitorLoaded) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          MonitorStatsRow(
-                            stepsToday: state.stepsToday,
-                            lessonsToday: state.lessonsToday,
-                          ),
-                          const SizedBox(height: 24),
-                          ParentScreenTimeChart(weeklyUsage: state.weeklyUsage),
-                          const SizedBox(height: 40),
+                          // Steps / lessons / weekly chart are hidden until the
+                          // backend exposes real data for them.
+                          if (state.hasActivityData) ...[
+                            MonitorStatsRow(
+                              stepsToday: state.stepsToday,
+                              lessonsToday: state.lessonsToday,
+                            ),
+                            const SizedBox(height: 24),
+                            ParentScreenTimeChart(
+                              weeklyUsage: state.weeklyUsage,
+                            ),
+                            const SizedBox(height: 40),
+                          ],
                           MonitorAppLimitsSection(appLimits: state.appLimits),
                           const SizedBox(height: 40),
                           const MonitorTasksSection(),
@@ -121,6 +160,7 @@ class _ParentMonitorView extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

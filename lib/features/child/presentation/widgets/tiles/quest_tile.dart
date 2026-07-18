@@ -91,6 +91,7 @@ class QuestTile extends StatelessWidget {
               icon: quest.icon,
               iconColor: quest.iconColor,
               iconBackground: quest.iconBackground,
+              emoji: quest.emoji,
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
@@ -113,11 +114,13 @@ class _QuestIcon extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final Color iconBackground;
+  final String? emoji;
 
   const _QuestIcon({
     required this.icon,
     required this.iconColor,
     required this.iconBackground,
+    this.emoji,
   });
 
   @override
@@ -125,11 +128,14 @@ class _QuestIcon extends StatelessWidget {
     return Container(
       width: 44,
       height: 44,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: iconBackground,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
-      child: Icon(icon, color: iconColor, size: 22),
+      child: emoji != null && emoji!.trim().isNotEmpty
+          ? Text(emoji!.trim(), style: const TextStyle(fontSize: 22))
+          : Icon(icon, color: iconColor, size: 22),
     );
   }
 }

@@ -64,7 +64,26 @@ class _FamilyDecisionPageState extends State<FamilyDecisionPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SizedBox(height: 28),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () => context.router.maybePop(),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.language,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () => _showLanguageDialog(context),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
                           Icon(
                             Icons.family_restroom_rounded,
                             color: context.colorScheme.onPrimary,
@@ -130,6 +149,42 @@ class _FamilyDecisionPageState extends State<FamilyDecisionPage> {
           ),
         );
       },
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final s = S.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.selectLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(s.english),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.russian),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('ru'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

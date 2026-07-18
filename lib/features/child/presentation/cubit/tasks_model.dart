@@ -37,6 +37,9 @@ class TaskItem {
   final IconData icon;
   final Color iconColor;
   final Color iconBackground;
+
+  /// Emoji the parent picked; shown instead of [icon] when present.
+  final String? emoji;
   final TaskCategory category;
   final int coins;
   final int xp;
@@ -58,6 +61,7 @@ class TaskItem {
     required this.category,
     required this.coins,
     required this.xp,
+    this.emoji,
     this.isCompleted = false,
     this.status = 'available',
   });
@@ -70,6 +74,7 @@ class TaskItem {
       icon: icon,
       iconColor: iconColor,
       iconBackground: iconBackground,
+      emoji: emoji,
       category: category,
       coins: coins,
       xp: xp,

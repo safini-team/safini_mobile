@@ -17,10 +17,15 @@ class ParentTasksLoaded extends ParentTasksState {
   final String childName;
   final List<ParentTaskInstanceModel> tasks;
 
+  /// Task id → child nickname. Non-empty only in "all children" mode (the
+  /// Tasks screen), so each tile can show which child a task belongs to.
+  final Map<String, String> childNames;
+
   const ParentTasksLoaded({
     required this.childId,
     required this.childName,
     required this.tasks,
+    this.childNames = const {},
   });
 
   List<ParentTaskInstanceModel> get pendingApproval =>

@@ -11,6 +11,12 @@ class AppTimeItem {
   final Color iconBackground;
   final int cost;
 
+  /// Whether redemptions are enabled for this app (parent-controlled).
+  final bool isEnabled;
+
+  /// Redeemed minutes still available for this app (0 = none active).
+  final int remainingMinutes;
+
   const AppTimeItem({
     required this.id,
     required this.title,
@@ -19,7 +25,23 @@ class AppTimeItem {
     required this.iconColor,
     required this.iconBackground,
     required this.cost,
+    this.isEnabled = true,
+    this.remainingMinutes = 0,
   });
+
+  AppTimeItem copyWith({int? remainingMinutes}) {
+    return AppTimeItem(
+      id: id,
+      title: title,
+      minutes: minutes,
+      icon: icon,
+      iconColor: iconColor,
+      iconBackground: iconBackground,
+      cost: cost,
+      isEnabled: isEnabled,
+      remainingMinutes: remainingMinutes ?? this.remainingMinutes,
+    );
+  }
 }
 
 class AvatarItem {

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/controllers/task_controller.dart';
+import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
@@ -14,7 +15,15 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
   ParentTasksCubit(this._repository, this._familyCubit, this._taskController)
     : super(const ParentTasksInitial());
 
-  Future<void> loadTasks() async {
+  // Remembers how the list was last loaded so refreshes after
+  // create/edit/delete/review reload in the same mode.
+  bool _allChildrenMode = false;
+  String? _lastChildId;
+
+  /// Loads tasks for [childId] when given (e.g. the child selected on the
+  /// monitor), otherwise for the family's first child.
+  Future<void> loadTasks({String? childId}) async {
+    _allChildrenMode = false;
     emit(const ParentTasksLoading());
 
     if (_familyCubit.state.family == null) {
@@ -22,9 +31,10 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     }
 
     final family = _familyCubit.state.family;
-    final child = family?.children
-        .where((child) => child.id.isNotEmpty)
-        .firstOrNull;
+    final children = family?.children.where((c) => c.id.isNotEmpty) ?? const [];
+    final child = childId != null
+        ? children.where((c) => c.id == childId).firstOrNull
+        : children.firstOrNull;
     if (child == null) {
       emit(
         const ParentTasksError(
@@ -34,6 +44,7 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       );
       return;
     }
+    _lastChildId = child.id;
 
     final result = await _repository.fetchTasks(child.id);
     result.fold(
@@ -47,6 +58,63 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       ),
     );
   }
+
+  /// Loads tasks for every child in the family, tagged with the child's name.
+  /// Used by the Tasks screen so the parent sees all tasks at once.
+  Future<void> loadAllTasks() async {
+    _allChildrenMode = true;
+    emit(const ParentTasksLoading());
+
+    if (_familyCubit.state.family == null) {
+      await _familyCubit.loadCurrentFamily(refresh: true);
+    }
+
+    final children = _familyCubit.state.family?.children
+            .where((c) => c.id.isNotEmpty)
+            .toList() ??
+        const [];
+    if (children.isEmpty) {
+      emit(
+        const ParentTasksError(
+          'No child profile is available for this parent account.',
+          canRetry: false,
+        ),
+      );
+      return;
+    }
+
+    final allTasks = <ParentTaskInstanceModel>[];
+    final childNames = <String, String>{};
+    Failure? firstFailure;
+
+    for (final child in children) {
+      final result = await _repository.fetchTasks(child.id);
+      result.fold((failure) => firstFailure ??= failure, (response) {
+        for (final task in response.tasks) {
+          allTasks.add(task);
+          childNames[task.id] = child.nickname;
+        }
+      });
+    }
+
+    if (allTasks.isEmpty && firstFailure != null) {
+      emit(_errorFromFailure(firstFailure!));
+      return;
+    }
+
+    emit(
+      ParentTasksLoaded(
+        childId: children.first.id,
+        childName: children.first.nickname,
+        tasks: allTasks,
+        childNames: childNames,
+      ),
+    );
+  }
+
+  /// Refreshes the list in whatever mode it was last loaded.
+  Future<void> _reload() =>
+      _allChildrenMode ? loadAllTasks() : loadTasks(childId: _lastChildId);
 
   ParentTasksLoaded? get _loaded {
     final current = state;
@@ -80,7 +148,7 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       (failure) async => emit(_actionError(current, failure)),
       (_) async {
         emit(ParentTaskReviewed(current, isApproved: approve));
-        await loadTasks();
+        await _reload();
       },
     );
   }
@@ -96,9 +164,39 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       (failure) async => emit(_actionError(current, failure)),
       (created) async {
         emit(ParentTaskSaved(current, wasCreate: true));
-        await loadTasks();
+        await _reload();
       },
     );
+  }
+
+  /// Creates the same task for several children (e.g. "all children").
+  /// Emits one Saving/Saved cycle and reloads once at the end.
+  Future<void> createTaskForChildren(
+    List<String> childIds,
+    TaskCreateRequestDto request,
+  ) async {
+    final current = _loaded;
+    if (current == null || childIds.isEmpty) return;
+
+    if (childIds.length == 1) {
+      return createTask(childIds.first, request);
+    }
+
+    emit(ParentTaskSaving(current));
+
+    Failure? firstFailure;
+    for (final childId in childIds) {
+      final result = await _taskController.createTask(childId, request);
+      result.fold((failure) => firstFailure ??= failure, (_) {});
+    }
+
+    if (firstFailure != null) {
+      emit(_actionError(current, firstFailure!));
+      return;
+    }
+
+    emit(ParentTaskSaved(current, wasCreate: true));
+    await _reload();
   }
 
   Future<void> updateTask(String taskId, TaskUpdateRequestDto request) async {
@@ -112,7 +210,7 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       (failure) async => emit(_actionError(current, failure)),
       (updated) async {
         emit(ParentTaskSaved(current, wasCreate: false));
-        await loadTasks();
+        await _reload();
       },
     );
   }
@@ -128,7 +226,7 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       (failure) async => emit(_actionError(current, failure)),
       (_) async {
         emit(ParentTaskDeleted(current));
-        await loadTasks();
+        await _reload();
       },
     );
   }

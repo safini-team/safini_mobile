@@ -7,12 +7,14 @@ class ParentProgressCard extends StatelessWidget {
   final String name;
   final int level;
   final int coins;
+  final String faceEmoji;
 
   const ParentProgressCard({
     super.key,
     required this.name,
     required this.level,
     required this.coins,
+    this.faceEmoji = '👦',
   });
 
   @override
@@ -43,8 +45,11 @@ class ParentProgressCard extends StatelessWidget {
                         width: 2,
                       ),
                     ),
-                    child: const Center(
-                      child: Text('👦', style: TextStyle(fontSize: 44)),
+                    child: Center(
+                      child: Text(
+                        faceEmoji,
+                        style: const TextStyle(fontSize: 44),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 20),

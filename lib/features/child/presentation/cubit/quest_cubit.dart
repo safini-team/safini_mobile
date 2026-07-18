@@ -82,12 +82,17 @@ class QuestCubit extends Cubit<QuestState> {
     return QuestModel(
       id: task.id,
       title: task.displayTitle,
-      subtitle: task.description?.trim().isNotEmpty == true
+      // Show the description as the subtitle only when it differs from the
+      // title (parent-created tasks store the same text in both).
+      subtitle: (task.description?.trim().isNotEmpty == true &&
+              task.description!.trim() != task.displayTitle.trim())
           ? task.description!.trim()
           : _fallbackSubtitle(task),
       icon: spec.icon,
       iconColor: spec.color,
       iconBackground: spec.background,
+      emoji: task.emoji,
+      reviewNote: task.reviewNote,
       isCompleted: task.isCompleted,
       coins: task.rewardCoins ?? 0,
       xp: task.xpReward ?? 0,

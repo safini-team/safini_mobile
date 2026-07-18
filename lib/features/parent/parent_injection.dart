@@ -9,9 +9,11 @@ import 'package:safini/features/models/domain/controllers/task_controller.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
 import 'package:safini/features/models/domain/repositories/i_task_repository.dart';
 import 'package:safini/features/parent/data/datasources/parent_remote_datasource.dart';
+import 'package:safini/features/parent/data/repositories/parent_app_usage_repository_impl.dart';
 import 'package:safini/features/parent/data/repositories/parent_task_repository_impl.dart';
 import 'package:safini/features/parent/data/repositories/parent_user_repository_impl.dart';
 import 'package:safini/features/parent/domain/controllers/parent_controller.dart';
+import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_user_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
@@ -48,11 +50,20 @@ void registerParentDependencies(GetIt sl) {
     () => ParentCubit(sl<ParentController>(), Supabase.instance.client),
   );
   sl.registerFactory<ParentHomeCubit>(() => ParentHomeCubit());
+  sl.registerLazySingleton<IParentAppUsageRepository>(
+    () => ParentAppUsageRepositoryImpl(),
+  );
   sl.registerFactory<ParentMonitorCubit>(
-    () => ParentMonitorCubit(sl<ParentController>(), sl<ParentFamilyCubit>()),
+    () => ParentMonitorCubit(
+      sl<ParentFamilyCubit>(),
+      sl<IParentAppUsageRepository>(),
+    ),
   );
   sl.registerFactory<ParentAppsCubit>(
-    () => ParentAppsCubit(sl<ParentController>()),
+    () => ParentAppsCubit(
+      sl<ParentFamilyCubit>(),
+      sl<IParentAppUsageRepository>(),
+    ),
   );
   sl.registerLazySingleton<IParentTaskRepository>(
     () => ParentTaskRepositoryImpl(),

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_state.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
@@ -21,7 +23,15 @@ class ChildTasksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (ctx) => getIt<TasksCubit>(),
-      child: const _TasksView(),
+      // Reload when the Tasks tab becomes active so submissions made on the
+      // Home tab (a separate cubit) are reflected here.
+      child: BlocListener<ChildHomeCubit, ChildHomeState>(
+        listenWhen: (prev, curr) =>
+            prev.selectedIndex != curr.selectedIndex &&
+            curr.selectedIndex == 1,
+        listener: (ctx, _) => ctx.read<TasksCubit>().loadTasks(),
+        child: const _TasksView(),
+      ),
     );
   }
 }
@@ -92,7 +102,7 @@ class _TasksHeader extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      const Flexible(child: StoreCoinBadge()),
+                      const StoreCoinBadge(),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),

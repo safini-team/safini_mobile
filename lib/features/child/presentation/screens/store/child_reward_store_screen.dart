@@ -4,6 +4,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
@@ -39,7 +40,10 @@ class _RewardStoreView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<RewardStoreCubit, RewardStoreState>(
       listenWhen: (prev, curr) =>
-          curr.missingCoins != null && curr.missingCoins != prev.missingCoins,
+          (curr.missingCoins != null &&
+              curr.missingCoins != prev.missingCoins) ||
+          (curr.purchaseError != null &&
+              curr.purchaseError != prev.purchaseError),
       listener: (ctx, state) {
         if (state.missingCoins case final missing?) {
           NotEnoughCoinsDialog.show(
@@ -48,6 +52,10 @@ class _RewardStoreView extends StatelessWidget {
             onDismiss: () =>
                 ctx.read<RewardStoreCubit>().clearInsufficientCoinsError(),
           );
+        }
+        if (state.purchaseError case final error?) {
+          AppSnackBar.error(ctx, error);
+          ctx.read<RewardStoreCubit>().clearPurchaseError();
         }
       },
       child: Scaffold(

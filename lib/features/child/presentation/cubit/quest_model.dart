@@ -7,6 +7,12 @@ class QuestModel {
   final IconData icon;
   final Color iconColor;
   final Color iconBackground;
+
+  /// Emoji the parent picked; shown instead of [icon] when present.
+  final String? emoji;
+
+  /// The note the parent left when reviewing (approve/reject).
+  final String? reviewNote;
   final bool isCompleted;
   final int coins;
   final int xp;
@@ -24,6 +30,8 @@ class QuestModel {
     required this.icon,
     required this.iconColor,
     required this.iconBackground,
+    this.emoji,
+    this.reviewNote,
     this.isCompleted = false,
     this.coins = 0,
     this.xp = 0,
@@ -38,6 +46,8 @@ class QuestModel {
       icon: icon,
       iconColor: iconColor,
       iconBackground: iconBackground,
+      emoji: emoji,
+      reviewNote: reviewNote,
       isCompleted: isCompleted ?? this.isCompleted,
       coins: coins,
       xp: xp,
