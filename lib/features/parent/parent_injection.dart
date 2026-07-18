@@ -25,7 +25,7 @@ import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 
 void registerParentDependencies(GetIt sl) {
   sl.registerLazySingleton<ParentRemoteDataSource>(
-    () => ParentRemoteDataSource(Supabase.instance.client),
+    () => ParentRemoteDataSource(sl<Dio>()),
   );
   sl.registerLazySingleton<IParentUserRepository>(
     () => ParentUserRepositoryImpl(sl<ParentRemoteDataSource>()),

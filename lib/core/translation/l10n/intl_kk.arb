@@ -311,5 +311,22 @@
   "removeParentConfirmTitle": "Ата-ананы жою керек пе?",
   "removeParentConfirmBody": "Бұл ата-ананы отбасынан жойғыңыз келетініне сенімдісіз бе?",
   "logoutConfirmTitle": "Шығу керек пе?",
-  "logoutConfirmBody": "Аккаунттан шыққыңыз келетініне сенімдісіз бе?"
+  "logoutConfirmBody": "Аккаунттан шыққыңыз келетініне сенімдісіз бе?",
+  "createChildProfileTitle": "Бала профилін құру",
+  "createChildProfileSubtitle": "Отбасыға бала қосу үшін төмендегі мәліметтерді толтырыңыз.",
+  "nicknameLabel": "Аты",
+  "nicknameRequired": "Атын енгізіңіз.",
+  "nicknameTooLong": "Аты 80 таңбадан аспауы керек.",
+  "ageFieldLabel": "Жасы",
+  "ageRequired": "Жасын көрсетіңіз.",
+  "ageMustBeInteger": "Жасы сан болуы керек.",
+  "ageRange": "Жасы 0 мен 18 аралығында болуы керек.",
+  "genderOptional": "Жынысы (міндетті емес)",
+  "genderBoy": "Ұл",
+  "genderGirl": "Қыз",
+  "genderOther": "Басқа",
+  "createChildButton": "Бала құру",
+  "editProfileSubtitle": "Бала мәліметтерін төменде жаңартыңыз.",
+  "saveChanges": "Өзгерістерді сақтау",
+  "childUpdatedSuccess": "Бала профилі жаңартылды."
 }

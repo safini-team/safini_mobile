@@ -1749,6 +1749,151 @@ class S {
       args: [],
     );
   }
+
+  /// `Create a child profile`
+  String get createChildProfileTitle {
+    return Intl.message(
+      'Create a child profile',
+      name: 'createChildProfileTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fill out the details below to add a child to your family.`
+  String get createChildProfileSubtitle {
+    return Intl.message(
+      'Fill out the details below to add a child to your family.',
+      name: 'createChildProfileSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nickname`
+  String get nicknameLabel {
+    return Intl.message('Nickname', name: 'nicknameLabel', desc: '', args: []);
+  }
+
+  /// `Nickname is required.`
+  String get nicknameRequired {
+    return Intl.message(
+      'Nickname is required.',
+      name: 'nicknameRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nickname must be at most 80 characters.`
+  String get nicknameTooLong {
+    return Intl.message(
+      'Nickname must be at most 80 characters.',
+      name: 'nicknameTooLong',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Age`
+  String get ageFieldLabel {
+    return Intl.message('Age', name: 'ageFieldLabel', desc: '', args: []);
+  }
+
+  /// `Age is required.`
+  String get ageRequired {
+    return Intl.message(
+      'Age is required.',
+      name: 'ageRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Age must be an integer.`
+  String get ageMustBeInteger {
+    return Intl.message(
+      'Age must be an integer.',
+      name: 'ageMustBeInteger',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Age must be between 0 and 18.`
+  String get ageRange {
+    return Intl.message(
+      'Age must be between 0 and 18.',
+      name: 'ageRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gender (optional)`
+  String get genderOptional {
+    return Intl.message(
+      'Gender (optional)',
+      name: 'genderOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Boy`
+  String get genderBoy {
+    return Intl.message('Boy', name: 'genderBoy', desc: '', args: []);
+  }
+
+  /// `Girl`
+  String get genderGirl {
+    return Intl.message('Girl', name: 'genderGirl', desc: '', args: []);
+  }
+
+  /// `Other`
+  String get genderOther {
+    return Intl.message('Other', name: 'genderOther', desc: '', args: []);
+  }
+
+  /// `Create Child`
+  String get createChildButton {
+    return Intl.message(
+      'Create Child',
+      name: 'createChildButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update your child's information below.`
+  String get editProfileSubtitle {
+    return Intl.message(
+      'Update your child\'s information below.',
+      name: 'editProfileSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Changes`
+  String get saveChanges {
+    return Intl.message(
+      'Save Changes',
+      name: 'saveChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Child profile updated successfully.`
+  String get childUpdatedSuccess {
+    return Intl.message(
+      'Child profile updated successfully.',
+      name: 'childUpdatedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

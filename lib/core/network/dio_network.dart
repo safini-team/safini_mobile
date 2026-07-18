@@ -52,8 +52,23 @@ class DioNetwork {
   static QueuedInterceptorsWrapper _appQueuedInterceptorsWrapper() {
     return QueuedInterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) async {
-        final token = _accessToken;
-        final isExpired = token == null || JwtDecoder.isExpired(token);
+        var token = _accessToken;
+        var isExpired = token == null || JwtDecoder.isExpired(token);
+
+        // Proactively refresh an expired token *before* sending, so the
+        // request never goes out unauthenticated (which the backend answers
+        // with 401 and the app then treats as a forced sign-out). The queued
+        // interceptor serialises requests, so awaiting here is safe.
+        if (isExpired &&
+            Supabase.instance.client.auth.currentSession != null) {
+          try {
+            await _refreshToken();
+            token = _accessToken;
+            isExpired = token == null || JwtDecoder.isExpired(token);
+          } catch (e) {
+            log('Proactive token refresh failed: $e');
+          }
+        }
 
         debugPrint('[DioNetwork] → ${options.method} ${options.path} | token: ${token != null ? '✓' : '✗ null'} | expired: $isExpired');
         log('Access token is expired: $isExpired');

@@ -53,14 +53,22 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "achievements": MessageLookupByLibrary.simpleMessage("Achievements"),
     "activeTasks": MessageLookupByLibrary.simpleMessage("Active Tasks"),
-    "addAnotherApp": MessageLookupByLibrary.simpleMessage("Add App"),
+    "addAnotherApp": MessageLookupByLibrary.simpleMessage("Add Another App"),
     "addAnotherChild": MessageLookupByLibrary.simpleMessage(
       "Add Another Child",
     ),
     "addChild": MessageLookupByLibrary.simpleMessage("Add Child"),
     "admin": MessageLookupByLibrary.simpleMessage("Admin"),
     "ageAndGender": m0,
+    "ageFieldLabel": MessageLookupByLibrary.simpleMessage("Age"),
     "ageLabel": m1,
+    "ageMustBeInteger": MessageLookupByLibrary.simpleMessage(
+      "Age must be an integer.",
+    ),
+    "ageRange": MessageLookupByLibrary.simpleMessage(
+      "Age must be between 0 and 18.",
+    ),
+    "ageRequired": MessageLookupByLibrary.simpleMessage("Age is required."),
     "appLimits": MessageLookupByLibrary.simpleMessage("App Limits"),
     "appLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
       "Set daily screen time limits",
@@ -87,6 +95,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Child Invite Code",
     ),
     "childProgressTitle": m2,
+    "childUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Child profile updated successfully.",
+    ),
     "chooseYourRole": MessageLookupByLibrary.simpleMessage("Choose Your Role"),
     "cleanTheRoom": MessageLookupByLibrary.simpleMessage("Clean the room"),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
@@ -101,8 +112,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "completed": MessageLookupByLibrary.simpleMessage("Completed"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),
+    "createChildButton": MessageLookupByLibrary.simpleMessage("Create Child"),
     "createChildInviteCode": MessageLookupByLibrary.simpleMessage(
       "Create Child Invite Code",
+    ),
+    "createChildProfileSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Fill out the details below to add a child to your family.",
+    ),
+    "createChildProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "Create a child profile",
     ),
     "createOrJoinFamily": MessageLookupByLibrary.simpleMessage(
       "Create a family or join one with an invite code.",
@@ -155,6 +173,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editChild": MessageLookupByLibrary.simpleMessage("Edit Child"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
+    "editProfileSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Update your child\'s information below.",
+    ),
     "editTaskSheetTitle": MessageLookupByLibrary.simpleMessage("Edit Task"),
     "educational": MessageLookupByLibrary.simpleMessage("Educational"),
     "english": MessageLookupByLibrary.simpleMessage("English"),
@@ -170,6 +191,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "free": MessageLookupByLibrary.simpleMessage("FREE"),
     "fri": MessageLookupByLibrary.simpleMessage("FRI"),
+    "genderBoy": MessageLookupByLibrary.simpleMessage("Boy"),
+    "genderGirl": MessageLookupByLibrary.simpleMessage("Girl"),
+    "genderOptional": MessageLookupByLibrary.simpleMessage("Gender (optional)"),
+    "genderOther": MessageLookupByLibrary.simpleMessage("Other"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Go to Tasks"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Good afternoon 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Good evening 👋"),
@@ -224,6 +249,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newBtn": MessageLookupByLibrary.simpleMessage("New"),
     "newTask": MessageLookupByLibrary.simpleMessage("New Task"),
+    "nicknameLabel": MessageLookupByLibrary.simpleMessage("Nickname"),
+    "nicknameRequired": MessageLookupByLibrary.simpleMessage(
+      "Nickname is required.",
+    ),
+    "nicknameTooLong": MessageLookupByLibrary.simpleMessage(
+      "Nickname must be at most 80 characters.",
+    ),
     "noChildrenFoundYet": MessageLookupByLibrary.simpleMessage(
       "No children found yet",
     ),
@@ -281,6 +313,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "russian": MessageLookupByLibrary.simpleMessage("Russian"),
     "sat": MessageLookupByLibrary.simpleMessage("SAT"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("Save Changes"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Save My Look!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
     "setUpANewProfile": MessageLookupByLibrary.simpleMessage(

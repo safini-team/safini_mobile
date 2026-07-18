@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -37,6 +38,7 @@ class _AddChildPageState extends State<AddChildPage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
       backgroundColor: context.colorScheme.primary,
       body: Column(
@@ -46,17 +48,25 @@ class _AddChildPageState extends State<AddChildPage> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(4, 8, 24, 28),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => context.router.maybePop(),
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    'Add Child',
-                    style: context.textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        s.addChild,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.headlineMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -87,14 +97,14 @@ class _AddChildPageState extends State<AddChildPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Create a child profile',
+                        s.createChildProfileTitle,
                         style: context.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Fill out the details below to add a child to your family.',
+                        s.createChildProfileSubtitle,
                         style: context.textTheme.bodyMedium?.copyWith(
                           color: context.colorScheme.onSurface.withValues(
                             alpha: 0.55,
@@ -108,15 +118,15 @@ class _AddChildPageState extends State<AddChildPage> {
                           textInputAction: TextInputAction.next,
                           decoration: _inputDecoration(
                             context,
-                            label: 'Nickname',
+                            label: s.nicknameLabel,
                             hint: 'e.g. Alex',
                             icon: Icons.person_outline_rounded,
                           ),
                           validator: (value) {
                             final v = value?.trim() ?? '';
-                            if (v.isEmpty) return 'Nickname is required.';
+                            if (v.isEmpty) return s.nicknameRequired;
                             if (v.length > 80) {
-                              return 'Nickname must be at most 80 characters.';
+                              return s.nicknameTooLong;
                             }
                             return null;
                           },
@@ -130,19 +140,19 @@ class _AddChildPageState extends State<AddChildPage> {
                           keyboardType: TextInputType.number,
                           decoration: _inputDecoration(
                             context,
-                            label: 'Age',
+                            label: s.ageFieldLabel,
                             hint: '0 – 18',
                             icon: Icons.cake_outlined,
                           ),
                           validator: (value) {
                             final input = value?.trim() ?? '';
-                            if (input.isEmpty) return 'Age is required.';
+                            if (input.isEmpty) return s.ageRequired;
                             final parsed = int.tryParse(input);
                             if (parsed == null) {
-                              return 'Age must be an integer.';
+                              return s.ageMustBeInteger;
                             }
                             if (parsed < 0 || parsed > 18) {
-                              return 'Age must be between 0 and 18.';
+                              return s.ageRange;
                             }
                             return null;
                           },
@@ -162,7 +172,7 @@ class _AddChildPageState extends State<AddChildPage> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  'Gender (optional)',
+                                  s.genderOptional,
                                   style: context.textTheme.bodySmall?.copyWith(
                                     color: context.colorScheme.onSurface
                                         .withValues(alpha: 0.55),
@@ -171,7 +181,8 @@ class _AddChildPageState extends State<AddChildPage> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            Row(
+                            Wrap(
+                              runSpacing: 8,
                               children: _GenderOption.values.map((option) {
                                 final selected = _selectedGender == option;
                                 return Padding(
@@ -203,7 +214,7 @@ class _AddChildPageState extends State<AddChildPage> {
                                         ),
                                       ),
                                       child: Text(
-                                        option.label,
+                                        _genderLabel(s, option),
                                         style: context.textTheme.labelLarge
                                             ?.copyWith(
                                           color: selected
@@ -249,7 +260,7 @@ class _AddChildPageState extends State<AddChildPage> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text('Create Child'),
+                            : Text(s.createChildButton),
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -303,6 +314,17 @@ class _AddChildPageState extends State<AddChildPage> {
         borderSide: BorderSide(color: context.colorScheme.error, width: 1.5),
       ),
     );
+  }
+
+  String _genderLabel(S s, _GenderOption option) {
+    switch (option) {
+      case _GenderOption.boy:
+        return s.genderBoy;
+      case _GenderOption.girl:
+        return s.genderGirl;
+      case _GenderOption.other:
+        return s.genderOther;
+    }
   }
 
   Future<void> _submit() async {

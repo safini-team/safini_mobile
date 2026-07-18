@@ -20,9 +20,10 @@ class QuestCubit extends Cubit<QuestState> {
   }
 
   Future<void> loadQuests() async {
+    emit(state.copyWith(isLoading: true));
     final childId = await _resolveChildId();
     if (childId == null) {
-      emit(state.copyWith(quests: const []));
+      emit(state.copyWith(quests: const [], isLoading: false));
       return;
     }
 
@@ -45,6 +46,7 @@ class QuestCubit extends Cubit<QuestState> {
           quests: const [],
           childNickname: nickname,
           doneToday: doneToday,
+          isLoading: false,
         ),
       ),
       (response) => emit(
@@ -52,6 +54,7 @@ class QuestCubit extends Cubit<QuestState> {
           quests: _sortQuests(response.tasks.map(_questFromTask).toList()),
           childNickname: nickname,
           doneToday: doneToday,
+          isLoading: false,
         ),
       ),
     );

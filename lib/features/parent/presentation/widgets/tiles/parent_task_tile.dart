@@ -123,7 +123,7 @@ class ParentTaskTile extends StatelessWidget {
                 if (category?.trim().isNotEmpty == true) ...[
                   const SizedBox(height: 2),
                   Text(
-                    category!.trim(),
+                    _localizedCategory(context, category!.trim()),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.bodySmall?.copyWith(
@@ -264,5 +264,31 @@ class ParentTaskTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Maps a raw backend category to its localized label.
+  String _localizedCategory(BuildContext context, String category) {
+    final s = S.of(context);
+    switch (category.toLowerCase()) {
+      case 'chore':
+      case 'daily chore':
+      case 'daily_chore':
+        return s.createTaskCategoryDailyChore;
+      case 'learn':
+      case 'educational':
+      case 'education':
+        return s.createTaskCategoryEducational;
+      case 'hobby':
+        return s.createTaskCategoryHobby;
+      case 'fitness':
+      case 'sport':
+        return s.categoryFitness;
+      case 'logic':
+        return s.categoryLogic;
+      case 'other':
+        return s.createTaskCategoryOther;
+      default:
+        return category;
+    }
   }
 }
