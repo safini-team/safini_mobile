@@ -46,7 +46,6 @@ class _LoginView extends StatelessWidget {
                 listener: (context, state) {
                   // ── Authenticated → route by account_type ──────────────
                   if (state.status == AuthSessionStatus.authenticated) {
-                    AppSnackBar.success(context, s.signedInSuccess);
                     unawaited(_routeAuthenticated(context, state.accountType));
                   }
 
@@ -109,33 +108,39 @@ class _LoginView extends StatelessWidget {
                                   onPressed: () => _showLanguageDialog(context),
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Center(
-                                child: Image.asset(
-                                  'assets/logo/app_logo.png',
-                                  width: 100,
-                                  height: 100,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                s.loginTitle,
-                                textAlign: TextAlign.center,
-                                style: context.textTheme.headlineMedium
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/logo/app_logo.png',
+                                      width: 100,
+                                      height: 100,
                                     ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                s.loginSubtitle,
-                                textAlign: TextAlign.center,
-                                style: context.textTheme.bodyLarge?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      s.loginTitle,
+                                      textAlign: TextAlign.center,
+                                      style: context.textTheme.headlineMedium
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      s.loginSubtitle,
+                                      textAlign: TextAlign.center,
+                                      style: context.textTheme.bodyLarge
+                                          ?.copyWith(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.9,
+                                            ),
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 32),
                               if (!SupabaseConfig.isSupabaseConfigured)
                                 Text(
                                   s.supabaseConfigMissing,
@@ -181,6 +186,7 @@ class _LoginView extends StatelessWidget {
                                   ),
                                 ],
                               ],
+                              const SizedBox(height: 32),
                             ],
                           ),
                         ),
