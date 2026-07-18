@@ -51,7 +51,20 @@ class _ParentMonitorView extends StatelessWidget {
         (_cardBlockBaseHeight * textScale) +
         _bottomStripHeight;
 
-    return Scaffold(
+    return BlocListener<ParentMonitorCubit, ParentMonitorState>(
+      // When the parent swipes to another child, reload that child's tasks so
+      // the "tasks" section matches the child shown on the card.
+      listenWhen: (prev, curr) =>
+          curr is ParentMonitorLoaded &&
+          (prev is! ParentMonitorLoaded ||
+              prev.selectedChild?.id != curr.selectedChild?.id),
+      listener: (context, state) {
+        final childId = (state as ParentMonitorLoaded).selectedChild?.id;
+        if (childId != null) {
+          context.read<ParentTasksCubit>().loadTasks(childId: childId);
+        }
+      },
+      child: Scaffold(
       backgroundColor: context.colorScheme.primary,
       body: CustomScrollView(
         slivers: [
@@ -147,6 +160,7 @@ class _ParentMonitorView extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

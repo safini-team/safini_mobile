@@ -125,9 +125,9 @@ class MonitorTasksSection extends StatelessWidget {
       title: task.displayTitle,
       category: task.category,
       rewardCoins: task.rewardCoins,
-      statusLabel: task.status,
       isPending: task.isPendingApproval,
       isCompleted: task.isCompleted,
+      emoji: task.emoji,
       onTap: task.isEditable
           ? () {
               final cubit = context.read<ParentTasksCubit>();

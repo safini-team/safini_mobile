@@ -196,6 +196,27 @@ class _ReviewSheetState extends State<ReviewSheet> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
+                      // ── Child's submission note ──────────────────────────
+                      if (widget.task.submissionNote?.trim().isNotEmpty ==
+                          true) ...[
+                        const TaskSectionLabel('Комментарий ребёнка'),
+                        const SizedBox(height: AppSpacing.sm),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(AppSpacing.md),
+                          decoration: BoxDecoration(
+                            color: context.colorScheme.primary.withValues(
+                              alpha: 0.06,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            widget.task.submissionNote!.trim(),
+                            style: context.textTheme.bodyMedium,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xl),
+                      ],
                       // Note field
                       TaskSectionLabel(s.reviewNoteHint),
                       const SizedBox(height: AppSpacing.sm),

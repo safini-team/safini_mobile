@@ -55,12 +55,16 @@ class TasksCubit extends Cubit<TasksState> {
     return TaskItem(
       id: task.id,
       title: task.displayTitle,
-      subtitle: task.description?.trim().isNotEmpty == true
+      // Show the description only when it differs from the title (parent tasks
+      // store the same text in both).
+      subtitle: (task.description?.trim().isNotEmpty == true &&
+              task.description!.trim() != task.displayTitle.trim())
           ? task.description!.trim()
           : (coins > 0 ? '$coins coin reward' : task.status),
       icon: spec.icon,
       iconColor: spec.color,
       iconBackground: spec.background,
+      emoji: task.emoji,
       category: category,
       coins: coins,
       xp: task.xpReward ?? 0,
