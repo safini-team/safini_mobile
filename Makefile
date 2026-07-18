@@ -7,7 +7,7 @@ help:
 	@echo "  make increment-build - Bump build number in pubspec.yaml (1.0.0+N -> 1.0.0+N+1)"
 	@echo "  make generate        - Run codegen (intl + build_runner: freezed/json_serializable)"
 	@echo "  make icons           - Generate app launcher icons (flutter_launcher_icons)"
-	@echo "  make build-ios       - Increment build, then build iOS release (no codesign)"
+	@echo "  make build-ios       - Increment build, then build iOS release IPA"
 	@echo "  make build-android   - Increment build, then build Android App Bundle (.aab) + APK"
 	@echo "  make build           - Increment build, then build both iOS and Android"
 	@echo "  make clean           - Clean build artifacts and re-fetch dependencies"
@@ -34,9 +34,9 @@ generate:
 icons:
 	flutter pub run flutter_launcher_icons
 
-# Build iOS release (bumps build number first)
+# Build iOS release IPA (bumps build number first)
 build-ios: increment-build
-	flutter build ios --release --no-codesign
+	flutter build ipa --release
 
 # Build Android App Bundle + APK (bumps build number first)
 build-android: increment-build
