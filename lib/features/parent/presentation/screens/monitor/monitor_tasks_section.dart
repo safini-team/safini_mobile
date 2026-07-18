@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/widgets/skeleton/skeleton_widgets.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
@@ -72,12 +73,7 @@ class MonitorTasksSection extends StatelessWidget {
         BlocBuilder<ParentTasksCubit, ParentTasksState>(
           builder: (context, state) {
             if (state is ParentTasksLoading || state is ParentTasksInitial) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return const SkeletonList(count: 3);
             }
 
             if (state is ParentTasksError) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/skeleton/skeleton_widgets.dart';
+import 'package:safini/core/utils/widgets/layout/parent_sliver_scaffold.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
@@ -16,85 +18,46 @@ class ParentAppsScreen extends StatelessWidget {
     final s = S.of(context);
     return BlocProvider(
       create: (context) => getIt<ParentAppsCubit>()..loadAppLimits(),
-      child: Scaffold(
-        backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
-        body: Column(
-          children: [
-            // ── Header ──────────────────────────────────────────
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    context.colorScheme.primary.withValues(alpha: 0.8),
-                    context.colorScheme.primary,
-                  ],
+      child: Builder(
+        builder: (context) => ParentSliverScaffold(
+          expandedHeight: 160,
+          bodyPadding: const EdgeInsets.fromLTRB(32, 28, 32, 80),
+          onRefresh: () => context.read<ParentAppsCubit>().loadAppLimits(),
+          header: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                s.appLimits,
+                style: context.textTheme.displaySmall?.copyWith(
+                  color: context.colorScheme.onPrimary,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
                 ),
               ),
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        s.appLimits,
-                        style: context.textTheme.displaySmall?.copyWith(
-                          color: context.colorScheme.onPrimary,
-                          fontSize: 30,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        s.appLimitsSubtitle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+              const SizedBox(height: 4),
+              Text(
+                s.appLimitsSubtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-            // ── Content ─────────────────────────────────────────
-            Expanded(
-              child: Transform.translate(
-                offset: const Offset(0, -1), // Fix sub-pixel white line gap
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(36),
-                      topRight: Radius.circular(36),
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(36),
-                      topRight: Radius.circular(36),
-                    ),
-                    child: BlocBuilder<ParentAppsCubit, ParentAppsState>(
-                      builder: (context, state) {
-                    if (state is ParentAppsLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF8B46FF),
-                        ),
-                      );
-                    }
+            ],
+          ),
+          body: BlocBuilder<ParentAppsCubit, ParentAppsState>(
+            builder: (context, state) {
+              if (state is ParentAppsLoading) {
+                return const SkeletonList(count: 6);
+              }
 
-                    if (state is ParentAppsLoaded) {
-                      return ListView(
-                        padding: const EdgeInsets.fromLTRB(32, 28, 32, 80),
-                        children: [
+              if (state is ParentAppsLoaded) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                           // Tip Banner
                           Container(
                             padding: const EdgeInsets.all(20),
@@ -180,21 +143,16 @@ class ParentAppsScreen extends StatelessWidget {
                             ),
                             ),
                           ),
-                          const SizedBox(height: 60),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-                ),
-                ),
-              ),
-            ),
-          ],
+                  const SizedBox(height: 60),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
-    );
+    ),
+  );
   }
 }
 

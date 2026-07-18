@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/widgets/skeleton/skeleton_widgets.dart';
+import 'package:safini/core/utils/widgets/layout/parent_sliver_scaffold.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
@@ -24,89 +26,60 @@ class ParentTasksScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<ParentTasksCubit>()..loadAllTasks(),
       child: Builder(
-        builder: (context) => Scaffold(
-          backgroundColor: context.colorScheme.primary.withValues(alpha: 0.9),
-          body: Column(
+        builder: (context) => ParentSliverScaffold(
+          expandedHeight: 150,
+          bodyPadding: const EdgeInsets.fromLTRB(20, 28, 20, 100),
+          onRefresh: () => context.read<ParentTasksCubit>().loadAllTasks(),
+          header: Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      context.colorScheme.primary.withValues(alpha: 0.8),
-                      context.colorScheme.primary,
-                    ],
-                  ),
-                ),
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 20, 20, 24),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            s.tasksAndRewards,
-                            style: context.textTheme.displaySmall?.copyWith(
-                              color: context.colorScheme.onPrimary,
-                              fontSize: 30,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        GestureDetector(
-                          onTap: () => _openCreateTaskSheet(context),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colorScheme.onPrimary
-                                  .withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  s.newBtn,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: context.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+              Expanded(
+                child: Text(
+                  s.tasksAndRewards,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.displaySmall?.copyWith(
+                    color: context.colorScheme.onPrimary,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
                   ),
                 ),
               ),
-              Expanded(
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: () => _openCreateTaskSheet(context),
                 child: Container(
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(36),
-                      topRight: Radius.circular(36),
-                    ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 10,
                   ),
-                  child: BlocConsumer<ParentTasksCubit, ParentTasksState>(
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.onPrimary
+                        .withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add, color: Colors.white, size: 18),
+                      const SizedBox(width: 6),
+                      Text(
+                        s.newBtn,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: context.colorScheme.onPrimary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          body: BlocConsumer<ParentTasksCubit, ParentTasksState>(
                     listener: (context, state) {
                       if (state is ParentTasksError && state.isUnauthorized) {
                         unawaited(
@@ -150,9 +123,7 @@ class ParentTasksScreen extends StatelessWidget {
                     builder: (context, state) {
                       if (state is ParentTasksLoading ||
                           state is ParentTasksInitial) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const SkeletonList(count: 5);
                       }
 
                       if (state is ParentTasksError) {
@@ -177,13 +148,9 @@ class ParentTasksScreen extends StatelessWidget {
                       };
 
                       if (loadedState != null) {
-                        return RefreshIndicator(
-                          onRefresh: () =>
-                              context.read<ParentTasksCubit>().loadAllTasks(),
-                          child: ListView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.fromLTRB(20, 28, 20, 100),
-                            children: [
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                               Text(
                                 loadedState.childName,
                                 style: context.textTheme.labelLarge?.copyWith(
@@ -233,16 +200,11 @@ class ParentTasksScreen extends StatelessWidget {
                                 ),
                               ],
                             ],
-                          ),
-                        );
+                          );
                       }
 
                       return const SizedBox.shrink();
                     },
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ),

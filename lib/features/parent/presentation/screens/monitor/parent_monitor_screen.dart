@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/skeleton/skeleton_widgets.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
@@ -37,7 +38,6 @@ class _ParentMonitorView extends StatelessWidget {
   // Base height of the progress-card block (padding + a 2-line title layout)
   // at a text scale of 1.0. It grows with the device font-scale factor.
   static const double _toolbarHeight = 80;
-  static const double _bottomStripHeight = 36;
   static const double _cardBlockBaseHeight = 224;
 
   @override
@@ -46,10 +46,8 @@ class _ParentMonitorView extends StatelessWidget {
     final topPadding = media.padding.top;
     // Clamp so an extreme system font size can't blow the header height up.
     final textScale = media.textScaler.scale(1.0).clamp(1.0, 1.3);
-    final expandedHeight = topPadding +
-        _toolbarHeight +
-        (_cardBlockBaseHeight * textScale) +
-        _bottomStripHeight;
+    final expandedHeight =
+        topPadding + _toolbarHeight + (_cardBlockBaseHeight * textScale);
 
     return BlocListener<ParentMonitorCubit, ParentMonitorState>(
       // When the parent swipes to another child, reload that child's tasks so
@@ -88,26 +86,17 @@ class _ParentMonitorView extends StatelessWidget {
               collapseMode: CollapseMode.pin,
               background: MonitorFlexBackground(),
             ),
-            // This bottom widget is part of the pinned SliverAppBar — it is
-            // always visible, keeping the rounded-corner transition in place
-            // even when the progress card has scrolled away.
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(_bottomStripHeight),
-              child: Container(
-                height: _bottomStripHeight,
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(36),
-                    topRight: Radius.circular(36),
-                  ),
-                ),
-              ),
-            ),
           ),
           SliverToBoxAdapter(
             child: Container(
-              color: context.colorScheme.surface,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(36),
+                  topRight: Radius.circular(36),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -116,12 +105,7 @@ class _ParentMonitorView extends StatelessWidget {
                 child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
                   builder: (context, state) {
                     if (state is ParentMonitorLoading) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(48),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
+                      return const MonitorSkeleton();
                     }
 
                     if (state is ParentMonitorNoChild) {
