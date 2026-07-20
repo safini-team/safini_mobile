@@ -417,6 +417,11 @@ class _TaskSheetState extends State<TaskSheet> {
                       TextField(
                         controller: _titleController,
                         maxLines: 3,
+                        textInputAction: TextInputAction.done,
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
+                        onSubmitted: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         textCapitalization: TextCapitalization.sentences,
                         decoration: InputDecoration(
                           hintText: 'Что нужно сделать? Ребёнок это увидит',

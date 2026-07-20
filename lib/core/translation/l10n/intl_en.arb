@@ -311,5 +311,22 @@
   "removeParentConfirmTitle": "Remove Parent?",
   "removeParentConfirmBody": "Are you sure you want to remove this parent from the family?",
   "logoutConfirmTitle": "Log out?",
-  "logoutConfirmBody": "Are you sure you want to log out?"
+  "logoutConfirmBody": "Are you sure you want to log out?",
+  "createChildProfileTitle": "Create a child profile",
+  "createChildProfileSubtitle": "Fill out the details below to add a child to your family.",
+  "nicknameLabel": "Nickname",
+  "nicknameRequired": "Nickname is required.",
+  "nicknameTooLong": "Nickname must be at most 80 characters.",
+  "ageFieldLabel": "Age",
+  "ageRequired": "Age is required.",
+  "ageMustBeInteger": "Age must be an integer.",
+  "ageRange": "Age must be between 0 and 18.",
+  "genderOptional": "Gender (optional)",
+  "genderBoy": "Boy",
+  "genderGirl": "Girl",
+  "genderOther": "Other",
+  "createChildButton": "Create Child",
+  "editProfileSubtitle": "Update your child's information below.",
+  "saveChanges": "Save Changes",
+  "childUpdatedSuccess": "Child profile updated successfully."
 }

@@ -83,6 +83,9 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                           );
                           if (result == true && context.mounted) {
                             context.read<ParentCubit>().loadProfile();
+                            context
+                                .read<ParentFamilyCubit>()
+                                .loadCurrentFamily(refresh: true);
                           }
                         },
                       ),

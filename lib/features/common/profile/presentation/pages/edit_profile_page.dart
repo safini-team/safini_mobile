@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/core/utils/widgets/skeleton/skeleton_loader.dart';
 import 'package:safini/features/common/profile/data/datasources/local/profile_local_datasource.dart';
 import 'package:safini/features/common/profile/domain/models/profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -298,7 +299,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Skeleton(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SkeletonBox(width: 80, height: 14),
+                    SizedBox(height: 10),
+                    SkeletonBox(height: 48, radius: 12),
+                    SizedBox(height: 24),
+                    SkeletonBox(width: 80, height: 14),
+                    SizedBox(height: 10),
+                    SkeletonBox(height: 48, radius: 12),
+                    SizedBox(height: 32),
+                    SkeletonBox(height: 52, radius: 26),
+                    SizedBox(height: 12),
+                    SkeletonBox(height: 52, radius: 26),
+                  ],
+                ),
+              ),
+            )
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20),

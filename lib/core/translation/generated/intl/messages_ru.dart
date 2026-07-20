@@ -60,7 +60,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "addChild": MessageLookupByLibrary.simpleMessage("Добавить ребенка"),
     "admin": MessageLookupByLibrary.simpleMessage("Админ"),
     "ageAndGender": m0,
+    "ageFieldLabel": MessageLookupByLibrary.simpleMessage("Возраст"),
     "ageLabel": m1,
+    "ageMustBeInteger": MessageLookupByLibrary.simpleMessage(
+      "Возраст должен быть числом.",
+    ),
+    "ageRange": MessageLookupByLibrary.simpleMessage(
+      "Возраст должен быть от 0 до 18.",
+    ),
+    "ageRequired": MessageLookupByLibrary.simpleMessage("Укажите возраст."),
     "appLimits": MessageLookupByLibrary.simpleMessage("Лимиты приложений"),
     "appLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
       "Установите дневные лимиты экранного времени",
@@ -87,6 +95,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Код приглашения ребенка",
     ),
     "childProgressTitle": m2,
+    "childUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Профиль ребёнка обновлён.",
+    ),
     "chooseYourRole": MessageLookupByLibrary.simpleMessage("Выберите роль"),
     "cleanTheRoom": MessageLookupByLibrary.simpleMessage("Убраться в комнате"),
     "close": MessageLookupByLibrary.simpleMessage("Закрыть"),
@@ -101,8 +112,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "completed": MessageLookupByLibrary.simpleMessage("Выполнено"),
     "copy": MessageLookupByLibrary.simpleMessage("Копировать"),
+    "createChildButton": MessageLookupByLibrary.simpleMessage(
+      "Создать ребёнка",
+    ),
     "createChildInviteCode": MessageLookupByLibrary.simpleMessage(
       "Создать код для ребенка",
+    ),
+    "createChildProfileSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Заполните данные ниже, чтобы добавить ребёнка в семью.",
+    ),
+    "createChildProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "Создать профиль ребёнка",
     ),
     "createOrJoinFamily": MessageLookupByLibrary.simpleMessage(
       "Создайте семью или присоединитесь по коду.",
@@ -165,6 +185,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editProfile": MessageLookupByLibrary.simpleMessage(
       "Редактировать профиль",
     ),
+    "editProfileSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Обновите данные ребёнка ниже.",
+    ),
     "editTaskSheetTitle": MessageLookupByLibrary.simpleMessage(
       "Изменить задание",
     ),
@@ -182,6 +205,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "free": MessageLookupByLibrary.simpleMessage("БЕСПЛАТНО"),
     "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
+    "genderBoy": MessageLookupByLibrary.simpleMessage("Мальчик"),
+    "genderGirl": MessageLookupByLibrary.simpleMessage("Девочка"),
+    "genderOptional": MessageLookupByLibrary.simpleMessage(
+      "Пол (необязательно)",
+    ),
+    "genderOther": MessageLookupByLibrary.simpleMessage("Другое"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Перейти к заданиям"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Добрый день 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Добрый вечер 👋"),
@@ -236,6 +265,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newBtn": MessageLookupByLibrary.simpleMessage("Новое"),
     "newTask": MessageLookupByLibrary.simpleMessage("Новое задание"),
+    "nicknameLabel": MessageLookupByLibrary.simpleMessage("Имя"),
+    "nicknameRequired": MessageLookupByLibrary.simpleMessage("Введите имя."),
+    "nicknameTooLong": MessageLookupByLibrary.simpleMessage(
+      "Имя не должно превышать 80 символов.",
+    ),
     "noChildrenFoundYet": MessageLookupByLibrary.simpleMessage(
       "Дети пока не добавлены",
     ),
@@ -301,6 +335,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "russian": MessageLookupByLibrary.simpleMessage("Русский"),
     "sat": MessageLookupByLibrary.simpleMessage("СБ"),
     "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("Сохранить изменения"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Сохранить вид!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Выберите язык"),
     "setUpANewProfile": MessageLookupByLibrary.simpleMessage(

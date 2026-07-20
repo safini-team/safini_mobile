@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/utils/widgets/skeleton/skeleton_widgets.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
@@ -127,6 +128,12 @@ class _QuestListBody extends StatelessWidget {
     final s = S.of(context);
     return BlocBuilder<QuestCubit, QuestState>(
       builder: (context, state) {
+        if (state.isLoading && state.quests.isEmpty) {
+          return const SkeletonList(
+            count: 5,
+            padding: EdgeInsets.all(20),
+          );
+        }
         if (state.quests.isEmpty) {
           return Center(
             child: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
@@ -41,6 +42,7 @@ class _EditChildPageState extends State<EditChildPage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final initials = widget.child.nickname.isNotEmpty
         ? widget.child.nickname[0].toUpperCase()
         : 'C';
@@ -54,17 +56,25 @@ class _EditChildPageState extends State<EditChildPage> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(4, 8, 24, 0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => Navigator.of(context).pop(false),
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    'Edit Child',
-                    style: context.textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        s.editChild,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.headlineMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -100,7 +110,7 @@ class _EditChildPageState extends State<EditChildPage> {
                       ),
                     ),
                     Text(
-                      'Age ${widget.child.age}',
+                      s.ageLabel(widget.child.age),
                       style: context.textTheme.bodyMedium?.copyWith(
                         color: Colors.white.withValues(alpha: 0.7),
                       ),
@@ -134,14 +144,14 @@ class _EditChildPageState extends State<EditChildPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Edit profile',
+                        s.editProfile,
                         style: context.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Update your child\'s information below.',
+                        s.editProfileSubtitle,
                         style: context.textTheme.bodyMedium?.copyWith(
                           color: context.colorScheme.onSurface.withValues(
                             alpha: 0.55,
@@ -155,15 +165,15 @@ class _EditChildPageState extends State<EditChildPage> {
                           textInputAction: TextInputAction.next,
                           decoration: _inputDecoration(
                             context,
-                            label: 'Nickname',
+                            label: s.nicknameLabel,
                             hint: 'e.g. Alex',
                             icon: Icons.person_outline_rounded,
                           ),
                           validator: (value) {
                             final v = value?.trim() ?? '';
-                            if (v.isEmpty) return 'Nickname is required.';
+                            if (v.isEmpty) return s.nicknameRequired;
                             if (v.length > 80) {
-                              return 'Nickname must be at most 80 characters.';
+                              return s.nicknameTooLong;
                             }
                             return null;
                           },
@@ -177,19 +187,19 @@ class _EditChildPageState extends State<EditChildPage> {
                           keyboardType: TextInputType.number,
                           decoration: _inputDecoration(
                             context,
-                            label: 'Age',
+                            label: s.ageFieldLabel,
                             hint: '0 – 18',
                             icon: Icons.cake_outlined,
                           ),
                           validator: (value) {
                             final input = value?.trim() ?? '';
-                            if (input.isEmpty) return 'Age is required.';
+                            if (input.isEmpty) return s.ageRequired;
                             final parsed = int.tryParse(input);
                             if (parsed == null) {
-                              return 'Age must be an integer.';
+                              return s.ageMustBeInteger;
                             }
                             if (parsed < 0 || parsed > 18) {
-                              return 'Age must be between 0 and 18.';
+                              return s.ageRange;
                             }
                             return null;
                           },
@@ -209,7 +219,7 @@ class _EditChildPageState extends State<EditChildPage> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  'Gender (optional)',
+                                  s.genderOptional,
                                   style: context.textTheme.bodySmall?.copyWith(
                                     color: context.colorScheme.onSurface
                                         .withValues(alpha: 0.55),
@@ -218,7 +228,8 @@ class _EditChildPageState extends State<EditChildPage> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            Row(
+                            Wrap(
+                              runSpacing: 8,
                               children: _GenderOption.values.map((option) {
                                 final selected = _selectedGender == option;
                                 return Padding(
@@ -250,7 +261,7 @@ class _EditChildPageState extends State<EditChildPage> {
                                         ),
                                       ),
                                       child: Text(
-                                        option.label,
+                                        _genderLabel(s, option),
                                         style: context.textTheme.labelLarge
                                             ?.copyWith(
                                           color: selected
@@ -296,7 +307,7 @@ class _EditChildPageState extends State<EditChildPage> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text('Save Changes'),
+                            : Text(s.saveChanges),
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -349,6 +360,17 @@ class _EditChildPageState extends State<EditChildPage> {
     );
   }
 
+  String _genderLabel(S s, _GenderOption option) {
+    switch (option) {
+      case _GenderOption.boy:
+        return s.genderBoy;
+      case _GenderOption.girl:
+        return s.genderGirl;
+      case _GenderOption.other:
+        return s.genderOther;
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -393,7 +415,7 @@ class _EditChildPageState extends State<EditChildPage> {
     });
 
     if (failure == null) {
-      AppSnackBar.success(context, 'Child profile updated successfully.');
+      AppSnackBar.success(context, S.of(context).childUpdatedSuccess);
       Navigator.of(context).pop(true);
       return;
     }

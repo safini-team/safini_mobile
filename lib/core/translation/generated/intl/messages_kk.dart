@@ -62,7 +62,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "addChild": MessageLookupByLibrary.simpleMessage("Бала қосу"),
     "admin": MessageLookupByLibrary.simpleMessage("Әкімші"),
     "ageAndGender": m0,
+    "ageFieldLabel": MessageLookupByLibrary.simpleMessage("Жасы"),
     "ageLabel": m1,
+    "ageMustBeInteger": MessageLookupByLibrary.simpleMessage(
+      "Жасы сан болуы керек.",
+    ),
+    "ageRange": MessageLookupByLibrary.simpleMessage(
+      "Жасы 0 мен 18 аралығында болуы керек.",
+    ),
+    "ageRequired": MessageLookupByLibrary.simpleMessage("Жасын көрсетіңіз."),
     "appLimits": MessageLookupByLibrary.simpleMessage("Қолданба шектеулері"),
     "appLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
       "Күнделікті экран уақытының шектеуін орнатыңыз",
@@ -89,6 +97,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Баланың шақыру коды",
     ),
     "childProgressTitle": m2,
+    "childUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Бала профилі жаңартылды.",
+    ),
     "chooseYourRole": MessageLookupByLibrary.simpleMessage(
       "Рөліңізді таңдаңыз",
     ),
@@ -105,8 +116,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "completed": MessageLookupByLibrary.simpleMessage("Орындалды"),
     "copy": MessageLookupByLibrary.simpleMessage("Көшіру"),
+    "createChildButton": MessageLookupByLibrary.simpleMessage("Бала құру"),
     "createChildInviteCode": MessageLookupByLibrary.simpleMessage(
       "Балаға шақыру кодын жасау",
+    ),
+    "createChildProfileSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Отбасыға бала қосу үшін төмендегі мәліметтерді толтырыңыз.",
+    ),
+    "createChildProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "Бала профилін құру",
     ),
     "createOrJoinFamily": MessageLookupByLibrary.simpleMessage(
       "Отбасын құрыңыз немесе шақыру кодымен қосылыңыз.",
@@ -163,6 +181,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("Өңдеу"),
     "editChild": MessageLookupByLibrary.simpleMessage("Баланы өңдеу"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Профильді өңдеу"),
+    "editProfileSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Бала мәліметтерін төменде жаңартыңыз.",
+    ),
     "editTaskSheetTitle": MessageLookupByLibrary.simpleMessage(
       "Тапсырманы өзгерту",
     ),
@@ -180,6 +201,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "free": MessageLookupByLibrary.simpleMessage("ТЕГІН"),
     "fri": MessageLookupByLibrary.simpleMessage("ЖМ"),
+    "genderBoy": MessageLookupByLibrary.simpleMessage("Ұл"),
+    "genderGirl": MessageLookupByLibrary.simpleMessage("Қыз"),
+    "genderOptional": MessageLookupByLibrary.simpleMessage(
+      "Жынысы (міндетті емес)",
+    ),
+    "genderOther": MessageLookupByLibrary.simpleMessage("Басқа"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Тапсырмаларға өту"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Қайырлы күн 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Қайырлы кеш 👋"),
@@ -234,6 +261,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newBtn": MessageLookupByLibrary.simpleMessage("Жаңа"),
     "newTask": MessageLookupByLibrary.simpleMessage("Жаңа тапсырма"),
+    "nicknameLabel": MessageLookupByLibrary.simpleMessage("Аты"),
+    "nicknameRequired": MessageLookupByLibrary.simpleMessage("Атын енгізіңіз."),
+    "nicknameTooLong": MessageLookupByLibrary.simpleMessage(
+      "Аты 80 таңбадан аспауы керек.",
+    ),
     "noChildrenFoundYet": MessageLookupByLibrary.simpleMessage(
       "Балалар әлі табылмады",
     ),
@@ -303,6 +335,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "russian": MessageLookupByLibrary.simpleMessage("Орыс"),
     "sat": MessageLookupByLibrary.simpleMessage("СБ"),
     "save": MessageLookupByLibrary.simpleMessage("Сақтау"),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("Өзгерістерді сақтау"),
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Көріністі сақтау!"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Тілді таңдаңыз"),
     "setUpANewProfile": MessageLookupByLibrary.simpleMessage(

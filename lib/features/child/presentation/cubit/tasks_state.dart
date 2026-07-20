@@ -3,15 +3,18 @@ import 'package:safini/features/child/presentation/cubit/tasks_model.dart';
 class TasksState {
   final List<TaskItem> tasks;
   final TaskCategory selectedCategory;
+  final bool isLoading;
 
   const TasksState({
     required this.tasks,
     this.selectedCategory = TaskCategory.all,
+    this.isLoading = false,
   });
 
   const TasksState.initial()
     : tasks = const [],
-      selectedCategory = TaskCategory.all;
+      selectedCategory = TaskCategory.all,
+      isLoading = true;
 
   List<TaskItem> get filteredTasks => selectedCategory == TaskCategory.all
       ? tasks
@@ -24,10 +27,15 @@ class TasksState {
   int get earnedToday =>
       tasks.where((t) => t.isCompleted).fold(0, (sum, t) => sum + t.coins);
 
-  TasksState copyWith({List<TaskItem>? tasks, TaskCategory? selectedCategory}) {
+  TasksState copyWith({
+    List<TaskItem>? tasks,
+    TaskCategory? selectedCategory,
+    bool? isLoading,
+  }) {
     return TasksState(
       tasks: tasks ?? this.tasks,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

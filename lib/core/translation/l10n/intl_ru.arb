@@ -311,5 +311,22 @@
   "removeParentConfirmTitle": "Удалить родителя?",
   "removeParentConfirmBody": "Вы уверены, что хотите удалить этого родителя из семьи?",
   "logoutConfirmTitle": "Выйти?",
-  "logoutConfirmBody": "Вы уверены, что хотите выйти из аккаунта?"
+  "logoutConfirmBody": "Вы уверены, что хотите выйти из аккаунта?",
+  "createChildProfileTitle": "Создать профиль ребёнка",
+  "createChildProfileSubtitle": "Заполните данные ниже, чтобы добавить ребёнка в семью.",
+  "nicknameLabel": "Имя",
+  "nicknameRequired": "Введите имя.",
+  "nicknameTooLong": "Имя не должно превышать 80 символов.",
+  "ageFieldLabel": "Возраст",
+  "ageRequired": "Укажите возраст.",
+  "ageMustBeInteger": "Возраст должен быть числом.",
+  "ageRange": "Возраст должен быть от 0 до 18.",
+  "genderOptional": "Пол (необязательно)",
+  "genderBoy": "Мальчик",
+  "genderGirl": "Девочка",
+  "genderOther": "Другое",
+  "createChildButton": "Создать ребёнка",
+  "editProfileSubtitle": "Обновите данные ребёнка ниже.",
+  "saveChanges": "Сохранить изменения",
+  "childUpdatedSuccess": "Профиль ребёнка обновлён."
 }
