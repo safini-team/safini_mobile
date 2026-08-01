@@ -109,6 +109,16 @@ class S {
     );
   }
 
+  /// `Enter an invite code from your parent to continue.`
+  String get kidInviteSubtitle {
+    return Intl.message(
+      'Enter an invite code from your parent to continue.',
+      name: 'kidInviteSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Today's Quests`
   String get todaysQuests {
     return Intl.message(

@@ -227,6 +227,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "inviteCodeCopied": MessageLookupByLibrary.simpleMessage("Код скопирован"),
     "kazakh": MessageLookupByLibrary.simpleMessage("Казахский"),
+    "kidInviteSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Введите код-приглашение от родителя, чтобы продолжить.",
+    ),
     "kidSubtitle": MessageLookupByLibrary.simpleMessage(
       "Зарабатывай монеты и играй",
     ),

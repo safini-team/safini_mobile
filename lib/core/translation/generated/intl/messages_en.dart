@@ -213,6 +213,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Invite code copied",
     ),
     "kazakh": MessageLookupByLibrary.simpleMessage("Kazakh"),
+    "kidInviteSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Enter an invite code from your parent to continue.",
+    ),
     "kidSubtitle": MessageLookupByLibrary.simpleMessage("Earn coins & play"),
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Kids earn Time Coins to unlock extra minutes for these apps.",

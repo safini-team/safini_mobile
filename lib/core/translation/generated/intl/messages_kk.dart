@@ -223,6 +223,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "inviteCodeCopied": MessageLookupByLibrary.simpleMessage("Код көшірілді"),
     "kazakh": MessageLookupByLibrary.simpleMessage("Қазақша"),
+    "kidInviteSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Жалғастыру үшін ата-анаңыздың шақыру кодын енгізіңіз.",
+    ),
     "kidSubtitle": MessageLookupByLibrary.simpleMessage("Монета жинап, ойна"),
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Балалар осы қолданбаларға қосымша уақыт ашу үшін Уақыт монеталарын табады",

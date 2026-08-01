@@ -38,7 +38,21 @@ class RoleSelectionPage extends StatelessWidget {
                   child: SafeArea(
                     child: Column(
                       children: [
-                        const SizedBox(height: 48),
+                        // Language switcher
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8, top: 4),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.language,
+                                color: context.colorScheme.onPrimary,
+                              ),
+                              onPressed: () => _showLanguageDialog(context),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         // Header
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -105,8 +119,7 @@ class RoleSelectionPage extends StatelessWidget {
                               _RoleCard(
                                 icon: Icons.sports_esports_rounded,
                                 title: S.of(context).imAKid,
-                                subtitle:
-                                    'Enter an invite code from your parent to continue.',
+                                subtitle: S.of(context).kidInviteSubtitle,
                                 gradientColors: const [
                                   Color(0xFF5A7DFF),
                                   Color(0xFF3F63E0),
@@ -142,6 +155,42 @@ class RoleSelectionPage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final s = S.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(s.selectLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(s.english),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('en'));
+                Navigator.pop(dialogContext);
+              },
+            ),
+            ListTile(
+              title: Text(s.russian),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('ru'));
+                Navigator.pop(dialogContext);
+              },
+            ),
+            ListTile(
+              title: Text(s.kazakh),
+              onTap: () {
+                context.read<LocaleCubit>().setLocale(const Locale('kk'));
+                Navigator.pop(dialogContext);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
