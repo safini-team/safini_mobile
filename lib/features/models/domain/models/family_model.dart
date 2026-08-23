@@ -143,6 +143,10 @@ class ChildSummaryModel {
   final int coinsBalance;
   final int level;
 
+  /// `current_streak_days` from the child row. Every endpoint that serialises a
+  /// child returns it, including `GET /v1/families/current`.
+  final int currentStreakDays;
+
   const ChildSummaryModel({
     required this.id,
     required this.nickname,
@@ -151,6 +155,7 @@ class ChildSummaryModel {
     this.claimedByUserId,
     required this.coinsBalance,
     required this.level,
+    this.currentStreakDays = 0,
   });
 
   factory ChildSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -179,6 +184,11 @@ class ChildSummaryModel {
       level: rawLevel is int
           ? rawLevel
           : int.tryParse(rawLevel?.toString() ?? '') ?? 0,
+      currentStreakDays: switch (json['currentStreakDays'] ??
+          json['current_streak_days']) {
+        final int value => value,
+        final Object? value => int.tryParse(value?.toString() ?? '') ?? 0,
+      },
     );
   }
 
@@ -191,6 +201,7 @@ class ChildSummaryModel {
       'claimed_by_user_id': claimedByUserId,
       'coinsBalance': coinsBalance,
       'level': level,
+      'currentStreakDays': currentStreakDays,
     };
   }
 }

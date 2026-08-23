@@ -109,8 +109,11 @@ class _TaskSheetState extends State<TaskSheet> {
       _details.text = task.description ?? '';
       _coins = task.coinReward;
       _photoProof = (task.proofMode ?? '').toLowerCase().contains('image');
+      // A task seeded by the backend carries a category this sheet has no chip
+      // for (`learn`, `fitness`, `logic`, `real_world`). Keep it instead of
+      // defaulting to `home`, or every edit silently rewrites the category.
       final key = (task.category ?? '').toLowerCase();
-      if (_categories.any((c) => c.key == key)) _category = key;
+      if (key.isNotEmpty) _category = key;
       final emoji = task.metadata?['emoji'];
       if (emoji is String && emoji.trim().isNotEmpty) _emoji = emoji.trim();
     }
@@ -125,7 +128,9 @@ class _TaskSheetState extends State<TaskSheet> {
     super.dispose();
   }
 
-  String get _proofMode => _photoProof ? 'text_image' : 'text';
+  /// Values the API documents: `text_image`, `reported_metric`, `none`.
+  /// `text` was never one of them.
+  String get _proofMode => _photoProof ? 'text_image' : 'none';
 
   Future<void> _submit() async {
     final title = _title.text.trim();

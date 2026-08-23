@@ -178,7 +178,6 @@ class DioNetwork {
     return InterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) async {
         final token = _accessToken;
-        log('Token: $token', name: 'AccessToken');
 
         if (token != null) {
           final isExpired = JwtDecoder.isExpired(token);

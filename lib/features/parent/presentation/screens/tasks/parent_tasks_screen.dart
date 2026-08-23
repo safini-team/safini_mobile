@@ -30,6 +30,11 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   String _scope = _allScope;
   TaskLane _lane = TaskLane.review;
 
+  /// Until the parent picks a lane themselves, the screen opens on whichever
+  /// one has something in it. Landing on an empty "To review" was the default
+  /// on most days.
+  bool _laneChosenByUser = false;
+
   Future<void> _reload() {
     final cubit = context.read<ParentTasksCubit>();
     return _scope == _allScope
@@ -68,7 +73,10 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         return ParentTasksView(
           data: _buildData(context, loaded),
           onSelectScope: _selectScope,
-          onSelectLane: (lane) => setState(() => _lane = lane),
+          onSelectLane: (lane) => setState(() {
+            _lane = lane;
+            _laneChosenByUser = true;
+          }),
           onOpenTask: (row) => _openTask(context, loaded, row.id),
           onNewTask: () => _openTask(context, loaded, null),
           onRefresh: _reload,
@@ -169,8 +177,12 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       TaskLane.done: loaded.completedTasks.length,
     };
 
+    final lane = _laneChosenByUser
+        ? _lane
+        : (counts[TaskLane.review]! > 0 ? TaskLane.review : TaskLane.active);
+
     final rows = loaded.tasks
-        .where((task) => laneOf(task) == _lane)
+        .where((task) => laneOf(task) == lane)
         .map(
           (task) => TaskRowData(
             id: task.id,
@@ -231,14 +243,14 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       ],
       selectedScope: _scope,
       laneCounts: counts,
-      lane: _lane,
+      lane: lane,
       groups: groups,
-      emptyTitle: switch (_lane) {
+      emptyTitle: switch (lane) {
         TaskLane.review => s.emptyNothingToReview,
         TaskLane.active => s.emptyNoActiveTasks,
         TaskLane.done => s.emptyNothingPaidYet,
       },
-      emptyBody: switch (_lane) {
+      emptyBody: switch (lane) {
         TaskLane.review => s.emptyReviewBody,
         TaskLane.active => s.emptyActiveBody,
         TaskLane.done => s.emptyDoneBody,

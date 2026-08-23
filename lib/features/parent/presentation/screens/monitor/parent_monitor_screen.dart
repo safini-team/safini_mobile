@@ -167,6 +167,7 @@ class _ParentMonitorView extends StatelessWidget {
       tasksDone: tasks?.completedTasks.length ?? 0,
       tasksTotal: tasks?.tasks.length ?? 0,
       coins: child?.coinsBalance ?? 0,
+      streakDays: child?.currentStreakDays,
       reviews: reviews,
       apps: apps.take(3).toList(),
     );
