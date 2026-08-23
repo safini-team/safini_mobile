@@ -42,7 +42,9 @@ class ChildModel {
     return ChildModel(
       id: json['id'] as String,
       familyId: (json['familyId'] ?? json['family_id']) as String,
-      nickname: json['nickname'] as String,
+      nickname: (json['nickname'] as String?)?.trim().isNotEmpty == true
+          ? (json['nickname'] as String).trim()
+          : 'NoName',
       age: json['age'] as int,
       gender: (json['gender'] as String?) ?? '',
       avatarState: AvatarStateModel.fromJson(avatarStateJson),

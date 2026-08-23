@@ -23,7 +23,9 @@ class ProfileModel {
     return ProfileModel(
       userId: json['userId'] as String,
       email: json['email'] as String,
-      displayName: json['displayName'] as String,
+      displayName: (json['displayName'] as String?)?.trim().isNotEmpty == true
+          ? (json['displayName'] as String).trim()
+          : 'NoName',
       avatarUrl: json['avatarUrl'] as String,
       bio: json['bio'] as String,
       timezone: json['timezone'] as String,

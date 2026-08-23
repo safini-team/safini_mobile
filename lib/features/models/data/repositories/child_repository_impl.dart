@@ -85,7 +85,7 @@ class ChildRepositoryImpl implements IChildRepository {
 
     final fallback = switch (response.statusCode) {
       409 => 'This child profile is already claimed.',
-      422 => 'Invalid invite code format. Must be 4-16 characters.',
+      422 => 'Invite code must be exactly 4 characters.',
       503 => 'Auth verification or database configuration unavailable.',
       _ => 'Unable to claim child profile right now.',
     };

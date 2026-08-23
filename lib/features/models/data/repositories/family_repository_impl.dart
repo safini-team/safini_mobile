@@ -43,7 +43,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
       statusMessages: {
         401: 'Session expired. Please log in again.',
         409: 'This code is invalid or the family already has two parents.',
-        422: 'Invalid invite code format. Must be 4-16 characters.',
+        422: 'Invite code must be exactly 4 characters.',
         503: 'Service unavailable. Please try again later.',
       },
     );
@@ -179,10 +179,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
       },
     );
 
-    return response.fold(
-      (failure) => Left(failure),
-      (_) => const Right(null),
-    );
+    return response.fold((failure) => Left(failure), (_) => const Right(null));
   }
 
   Future<Either<Failure, FamilyModel>> _postFamily(

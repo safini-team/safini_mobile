@@ -12,10 +12,8 @@ class QuestCubit extends Cubit<QuestState> {
   final ProfileController _profileController;
   final IChildRepository _childRepository;
 
-  QuestCubit(
-    this._profileController,
-    this._childRepository,
-  ) : super(const QuestState.initial()) {
+  QuestCubit(this._profileController, this._childRepository)
+    : super(const QuestState.initial()) {
     loadQuests();
   }
 
@@ -73,10 +71,10 @@ class QuestCubit extends Cubit<QuestState> {
 
   List<QuestModel> _sortQuests(List<QuestModel> quests) {
     return [...quests]..sort((a, b) {
-        final aRank = a.isCompleted ? 2 : (a.isSubmitted ? 1 : 0);
-        final bRank = b.isCompleted ? 2 : (b.isSubmitted ? 1 : 0);
-        return aRank.compareTo(bRank);
-      });
+      final aRank = a.isCompleted ? 2 : (a.isSubmitted ? 1 : 0);
+      final bRank = b.isCompleted ? 2 : (b.isSubmitted ? 1 : 0);
+      return aRank.compareTo(bRank);
+    });
   }
 
   QuestModel _questFromTask(ParentTaskInstanceModel task) {
@@ -87,10 +85,11 @@ class QuestCubit extends Cubit<QuestState> {
       title: task.displayTitle,
       // Show the description as the subtitle only when it differs from the
       // title (parent-created tasks store the same text in both).
-      subtitle: (task.description?.trim().isNotEmpty == true &&
+      subtitle:
+          (task.description?.trim().isNotEmpty == true &&
               task.description!.trim() != task.displayTitle.trim())
           ? task.description!.trim()
-          : _fallbackSubtitle(task),
+          : '',
       icon: spec.icon,
       iconColor: spec.color,
       iconBackground: spec.background,
@@ -106,23 +105,14 @@ class QuestCubit extends Cubit<QuestState> {
   /// Returns an error message on failure, or null on success.
   Future<String?> submitQuest(String questId, {String? note}) async {
     final result = await _childRepository.submitTask(questId, note: note);
-    return result.fold(
-      (failure) => failure.message,
-      (_) {
-        final updated = state.quests.map((q) {
-          if (q.id == questId) return q.copyWith(status: 'submitted');
-          return q;
-        }).toList();
-        emit(state.copyWith(quests: _sortQuests(updated)));
-        return null;
-      },
-    );
-  }
-
-  String _fallbackSubtitle(ParentTaskInstanceModel task) {
-    final reward = task.rewardCoins ?? 0;
-    if (reward > 0) return '$reward coin reward';
-    return task.isCompleted ? 'Completed' : 'Ready when you are';
+    return result.fold((failure) => failure.message, (_) {
+      final updated = state.quests.map((q) {
+        if (q.id == questId) return q.copyWith(status: 'submitted');
+        return q;
+      }).toList();
+      emit(state.copyWith(quests: _sortQuests(updated)));
+      return null;
+    });
   }
 
   _QuestVisualSpec _visualSpec(String category) {

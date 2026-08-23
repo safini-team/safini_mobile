@@ -87,7 +87,9 @@ class ChildSummaryDto {
   factory ChildSummaryDto.fromJson(Map<String, dynamic> json) {
     return ChildSummaryDto(
       id: json['id'] as String? ?? '',
-      nickname: json['nickname'] as String? ?? '',
+      nickname: (json['nickname'] as String?)?.trim().isNotEmpty == true
+          ? (json['nickname'] as String).trim()
+          : 'NoName',
       age: json['age'] as int? ?? 0,
       gender: json['gender'] as String?,
       claimedByUserId: json['claimed_by_user_id'] as String?,

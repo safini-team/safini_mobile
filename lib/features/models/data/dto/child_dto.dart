@@ -39,7 +39,9 @@ class ChildDto {
     return ChildDto(
       id: json['id'] as String? ?? '',
       familyId: json['family_id'] as String? ?? '',
-      nickname: json['nickname'] as String? ?? '',
+      nickname: (json['nickname'] as String?)?.trim().isNotEmpty == true
+          ? (json['nickname'] as String).trim()
+          : 'NoName',
       age: json['age'] as int? ?? 0,
       gender: json['gender'] as String? ?? '',
       avatarState: json['avatar_state'] != null

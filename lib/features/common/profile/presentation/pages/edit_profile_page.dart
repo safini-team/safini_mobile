@@ -6,7 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/core/theme/app_shadows.dart';
+import 'package:safini/core/theme/app_spacing.dart';
+import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/skeleton/skeleton_loader.dart';
 import 'package:safini/features/common/profile/data/datasources/local/profile_local_datasource.dart';
 import 'package:safini/features/common/profile/domain/models/profile_model.dart';
@@ -290,113 +296,131 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(s.editProfile),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.router.maybePop(),
-        ),
+      backgroundColor: AppColors.bgParent,
+      body: Column(
+        children: [
+          DsNavBar(
+            title: s.editProfile,
+            backLabel: s.settings,
+            onBack: () => context.router.maybePop(),
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Skeleton(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(18, 18, 18, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SkeletonBox(height: 116, radius: AppRadius.card),
+                          SizedBox(height: 26),
+                          SkeletonBox(height: 54, radius: AppRadius.button),
+                        ],
+                      ),
+                    ),
+                  )
+                : DsScreenEntrance(
+                    child: Form(
+                      key: _formKey,
+                      child: ListView(
+                        physics: const BouncingScrollPhysics(),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: EdgeInsets.only(
+                          bottom: 40 + MediaQuery.viewInsetsOf(context).bottom,
+                        ),
+                        children: [
+                          DsOverline(s.yourName, top: 14),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.gutter,
+                            ),
+                            child: DsGroup(
+                              radius: AppRadius.card,
+                              verticalPadding: 4,
+                              shadow: AppShadows.cardSoft,
+                              children: [
+                                DsFieldRow(
+                                  label: s.name,
+                                  child: TextFormField(
+                                    controller: _nameController,
+                                    maxLength: 60,
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    cursorColor: AppColors.primary,
+                                    style: AppText.rowTitleLg,
+                                    decoration: DsFieldRow.decoration(s.name)
+                                        .copyWith(counterText: ''),
+                                    validator: (value) {
+                                      final text = value?.trim() ?? '';
+                                      if (text.isEmpty) {
+                                        return '${s.name} is required.';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                DsFieldRow(
+                                  label: s.surname,
+                                  child: TextFormField(
+                                    controller: _surnameController,
+                                    maxLength: 60,
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    cursorColor: AppColors.primary,
+                                    style: AppText.rowTitleLg,
+                                    decoration: DsFieldRow.decoration(s.surname)
+                                        .copyWith(counterText: ''),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (_errorMessage != null)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                              child: Text(
+                                _errorMessage!,
+                                style: AppText.metaSm.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.dangerDeep,
+                                ),
+                              ),
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppSpacing.gutter,
+                              26,
+                              AppSpacing.gutter,
+                              0,
+                            ),
+                            child: DsPrimaryButton(
+                              label: s.save,
+                              busy: _isSaving,
+                              onTap: _save,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppSpacing.gutter,
+                              32,
+                              AppSpacing.gutter,
+                              0,
+                            ),
+                            child: DsDestructiveButton(
+                              label: s.deleteAccount,
+                              onTap: _isSaving ? null : _deleteAccount,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+          ),
+        ],
       ),
-      body: _isLoading
-          ? const Skeleton(
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SkeletonBox(width: 80, height: 14),
-                    SizedBox(height: 10),
-                    SkeletonBox(height: 48, radius: 12),
-                    SizedBox(height: 24),
-                    SkeletonBox(width: 80, height: 14),
-                    SizedBox(height: 10),
-                    SkeletonBox(height: 48, radius: 12),
-                    SizedBox(height: 32),
-                    SkeletonBox(height: 52, radius: 26),
-                    SizedBox(height: 12),
-                    SkeletonBox(height: 52, radius: 26),
-                  ],
-                ),
-              ),
-            )
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (_errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _errorMessage!,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    TextFormField(
-                      controller: _nameController,
-                      maxLength: 60,
-                      decoration: InputDecoration(labelText: s.name),
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-                        if (text.isEmpty) return '${s.name} is required.';
-                        if (text.length > 60) return 'Max 60 characters.';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _surnameController,
-                      maxLength: 60,
-                      decoration: InputDecoration(labelText: s.surname),
-                      validator: (value) {
-                        final text = value?.trim() ?? '';
-                        if (text.length > 60) return 'Max 60 characters.';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _isSaving ? null : _save,
-                      child: _isSaving
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(s.save),
-                    ),
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      onPressed: _isSaving
-                          ? null
-                          : () => context.router.maybePop(),
-                      child: Text(s.cancel),
-                    ),
-                    const SizedBox(height: 32),
-                    OutlinedButton(
-                      onPressed: _isSaving ? null : _deleteAccount,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        side: const BorderSide(color: Colors.red),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text(s.deleteAccount),
-                    ),
-                  ],
-                ),
-                ),
-              ),
-            ),
     );
   }
 }

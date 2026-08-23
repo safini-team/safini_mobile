@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:safini/core/app/app_router.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/di/injection.dart';
@@ -15,18 +17,23 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  /// Null when the platform plugin is unavailable (widget tests); the locale
+  /// then falls back to the system language for the session.
+  static SharedPreferences? get _prefs =>
+      getIt.isRegistered<SharedPreferences>() ? getIt<SharedPreferences>() : null;
+
   @override
   Widget build(BuildContext context) {
     final appRouter = getIt<AppRouter>();
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: getIt<CoinsCubit>()),
-        BlocProvider(create: (_) => LocaleCubit()),
+        BlocProvider(create: (_) => LocaleCubit(_prefs)),
         BlocProvider.value(value: getIt<AuthSessionCubit>()),
         BlocProvider.value(value: getIt<ChildClaimCubit>()),
         BlocProvider.value(value: getIt<ParentFamilyCubit>()),
       ],
-      child: BlocBuilder<LocaleCubit, Locale>(
+      child: BlocBuilder<LocaleCubit, Locale?>(
         builder: (context, locale) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
@@ -40,6 +47,11 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
+            // `locale` is null until the user picks one, so this decides what
+            // the phone's own language maps to - and re-runs if they change it
+            // in system settings while the app is open.
+            localeListResolutionCallback: (deviceLocales, _) =>
+                LocaleCubit.resolve(deviceLocales),
             routerConfig: appRouter.config(),
             builder: (context, child) {
               // Clamp the device text scale so extreme accessibility font

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Supabase and Google OAuth configuration.
@@ -42,10 +43,18 @@ class SupabaseConfig {
   /// Not always passed to `google_sign_in`; kept for reference and tooling.
   static String get googleAndroidClientId => _env('GOOGLE_ANDROID_CLIENT_ID');
 
-  static bool get isSupabaseConfigured =>
-      url.isNotEmpty && anonKey.isNotEmpty;
+  static bool get isSupabaseConfigured => url.isNotEmpty && anonKey.isNotEmpty;
 
   static bool get isGoogleConfigured => googleWebClientId.isNotEmpty;
+
+  /// Enables the non-public email/password login used by local testing and
+  /// App Review. It is on by default for debug builds and off for release
+  /// builds unless explicitly enabled with `ENABLE_EMAIL_SIGN_IN=true`.
+  static bool get isEmailSignInEnabled {
+    final configured = _env('ENABLE_EMAIL_SIGN_IN').toLowerCase();
+    if (configured.isEmpty) return kDebugMode;
+    return configured == 'true' || configured == '1' || configured == 'yes';
+  }
 
   /// Backend API base URL (e.g. `https://api.safini.fun`).
   static String get apiBaseUrl => _env('API_BASE_URL');

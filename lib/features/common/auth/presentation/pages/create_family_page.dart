@@ -2,11 +2,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/core/theme/app_shadows.dart';
+import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
 
+/// Naming the family, in the same form-card shape as "Add a child".
 class CreateFamilyPage extends StatefulWidget {
   const CreateFamilyPage({super.key});
 
@@ -15,200 +20,127 @@ class CreateFamilyPage extends StatefulWidget {
 }
 
 class _CreateFamilyPageState extends State<CreateFamilyPage> {
-  late final TextEditingController _nameController;
-  bool _initialized = false;
+  final _name = TextEditingController();
+  bool _hasAppliedDefaultName = false;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: 'My Family');
+    _name.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _name.dispose();
     super.dispose();
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_hasAppliedDefaultName) return;
+    _hasAppliedDefaultName = true;
+    _name.text = S.of(context).myFamily;
+    _name.selection = TextSelection.collapsed(offset: _name.text.length);
+  }
+
+  bool get _canSubmit => _name.text.trim().isNotEmpty;
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocaleCubit, Locale>(
-      builder: (context, locale) {
-        return Localizations.override(
-          context: context,
-          locale: locale,
-          child: Builder(
-            builder: (context) {
-              if (!_initialized) {
-                _initialized = true;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    context.read<ParentFamilyCubit>().markCreateFlow();
-                  }
-                });
-              }
+    return BlocBuilder<LocaleCubit, Locale?>(
+      builder: (context, locale) => Localizations.override(
+        context: context,
+        locale: locale,
+        child: Builder(builder: _build),
+      ),
+    );
+  }
 
-              final s = S.of(context);
+  Widget _build(BuildContext context) {
+    final s = S.of(context);
 
-              return BlocConsumer<ParentFamilyCubit, ParentFamilyState>(
-                listener: (context, state) {
-                  if (state.isDashboard && state.family != null) {
-                    context.router.replace(const NamedRoute('parentHome'));
-                  }
-                },
-                builder: (context, state) {
-                  return Scaffold(
-                    body: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            context.colorScheme.primary.withValues(alpha: 0.88),
-                            context.colorScheme.primary,
-                          ],
-                        ),
-                      ),
-                      child: SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: IconButton(
-                                  onPressed: () async {
-                                    if (!await context.router.maybePop()) {
-                                      context.router.replace(
-                                        const NamedRoute('familyDecision'),
-                                      );
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_back_rounded,
-                                    color: context.colorScheme.onPrimary,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Icon(
-                                Icons.family_restroom_rounded,
-                                color: context.colorScheme.onPrimary,
-                                size: 72,
-                              ),
-                              const SizedBox(height: 18),
-                              Text(
-                                'Create a family',
-                                textAlign: TextAlign.center,
-                                style: context.textTheme.headlineMedium?.copyWith(
-                                  color: context.colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Set up your family space so you can invite children and manage screen time.',
-                                textAlign: TextAlign.center,
-                                style: context.textTheme.bodyLarge?.copyWith(
-                                  color: context.colorScheme.onPrimary.withValues(alpha: 0.85),
-                                ),
-                              ),
-                              const SizedBox(height: 28),
-                              TextField(
-                                controller: _nameController,
-                                style: TextStyle(color: context.colorScheme.onPrimary),
-                                decoration: InputDecoration(
-                                  labelText: 'Family name',
-                                  labelStyle: TextStyle(
-                                    color: context.colorScheme.onPrimary.withValues(alpha: 0.8),
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.white.withValues(alpha: 0.12),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide(
-                                      color: Colors.white.withValues(alpha: 0.25),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              if (state.errorMessage != null) ...[
-                                Text(
-                                  state.errorMessage!,
-                                  textAlign: TextAlign.center,
-                                  style: context.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.red.shade100,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                              ElevatedButton(
-                                onPressed: state.isLoading
-                                    ? null
-                                    : () => context
-                                        .read<ParentFamilyCubit>()
-                                        .createFamily(
-                                          name: _nameController.text,
-                                        ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: context.colorScheme.onPrimary,
-                                  foregroundColor: context.colorScheme.primary,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: state.isLoading
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      )
-                                    : const Text('Create family'),
-                              ),
-                              const SizedBox(height: 12),
-                              OutlinedButton(
-                                onPressed: state.isLoading
-                                    ? null
-                                    : () => context
-                                        .read<ParentFamilyCubit>()
-                                        .createFamily(
-                                          name: _nameController.text,
-                                        ),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: context.colorScheme.onPrimary,
-                                  side: BorderSide(
-                                    color: context.colorScheme.onPrimary.withValues(alpha: 0.8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: Text(s.retry),
-                              ),
-                            ],
+    return BlocConsumer<ParentFamilyCubit, ParentFamilyState>(
+      listenWhen: (prev, curr) => curr.hasFamily && !prev.hasFamily,
+      listener: (context, _) =>
+          context.router.replace(const NamedRoute('parentHome')),
+      builder: (context, state) => Scaffold(
+        backgroundColor: AppColors.bgParent,
+        body: DsScreenEntrance(
+          child: SafeArea(
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.only(
+                bottom: 40 + MediaQuery.viewInsetsOf(context).bottom,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 8),
+                  const DsBackButton(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 8, 22, 0),
+                    child: Text(s.createFamilyAction, style: AppText.title1),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 8, 22, 0),
+                    child: Text(s.nameYourFamily, style: AppText.bodyRegular),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 24, 18, 0),
+                    child: DsGroup(
+                      radius: AppRadius.card,
+                      verticalPadding: 4,
+                      shadow: AppShadows.cardSoft,
+                      children: [
+                        DsFieldRow(
+                          label: s.familyLabel,
+                          labelWidth: 62,
+                          child: TextField(
+                            controller: _name,
+                            autofocus: true,
+                            textCapitalization: TextCapitalization.words,
+                            cursorColor: AppColors.primary,
+                            style: AppText.rowTitleLg,
+                            decoration: DsFieldRow.decoration(s.myFamily),
+                            onSubmitted: (_) => _submit(context),
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (state.errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 14, 24, 0),
+                      child: Text(
+                        state.errorMessage!,
+                        style: AppText.metaSm.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.dangerDeep,
                         ),
                       ),
                     ),
-                  );
-                },
-              );
-            },
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 26, 18, 0),
+                    child: DsPrimaryButton(
+                      label: s.createFamilyAction,
+                      enabled: _canSubmit,
+                      busy: state.isLoading,
+                      onTap: () => _submit(context),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+
+  void _submit(BuildContext context) {
+    if (!_canSubmit) return;
+    FocusScope.of(context).unfocus();
+    context.read<ParentFamilyCubit>().createFamily(name: _name.text.trim());
+  }
 }
-
-

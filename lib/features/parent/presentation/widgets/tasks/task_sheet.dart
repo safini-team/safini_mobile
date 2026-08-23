@@ -1,35 +1,28 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
-import 'package:safini/core/theme/app_spacing.dart';
+import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/task_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
-import 'package:safini/features/parent/presentation/widgets/buttons/gradient_button.dart';
-import 'package:safini/features/parent/presentation/widgets/selectable_pill.dart';
-import 'package:safini/features/parent/presentation/widgets/tasks/task_section_label.dart';
 
-/// Opens the create/edit task sheet. [task] == null → CREATE; otherwise EDIT.
+/// Opens the create/edit task sheet. [task] == null → CREATE, otherwise EDIT.
 Future<void> showTaskSheet(
   BuildContext context, {
   required ParentTasksCubit cubit,
   required String childId,
   TaskModel? task,
 }) {
-  return showModalBottomSheet<void>(
+  return showDsSheet<void>(
     context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => BlocProvider.value(
+    builder: (context) => BlocProvider.value(
       value: cubit,
       child: TaskSheet(childId: childId, task: task),
     ),
@@ -37,12 +30,12 @@ Future<void> showTaskSheet(
 }
 
 class TaskSheet extends StatefulWidget {
+  const TaskSheet({super.key, required this.childId, this.task});
+
   final String childId;
 
   /// When non-null the sheet is in EDIT mode, prefilled from this task.
   final TaskModel? task;
-
-  const TaskSheet({super.key, required this.childId, this.task});
 
   bool get isEdit => task != null;
 
@@ -51,91 +44,112 @@ class TaskSheet extends StatefulWidget {
 }
 
 class _TaskSheetState extends State<TaskSheet> {
-  final _titleController = TextEditingController();
-  String? _selectedEmoji;
-  String? _selectedCategory;
-  int? _selectedCoins;
+  static const List<String> _emojis = [
+    '🪴',
+    '🧹',
+    '🍽️',
+    '📚',
+    '🛏️',
+    '🐕',
+    '🧺',
+    '🦷',
+    '🎹',
+    '🗑️',
+  ];
 
-  // Children this task can target. `_targetChildId == null` means "all children".
+  static const List<({String emoji, String key})> _categories = [
+    (emoji: '🏠', key: 'home'),
+    (emoji: '🎓', key: 'school'),
+    (emoji: '🦷', key: 'health'),
+    (emoji: '⚽', key: 'outdoor'),
+  ];
+
+  static String _categoryLabel(S s, String key) => switch (key) {
+    'school' => s.catSchool,
+    'health' => s.catHealth,
+    'outdoor' => s.catOutdoor,
+    _ => s.catHome,
+  };
+
+  static const int _coinStep = 5;
+
+  final _title = TextEditingController();
+  final _details = TextEditingController();
+
+  String _emoji = _emojis.first;
+  String _category = _categories.first.key;
+  int _coins = 15;
+  bool _photoProof = true;
+
   List<ChildSummaryModel> _children = const [];
+
+  /// null means "everyone".
   String? _targetChildId;
 
-  static const _emojis = [
-    '🧹',
-    '📚',
-    '✏️',
-    '🎹',
-    '🏃',
-    '🔍',
-    '🧮',
-    '🎨',
-    '⚽',
-    '🛏️',
-  ];
-  static const _coinOptions = [10, 20, 30, 40, 50];
-
-  bool get _canSubmit =>
-      _titleController.text.trim().isNotEmpty && _selectedCoins != null;
+  bool get _canSubmit => _title.text.trim().isNotEmpty;
 
   @override
   void initState() {
     super.initState();
-    _children = context
+
+    _children =
+        context
             .read<ParentFamilyCubit>()
             .state
             .family
             ?.children
-            .where((c) => c.id.isNotEmpty)
+            .where((child) => child.id.isNotEmpty)
             .toList() ??
         const [];
-    // Default target: the child the sheet was opened for.
     _targetChildId = widget.childId;
 
     final task = widget.task;
     if (task != null) {
-      _titleController.text = task.title;
-      _selectedCategory = task.category;
-      _selectedCoins = task.coinReward;
+      _title.text = task.title;
+      _details.text = task.description ?? '';
+      _coins = task.coinReward;
+      _photoProof = (task.proofMode ?? '').toLowerCase().contains('image');
+      final key = (task.category ?? '').toLowerCase();
+      if (_categories.any((c) => c.key == key)) _category = key;
       final emoji = task.metadata?['emoji'];
-      if (emoji is String && emoji.trim().isNotEmpty) {
-        _selectedEmoji = emoji.trim();
-      }
+      if (emoji is String && emoji.trim().isNotEmpty) _emoji = emoji.trim();
     }
-    _titleController.addListener(() => setState(() {}));
+
+    _title.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
-    _titleController.dispose();
+    _title.dispose();
+    _details.dispose();
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    // The single text field is the task description; there is no separate
-    // title. We send it as both so the backend (title is required) is happy
-    // and the child sees the description when opening the task.
-    final description = _titleController.text.trim();
-    if (description.isEmpty || _selectedCoins == null) return;
-    final coins = _selectedCoins!.clamp(0, 100000);
-    final cubit = context.read<ParentTasksCubit>();
+  String get _proofMode => _photoProof ? 'text_image' : 'text';
 
+  Future<void> _submit() async {
+    final title = _title.text.trim();
+    if (title.isEmpty) return;
+
+    final details = _details.text.trim();
+    final coins = _coins.clamp(0, 100000);
+    final cubit = context.read<ParentTasksCubit>();
     final original = widget.task;
+
     if (original == null) {
-      // CREATE
       final request = TaskCreateRequestDto(
-        title: description,
-        description: description,
-        category: _selectedCategory ?? 'other',
+        title: title,
+        description: details.isEmpty ? title : details,
+        category: _category,
         taskType: 'custom',
-        proofMode: 'text_image',
+        proofMode: _proofMode,
         verificationMode: 'parent_approval',
         coinReward: coins,
         xpReward: coins,
-        metadata: _selectedEmoji != null ? {'emoji': _selectedEmoji} : null,
+        metadata: {'emoji': _emoji},
       );
-      // `_targetChildId == null` → all children; otherwise the picked one.
       final targetIds = _targetChildId == null
-          ? _children.map((c) => c.id).toList()
+          ? _children.map((child) => child.id).toList()
           : <String>[_targetChildId!];
       await cubit.createTaskForChildren(
         targetIds.isEmpty ? [widget.childId] : targetIds,
@@ -144,21 +158,15 @@ class _TaskSheetState extends State<TaskSheet> {
       return;
     }
 
-    // EDIT — diff against the original task; send only what changed.
-    final newCategory = _selectedCategory ?? original.category;
-    final coinsChanged = coins != original.coinReward;
+    // EDIT - diff against the original and send only what changed.
     final originalEmoji = original.metadata?['emoji'];
-    final emojiChanged =
-        _selectedEmoji != null && _selectedEmoji != originalEmoji;
-
-    final textChanged = description != original.title;
     final request = TaskUpdateRequestDto(
-      title: textChanged ? description : null,
-      description: textChanged ? description : null,
-      category: newCategory != original.category ? newCategory : null,
-      coinReward: coinsChanged ? coins : null,
-      xpReward: coinsChanged ? coins : null,
-      metadata: emojiChanged ? {'emoji': _selectedEmoji} : null,
+      title: title != original.title ? title : null,
+      description: details != (original.description ?? '') ? details : null,
+      category: _category != original.category ? _category : null,
+      coinReward: coins != original.coinReward ? coins : null,
+      xpReward: coins != original.coinReward ? coins : null,
+      metadata: _emoji != originalEmoji ? {'emoji': _emoji} : null,
     );
 
     if (request.isEmpty) {
@@ -168,41 +176,35 @@ class _TaskSheetState extends State<TaskSheet> {
     await cubit.updateTask(original.id, request);
   }
 
-  Future<void> _confirmAndDelete() async {
+  Future<void> _confirmDelete() async {
     final s = S.of(context);
     final cubit = context.read<ParentTasksCubit>();
-    final confirmed = await showDialog<bool>(
+
+    final confirmed = await showDsSheet<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-        ),
-        title: Text(
-          s.deleteTaskTitle,
-          style: const TextStyle(fontWeight: FontWeight.w800),
-        ),
-        content: Text(s.deleteTaskBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(
-              s.cancel,
-              style: const TextStyle(color: AppColors.textSecondary),
-            ),
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(s.deleteTaskTitle, style: AppText.title3),
+          const SizedBox(height: 8),
+          Text(s.deleteTaskBody, style: AppText.bodyRegular),
+          const SizedBox(height: 22),
+          DsPrimaryButton(
+            label: s.deleteTaskButton,
+            background: AppColors.danger,
+            shadow: const [],
+            onTap: () => Navigator.of(context).pop(true),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
-              s.deleteTaskButton,
-              style: const TextStyle(
-                color: AppColors.error,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          const SizedBox(height: 9),
+          DsPrimaryButton.secondary(
+            label: s.cancel,
+            onTap: () => Navigator.of(context).pop(false),
           ),
         ],
       ),
     );
+
     if (confirmed == true && mounted) {
       await cubit.deleteTask(widget.task!.id);
     }
@@ -210,14 +212,13 @@ class _TaskSheetState extends State<TaskSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
     return BlocListener<ParentTasksCubit, ParentTasksState>(
       listener: (context, state) {
         if (state is ParentTaskSaved || state is ParentTaskDeleted) {
           Navigator.of(context).pop();
         } else if (state is ParentTaskActionError) {
-          // Conflicts (approved task) close the sheet; the list screen shows
-          // the message. Other errors stay so the parent can retry.
+          // A conflict (already-approved task) closes the sheet and the list
+          // screen shows why; anything else stays so the parent can retry.
           if (state.isConflict) {
             Navigator.of(context).pop();
           } else if (!state.isUnauthorized) {
@@ -227,308 +228,336 @@ class _TaskSheetState extends State<TaskSheet> {
       },
       child: BlocBuilder<ParentTasksCubit, ParentTasksState>(
         builder: (context, state) {
-          final isBusy =
-              state is ParentTaskSaving || state is ParentTaskDeleting;
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Container(
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(AppRadius.xl),
-                ),
+          final s = S.of(context);
+          final busy = state is ParentTaskSaving || state is ParentTaskDeleting;
+          final targetName = _targetChildId == null
+              ? null
+              : _children
+                    .where((child) => child.id == _targetChildId)
+                    .firstOrNull
+                    ?.nickname;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.isEdit ? s.editTaskSheetTitle : s.newTask,
+                style: AppText.title3,
               ),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                    vertical: AppSpacing.xl,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Drag handle
-                      Center(
-                        child: Container(
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: AppColors.border,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Header
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.isEdit
-                                  ? s.editTaskSheetTitle
-                                  : s.createTaskSheetTitle,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary,
-                                fontSize: 22,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          if (widget.isEdit) ...[
-                            GestureDetector(
-                              onTap: isBusy ? null : _confirmAndDelete,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.error.withValues(
-                                    alpha: 0.1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(
-                                    AppRadius.pill,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.delete_outline_rounded,
-                                      size: 16,
-                                      color: AppColors.error,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      s.deleteTaskButton,
-                                      style: const TextStyle(
-                                        color: AppColors.error,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                          ],
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pop(),
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF2F2F5),
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                size: 18,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // ── Target child (create mode, 2+ children) ───────────
-                      if (!widget.isEdit && _children.length > 1) ...[
-                        const TaskSectionLabel('Кому задание'),
-                        const SizedBox(height: AppSpacing.sm),
-                        Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          children: [
-                            SelectablePill(
-                              selected: _targetChildId == null,
-                              onTap: () =>
-                                  setState(() => _targetChildId = null),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.md,
-                                vertical: AppSpacing.sm,
-                              ),
-                              child: const Text('Все дети'),
-                            ),
-                            ..._children.map(
-                              (c) => SelectablePill(
-                                selected: _targetChildId == c.id,
-                                onTap: () =>
-                                    setState(() => _targetChildId = c.id),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.md,
-                                  vertical: AppSpacing.sm,
-                                ),
-                                child: Text(c.nickname),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.xl),
-                      ],
-
-                      // ── Emoji Picker ──────────────────────────────────────
-                      TaskSectionLabel(s.createTaskPickEmojiLabel),
-                      const SizedBox(height: AppSpacing.sm),
-                      SizedBox(
-                        height: 56,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _emojis.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(width: AppSpacing.sm),
-                          itemBuilder: (context, i) {
-                            final emoji = _emojis[i];
-                            return SelectablePill(
-                              selected: _selectedEmoji == emoji,
-                              isSquare: true,
-                              onTap: () =>
-                                  setState(() => _selectedEmoji = emoji),
-                              child: Text(
-                                emoji,
-                                style: const TextStyle(fontSize: 24),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // ── Category ──────────────────────────────────────────
-                      TaskSectionLabel(s.createTaskCategoryTitle),
-                      const SizedBox(height: AppSpacing.sm),
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.sm,
-                        children: _buildCategoryChips(s),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // ── Description (the child sees this) ─────────────────
-                      const TaskSectionLabel('Описание задания'),
-                      const SizedBox(height: AppSpacing.sm),
-                      TextField(
-                        controller: _titleController,
-                        maxLines: 3,
-                        textInputAction: TextInputAction.done,
-                        onTapOutside: (_) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                        onSubmitted: (_) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
-                          hintText: 'Что нужно сделать? Ребёнок это увидит',
-                          hintStyle: context.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          filled: true,
-                          fillColor: AppColors.background,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(
-                              color: AppColors.primary,
-                              width: 1.5,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(AppSpacing.lg),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // ── Reward ────────────────────────────────────────────
-                      TaskSectionLabel(s.createTaskRewardLabel),
-                      const SizedBox(height: AppSpacing.sm),
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.sm,
-                        children: _coinOptions.map((coins) {
-                          return SelectablePill(
-                            selected: _selectedCoins == coins,
-                            onTap: () =>
-                                setState(() => _selectedCoins = coins),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: AppSpacing.sm,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  '🪙',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(width: 4),
-                                Text('$coins'),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // ── Submit ────────────────────────────────────────────
-                      GradientButton(
-                        label: widget.isEdit
-                            ? s.createTaskSaveButton
-                            : s.createTaskAddButton,
-                        isLoading: state is ParentTaskSaving,
-                        isEnabled: _canSubmit && !isBusy,
-                        onTap: _canSubmit && !isBusy ? _submit : null,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                    ],
-                  ),
-                ),
+              const SizedBox(height: 18),
+              _IconPicker(
+                emoji: _emoji,
+                options: _emojis,
+                onSelect: (value) => setState(() => _emoji = value),
               ),
-            ),
+              const SizedBox(height: 14),
+              _FieldPanel(
+                title: _title,
+                details: _details,
+                coins: _coins,
+                photoProof: _photoProof,
+                onLess: () => setState(
+                  () => _coins = (_coins - _coinStep).clamp(5, 100000),
+                ),
+                onMore: () => setState(() => _coins += _coinStep),
+                onPhotoProof: (value) => setState(() => _photoProof = value),
+              ),
+              const SizedBox(height: 20),
+              DsOverlineText(s.createTaskCategoryTitle),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final category in _categories)
+                    DsCategoryChip(
+                      label: _categoryLabel(s, category.key),
+                      emoji: category.emoji,
+                      selected: category.key == _category,
+                      restBackground: AppColors.fill,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 9,
+                      ),
+                      onTap: () => setState(() => _category = category.key),
+                    ),
+                ],
+              ),
+              if (!widget.isEdit && _children.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                DsOverlineText(s.whoSection),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    DsKidChip(
+                      name: s.scopeEveryone,
+                      showAvatar: false,
+                      avatarSize: 26,
+                      selected: _targetChildId == null,
+                      onTap: () => setState(() => _targetChildId = null),
+                    ),
+                    for (final child in _children)
+                      DsKidChip(
+                        name: child.nickname,
+                        color: AppColors.kidColor(child.id),
+                        avatarSize: 26,
+                        selected: _targetChildId == child.id,
+                        onTap: () =>
+                            setState(() => _targetChildId = child.id),
+                      ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 24),
+              DsPrimaryButton(
+                label: widget.isEdit
+                    ? s.saveChanges
+                    : targetName == null
+                    ? s.addToEveryonesList
+                    : s.addToList(targetName),
+                enabled: _canSubmit,
+                busy: busy,
+                onTap: _submit,
+              ),
+              if (widget.isEdit) ...[
+                const SizedBox(height: 4),
+                DsDestructiveButton(
+                  label: S.of(context).deleteTaskButton,
+                  filled: false,
+                  onTap: busy ? null : _confirmDelete,
+                ),
+              ],
+            ],
           );
         },
       ),
     );
   }
+}
 
-  List<Widget> _buildCategoryChips(S s) {
-    final labels = <String>[
-      s.createTaskCategoryDailyChore,
-      s.createTaskCategoryEducational,
-      s.createTaskCategoryHobby,
-      s.categoryFitness,
-      s.categoryLogic,
-      s.createTaskCategoryOther,
-    ];
-    const apiValues = <String>[
-      'chore',
-      'learn',
-      'hobby',
-      'fitness',
-      'logic',
-      'other',
-    ];
-    return List.generate(labels.length, (i) {
-      final apiValue = apiValues[i];
-      return SelectablePill(
-        selected: _selectedCategory == apiValue,
-        onTap: () => setState(() => _selectedCategory = apiValue),
-        child: Text(labels[i], style: const TextStyle(fontSize: 13)),
-      );
-    });
+class _IconPicker extends StatelessWidget {
+  const _IconPicker({
+    required this.emoji,
+    required this.options,
+    required this.onSelect,
+  });
+
+  final String emoji;
+  final List<String> options;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DsEmojiTile(
+          emoji: emoji,
+          size: 56,
+          radius: AppRadius.control,
+          background: AppColors.primaryTint,
+          fontSize: 28,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DsOverlineText(S.of(context).iconSection),
+              const SizedBox(height: 7),
+              SizedBox(
+                height: 34,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: options.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 6),
+                  itemBuilder: (context, index) {
+                    final option = options[index];
+                    final selected = option == emoji;
+                    return Pressable(
+                      onTap: () => onSelect(option),
+                      scale: 0.92,
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: selected
+                              ? AppColors.surface
+                              : AppColors.fill,
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                          border: selected
+                              ? Border.all(
+                                  color: AppColors.primary,
+                                  width: 2,
+                                )
+                              : null,
+                        ),
+                        child: Text(
+                          option,
+                          style: const TextStyle(fontSize: 17, height: 1.15),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 
-// ── Shared sheet sub-widgets ──────────────────────────────────────────────────
+class _FieldPanel extends StatelessWidget {
+  const _FieldPanel({
+    required this.title,
+    required this.details,
+    required this.coins,
+    required this.photoProof,
+    required this.onLess,
+    required this.onMore,
+    required this.onPhotoProof,
+  });
 
+  final TextEditingController title;
+  final TextEditingController details;
+  final int coins;
+  final bool photoProof;
+  final VoidCallback onLess;
+  final VoidCallback onMore;
+  final ValueChanged<bool> onPhotoProof;
+
+  @override
+  Widget build(BuildContext context) {
+    return DsSheetPanel(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Column(
+        children: [
+          _FieldRow(
+            label: S.of(context).taskFieldLabel,
+            child: TextField(
+              controller: title,
+              textCapitalization: TextCapitalization.sentences,
+              cursorColor: AppColors.primary,
+              style: AppText.rowTitleLg,
+              decoration: _fieldDecoration(S.of(context).taskTitleHint),
+            ),
+          ),
+          const DsDivider(),
+          _FieldRow(
+            label: S.of(context).detailsFieldLabel,
+            alignTop: true,
+            child: TextField(
+              controller: details,
+              minLines: 2,
+              maxLines: 4,
+              textCapitalization: TextCapitalization.sentences,
+              cursorColor: AppColors.primary,
+              style: AppText.body.copyWith(
+                fontWeight: FontWeight.w400,
+                height: 1.4,
+              ),
+              decoration: _fieldDecoration(S.of(context).taskDetailsHint),
+            ),
+          ),
+          const DsDivider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 11),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 70,
+                  child: Text(
+                    S.of(context).rewardFieldLabel,
+                    style: AppText.field,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    S.of(context).coinCountShort(coins),
+                    style: AppText.rowTitleLg.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ).nums,
+                  ),
+                ),
+                DsStepper.onPanel(onLess: onLess, onMore: onMore),
+              ],
+            ),
+          ),
+          const DsDivider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    S.of(context).needsPhotoProof,
+                    style: AppText.rowTitleLg,
+                  ),
+                ),
+                DsSwitch(value: photoProof, onChanged: onPhotoProof),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static InputDecoration _fieldDecoration(String hint) => InputDecoration(
+    filled: false,
+    isDense: true,
+    border: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    focusedBorder: InputBorder.none,
+    contentPadding: EdgeInsets.zero,
+    hintText: hint,
+    hintStyle: AppText.body.copyWith(
+      fontWeight: FontWeight.w400,
+      color: AppColors.textTertiary,
+    ),
+  );
+}
+
+class _FieldRow extends StatelessWidget {
+  const _FieldRow({
+    required this.label,
+    required this.child,
+    this.alignTop = false,
+  });
+
+  final String label;
+  final Widget child;
+  final bool alignTop;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Row(
+        crossAxisAlignment: alignTop
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: alignTop ? 2 : 0),
+            child: SizedBox(
+              width: 70,
+              child: Text(label, style: AppText.field),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: child),
+        ],
+      ),
+    );
+  }
+}

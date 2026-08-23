@@ -44,7 +44,8 @@ class FamilyModel {
                     ParentSummaryModel(
                       userId: ownerUserId,
                       email: null,
-                      displayName: 'Parent',
+                      displayName: 'NoName',
+                      avatarUrl: null,
                       role: 'admin',
                       joinedAt: null,
                     ),
@@ -86,6 +87,7 @@ class ParentSummaryModel {
   final String userId;
   final String? email;
   final String displayName;
+  final String? avatarUrl;
   final String role;
   final DateTime? joinedAt;
 
@@ -93,6 +95,7 @@ class ParentSummaryModel {
     required this.userId,
     this.email,
     required this.displayName,
+    this.avatarUrl,
     required this.role,
     this.joinedAt,
   });
@@ -101,8 +104,17 @@ class ParentSummaryModel {
     return ParentSummaryModel(
       userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
       email: json['email'] as String?,
-      displayName: (json['display_name'] ?? json['displayName'] ?? 'Parent')
-          .toString(),
+      displayName:
+          (json['display_name'] ?? json['displayName'])
+                  ?.toString()
+                  .trim()
+                  .isNotEmpty ==
+              true
+          ? (json['display_name'] ?? json['displayName']).toString().trim()
+          : 'NoName',
+      avatarUrl:
+          (json['avatar_url'] ?? json['avatarUrl'] ?? json['picture'])
+              as String?,
       role: (json['role'] ?? 'parent').toString(),
       joinedAt: DateTime.tryParse(
         (json['joined_at'] ?? json['joinedAt'] ?? '').toString(),
@@ -115,6 +127,7 @@ class ParentSummaryModel {
       'user_id': userId,
       'email': email,
       'display_name': displayName,
+      'avatar_url': avatarUrl,
       'role': role,
       'joined_at': joinedAt?.toIso8601String(),
     };
@@ -148,8 +161,14 @@ class ChildSummaryModel {
       id: (json['id'] ?? json['child_id']) as String? ?? '',
       nickname:
           (json['nickname'] ?? json['name'] ?? json['display_name'])
-              as String? ??
-          'Child',
+                  ?.toString()
+                  .trim()
+                  .isNotEmpty ==
+              true
+          ? (json['nickname'] ?? json['name'] ?? json['display_name'])
+                .toString()
+                .trim()
+          : 'NoName',
       age: rawAge is int ? rawAge : int.tryParse(rawAge?.toString() ?? '') ?? 0,
       gender: (json['gender'] as String?)?.trim(),
       claimedByUserId:

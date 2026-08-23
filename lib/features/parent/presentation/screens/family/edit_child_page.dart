@@ -1,479 +1,261 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/core/theme/app_shadows.dart';
+import 'package:safini/core/theme/app_spacing.dart';
+import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/error/failures.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
+/// Editing a child: the same form-card shape as "Add a child", pushed from the
+/// child sheet on My family.
 class EditChildPage extends StatefulWidget {
-  final ChildSummaryModel child;
-
   const EditChildPage({super.key, required this.child});
+
+  final ChildSummaryModel child;
 
   @override
   State<EditChildPage> createState() => _EditChildPageState();
 }
 
-class _EditChildPageState extends State<EditChildPage> {
-  final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _nicknameController;
-  late final TextEditingController _ageController;
+enum _Gender {
+  boy('boy'),
+  girl('girl'),
+  other('other');
 
-  _GenderOption? _selectedGender;
-  bool _isSubmitting = false;
-  String? _errorMessage;
+  const _Gender(this.apiValue);
+
+  final String apiValue;
+
+  static _Gender? fromApiValue(String? value) {
+    final normalized = value?.trim().toLowerCase();
+    if (normalized == null || normalized.isEmpty) return null;
+    for (final option in _Gender.values) {
+      if (option.apiValue == normalized) return option;
+    }
+    return null;
+  }
+}
+
+class _EditChildPageState extends State<EditChildPage> {
+  late final TextEditingController _name = TextEditingController(
+    text: widget.child.nickname,
+  );
+  late int _age = widget.child.age;
+  late _Gender? _gender = _Gender.fromApiValue(widget.child.gender);
+
+  bool _submitting = false;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _nicknameController = TextEditingController(text: widget.child.nickname);
-    _ageController = TextEditingController(text: widget.child.age.toString());
-    _selectedGender = _GenderOption.fromApiValue(widget.child.gender);
+    _name.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
-    _nicknameController.dispose();
-    _ageController.dispose();
+    _name.dispose();
     super.dispose();
   }
+
+  bool get _canSubmit => _name.text.trim().isNotEmpty && !_submitting;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final initials = widget.child.nickname.isNotEmpty
-        ? widget.child.nickname[0].toUpperCase()
-        : 'C';
 
     return Scaffold(
-      backgroundColor: context.colorScheme.primary,
+      backgroundColor: AppColors.bgParent,
       body: Column(
         children: [
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(4, 8, 24, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          DsNavBar(
+            title: s.editName(widget.child.nickname),
+            backLabel: s.myFamily,
+            onBack: () => Navigator.of(context).pop(false),
+          ),
+          Expanded(
+            child: DsScreenEntrance(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: EdgeInsets.only(
+                  bottom: 40 + MediaQuery.viewInsetsOf(context).bottom,
+                ),
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.of(context).pop(false),
+                  DsOverline(s.detailsSection, top: 14),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.gutter,
+                    ),
+                    child: DsGroup(
+                      radius: AppRadius.card,
+                      verticalPadding: 4,
+                      shadow: AppShadows.cardSoft,
+                      children: [
+                        DsFieldRow(
+                          label: s.name,
+                          labelWidth: 56,
+                          child: TextField(
+                            controller: _name,
+                            textCapitalization: TextCapitalization.words,
+                            cursorColor: AppColors.primary,
+                            style: AppText.rowTitleLg,
+                            decoration: DsFieldRow.decoration(s.name),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 56,
+                                child: Text(
+                                  s.ageFieldLabel,
+                                  style: AppText.field,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  '$_age',
+                                  style: AppText.rowTitleLg.nums,
+                                ),
+                              ),
+                              DsStepper(
+                                onLess: () => setState(
+                                  () => _age = (_age - 1).clamp(2, 18),
+                                ),
+                                onMore: () => setState(
+                                  () => _age = (_age + 1).clamp(2, 18),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                  DsOverline(s.genderOptional, top: 26),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.gutter,
+                    ),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final option in _Gender.values)
+                          DsCategoryChip(
+                            label: _label(s, option),
+                            selected: _gender == option,
+                            restBackground: AppColors.fill,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 9,
+                            ),
+                            onTap: () => setState(
+                              () => _gender = _gender == option ? null : option,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (_error != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 18, 24, 0),
                       child: Text(
-                        s.editChild,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        _error!,
+                        style: AppText.metaSm.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.dangerDeep,
                         ),
                       ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.gutter,
+                      26,
+                      AppSpacing.gutter,
+                      0,
+                    ),
+                    child: DsPrimaryButton(
+                      label: s.save,
+                      enabled: _canSubmit,
+                      busy: _submitting,
+                      onTap: _submit,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          // Child avatar + name chip in header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  child: Text(
-                    initials,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.child.nickname,
-                      style: context.textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      s.ageLabel(widget.child.age),
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(36),
-                  topRight: Radius.circular(36),
-                ),
-              ),
-              child: SingleChildScrollView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.fromLTRB(
-                  24,
-                  32,
-                  24,
-                  24 + MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        s.editProfile,
-                        style: context.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        s.editProfileSubtitle,
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: context.colorScheme.onSurface.withValues(
-                            alpha: 0.55,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      _FormCard(
-                        child: TextFormField(
-                          controller: _nicknameController,
-                          textInputAction: TextInputAction.next,
-                          decoration: _inputDecoration(
-                            context,
-                            label: s.nicknameLabel,
-                            hint: 'e.g. Alex',
-                            icon: Icons.person_outline_rounded,
-                          ),
-                          validator: (value) {
-                            final v = value?.trim() ?? '';
-                            if (v.isEmpty) return s.nicknameRequired;
-                            if (v.length > 80) {
-                              return s.nicknameTooLong;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      _FormCard(
-                        child: TextFormField(
-                          controller: _ageController,
-                          textInputAction: TextInputAction.done,
-                          keyboardType: TextInputType.number,
-                          decoration: _inputDecoration(
-                            context,
-                            label: s.ageFieldLabel,
-                            hint: '0 – 18',
-                            icon: Icons.cake_outlined,
-                          ),
-                          validator: (value) {
-                            final input = value?.trim() ?? '';
-                            if (input.isEmpty) return s.ageRequired;
-                            final parsed = int.tryParse(input);
-                            if (parsed == null) {
-                              return s.ageMustBeInteger;
-                            }
-                            if (parsed < 0 || parsed > 18) {
-                              return s.ageRange;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      _FormCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.wc_outlined,
-                                  size: 20,
-                                  color: context.colorScheme.primary,
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  s.genderOptional,
-                                  style: context.textTheme.bodySmall?.copyWith(
-                                    color: context.colorScheme.onSurface
-                                        .withValues(alpha: 0.55),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Wrap(
-                              runSpacing: 8,
-                              children: _GenderOption.values.map((option) {
-                                final selected = _selectedGender == option;
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: GestureDetector(
-                                    onTap: () => setState(() {
-                                      _selectedGender =
-                                          selected ? null : option;
-                                    }),
-                                    child: AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 180),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 18,
-                                        vertical: 9,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: selected
-                                            ? context.colorScheme.primary
-                                            : context.colorScheme.primary
-                                                .withValues(alpha: 0.07),
-                                        borderRadius:
-                                            BorderRadius.circular(24),
-                                        border: Border.all(
-                                          color: selected
-                                              ? context.colorScheme.primary
-                                              : context.colorScheme.primary
-                                                  .withValues(alpha: 0.25),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        _genderLabel(s, option),
-                                        style: context.textTheme.labelLarge
-                                            ?.copyWith(
-                                          color: selected
-                                              ? Colors.white
-                                              : context.colorScheme.primary,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (_errorMessage != null) ...[
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Text(
-                            _errorMessage!,
-                            style: TextStyle(
-                              color: context.colorScheme.error,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: _isSubmitting ? null : _submit,
-                        child: _isSubmitting
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(s.saveChanges),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 
-  InputDecoration _inputDecoration(
-    BuildContext context, {
-    required String label,
-    required String hint,
-    required IconData icon,
-  }) {
-    return InputDecoration(
-      labelText: label,
-      hintText: hint,
-      prefixIcon: Icon(icon, color: context.colorScheme.primary, size: 20),
-      filled: true,
-      fillColor: context.colorScheme.primary.withValues(alpha: 0.05),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: context.colorScheme.primary.withValues(alpha: 0.15),
-        ),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: context.colorScheme.primary.withValues(alpha: 0.15),
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: context.colorScheme.primary, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: context.colorScheme.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: context.colorScheme.error, width: 1.5),
-      ),
-    );
-  }
-
-  String _genderLabel(S s, _GenderOption option) {
-    switch (option) {
-      case _GenderOption.boy:
-        return s.genderBoy;
-      case _GenderOption.girl:
-        return s.genderGirl;
-      case _GenderOption.other:
-        return s.genderOther;
-    }
-  }
+  String _label(S s, _Gender option) => switch (option) {
+    _Gender.boy => s.genderBoy,
+    _Gender.girl => s.genderGirl,
+    _Gender.other => s.genderOther,
+  };
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_canSubmit) return;
+    FocusScope.of(context).unfocus();
 
-    final nickname = _nicknameController.text.trim();
-    final age = int.parse(_ageController.text.trim());
-    final gender = _selectedGender?.apiValue;
+    final name = _name.text.trim();
+    final currentGender = widget.child.gender?.trim();
+    final gender = _gender?.apiValue;
 
-    final changedNickname =
-        nickname != widget.child.nickname ? nickname : null;
-    final changedAge = age != widget.child.age ? age : null;
+    final changedName = name != widget.child.nickname ? name : null;
+    final changedAge = _age != widget.child.age ? _age : null;
     final changedGender =
-        gender !=
-                (widget.child.gender?.trim().isEmpty ?? true
-                    ? null
-                    : widget.child.gender!.trim())
-            ? gender
-            : null;
+        gender != ((currentGender?.isEmpty ?? true) ? null : currentGender)
+        ? gender
+        : null;
 
-    if (changedNickname == null &&
-        changedAge == null &&
-        changedGender == null) {
-      if (mounted) Navigator.of(context).pop(false);
+    if (changedName == null && changedAge == null && changedGender == null) {
+      Navigator.of(context).pop(false);
       return;
     }
 
     setState(() {
-      _isSubmitting = true;
-      _errorMessage = null;
+      _submitting = true;
+      _error = null;
     });
 
     final failure = await context.read<ParentFamilyCubit>().updateChild(
-          widget.child.id,
-          nickname: changedNickname,
-          age: changedAge,
-          gender: changedGender,
-        );
-
+      widget.child.id,
+      nickname: changedName,
+      age: changedAge,
+      gender: changedGender,
+    );
     if (!mounted) return;
 
-    setState(() {
-      _isSubmitting = false;
-    });
+    setState(() => _submitting = false);
 
     if (failure == null) {
       AppSnackBar.success(context, S.of(context).childUpdatedSuccess);
       Navigator.of(context).pop(true);
       return;
     }
-
-    setState(() {
-      _errorMessage = _mapFailureMessage(failure);
-    });
+    setState(() => _error = _messageFor(failure));
   }
 
-  String _mapFailureMessage(Failure failure) {
+  String _messageFor(Failure failure) {
     if (failure is UnauthorizedFailure) {
       return 'Invalid or expired token. Please sign in again.';
     }
     if (failure is ValidationFailure) return failure.message;
     if (failure is ServerFailure) return failure.message;
-    return 'Unable to update child right now. Please try again.';
-  }
-}
-
-class _FormCard extends StatelessWidget {
-  final Widget child;
-  const _FormCard({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
-}
-
-enum _GenderOption {
-  boy('Boy', 'boy'),
-  girl('Girl', 'girl'),
-  other('Other', 'other');
-
-  final String label;
-  final String apiValue;
-
-  const _GenderOption(this.label, this.apiValue);
-
-  static _GenderOption? fromApiValue(String? value) {
-    final normalized = value?.trim().toLowerCase();
-    for (final option in _GenderOption.values) {
-      if (option.apiValue == normalized) return option;
-    }
-    return null;
+    return 'Unable to update the child right now. Please try again.';
   }
 }

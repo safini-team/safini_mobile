@@ -4,6 +4,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/theme/app_shadows.dart';
+import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -140,7 +143,7 @@ class _SplashScreenState extends State<SplashScreen>
         _navigateIfReady();
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF0D1B2A),
+        backgroundColor: AppColors.surface,
         body: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
@@ -149,18 +152,21 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 ScaleTransition(
                   scale: _scaleAnimation,
-                  child: Image.asset('assets/logo/app_logo.png', width: 220),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'SAFINI',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 8,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(28),
+                    child: const DecoratedBox(
+                      decoration: BoxDecoration(boxShadow: AppShadows.logo),
+                      child: Image(
+                        image: AssetImage('assets/logo/app_logo.png'),
+                        width: 104,
+                        height: 104,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
+                const SizedBox(height: 20),
+                const Text('Safini', style: AppText.title2),
               ],
             ),
           ),

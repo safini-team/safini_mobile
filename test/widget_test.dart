@@ -11,6 +11,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('SAFINI'), findsOneWidget);
+    // The splash wordmark follows the design's own casing.
+    expect(find.text('Safini'), findsOneWidget);
   });
 }

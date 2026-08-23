@@ -1,9 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
-import 'package:safini/core/utils/widgets/layout/app_nav_bar.dart';
+import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/utils/widgets/ds/app_icons.dart';
+import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
+import 'package:safini/features/child/domain/controllers/child_controller.dart';
+import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_state.dart';
+import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
+import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
+import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/child/presentation/screens/home/child_home_screen.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_screen.dart';
 import 'package:safini/features/child/presentation/screens/store/child_reward_store_screen.dart';
@@ -22,9 +32,24 @@ class ChildMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ChildHomeCubit(),
-      child: BlocBuilder<LocaleCubit, Locale>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ChildHomeCubit()),
+        // Hoisted: Today reads the streak from the profile and the "Almost
+        // yours" teaser from the store, and the Store tab shares both.
+        BlocProvider(
+          create: (context) => ProfileCubit(
+            getIt<ChildController>(),
+            getIt<ProfileRepository>(),
+            getIt<CoinsCubit>(),
+            getIt<Dio>(),
+          )..loadProfile(
+            fallbackChild: context.read<ChildClaimCubit>().state.child,
+          ),
+        ),
+        BlocProvider(create: (_) => getIt<RewardStoreCubit>()),
+      ],
+      child: BlocBuilder<LocaleCubit, Locale?>(
         builder: (context, locale) {
           return Localizations.override(
             context: context,
@@ -46,40 +71,34 @@ class _ChildMainView extends StatelessWidget {
       builder: (context, state) {
         final s = S.of(context);
         final cubit = context.read<ChildHomeCubit>();
+
         return Scaffold(
+          backgroundColor: AppColors.bgChild,
+          // The tab bar is translucent, so the content has to run underneath it.
+          extendBody: true,
           body: IndexedStack(
             index: state.selectedIndex,
             children: ChildMainScreen._screens,
           ),
-          bottomNavigationBar: AppNavBar(
+          bottomNavigationBar: DsTabBar.child(
+            currentIndex: state.selectedIndex,
+            onTap: cubit.selectTab,
             items: [
-              AppNavBarItem(
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home_rounded,
-                label: s.home,
-                isSelected: state.selectedIndex == 0,
-                onTap: () => cubit.selectTab(0),
+              DsTabItem(
+                label: s.tabToday,
+                builder: (color) => AppIcons.tabHome(color: color),
               ),
-              AppNavBarItem(
-                icon: Icons.check_box_outlined,
-                activeIcon: Icons.check_box_rounded,
-                label: s.tasks,
-                isSelected: state.selectedIndex == 1,
-                onTap: () => cubit.selectTab(1),
+              DsTabItem(
+                label: s.tabTasks,
+                builder: (color) => AppIcons.tabTasksChild(color: color),
               ),
-              AppNavBarItem(
-                icon: Icons.shopping_bag_outlined,
-                activeIcon: Icons.shopping_bag_rounded,
-                label: s.store,
-                isSelected: state.selectedIndex == 2,
-                onTap: () => cubit.selectTab(2),
+              DsTabItem(
+                label: s.tabStore,
+                builder: (color) => AppIcons.tabStore(color: color),
               ),
-              AppNavBarItem(
-                icon: Icons.person_outline_rounded,
-                activeIcon: Icons.person_rounded,
-                label: s.profile,
-                isSelected: state.selectedIndex == 3,
-                onTap: () => cubit.selectTab(3),
+              DsTabItem(
+                label: s.tabMe,
+                builder: (color) => AppIcons.tabMe(color: color),
               ),
             ],
           ),

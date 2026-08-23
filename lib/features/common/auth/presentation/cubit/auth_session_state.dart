@@ -12,7 +12,7 @@ enum AuthSessionStatus {
   /// No valid session — show the login page.
   unauthenticated,
 
-  /// Google Sign-In is in progress.
+  /// A Google or test email sign-in is in progress.
   signingIn,
 
   /// Session exists; calling GET /v1/me to fetch profile.
@@ -21,7 +21,7 @@ enum AuthSessionStatus {
   /// Profile loaded — ready to route by [accountType].
   authenticated,
 
-  /// Google sign-in failed (cancel, network, permission denied).
+  /// Sign-in failed (credentials, cancel, network, or configuration).
   signInError,
 
   /// GET /v1/me failed (network error, unexpected response).
@@ -54,12 +54,12 @@ class AuthSessionState {
   });
 
   const AuthSessionState.initial()
-      : status = AuthSessionStatus.initial,
-        userId = null,
-        accountType = null,
-        errorMessage = null,
-        canRetry = false,
-        isUnauthorized = false;
+    : status = AuthSessionStatus.initial,
+      userId = null,
+      accountType = null,
+      errorMessage = null,
+      canRetry = false,
+      isUnauthorized = false;
 
   AuthSessionState copyWith({
     AuthSessionStatus? status,
