@@ -44,7 +44,7 @@ class FamilyModel {
                     ParentSummaryModel(
                       userId: ownerUserId,
                       email: null,
-                      displayName: 'Parent',
+                      displayName: 'NoName',
                       avatarUrl: null,
                       role: 'admin',
                       joinedAt: null,
@@ -104,8 +104,14 @@ class ParentSummaryModel {
     return ParentSummaryModel(
       userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
       email: json['email'] as String?,
-      displayName: (json['display_name'] ?? json['displayName'] ?? 'Parent')
-          .toString(),
+      displayName:
+          (json['display_name'] ?? json['displayName'])
+                  ?.toString()
+                  .trim()
+                  .isNotEmpty ==
+              true
+          ? (json['display_name'] ?? json['displayName']).toString().trim()
+          : 'NoName',
       avatarUrl:
           (json['avatar_url'] ?? json['avatarUrl'] ?? json['picture'])
               as String?,
@@ -155,8 +161,14 @@ class ChildSummaryModel {
       id: (json['id'] ?? json['child_id']) as String? ?? '',
       nickname:
           (json['nickname'] ?? json['name'] ?? json['display_name'])
-              as String? ??
-          'Child',
+                  ?.toString()
+                  .trim()
+                  .isNotEmpty ==
+              true
+          ? (json['nickname'] ?? json['name'] ?? json['display_name'])
+                .toString()
+                .trim()
+          : 'NoName',
       age: rawAge is int ? rawAge : int.tryParse(rawAge?.toString() ?? '') ?? 0,
       gender: (json['gender'] as String?)?.trim(),
       claimedByUserId:

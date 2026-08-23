@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
@@ -48,8 +49,14 @@ class _ChildStoreScreen extends StatelessWidget {
         final coins = context.watch<CoinsCubit>().state;
         final cubit = context.read<RewardStoreCubit>();
 
-        if (state.appTimeItems.isEmpty && state.avatarItems.isEmpty) {
+        if (state.isLoading) {
           return const ChildStoreSkeleton();
+        }
+        if (state.hasLoadError) {
+          return ChildStoreError(onRetry: cubit.loadStore);
+        }
+        if (state.appTimeItems.isEmpty && state.avatarItems.isEmpty) {
+          return ChildStoreEmpty(onRetry: cubit.loadStore);
         }
 
         final onAppTime = state.selectedTab == StoreTab.appTime;
@@ -76,12 +83,8 @@ class _ChildStoreScreen extends StatelessWidget {
                     name: item.isEquipped ? s.wornLabel : s.avatarItem,
                     cost: item.cost ?? 0,
                     owned: item.isEquipped || item.isFree,
-                    affordable:
-                        item.cost == null || coins >= (item.cost ?? 0),
-                    toGo: ((item.cost ?? 0) - coins).clamp(
-                      0,
-                      item.cost ?? 0,
-                    ),
+                    affordable: item.cost == null || coins >= (item.cost ?? 0),
+                    toGo: ((item.cost ?? 0) - coins).clamp(0, item.cost ?? 0),
                     badge: item.isLocked ? item.lockLabel : null,
                   ),
               ];
@@ -115,9 +118,7 @@ class _ChildStoreScreen extends StatelessWidget {
     final cubit = context.read<RewardStoreCubit>();
     final onAppTime = state.selectedTab == StoreTab.appTime;
 
-    final blurb = onAppTime
-        ? s.rewardBlurbAppTime
-        : s.rewardBlurbAvatar;
+    final blurb = onAppTime ? s.rewardBlurbAppTime : s.rewardBlurbAvatar;
 
     final confirmed = await showRewardSheet(
       context,
@@ -139,19 +140,65 @@ class _ChildStoreScreen extends StatelessWidget {
 
 /// Shown when the store has nothing configured at all.
 class ChildStoreEmpty extends StatelessWidget {
-  const ChildStoreEmpty({super.key});
+  const ChildStoreEmpty({super.key, required this.onRetry});
+
+  final Future<void> Function() onRetry;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Text(
-          S.of(context).nothingInStore,
-          style: AppText.meta,
-          textAlign: TextAlign.center,
+    return _StoreStatus(
+      message: S.of(context).nothingInStore,
+      onRetry: onRetry,
+    );
+  }
+}
+
+class ChildStoreError extends StatelessWidget {
+  const ChildStoreError({super.key, required this.onRetry});
+
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return _StoreStatus(message: S.of(context).networkError, onRetry: onRetry);
+  }
+}
+
+class _StoreStatus extends StatelessWidget {
+  const _StoreStatus({required this.message, required this.onRetry});
+
+  final String message;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return DsScreen(
+      slivers: [
+        SliverToBoxAdapter(child: DsLargeTitle(title: S.of(context).tabStore)),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    message,
+                    style: AppText.meta,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  DsPrimaryButton.secondary(
+                    label: S.of(context).retry,
+                    onTap: onRetry,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
