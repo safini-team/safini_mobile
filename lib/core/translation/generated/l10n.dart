@@ -2055,10 +2055,10 @@ class S {
     return Intl.message('Saved', name: 'profileUpdated', desc: '', args: []);
   }
 
-  /// `Your parent approves before it is yours`
+  /// `Your coins, your choice`
   String get storeSubtitle {
     return Intl.message(
-      'Your parent approves before it is yours',
+      'Your coins, your choice',
       name: 'storeSubtitle',
       desc: '',
       args: [],
@@ -2070,10 +2070,10 @@ class S {
     return Intl.message('Screen time', name: 'screenTime', desc: '', args: []);
   }
 
-  /// `{name} has {time} left today`
+  /// `{name} has {time} left across all apps`
   String kidHasLeftToday(Object name, Object time) {
     return Intl.message(
-      '$name has $time left today',
+      '$name has $time left across all apps',
       name: 'kidHasLeftToday',
       desc: '',
       args: [name, time],
@@ -2271,10 +2271,10 @@ class S {
     );
   }
 
-  /// `Coins are paid out only after you approve. Repeating tasks reset at midnight.`
+  /// `Coins are paid out only after you approve.`
   String get coinsPaidAfterApproval {
     return Intl.message(
-      'Coins are paid out only after you approve. Repeating tasks reset at midnight.',
+      'Coins are paid out only after you approve.',
       name: 'coinsPaidAfterApproval',
       desc: '',
       args: [],
@@ -2351,10 +2351,10 @@ class S {
     );
   }
 
-  /// `{name} · daily allowance`
+  /// `{name} · all apps combined`
   String dailyAllowanceFor(Object name) {
     return Intl.message(
-      '$name · daily allowance',
+      '$name · all apps combined',
       name: 'dailyAllowanceFor',
       desc: '',
       args: [name],
@@ -2396,11 +2396,21 @@ class S {
     return Intl.message('Add an app', name: 'addAnApp', desc: '', args: []);
   }
 
-  /// `A blocked app disappears from the home screen. Apps with no limit are always allowed.`
+  /// `When the daily limit runs out, the app stops opening and shows the Safini screen instead.`
   String get limitsFootnote {
     return Intl.message(
-      'A blocked app disappears from the home screen. Apps with no limit are always allowed.',
+      'When the daily limit runs out, the app stops opening and shows the Safini screen instead.',
       name: 'limitsFootnote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limits are counted, not yet enforced. Finish setup on your child's phone.`
+  String get limitsNotYetEnforced {
+    return Intl.message(
+      'Limits are counted, not yet enforced. Finish setup on your child\'s phone.',
+      name: 'limitsNotYetEnforced',
       desc: '',
       args: [],
     );
@@ -3096,10 +3106,10 @@ class S {
     );
   }
 
-  /// `Added to today only, once your parent approves.`
+  /// `Added straight away.`
   String get rewardBlurbAppTime {
     return Intl.message(
-      'Added to today only, once your parent approves.',
+      'Added straight away.',
       name: 'rewardBlurbAppTime',
       desc: '',
       args: [],
@@ -3116,9 +3126,9 @@ class S {
     );
   }
 
-  /// `Ask for this`
+  /// `Unlock now`
   String get askForThis {
-    return Intl.message('Ask for this', name: 'askForThis', desc: '', args: []);
+    return Intl.message('Unlock now', name: 'askForThis', desc: '', args: []);
   }
 
   /// `Not yet`

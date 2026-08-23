@@ -5,6 +5,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
@@ -177,6 +178,8 @@ class ParentLimitsView extends StatelessWidget {
                   ],
                 ),
                 DsFootnote(s.limitsFootnote),
+                if (!AppConstants.enforcementShipped)
+                  DsFootnote(s.limitsNotYetEnforced),
               ],
             ),
           ),

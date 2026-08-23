@@ -56,13 +56,14 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(count) => "Ещё ${count} монет";
 
-  static String m16(name) => "${name} · дневной лимит";
+  static String m16(name) => "${name} · все приложения вместе";
 
   static String m17(name) => "Изменить ${name}";
 
   static String m18(date, time) => "Истекает: ${date}, ${time}";
 
-  static String m19(name, time) => "У ${name} осталось ${time} на сегодня";
+  static String m19(name, time) =>
+      "У ${name} осталось ${time} на все приложения";
 
   static String m20(name, time) => "${name} использовал ${time} сегодня";
 
@@ -191,7 +192,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "askForSomethingNew": MessageLookupByLibrary.simpleMessage(
       "Попроси что-то новое - родитель добавит это в магазин.",
     ),
-    "askForThis": MessageLookupByLibrary.simpleMessage("Попросить"),
+    "askForThis": MessageLookupByLibrary.simpleMessage("Открыть"),
     "askToRedo": MessageLookupByLibrary.simpleMessage("Переделать"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Предмет аватара"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Предметы"),
@@ -239,7 +240,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "coins": MessageLookupByLibrary.simpleMessage("Монеты"),
     "coinsCount": m12,
     "coinsPaidAfterApproval": MessageLookupByLibrary.simpleMessage(
-      "Монеты начисляются только после вашего одобрения. Повторяющиеся задания обнуляются в полночь.",
+      "Монеты начисляются только после вашего одобрения.",
     ),
     "coinsReward": m13,
     "coinsText": MessageLookupByLibrary.simpleMessage("Монеты"),
@@ -471,7 +472,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ограничить приложение",
     ),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
-      "Заблокированное приложение исчезает с домашнего экрана. Приложения без лимита доступны всегда.",
+      "Когда дневной лимит закончится, приложение перестанет открываться и покажет экран Safini.",
+    ),
+    "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
+      "Лимиты считаются, но пока не применяются. Завершите настройку на телефоне ребёнка.",
     ),
     "limitsSubtitle": m24,
     "lockedLabel": MessageLookupByLibrary.simpleMessage("Закрыто"),
@@ -656,7 +660,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Проверить задание",
     ),
     "rewardBlurbAppTime": MessageLookupByLibrary.simpleMessage(
-      "Добавится только на сегодня, после одобрения родителя.",
+      "Добавится сразу.",
     ),
     "rewardBlurbAvatar": MessageLookupByLibrary.simpleMessage(
       "Надень на аватар. Останется у тебя.",
@@ -718,7 +722,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "storeAvatarTab": MessageLookupByLibrary.simpleMessage("Аватар"),
     "storeSubtitle": MessageLookupByLibrary.simpleMessage(
-      "Родитель подтверждает покупку",
+      "Твои монеты, твой выбор",
     ),
     "streakText": MessageLookupByLibrary.simpleMessage("Подряд"),
     "sun": MessageLookupByLibrary.simpleMessage("ВС"),

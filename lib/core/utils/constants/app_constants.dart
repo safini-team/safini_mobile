@@ -10,5 +10,13 @@ class AppConstants {
   static const String accountTypeParent = 'parent';
   static const String accountTypeChild = 'child';
 
+  /// Whether on-device app blocking (F-05) actually ships in this build.
+  ///
+  /// While this is false the app counts usage but enforces nothing, so screens
+  /// that talk about limits say so out loud rather than implying the block is
+  /// already working. Flip it to true with the native enforcement layer and
+  /// the caveats disappear on their own.
+  static const bool enforcementShipped = false;
+
   const AppConstants._();
 }

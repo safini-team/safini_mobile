@@ -55,13 +55,14 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(count) => "Yana ${count} tanga";
 
-  static String m16(name) => "${name} · kunlik limit";
+  static String m16(name) => "${name} · barcha ilovalar birgalikda";
 
   static String m17(name) => "${name}ni tahrirlash";
 
   static String m18(date, time) => "Amal qiladi: ${date}, ${time}";
 
-  static String m19(name, time) => "${name}da bugun ${time} qoldi";
+  static String m19(name, time) =>
+      "${name} uchun barcha ilovalarga ${time} qoldi";
 
   static String m20(name, time) => "${name} bugun ${time} ishlatdi";
 
@@ -195,7 +196,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "askForSomethingNew": MessageLookupByLibrary.simpleMessage(
       "Yangi narsa soʻra - ota-onang doʻkonga qoʻshadi.",
     ),
-    "askForThis": MessageLookupByLibrary.simpleMessage("Soʻrash"),
+    "askForThis": MessageLookupByLibrary.simpleMessage("Ochish"),
     "askToRedo": MessageLookupByLibrary.simpleMessage(
       "Qayta bajarishni soʻrash",
     ),
@@ -251,7 +252,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "coins": MessageLookupByLibrary.simpleMessage("Tangalar"),
     "coinsCount": m12,
     "coinsPaidAfterApproval": MessageLookupByLibrary.simpleMessage(
-      "Tangalar siz tasdiqlaganingizdan keyingina beriladi. Takrorlanuvchi vazifalar yarim tunda yangilanadi.",
+      "Tangalar siz tasdiqlaganingizdan keyingina beriladi.",
     ),
     "coinsReward": m13,
     "coinsText": MessageLookupByLibrary.simpleMessage("Tangalar"),
@@ -485,7 +486,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "levelValue": m23,
     "limitThisApp": MessageLookupByLibrary.simpleMessage("Ilovani cheklash"),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
-      "Bloklangan ilova bosh ekrandan yoʻqoladi. Cheklovsiz ilovalar doim ochiq.",
+      "Kunlik limit tugagach, ilova ochilmay qoladi va Safini ekranini koʻrsatadi.",
+    ),
+    "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
+      "Limitlar hisoblanadi, lekin hali qoʻllanilmaydi. Farzandingiz telefonida sozlashni yakunlang.",
     ),
     "limitsSubtitle": m24,
     "lockedLabel": MessageLookupByLibrary.simpleMessage("Yopiq"),
@@ -686,7 +690,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Topshiriqni tekshirish",
     ),
     "rewardBlurbAppTime": MessageLookupByLibrary.simpleMessage(
-      "Ota-onang tasdiqlagach, faqat bugunga qoʻshiladi.",
+      "Darhol qoʻshiladi.",
     ),
     "rewardBlurbAvatar": MessageLookupByLibrary.simpleMessage(
       "Avataringga kiy. Sende qoladi.",
@@ -752,7 +756,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "storeAppTimeTab": MessageLookupByLibrary.simpleMessage("Ilova vaqti"),
     "storeAvatarTab": MessageLookupByLibrary.simpleMessage("Avatar"),
     "storeSubtitle": MessageLookupByLibrary.simpleMessage(
-      "Ota-onang tasdiqlagach seniki boʻladi",
+      "Tangalaring, sening tanloving",
     ),
     "streakText": MessageLookupByLibrary.simpleMessage("Seriya"),
     "sun": MessageLookupByLibrary.simpleMessage("YAK"),

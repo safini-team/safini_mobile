@@ -56,13 +56,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(count) => "${count} coins to go";
 
-  static String m16(name) => "${name} · daily allowance";
+  static String m16(name) => "${name} · all apps combined";
 
   static String m17(name) => "Edit ${name}";
 
   static String m18(date, time) => "Expires: ${date}, ${time}";
 
-  static String m19(name, time) => "${name} has ${time} left today";
+  static String m19(name, time) => "${name} has ${time} left across all apps";
 
   static String m20(name, time) => "${name} used ${time} today";
 
@@ -193,7 +193,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "askForSomethingNew": MessageLookupByLibrary.simpleMessage(
       "Ask for something new and your parent can add it to the store.",
     ),
-    "askForThis": MessageLookupByLibrary.simpleMessage("Ask for this"),
+    "askForThis": MessageLookupByLibrary.simpleMessage("Unlock now"),
     "askToRedo": MessageLookupByLibrary.simpleMessage("Ask to redo"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Avatar item"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar Items"),
@@ -241,7 +241,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "coins": MessageLookupByLibrary.simpleMessage("Coins"),
     "coinsCount": m12,
     "coinsPaidAfterApproval": MessageLookupByLibrary.simpleMessage(
-      "Coins are paid out only after you approve. Repeating tasks reset at midnight.",
+      "Coins are paid out only after you approve.",
     ),
     "coinsReward": m13,
     "coinsText": MessageLookupByLibrary.simpleMessage("Coins"),
@@ -459,7 +459,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "levelValue": m23,
     "limitThisApp": MessageLookupByLibrary.simpleMessage("Limit this app"),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
-      "A blocked app disappears from the home screen. Apps with no limit are always allowed.",
+      "When the daily limit runs out, the app stops opening and shows the Safini screen instead.",
+    ),
+    "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
+      "Limits are counted, not yet enforced. Finish setup on your child\'s phone.",
     ),
     "limitsSubtitle": m24,
     "lockedLabel": MessageLookupByLibrary.simpleMessage("Locked"),
@@ -648,7 +651,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "reviewTaskSheetTitle": MessageLookupByLibrary.simpleMessage("Review Task"),
     "rewardBlurbAppTime": MessageLookupByLibrary.simpleMessage(
-      "Added to today only, once your parent approves.",
+      "Added straight away.",
     ),
     "rewardBlurbAvatar": MessageLookupByLibrary.simpleMessage(
       "Wear it on your avatar. Yours to keep.",
@@ -712,7 +715,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "storeAppTimeTab": MessageLookupByLibrary.simpleMessage("App time"),
     "storeAvatarTab": MessageLookupByLibrary.simpleMessage("Avatar"),
     "storeSubtitle": MessageLookupByLibrary.simpleMessage(
-      "Your parent approves before it is yours",
+      "Your coins, your choice",
     ),
     "streakText": MessageLookupByLibrary.simpleMessage("Streak"),
     "sun": MessageLookupByLibrary.simpleMessage("SUN"),
