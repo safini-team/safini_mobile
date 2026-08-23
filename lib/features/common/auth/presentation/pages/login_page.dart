@@ -6,21 +6,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/config/supabase_config.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/core/theme/app_shadows.dart';
+import 'package:safini/core/theme/app_typography.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/core/utils/widgets/language_sheet.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
-import 'package:safini/features/common/auth/presentation/widgets/buttons/google_sign_in_button.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
-import 'package:safini/core/translation/generated/l10n.dart';
 
+/// Sign-in, laid out like the Welcome artboard: logo and wordmark up top, the
+/// single action pinned to the bottom.
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const _LoginView();
-  }
+  Widget build(BuildContext context) => const _LoginView();
 }
 
 class _LoginView extends StatelessWidget {
@@ -28,174 +32,153 @@ class _LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocaleCubit, Locale>(
-      builder: (context, locale) {
-        return Localizations.override(
-          context: context,
-          locale: locale,
-          delegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          child: Builder(
-            builder: (context) {
-              final s = S.of(context);
-              return BlocConsumer<AuthSessionCubit, AuthSessionState>(
-                listener: (context, state) {
-                  // ── Authenticated → route by account_type ──────────────
-                  if (state.status == AuthSessionStatus.authenticated) {
-                    unawaited(_routeAuthenticated(context, state.accountType));
-                  }
+    return BlocBuilder<LocaleCubit, Locale?>(
+      builder: (context, locale) => Localizations.override(
+        context: context,
+        locale: locale,
+        delegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        child: Builder(builder: _build),
+      ),
+    );
+  }
 
-                  // 401 in profile fetch signs out and returns to login.
-                  if (state.status == AuthSessionStatus.unauthenticated &&
-                      state.isUnauthorized) {
-                    AppSnackBar.error(
-                      context,
-                      state.errorMessage ?? s.signInError,
-                    );
-                  }
+  Widget _build(BuildContext context) {
+    final s = S.of(context);
 
-                  if (state.status == AuthSessionStatus.signInError) {
-                    AppSnackBar.error(
-                      context,
-                      state.errorMessage ?? s.signInError,
-                    );
-                  }
+    return BlocConsumer<AuthSessionCubit, AuthSessionState>(
+      listener: (context, state) {
+        if (state.status == AuthSessionStatus.authenticated) {
+          unawaited(_routeAuthenticated(context, state.accountType));
+        }
+        if (state.status == AuthSessionStatus.unauthenticated &&
+            state.isUnauthorized) {
+          AppSnackBar.error(context, state.errorMessage ?? s.signInError);
+        }
+        if (state.status == AuthSessionStatus.signInError) {
+          AppSnackBar.error(context, state.errorMessage ?? s.signInError);
+        }
+        if (state.status == AuthSessionStatus.profileError) {
+          AppSnackBar.error(context, state.errorMessage ?? s.networkError);
+        }
+      },
+      builder: (context, state) {
+        final loading =
+            state.status == AuthSessionStatus.signingIn ||
+            state.status == AuthSessionStatus.fetchingProfile;
+        final blocked =
+            !SupabaseConfig.isSupabaseConfigured ||
+            !SupabaseConfig.isGoogleConfigured;
 
-                  if (state.status == AuthSessionStatus.profileError) {
-                    AppSnackBar.error(
-                      context,
-                      state.errorMessage ?? s.networkError,
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  final loading =
-                      state.status == AuthSessionStatus.signingIn ||
-                      state.status == AuthSessionStatus.fetchingProfile;
-
-                  return Scaffold(
-                    body: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color(0xFF9B59D0),
-                            Color(0xFF7B3FA0),
-                            Color(0xFF6A35B0),
-                          ],
-                        ),
-                      ),
-                      child: SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  icon: const Icon(
-                                    Icons.language,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () => _showLanguageDialog(context),
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/logo/app_logo.png',
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      s.loginTitle,
-                                      textAlign: TextAlign.center,
-                                      style: context.textTheme.headlineMedium
-                                          ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      s.loginSubtitle,
-                                      textAlign: TextAlign.center,
-                                      style: context.textTheme.bodyLarge
-                                          ?.copyWith(
-                                            color: Colors.white.withValues(
-                                              alpha: 0.9,
-                                            ),
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (!SupabaseConfig.isSupabaseConfigured)
-                                Text(
-                                  s.supabaseConfigMissing,
-                                  textAlign: TextAlign.center,
-                                  style: context.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                )
-                              else if (!SupabaseConfig.isGoogleConfigured)
-                                Text(
-                                  s.googleClientIdMissing,
-                                  textAlign: TextAlign.center,
-                                  style: context.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                )
-                              else ...[
-                                GoogleSignInButton(
-                                  label: s.loginWithGoogle,
-                                  loadingLabel: s.signingIn,
-                                  isLoading: loading,
-                                  onPressed: () => context
-                                      .read<AuthSessionCubit>()
-                                      .signInWithGoogle(),
-                                ),
-                                // ── Profile-fetch error (retryable) ───
-                                if (state.status ==
-                                        AuthSessionStatus.profileError &&
-                                    state.canRetry &&
-                                    !state.isUnauthorized) ...[
-                                  const SizedBox(height: 12),
-                                  OutlinedButton(
-                                    onPressed: () => context
-                                        .read<AuthSessionCubit>()
-                                        .retryFetchProfile(),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      side: const BorderSide(
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                    child: Text(s.retry),
-                                  ),
-                                ],
-                              ],
-                              const SizedBox(height: 32),
-                            ],
+        return Scaffold(
+          backgroundColor: AppColors.surface,
+          body: DsScreenEntrance(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(28, 8, 28, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Pressable(
+                        onTap: () => showLanguageSheet(context),
+                        scale: 0.94,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.fill,
+                            borderRadius: BorderRadius.circular(AppRadius.pill),
+                          ),
+                          child: Text(
+                            languageName(
+                              Localizations.localeOf(context).languageCode,
+                              s,
+                            ),
+                            style: AppText.chip,
                           ),
                         ),
                       ),
                     ),
-                  );
-                },
-              );
-            },
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(AppRadius.card),
+                            child: const DecoratedBox(
+                              decoration: BoxDecoration(
+                                boxShadow: AppShadows.logo,
+                              ),
+                              child: Image(
+                                image: AssetImage('assets/logo/app_logo.png'),
+                                width: 72,
+                                height: 72,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          const Text('Safini', style: AppText.display),
+                          const SizedBox(height: 18),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 290),
+                            child: Text(s.loginSubtitle, style: AppText.lede),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!SupabaseConfig.isSupabaseConfigured)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          s.supabaseConfigMissing,
+                          textAlign: TextAlign.center,
+                          style: AppText.metaSm.copyWith(
+                            color: AppColors.dangerDeep,
+                          ),
+                        ),
+                      )
+                    else if (!SupabaseConfig.isGoogleConfigured)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          s.googleClientIdMissing,
+                          textAlign: TextAlign.center,
+                          style: AppText.metaSm.copyWith(
+                            color: AppColors.dangerDeep,
+                          ),
+                        ),
+                      ),
+                    DsPrimaryButton(
+                      label: loading ? s.signingIn : s.loginWithGoogle,
+                      enabled: !blocked,
+                      busy: loading,
+                      onTap: () =>
+                          context.read<AuthSessionCubit>().signInWithGoogle(),
+                    ),
+                    if (state.status == AuthSessionStatus.profileError &&
+                        state.canRetry &&
+                        !state.isUnauthorized) ...[
+                      const SizedBox(height: 10),
+                      DsPrimaryButton.secondary(
+                        label: s.retry,
+                        onTap: () =>
+                            context.read<AuthSessionCubit>().retryFetchProfile(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -209,11 +192,9 @@ class _LoginView extends StatelessWidget {
     switch (accountType) {
       case 'parent':
         await _routeParent(context);
-        break;
       case 'child':
         if (!context.mounted) return;
         context.router.replace(const NamedRoute('childHome'));
-        break;
       default:
         if (!context.mounted) return;
         context.router.replace(const NamedRoute('roleSelection'));
@@ -224,48 +205,11 @@ class _LoginView extends StatelessWidget {
     await context.read<ParentFamilyCubit>().loadCurrentFamily(refresh: true);
     if (!context.mounted) return;
 
-    final authState = context.read<AuthSessionCubit>().state;
-    if (authState.status == AuthSessionStatus.unauthenticated) {
+    final auth = context.read<AuthSessionCubit>().state;
+    if (auth.status == AuthSessionStatus.unauthenticated) {
       context.router.replace(const NamedRoute('login'));
       return;
     }
-
     context.router.replace(const NamedRoute('parentHome'));
-  }
-
-  void _showLanguageDialog(BuildContext context) {
-    final s = S.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(s.selectLanguage),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(s.english),
-              onTap: () {
-                context.read<LocaleCubit>().setLocale(const Locale('en'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text(s.russian),
-              onTap: () {
-                context.read<LocaleCubit>().setLocale(const Locale('ru'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text(s.kazakh),
-              onTap: () {
-                context.read<LocaleCubit>().setLocale(const Locale('kk'));
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
