@@ -69,7 +69,7 @@ class _ChildTasksScreen extends StatelessWidget {
                 ChildTaskRow(
                   id: task.id,
                   title: task.title,
-                  meta: task.subtitle,
+                  meta: task.localizedSubtitle(s),
                   coins: task.coins,
                   state: task.isCompleted
                       ? ChildTaskState.done
@@ -80,8 +80,7 @@ class _ChildTasksScreen extends StatelessWidget {
             ],
             emptyMessage: s.noQuestsInCategory,
           ),
-          onSelectCategory: (index) =>
-              cubit.selectCategory(categories[index]),
+          onSelectCategory: (index) => cubit.selectCategory(categories[index]),
           onOpenTask: (row) => _openTask(context, state, row.id),
           onRefresh: () => cubit.loadTasks(),
         );
@@ -107,7 +106,7 @@ class _ChildTasksScreen extends StatelessWidget {
       QuestModel(
         id: task.id,
         title: task.title,
-        subtitle: task.subtitle,
+        subtitle: task.localizedSubtitle(S.of(context)),
         icon: task.icon,
         iconColor: task.iconColor,
         iconBackground: task.iconBackground,

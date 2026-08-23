@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -8,11 +9,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 
 class MeBadge {
-  const MeBadge({
-    required this.emoji,
-    required this.label,
-    this.earned = true,
-  });
+  const MeBadge({required this.emoji, required this.label, this.earned = true});
 
   final String emoji;
   final String label;
@@ -256,32 +253,41 @@ class _WeekStrip extends StatelessWidget {
 
   final int streakDays;
 
-  static const List<String> _labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
   @override
   Widget build(BuildContext context) {
     final todayIndex = DateTime.now().weekday - 1;
     final firstDone = (todayIndex + 1 - streakDays).clamp(0, 7);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final monday = DateTime.utc(2024, 1, 1);
+    final labels = [
+      for (var i = 0; i < 7; i++)
+        DateFormat.E(locale).format(monday.add(Duration(days: i))),
+    ];
 
     return DsCard(
       shadow: AppShadows.flat,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           for (var i = 0; i < 7; i++)
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _labels[i],
-                  style: AppText.micro.copyWith(letterSpacing: 0.345),
-                ),
-                const SizedBox(height: 8),
-                _DayDot(
-                  done: i >= firstDone && i <= todayIndex && streakDays > 0,
-                  isToday: i == todayIndex,
-                ),
-              ],
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      labels[i],
+                      maxLines: 1,
+                      style: AppText.micro.copyWith(letterSpacing: 0.345),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _DayDot(
+                    done: i >= firstDone && i <= todayIndex && streakDays > 0,
+                    isToday: i == todayIndex,
+                  ),
+                ],
+              ),
             ),
         ],
       ),

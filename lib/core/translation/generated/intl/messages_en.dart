@@ -338,6 +338,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "editTaskSheetTitle": MessageLookupByLibrary.simpleMessage("Edit Task"),
     "educational": MessageLookupByLibrary.simpleMessage("Educational"),
+    "emailHint": MessageLookupByLibrary.simpleMessage("reviewer@example.com"),
+    "emailLabel": MessageLookupByLibrary.simpleMessage("Email"),
+    "emailRequired": MessageLookupByLibrary.simpleMessage(
+      "Enter a valid email address",
+    ),
+    "emailSignInDescription": MessageLookupByLibrary.simpleMessage(
+      "For debug and App Review accounts only.",
+    ),
+    "emailSignInTitle": MessageLookupByLibrary.simpleMessage(
+      "Test account sign-in",
+    ),
     "emptyActiveBody": MessageLookupByLibrary.simpleMessage(
       "Add one with the button below.",
     ),
@@ -457,6 +468,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Continue with your Google account",
     ),
     "loginTitle": MessageLookupByLibrary.simpleMessage("Sign in"),
+    "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
+      "Sign in with email (Test)",
+    ),
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Continue with Google",
     ),
@@ -583,6 +597,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "parentSubtitle": MessageLookupByLibrary.simpleMessage("Monitor & reward"),
     "parents": MessageLookupByLibrary.simpleMessage("Parents"),
+    "passwordHint": MessageLookupByLibrary.simpleMessage("Enter password"),
+    "passwordLabel": MessageLookupByLibrary.simpleMessage("Password"),
+    "passwordRequired": MessageLookupByLibrary.simpleMessage(
+      "Enter your password",
+    ),
     "pendingApproval": MessageLookupByLibrary.simpleMessage("Pending Approval"),
     "percentToNextLevel": m33,
     "photoProofAsked": MessageLookupByLibrary.simpleMessage(
@@ -598,6 +617,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "readFor20Mins": MessageLookupByLibrary.simpleMessage("Read for 20 mins"),
     "readyToSpend": MessageLookupByLibrary.simpleMessage(
       "Ready to spend your coins?",
+    ),
+    "readyWhenYouAre": MessageLookupByLibrary.simpleMessage(
+      "Ready when you are",
     ),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Real-world Tasks"),
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
@@ -658,6 +680,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "setupYourFamily": MessageLookupByLibrary.simpleMessage(
       "Set Up Your Family",
     ),
+    "signInAction": MessageLookupByLibrary.simpleMessage("Sign in"),
     "signInError": MessageLookupByLibrary.simpleMessage(
       "Sign in failed. Please try again.",
     ),

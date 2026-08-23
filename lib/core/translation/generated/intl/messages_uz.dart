@@ -364,6 +364,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Topshiriqni tahrirlash",
     ),
     "educational": MessageLookupByLibrary.simpleMessage("Taʼlimiy"),
+    "emailHint": MessageLookupByLibrary.simpleMessage("tekshiruvchi@misol.uz"),
+    "emailLabel": MessageLookupByLibrary.simpleMessage("Elektron pochta"),
+    "emailRequired": MessageLookupByLibrary.simpleMessage(
+      "Toʻgʻri email kiriting",
+    ),
+    "emailSignInDescription": MessageLookupByLibrary.simpleMessage(
+      "Faqat test va App Review tekshiruvi uchun.",
+    ),
+    "emailSignInTitle": MessageLookupByLibrary.simpleMessage(
+      "Test hisobiga kirish",
+    ),
     "emptyActiveBody": MessageLookupByLibrary.simpleMessage(
       "Quyidagi tugma bilan qoʻshing.",
     ),
@@ -483,6 +494,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Google hisobingiz bilan davom eting",
     ),
     "loginTitle": MessageLookupByLibrary.simpleMessage("Kirish"),
+    "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
+      "Email orqali kirish (test)",
+    ),
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Google bilan davom etish",
     ),
@@ -611,6 +625,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Kuzat va ragʻbatlantir",
     ),
     "parents": MessageLookupByLibrary.simpleMessage("Ota-onalar"),
+    "passwordHint": MessageLookupByLibrary.simpleMessage("Parolni kiriting"),
+    "passwordLabel": MessageLookupByLibrary.simpleMessage("Parol"),
+    "passwordRequired": MessageLookupByLibrary.simpleMessage(
+      "Parolni kiriting",
+    ),
     "pendingApproval": MessageLookupByLibrary.simpleMessage(
       "Tasdiqlash kutilmoqda",
     ),
@@ -632,6 +651,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "readyToSpend": MessageLookupByLibrary.simpleMessage(
       "Tangalaringni sarflashga tayyormisan?",
+    ),
+    "readyWhenYouAre": MessageLookupByLibrary.simpleMessage(
+      "Tayyor boʻlsang, boshla",
     ),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage(
       "Hayotiy topshiriqlar",
@@ -698,6 +720,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "setupYourFamily": MessageLookupByLibrary.simpleMessage(
       "Oilangizni sozlang",
     ),
+    "signInAction": MessageLookupByLibrary.simpleMessage("Kirish"),
     "signInError": MessageLookupByLibrary.simpleMessage(
       "Kirishda xatolik. Qaytadan urinib koʻring.",
     ),

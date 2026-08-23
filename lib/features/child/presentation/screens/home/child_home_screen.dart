@@ -79,7 +79,7 @@ class _ChildTodayScreen extends StatelessWidget {
             openCoins: open.fold(0, (sum, q) => sum + q.coins),
             streakDays: profile.dayStreak > 0 ? profile.dayStreak : null,
             holdToComplete: true,
-            next: next == null ? null : _toTodayQuest(next),
+            next: next == null ? null : _toTodayQuest(next, s),
             teaser: _teaser(store, coins, s),
           ),
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
@@ -92,10 +92,10 @@ class _ChildTodayScreen extends StatelessWidget {
     );
   }
 
-  TodayQuest _toTodayQuest(QuestModel quest) => TodayQuest(
+  TodayQuest _toTodayQuest(QuestModel quest, S s) => TodayQuest(
     id: quest.id,
     title: quest.title,
-    meta: quest.subtitle,
+    meta: quest.localizedSubtitle(s),
     emoji: quest.emoji ?? '⭐',
     coins: quest.coins,
   );

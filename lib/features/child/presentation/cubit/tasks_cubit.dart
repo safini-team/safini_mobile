@@ -15,7 +15,7 @@ class TasksCubit extends Cubit<TasksState> {
   final IChildRepository _childRepository;
 
   TasksCubit(this._coins, this._profileController, this._childRepository)
-      : super(const TasksState.initial()) {
+    : super(const TasksState.initial()) {
     loadTasks();
   }
 
@@ -59,10 +59,11 @@ class TasksCubit extends Cubit<TasksState> {
       title: task.displayTitle,
       // Show the description only when it differs from the title (parent tasks
       // store the same text in both).
-      subtitle: (task.description?.trim().isNotEmpty == true &&
+      subtitle:
+          (task.description?.trim().isNotEmpty == true &&
               task.description!.trim() != task.displayTitle.trim())
           ? task.description!.trim()
-          : (coins > 0 ? '$coins coin reward' : task.status),
+          : '',
       icon: spec.icon,
       iconColor: spec.color,
       iconBackground: spec.background,
@@ -78,17 +79,14 @@ class TasksCubit extends Cubit<TasksState> {
   /// Returns an error message on failure, or null on success.
   Future<String?> submitTask(String taskId, {String? note}) async {
     final result = await _childRepository.submitTask(taskId, note: note);
-    return result.fold(
-      (failure) => failure.message,
-      (_) {
-        final updated = state.tasks.map((t) {
-          if (t.id == taskId) return t.copyWith(status: 'submitted');
-          return t;
-        }).toList();
-        emit(state.copyWith(tasks: _sortTasks(updated)));
-        return null;
-      },
-    );
+    return result.fold((failure) => failure.message, (_) {
+      final updated = state.tasks.map((t) {
+        if (t.id == taskId) return t.copyWith(status: 'submitted');
+        return t;
+      }).toList();
+      emit(state.copyWith(tasks: _sortTasks(updated)));
+      return null;
+    });
   }
 
   TaskCategory _categoryFrom(String? raw) {
@@ -128,10 +126,10 @@ class TasksCubit extends Cubit<TasksState> {
 
   List<TaskItem> _sortTasks(List<TaskItem> tasks) {
     return [...tasks]..sort((a, b) {
-        final aRank = a.isCompleted ? 2 : (a.isSubmitted ? 1 : 0);
-        final bRank = b.isCompleted ? 2 : (b.isSubmitted ? 1 : 0);
-        return aRank.compareTo(bRank);
-      });
+      final aRank = a.isCompleted ? 2 : (a.isSubmitted ? 1 : 0);
+      final bRank = b.isCompleted ? 2 : (b.isSubmitted ? 1 : 0);
+      return aRank.compareTo(bRank);
+    });
   }
 
   void selectCategory(TaskCategory category) =>

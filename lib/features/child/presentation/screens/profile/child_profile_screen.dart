@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
-import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -16,10 +15,8 @@ import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
-import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart'
-    as safini_auth;
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
-import 'package:shared_preferences/shared_preferences.dart' as safini_prefs;
 
 class ChildProfileScreen extends StatelessWidget {
   const ChildProfileScreen({super.key});
@@ -60,9 +57,7 @@ class _ChildMeScreen extends StatelessWidget {
                 ? s.levelValue(state.level)
                 : state.levelLabel,
             xpProgress: state.xpProgress,
-            xpCaption: s.percentToNextLevel(
-              (state.xpProgress * 100).round(),
-            ),
+            xpCaption: s.percentToNextLevel((state.xpProgress * 100).round()),
             coins: coins,
             questsDone: state.questsDone,
             streakDays: state.dayStreak,
@@ -216,6 +211,7 @@ class ChildMeSettings extends StatelessWidget {
 
   Future<void> _signOut(BuildContext context, S s) async {
     final router = context.router;
+    final auth = context.read<AuthSessionCubit>();
 
     final confirmed = await showDsSheet<bool>(
       context: context,
@@ -243,10 +239,8 @@ class ChildMeSettings extends StatelessWidget {
     );
 
     if (confirmed != true) return;
-    try {
-      await getIt<safini_auth.AuthGoogleSignInService>().signOut();
-    } catch (_) {}
-    await getIt<safini_prefs.SharedPreferences>().remove('access_token');
+    await auth.signOut();
+    if (!context.mounted) return;
     router.replaceAll([const NamedRoute('login')]);
   }
 }

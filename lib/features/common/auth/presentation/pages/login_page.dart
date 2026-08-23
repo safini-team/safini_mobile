@@ -18,8 +18,8 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubi
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
-/// Sign-in, laid out like the Welcome artboard: logo and wordmark up top, the
-/// single action pinned to the bottom.
+/// Sign-in, laid out like the Welcome artboard: logo and wordmark up top, with
+/// the public Google action and an optional debug/review email action below.
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -70,9 +70,9 @@ class _LoginView extends StatelessWidget {
         final loading =
             state.status == AuthSessionStatus.signingIn ||
             state.status == AuthSessionStatus.fetchingProfile;
-        final blocked =
-            !SupabaseConfig.isSupabaseConfigured ||
-            !SupabaseConfig.isGoogleConfigured;
+        final supabaseBlocked = !SupabaseConfig.isSupabaseConfigured;
+        final googleBlocked =
+            supabaseBlocked || !SupabaseConfig.isGoogleConfigured;
 
         return Scaffold(
           backgroundColor: AppColors.surface,
@@ -160,19 +160,28 @@ class _LoginView extends StatelessWidget {
                       ),
                     DsPrimaryButton(
                       label: loading ? s.signingIn : s.loginWithGoogle,
-                      enabled: !blocked,
+                      enabled: !googleBlocked,
                       busy: loading,
                       onTap: () =>
                           context.read<AuthSessionCubit>().signInWithGoogle(),
                     ),
+                    if (SupabaseConfig.isEmailSignInEnabled) ...[
+                      const SizedBox(height: 10),
+                      DsPrimaryButton.secondary(
+                        label: s.loginWithEmailTest,
+                        enabled: !supabaseBlocked && !loading,
+                        onTap: () => _showEmailSignInSheet(context),
+                      ),
+                    ],
                     if (state.status == AuthSessionStatus.profileError &&
                         state.canRetry &&
                         !state.isUnauthorized) ...[
                       const SizedBox(height: 10),
                       DsPrimaryButton.secondary(
                         label: s.retry,
-                        onTap: () =>
-                            context.read<AuthSessionCubit>().retryFetchProfile(),
+                        onTap: () => context
+                            .read<AuthSessionCubit>()
+                            .retryFetchProfile(),
                       ),
                     ],
                   ],
@@ -182,6 +191,19 @@ class _LoginView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _showEmailSignInSheet(BuildContext context) {
+    final auth = context.read<AuthSessionCubit>();
+    return showDsSheet<void>(
+      context: context,
+      builder: (sheetContext) => _EmailSignInSheet(
+        onSubmit: (email, password) {
+          Navigator.of(sheetContext).pop();
+          unawaited(auth.signInWithEmail(email: email, password: password));
+        },
+      ),
     );
   }
 
@@ -211,5 +233,121 @@ class _LoginView extends StatelessWidget {
       return;
     }
     context.router.replace(const NamedRoute('parentHome'));
+  }
+}
+
+class _EmailSignInSheet extends StatefulWidget {
+  const _EmailSignInSheet({required this.onSubmit});
+
+  final void Function(String email, String password) onSubmit;
+
+  @override
+  State<_EmailSignInSheet> createState() => _EmailSignInSheetState();
+}
+
+class _EmailSignInSheetState extends State<_EmailSignInSheet> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _passwordFocusNode = FocusNode();
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(s.emailSignInTitle, style: AppText.title3),
+          const SizedBox(height: 6),
+          Text(s.emailSignInDescription, style: AppText.bodyRegular),
+          const SizedBox(height: 20),
+          DsGroup(
+            color: AppColors.fillAlt,
+            shadow: const [],
+            radius: AppRadius.card,
+            children: [
+              DsFieldRow(
+                label: s.emailLabel,
+                labelWidth: 76,
+                child: TextFormField(
+                  controller: _emailController,
+                  autofocus: true,
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  autofillHints: const [AutofillHints.email],
+                  cursorColor: AppColors.primary,
+                  style: AppText.rowTitleLg,
+                  decoration: DsFieldRow.decoration(s.emailHint),
+                  validator: (value) {
+                    final email = value?.trim() ?? '';
+                    if (email.isEmpty ||
+                        !email.contains('@') ||
+                        !email.contains('.')) {
+                      return s.emailRequired;
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
+                ),
+              ),
+              DsFieldRow(
+                label: s.passwordLabel,
+                labelWidth: 76,
+                child: TextFormField(
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
+                  obscureText: _obscurePassword,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  textInputAction: TextInputAction.done,
+                  autofillHints: const [AutofillHints.password],
+                  cursorColor: AppColors.primary,
+                  style: AppText.rowTitleLg,
+                  decoration: DsFieldRow.decoration(s.passwordHint).copyWith(
+                    suffixIcon: IconButton(
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        size: 20,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? s.passwordRequired
+                      : null,
+                  onFieldSubmitted: (_) => _submit(),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          DsPrimaryButton(label: s.signInAction, onTap: _submit),
+        ],
+      ),
+    );
+  }
+
+  void _submit() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    FocusScope.of(context).unfocus();
+    widget.onSubmit(_emailController.text.trim(), _passwordController.text);
   }
 }

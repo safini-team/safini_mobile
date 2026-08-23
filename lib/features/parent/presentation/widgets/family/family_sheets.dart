@@ -87,6 +87,7 @@ class _ParentSheetState extends State<_ParentSheet> {
             DsInitialAvatar(
               name: widget.parent.name,
               color: widget.parent.color,
+              imageUrl: widget.parent.avatarUrl,
               size: 56,
             ),
             const SizedBox(width: 14),
@@ -241,10 +242,7 @@ class _ChildSheetState extends State<_ChildSheet> {
                 value: child.age > 0 ? s.yearsOld(child.age) : s.notSet,
               ),
               const DsDivider(),
-              _DetailRow(
-                label: s.levelShort,
-                value: s.levelValue(child.level),
-              ),
+              _DetailRow(label: s.levelShort, value: s.levelValue(child.level)),
               const DsDivider(),
               _DetailRow(label: s.statCoins, value: '${child.coins}'),
             ],
@@ -287,10 +285,13 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(label, style: AppText.body.copyWith(
-              fontWeight: FontWeight.w400,
-              color: AppColors.textSecondary,
-            )),
+            child: Text(
+              label,
+              style: AppText.body.copyWith(
+                fontWeight: FontWeight.w400,
+                color: AppColors.textSecondary,
+              ),
+            ),
           ),
           Text(
             value,

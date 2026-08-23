@@ -36,14 +36,12 @@ class ParentMainScreen extends StatelessWidget {
         BlocProvider(create: (_) => ParentHomeCubit()),
         BlocProvider(create: (_) => getIt<ParentCubit>()..loadProfile()),
         // Hoisted so the Tasks tab and its badge read the same list.
-        BlocProvider(
-          create: (_) => getIt<ParentTasksCubit>()..loadAllTasks(),
-        ),
+        BlocProvider(create: (_) => getIt<ParentTasksCubit>()..loadAllTasks()),
       ],
       child: BlocListener<AuthSessionCubit, AuthSessionState>(
         listener: (context, state) {
           if (state.status == AuthSessionStatus.unauthenticated) {
-            context.router.replaceAll([const NamedRoute('roleSelection')]);
+            context.router.replaceAll([const NamedRoute('login')]);
           }
         },
         child: const _ParentMainView(),

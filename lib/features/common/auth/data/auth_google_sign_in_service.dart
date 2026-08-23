@@ -32,10 +32,10 @@ class AuthGoogleSignInService {
     final String? clientId = kIsWeb
         ? webClientId
         : (defaultTargetPlatform == TargetPlatform.iOS
-            ? (SupabaseConfig.googleIosClientId.isEmpty
-                ? null
-                : SupabaseConfig.googleIosClientId)
-            : null);
+              ? (SupabaseConfig.googleIosClientId.isEmpty
+                    ? null
+                    : SupabaseConfig.googleIosClientId)
+              : null);
 
     debugPrint(
       '[GoogleSignIn] initialize platform=$defaultTargetPlatform '
@@ -119,8 +119,9 @@ class AuthGoogleSignInService {
       return 'set';
     }
     final suffix = parts.last;
-    final visibleSuffix =
-        suffix.length <= 8 ? suffix : suffix.substring(suffix.length - 8);
+    final visibleSuffix = suffix.length <= 8
+        ? suffix
+        : suffix.substring(suffix.length - 8);
     return '${parts.first}-...$visibleSuffix';
   }
 
@@ -128,9 +129,15 @@ class AuthGoogleSignInService {
     try {
       await _ensureGoogleSignInInitialized();
       await GoogleSignIn.instance.signOut();
+    } catch (e) {
+      debugPrint('[GoogleSignIn] Google signOut error: $e');
+    }
+
+    // Supabase must still be cleared if Google initialization or sign-out fails.
+    try {
       await Supabase.instance.client.auth.signOut();
     } catch (e) {
-      debugPrint('[GoogleSignIn] signOut error: $e');
+      debugPrint('[GoogleSignIn] Supabase signOut error: $e');
     }
   }
 }

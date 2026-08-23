@@ -77,9 +77,7 @@ class ParentSettingsScreen extends StatelessWidget {
                             children: [
                               Text(
                                 languageName(
-                                  Localizations.localeOf(
-                                    context,
-                                  ).languageCode,
+                                  Localizations.localeOf(context).languageCode,
                                   s,
                                 ),
                                 style: AppText.body.copyWith(
@@ -159,6 +157,6 @@ class ParentSettingsScreen extends StatelessWidget {
       ),
     );
 
-    if (confirmed == true) auth.signOut();
+    if (confirmed == true) await auth.signOut();
   }
 }

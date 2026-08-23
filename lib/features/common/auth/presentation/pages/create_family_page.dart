@@ -20,7 +20,8 @@ class CreateFamilyPage extends StatefulWidget {
 }
 
 class _CreateFamilyPageState extends State<CreateFamilyPage> {
-  final _name = TextEditingController(text: 'My Family');
+  final _name = TextEditingController();
+  bool _hasAppliedDefaultName = false;
 
   @override
   void initState() {
@@ -32,6 +33,15 @@ class _CreateFamilyPageState extends State<CreateFamilyPage> {
   void dispose() {
     _name.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_hasAppliedDefaultName) return;
+    _hasAppliedDefaultName = true;
+    _name.text = S.of(context).myFamily;
+    _name.selection = TextSelection.collapsed(offset: _name.text.length);
   }
 
   bool get _canSubmit => _name.text.trim().isNotEmpty;
@@ -92,7 +102,7 @@ class _CreateFamilyPageState extends State<CreateFamilyPage> {
                             textCapitalization: TextCapitalization.words,
                             cursorColor: AppColors.primary,
                             style: AppText.rowTitleLg,
-                            decoration: DsFieldRow.decoration('My Family'),
+                            decoration: DsFieldRow.decoration(s.myFamily),
                             onSubmitted: (_) => _submit(context),
                           ),
                         ),

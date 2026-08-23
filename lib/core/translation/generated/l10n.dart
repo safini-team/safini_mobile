@@ -600,6 +600,16 @@ class S {
     return Intl.message('Completed', name: 'completed', desc: '', args: []);
   }
 
+  /// `Ready when you are`
+  String get readyWhenYouAre {
+    return Intl.message(
+      'Ready when you are',
+      name: 'readyWhenYouAre',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `YOUR CHILDREN`
   String get yourChildren {
     return Intl.message(
@@ -1143,6 +1153,91 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Sign in with email (Test)`
+  String get loginWithEmailTest {
+    return Intl.message(
+      'Sign in with email (Test)',
+      name: 'loginWithEmailTest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test account sign-in`
+  String get emailSignInTitle {
+    return Intl.message(
+      'Test account sign-in',
+      name: 'emailSignInTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For debug and App Review accounts only.`
+  String get emailSignInDescription {
+    return Intl.message(
+      'For debug and App Review accounts only.',
+      name: 'emailSignInDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email`
+  String get emailLabel {
+    return Intl.message('Email', name: 'emailLabel', desc: '', args: []);
+  }
+
+  /// `reviewer@example.com`
+  String get emailHint {
+    return Intl.message(
+      'reviewer@example.com',
+      name: 'emailHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password`
+  String get passwordLabel {
+    return Intl.message('Password', name: 'passwordLabel', desc: '', args: []);
+  }
+
+  /// `Enter password`
+  String get passwordHint {
+    return Intl.message(
+      'Enter password',
+      name: 'passwordHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid email address`
+  String get emailRequired {
+    return Intl.message(
+      'Enter a valid email address',
+      name: 'emailRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your password`
+  String get passwordRequired {
+    return Intl.message(
+      'Enter your password',
+      name: 'passwordRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign in`
+  String get signInAction {
+    return Intl.message('Sign in', name: 'signInAction', desc: '', args: []);
   }
 
   /// `Signing in...`

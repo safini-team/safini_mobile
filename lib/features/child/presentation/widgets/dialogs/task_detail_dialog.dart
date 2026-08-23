@@ -70,6 +70,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final quest = widget.quest;
+    final subtitle = quest.localizedSubtitle(s);
     final canSubmit = widget.onSubmit != null;
 
     return Column(
@@ -96,12 +97,9 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                     quest.title,
                     style: AppText.title4.copyWith(height: 1.18),
                   ),
-                  if (quest.subtitle.isNotEmpty) ...[
+                  if (subtitle.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    Text(
-                      quest.subtitle,
-                      style: AppText.meta.copyWith(fontSize: 14),
-                    ),
+                    Text(subtitle, style: AppText.meta.copyWith(fontSize: 14)),
                   ],
                 ],
               ),

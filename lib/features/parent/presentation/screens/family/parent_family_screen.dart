@@ -111,6 +111,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
 
         final currentUserId =
             Supabase.instance.client.auth.currentSession?.user.id;
+        final currentParent = context.watch<ParentCubit>().state.user;
 
         return ParentFamilyView(
           data: ParentFamilyData(
@@ -122,6 +123,11 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                   name: parent.displayName,
                   subtitle: _parentSubtitle(s, parent),
                   color: AppColors.kidColor(parent.userId),
+                  avatarUrl:
+                      parent.avatarUrl ??
+                      (parent.userId == currentUserId
+                          ? currentParent?.avatarUrl
+                          : null),
                   isYou: parent.userId == currentUserId,
                 ),
             ],
@@ -170,9 +176,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
 
   Future<void> _openParent(FamilyModel family, FamilyParentRow row) async {
     final s = S.of(context);
-    final parent = family.parents
-        .where((p) => p.userId == row.id)
-        .firstOrNull;
+    final parent = family.parents.where((p) => p.userId == row.id).firstOrNull;
     final cubit = context.read<ParentFamilyCubit>();
     final router = context.router;
     final parentCubit = context.read<ParentCubit>();
@@ -277,10 +281,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
             const SizedBox(height: 8),
             Text(s.inviteAParentBody, style: AppText.bodyRegular),
             const SizedBox(height: 18),
-            DsCodePanel(
-              caption: s.inviteCodeValid,
-              code: invite.inviteCode,
-            ),
+            DsCodePanel(caption: s.inviteCodeValid, code: invite.inviteCode),
             const SizedBox(height: 18),
             DsPrimaryButton(
               label: s.doneAction,

@@ -9,6 +9,7 @@ class DsInitialAvatar extends StatelessWidget {
     super.key,
     required this.name,
     this.color,
+    this.imageUrl,
     this.size = 38,
     this.fontSize,
     this.label,
@@ -16,6 +17,7 @@ class DsInitialAvatar extends StatelessWidget {
 
   final String name;
   final Color? color;
+  final String? imageUrl;
   final double size;
   final double? fontSize;
 
@@ -31,7 +33,7 @@ class DsInitialAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final fallback = Container(
       width: size,
       height: size,
       alignment: Alignment.center,
@@ -47,6 +49,22 @@ class DsInitialAvatar extends StatelessWidget {
           color: AppColors.textOnPrimary,
           height: 1,
         ),
+      ),
+    );
+
+    final url = imageUrl?.trim();
+    if (url == null || url.isEmpty) return fallback;
+
+    return ClipOval(
+      child: Image.network(
+        url,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        filterQuality: FilterQuality.medium,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
+            wasSynchronouslyLoaded || frame != null ? child : fallback,
+        errorBuilder: (context, error, stackTrace) => fallback,
       ),
     );
   }

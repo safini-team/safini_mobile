@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 
 enum TaskCategory { all, learn, fitness, logic }
 
@@ -48,8 +49,18 @@ class TaskItem {
 
   bool get isSubmitted {
     final s = status.toLowerCase();
-    return s == 'submitted' || s == 'pending' || s == 'pending_approval' || s == 'awaiting_approval';
+    return s == 'submitted' ||
+        s == 'pending' ||
+        s == 'pending_approval' ||
+        s == 'awaiting_approval';
   }
+
+  String localizedSubtitle(S s) => localizedTaskSubtitle(
+    s,
+    customSubtitle: subtitle,
+    coins: coins,
+    isCompleted: isCompleted,
+  );
 
   const TaskItem({
     required this.id,
@@ -82,4 +93,15 @@ class TaskItem {
       status: status ?? this.status,
     );
   }
+}
+
+String localizedTaskSubtitle(
+  S s, {
+  required String customSubtitle,
+  required int coins,
+  required bool isCompleted,
+}) {
+  if (customSubtitle.trim().isNotEmpty) return customSubtitle.trim();
+  if (coins > 0) return s.coinsReward(coins);
+  return isCompleted ? s.completed : s.readyWhenYouAre;
 }

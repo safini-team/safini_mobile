@@ -45,6 +45,7 @@ class FamilyModel {
                       userId: ownerUserId,
                       email: null,
                       displayName: 'Parent',
+                      avatarUrl: null,
                       role: 'admin',
                       joinedAt: null,
                     ),
@@ -86,6 +87,7 @@ class ParentSummaryModel {
   final String userId;
   final String? email;
   final String displayName;
+  final String? avatarUrl;
   final String role;
   final DateTime? joinedAt;
 
@@ -93,6 +95,7 @@ class ParentSummaryModel {
     required this.userId,
     this.email,
     required this.displayName,
+    this.avatarUrl,
     required this.role,
     this.joinedAt,
   });
@@ -103,6 +106,9 @@ class ParentSummaryModel {
       email: json['email'] as String?,
       displayName: (json['display_name'] ?? json['displayName'] ?? 'Parent')
           .toString(),
+      avatarUrl:
+          (json['avatar_url'] ?? json['avatarUrl'] ?? json['picture'])
+              as String?,
       role: (json['role'] ?? 'parent').toString(),
       joinedAt: DateTime.tryParse(
         (json['joined_at'] ?? json['joinedAt'] ?? '').toString(),
@@ -115,6 +121,7 @@ class ParentSummaryModel {
       'user_id': userId,
       'email': email,
       'display_name': displayName,
+      'avatar_url': avatarUrl,
       'role': role,
       'joined_at': joinedAt?.toIso8601String(),
     };

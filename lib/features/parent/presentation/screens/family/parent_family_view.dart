@@ -13,6 +13,7 @@ class FamilyParentRow {
     required this.name,
     required this.subtitle,
     required this.color,
+    this.avatarUrl,
     this.isYou = false,
     this.isPending = false,
   });
@@ -21,6 +22,7 @@ class FamilyParentRow {
   final String name;
   final String subtitle;
   final Color color;
+  final String? avatarUrl;
   final bool isYou;
   final bool isPending;
 }
@@ -115,6 +117,7 @@ class ParentFamilyView extends StatelessWidget {
                         leading: DsInitialAvatar(
                           name: parent.name,
                           color: parent.color,
+                          imageUrl: parent.avatarUrl,
                           size: 38,
                         ),
                         trailing: Row(
@@ -123,9 +126,7 @@ class ParentFamilyView extends StatelessWidget {
                             if (parent.isPending) ...[
                               // The chevron keeps its width; the pill is what
                               // gives if the label runs long.
-                              Flexible(
-                                child: DsPill.pending(label: s.invited),
-                              ),
+                              Flexible(child: DsPill.pending(label: s.invited)),
                               const SizedBox(width: 4),
                             ],
                             AppIcons.chevronRight(),
@@ -315,11 +316,7 @@ class _ChildCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              DsInitialAvatar(
-                name: child.name,
-                color: child.color,
-                size: 52,
-              ),
+              DsInitialAvatar(name: child.name, color: child.color, size: 52),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -399,10 +396,7 @@ class _StatTile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 1),
-            Text(
-              label,
-              style: AppText.caption.copyWith(fontSize: 11.5),
-            ),
+            Text(label, style: AppText.caption.copyWith(fontSize: 11.5)),
           ],
         ),
       ),

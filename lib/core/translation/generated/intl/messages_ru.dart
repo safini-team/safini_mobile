@@ -350,6 +350,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Изменить задание",
     ),
     "educational": MessageLookupByLibrary.simpleMessage("Образование"),
+    "emailHint": MessageLookupByLibrary.simpleMessage("reviewer@primer.ru"),
+    "emailLabel": MessageLookupByLibrary.simpleMessage("Эл. почта"),
+    "emailRequired": MessageLookupByLibrary.simpleMessage(
+      "Введите корректный email",
+    ),
+    "emailSignInDescription": MessageLookupByLibrary.simpleMessage(
+      "Только для отладки и проверки App Review.",
+    ),
+    "emailSignInTitle": MessageLookupByLibrary.simpleMessage(
+      "Вход в тестовый аккаунт",
+    ),
     "emptyActiveBody": MessageLookupByLibrary.simpleMessage(
       "Добавьте кнопкой ниже.",
     ),
@@ -469,6 +480,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Продолжите с аккаунтом Google",
     ),
     "loginTitle": MessageLookupByLibrary.simpleMessage("Вход"),
+    "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
+      "Войти по email (тест)",
+    ),
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Продолжить с Google",
     ),
@@ -595,6 +609,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Контролируй и награждай",
     ),
     "parents": MessageLookupByLibrary.simpleMessage("Родители"),
+    "passwordHint": MessageLookupByLibrary.simpleMessage("Введите пароль"),
+    "passwordLabel": MessageLookupByLibrary.simpleMessage("Пароль"),
+    "passwordRequired": MessageLookupByLibrary.simpleMessage("Введите пароль"),
     "pendingApproval": MessageLookupByLibrary.simpleMessage("Ожидают проверки"),
     "percentToNextLevel": m33,
     "photoProofAsked": MessageLookupByLibrary.simpleMessage(
@@ -611,6 +628,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "readyToSpend": MessageLookupByLibrary.simpleMessage(
       "Готовы потратить монеты?",
     ),
+    "readyWhenYouAre": MessageLookupByLibrary.simpleMessage("Можно начинать"),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Задания в жизни"),
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
       "Код повторной связи · 30 мин",
@@ -668,6 +686,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
     "setupYourFamily": MessageLookupByLibrary.simpleMessage("Настройте семью"),
+    "signInAction": MessageLookupByLibrary.simpleMessage("Войти"),
     "signInError": MessageLookupByLibrary.simpleMessage(
       "Не удалось войти. Попробуйте ещё раз.",
     ),

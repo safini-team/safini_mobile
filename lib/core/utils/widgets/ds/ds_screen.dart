@@ -4,6 +4,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_motion.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/app_icons.dart';
 import 'package:safini/core/utils/widgets/ds/ds_blur.dart';
 import 'package:safini/core/utils/widgets/ds/pressable.dart';
@@ -191,7 +192,12 @@ class DsLargeTitle extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.textGutter, 6, AppSpacing.textGutter, 0),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.textGutter,
+        6,
+        AppSpacing.textGutter,
+        0,
+      ),
       child: trailing == null
           ? block
           : Row(
@@ -209,9 +215,9 @@ class DsLargeTitle extends StatelessWidget {
 /// The bare back affordance on an onboarding step: `padding:0 14px 8px` with a
 /// purple chevron and a 17px label, no bar behind it.
 class DsBackButton extends StatelessWidget {
-  const DsBackButton({super.key, this.label = 'Back', this.onTap});
+  const DsBackButton({super.key, this.label, this.onTap});
 
-  final String label;
+  final String? label;
   final VoidCallback? onTap;
 
   @override
@@ -231,7 +237,7 @@ class DsBackButton extends StatelessWidget {
                 AppIcons.chevronLeft(),
                 const SizedBox(width: 2),
                 Text(
-                  label,
+                  label ?? S.of(context).loginBack,
                   style: AppText.button.copyWith(
                     fontWeight: FontWeight.w400,
                     color: AppColors.primary,
