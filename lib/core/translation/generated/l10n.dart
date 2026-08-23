@@ -2576,20 +2576,20 @@ class S {
     );
   }
 
-  /// `Invite code · valid 30 min`
+  /// `Invite code · valid 24 hours`
   String get inviteCodeValid {
     return Intl.message(
-      'Invite code · valid 30 min',
+      'Invite code · valid 24 hours',
       name: 'inviteCodeValid',
       desc: '',
       args: [],
     );
   }
 
-  /// `Re-connect code · valid 30 min`
+  /// `Re-connect code · valid 24 hours`
   String get reconnectCodeValid {
     return Intl.message(
-      'Re-connect code · valid 30 min',
+      'Re-connect code · valid 24 hours',
       name: 'reconnectCodeValid',
       desc: '',
       args: [],
@@ -2731,10 +2731,10 @@ class S {
     );
   }
 
-  /// `Step 2 of 2 - the code works for 30 minutes.`
+  /// `Step 2 of 2 - the code works for 24 hours.`
   String get step2of2 {
     return Intl.message(
-      'Step 2 of 2 - the code works for 30 minutes.',
+      'Step 2 of 2 - the code works for 24 hours.',
       name: 'step2of2',
       desc: '',
       args: [],

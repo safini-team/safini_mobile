@@ -456,7 +456,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Taklif kodi nusxalandi",
     ),
     "inviteCodeValid": MessageLookupByLibrary.simpleMessage(
-      "Taklif kodi · 30 daqiqa",
+      "Taklif kodi · 24 soat",
     ),
     "invited": MessageLookupByLibrary.simpleMessage("Taklif"),
     "joinFamilyAction": MessageLookupByLibrary.simpleMessage(
@@ -659,7 +659,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Hayotiy topshiriqlar",
     ),
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
-      "Qayta ulanish kodi · 30 daqiqa",
+      "Qayta ulanish kodi · 24 soat",
     ),
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Kod bilan qayta ulash",
@@ -741,7 +741,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "2 bosqichdan 1-si - boshqa farzandlarni keyin qoʻshasiz.",
     ),
     "step2of2": MessageLookupByLibrary.simpleMessage(
-      "2 bosqichdan 2-si - kod 30 daqiqa amal qiladi.",
+      "2 bosqichdan 2-si - kod 24 soat amal qiladi.",
     ),
     "steps": MessageLookupByLibrary.simpleMessage("Qadamlar"),
     "stepsChangeText": MessageLookupByLibrary.simpleMessage(

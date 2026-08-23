@@ -859,8 +859,8 @@
                 },
                 "example": {
                   "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
-                  "invite_code": "SAFE2026",
-                  "invite_code_expires_at": "2026-04-02T12:00:00Z"
+                  "invite_code": "SAFE",
+                  "invite_code_expires_at": "2026-03-27T12:00:00Z"
                 }
               }
             }
@@ -3189,8 +3189,9 @@
         "properties": {
           "invite_code": {
             "type": "string",
-            "maxLength": 16,
+            "maxLength": 4,
             "minLength": 4,
+            "pattern": "^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]+$",
             "title": "Invite Code",
             "description": "Short invite code created by the parent to link a child login later."
           }
@@ -3202,7 +3203,7 @@
         ],
         "title": "ChildClaimRequest",
         "example": {
-          "invite_code": "SAFE2026"
+          "invite_code": "SAFE"
         }
       },
       "ChildCreateRequest": {

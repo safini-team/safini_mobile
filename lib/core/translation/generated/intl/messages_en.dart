@@ -432,7 +432,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Invite code copied",
     ),
     "inviteCodeValid": MessageLookupByLibrary.simpleMessage(
-      "Invite code · valid 30 min",
+      "Invite code · valid 24 hours",
     ),
     "invited": MessageLookupByLibrary.simpleMessage("Invited"),
     "joinFamilyAction": MessageLookupByLibrary.simpleMessage(
@@ -623,7 +623,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Real-world Tasks"),
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
-      "Re-connect code · valid 30 min",
+      "Re-connect code · valid 24 hours",
     ),
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Re-connect with a code",
@@ -701,7 +701,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Step 1 of 2 - you can add more kids later.",
     ),
     "step2of2": MessageLookupByLibrary.simpleMessage(
-      "Step 2 of 2 - the code works for 30 minutes.",
+      "Step 2 of 2 - the code works for 24 hours.",
     ),
     "steps": MessageLookupByLibrary.simpleMessage("Steps"),
     "stepsChangeText": MessageLookupByLibrary.simpleMessage(

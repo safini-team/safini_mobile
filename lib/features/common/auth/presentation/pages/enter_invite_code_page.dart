@@ -23,9 +23,8 @@ class EnterInviteCodePage extends StatefulWidget {
 class _EnterInviteCodePageState extends State<EnterInviteCodePage> {
   final _code = TextEditingController();
 
-  /// Codes are 4-16 characters; the artboard shows six boxes, which is what
-  /// the backend actually issues.
-  static const int _length = 6;
+  /// The backend issues four-character codes without ambiguous characters.
+  static const int _length = 4;
 
   @override
   void initState() {
@@ -39,7 +38,7 @@ class _EnterInviteCodePageState extends State<EnterInviteCodePage> {
     super.dispose();
   }
 
-  bool get _canSubmit => _code.text.trim().length >= 4;
+  bool get _canSubmit => _code.text.trim().length == _length;
 
   @override
   Widget build(BuildContext context) {

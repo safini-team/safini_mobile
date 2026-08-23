@@ -20,6 +20,7 @@ class JoinFamilyPage extends StatefulWidget {
 
 class _JoinFamilyPageState extends State<JoinFamilyPage> {
   final _code = TextEditingController();
+  static const int _codeLength = 4;
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _JoinFamilyPageState extends State<JoinFamilyPage> {
     super.dispose();
   }
 
-  bool get _canSubmit => _code.text.trim().length >= 4;
+  bool get _canSubmit => _code.text.trim().length == _codeLength;
 
   void _submit() {
     if (!_canSubmit) return;
@@ -87,12 +88,12 @@ class _JoinFamilyPageState extends State<JoinFamilyPage> {
                     padding: const EdgeInsets.fromLTRB(22, 30, 22, 0),
                     child: DsCodeField(
                       controller: _code,
+                      length: _codeLength,
                       enabled: !state.isLoading,
                       onCompleted: (_) => _submit(),
                     ),
                   ),
-                  if (state.joinCodeError != null ||
-                      state.errorMessage != null)
+                  if (state.joinCodeError != null || state.errorMessage != null)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(22, 16, 22, 0),
                       child: Text(

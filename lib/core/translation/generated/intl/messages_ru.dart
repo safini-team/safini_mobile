@@ -442,7 +442,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "inviteCodeCopied": MessageLookupByLibrary.simpleMessage("Код скопирован"),
     "inviteCodeValid": MessageLookupByLibrary.simpleMessage(
-      "Код приглашения · 30 мин",
+      "Код приглашения · 24 часа",
     ),
     "invited": MessageLookupByLibrary.simpleMessage("Приглашён"),
     "joinFamilyAction": MessageLookupByLibrary.simpleMessage("Войти по коду"),
@@ -631,7 +631,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "readyWhenYouAre": MessageLookupByLibrary.simpleMessage("Можно начинать"),
     "realWorldTasks": MessageLookupByLibrary.simpleMessage("Задания в жизни"),
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
-      "Код повторной связи · 30 мин",
+      "Код повторной связи · 24 часа",
     ),
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Связать заново по коду",
@@ -705,7 +705,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Шаг 1 из 2 - других детей можно добавить позже.",
     ),
     "step2of2": MessageLookupByLibrary.simpleMessage(
-      "Шаг 2 из 2 - код действует 30 минут.",
+      "Шаг 2 из 2 - код действует 24 часа.",
     ),
     "steps": MessageLookupByLibrary.simpleMessage("Шаги"),
     "stepsChangeText": MessageLookupByLibrary.simpleMessage(

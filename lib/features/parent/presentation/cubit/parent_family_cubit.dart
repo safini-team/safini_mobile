@@ -174,12 +174,12 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
       );
       return;
     }
-    if (code.length < 4 || code.length > 16) {
+    if (code.length != 4) {
       emit(
         state.copyWith(
           stage: ParentFamilyStage.join,
           isLoading: false,
-          joinCodeError: 'Invalid invite code format. Must be 4-16 characters.',
+          joinCodeError: 'Invite code must be exactly 4 characters.',
           errorMessage: null,
           canRetry: false,
           keepFamily: true,

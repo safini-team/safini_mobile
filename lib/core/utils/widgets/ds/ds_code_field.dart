@@ -14,7 +14,7 @@ class DsCodeField extends StatefulWidget {
   const DsCodeField({
     super.key,
     required this.controller,
-    this.length = 6,
+    this.length = 4,
     this.onCompleted,
     this.autofocus = true,
     this.enabled = true,
@@ -78,7 +78,9 @@ class _DsCodeFieldState extends State<DsCodeField> {
               keyboardType: TextInputType.visiblePassword,
               maxLength: widget.length,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
+                FilteringTextInputFormatter.allow(
+                  RegExp('[A-HJ-NP-Za-hj-np-z2-9]'),
+                ),
                 TextInputFormatter.withFunction(
                   (_, next) => next.copyWith(text: next.text.toUpperCase()),
                 ),
@@ -124,9 +126,7 @@ class _Box extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.tile),
-        border: focused
-            ? Border.all(color: AppColors.primary, width: 2)
-            : null,
+        border: focused ? Border.all(color: AppColors.primary, width: 2) : null,
         boxShadow: AppShadows.hairline,
       ),
       child: Text(
