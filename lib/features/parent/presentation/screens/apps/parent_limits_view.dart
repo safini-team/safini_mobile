@@ -25,7 +25,10 @@ class LimitsApp {
     required this.emoji,
     required this.usedMinutes,
     required this.limitMinutes,
-    required this.isEnabled,
+    required this.isLimited,
+    required this.canRedeem,
+    this.redeemCoinCost = 100,
+    this.redeemRewardMinutes = 30,
   });
 
   final String slug;
@@ -33,16 +36,28 @@ class LimitsApp {
   final String emoji;
   final int usedMinutes;
   final int limitMinutes;
-  final bool isEnabled;
 
-  bool get isOver => limitMinutes > 0 && usedMinutes > limitMinutes;
+  /// Does the daily cap apply at all. This is the real "no limit".
+  final bool isLimited;
 
-  /// The design's second line: "1 h of 45 m · over", "21 m · no limit", or the
-  /// always-allowed note when redemptions are switched off.
+  /// May the child buy extra minutes. Independent of [isLimited]: a parent may
+  /// want a capped app the child cannot buy past, or an uncapped one.
+  final bool canRedeem;
+
+  final int redeemCoinCost;
+  final int redeemRewardMinutes;
+
+  bool get isOver => isLimited && limitMinutes > 0 && usedMinutes > limitMinutes;
+
+  /// "1 h of 45 m · over", "21 m · no limit", "21 m · no free time".
+  ///
+  /// A limit of zero used to render as "no limit", which is the opposite of
+  /// what the server does with it: with a cap of 0 every minute is overage
+  /// and the child has no free time at all.
   String subtitle(S s) {
-    if (!isEnabled) return s.alwaysAllowedNoRedemption;
-    if (limitMinutes <= 0) return s.usedNoLimit(formatHm(s, usedMinutes));
     final used = formatHm(s, usedMinutes);
+    if (!isLimited) return s.usedNoLimit(used);
+    if (limitMinutes <= 0) return '$used · ${s.noFreeTime}';
     final limit = formatHm(s, limitMinutes);
     return isOver ? s.usedOfLimitOver(used, limit) : s.usedOfLimit(used, limit);
   }

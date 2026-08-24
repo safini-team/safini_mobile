@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,6 +16,71 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
 
   ParentAppUsageRepositoryImpl({http.Client? client})
     : _client = client ?? http.Client();
+
+  @override
+  Future<Either<Failure, List<CatalogAppModel>>> fetchCatalog() async {
+    final token = Supabase.instance.client.auth.currentSession?.accessToken;
+    if (token == null || token.isEmpty) {
+      return const Left(
+        UnauthorizedFailure('Missing, expired, or invalid token.'),
+      );
+    }
+
+    late final http.Response response;
+    try {
+      response = await _client
+          .get(
+            _uri('/v1/apps'),
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          )
+          .timeout(AppConstants.apiTimeout);
+    } on SocketException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on HttpException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on http.ClientException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+
+    if (response.statusCode == 401) {
+      return const Left(
+        UnauthorizedFailure('Missing, expired, or invalid token.'),
+      );
+    }
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      return Left(
+        ServerFailure(
+          _extractErrorMessage(
+            response.body,
+            'Unable to load the app list. Please try again.',
+          ),
+        ),
+      );
+    }
+
+    final decoded = _decodeBody(response.body);
+    if (decoded is Map<String, dynamic> && decoded['apps'] is List) {
+      return Right(
+        (decoded['apps'] as List)
+            .whereType<Map>()
+            .map(
+              (e) => CatalogAppModel.fromJson(
+                e.map((k, v) => MapEntry(k.toString(), v)),
+              ),
+            )
+            .where((app) => app.appSlug.isNotEmpty)
+            .toList(),
+      );
+    }
+
+    return const Left(ServerFailure('Unexpected app catalog response format.'));
+  }
 
   @override
   Future<Either<Failure, List<ChildAppUsageModel>>> fetchAppUsage(

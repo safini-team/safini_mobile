@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -6,18 +8,11 @@ import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
+import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
 
-/// Controlled apps the backend accepts. There is no catalog endpoint, so this
-/// list is maintained client-side; add new entries here as the backend seeds
-/// more controlled apps.
-const List<({String slug, String name})> knownApps = [
-  (slug: 'youtube-kids', name: 'YouTube Kids'),
-  (slug: 'roblox', name: 'Roblox'),
-  (slug: 'brawl-stars', name: 'Brawl Stars'),
-  (slug: 'minecraft', name: 'Minecraft'),
-];
+
 
 /// Add an app to a child's rules. Built from the artboard's "New task" sheet
 /// pattern: emoji tiles to pick, a grey panel of stepper rows, one primary
@@ -43,9 +38,9 @@ class _AddAppSheet extends StatefulWidget {
 }
 
 class _AddAppSheetState extends State<_AddAppSheet> {
-  late final List<({String slug, String name})> _available = knownApps
-      .where((app) => !widget.added.contains(app.slug))
-      .toList();
+  List<CatalogAppModel> _available = const [];
+  bool _loading = true;
+  String? _loadError;
 
   String? _slug;
   int _limit = 60;
@@ -56,18 +51,44 @@ class _AddAppSheetState extends State<_AddAppSheet> {
   @override
   void initState() {
     super.initState();
-    _slug = _available.firstOrNull?.slug;
+    unawaited(_loadCatalog());
+  }
+
+  /// The list comes from `GET /v1/apps` now. It used to be a hard-coded copy
+  /// of four slugs, which went stale the moment the catalog grew.
+  Future<void> _loadCatalog() async {
+    final result = await widget.cubit.loadCatalog();
+    if (!mounted) return;
+    result.fold(
+      (failure) => setState(() {
+        _loading = false;
+        _loadError = failure.message;
+      }),
+      (apps) => setState(() {
+        _loading = false;
+        _available = apps
+            .where((app) => !widget.added.contains(app.appSlug))
+            .toList();
+        final first = _available.firstOrNull;
+        if (first != null) {
+          _slug = first.appSlug;
+          _limit = first.defaultDailyLimitMinutes;
+          _cost = first.defaultRedeemCoinCost;
+          _reward = first.defaultRedeemRewardMinutes;
+        }
+      }),
+    );
   }
 
   Future<void> _save() async {
     final slug = _slug;
     if (slug == null) return;
-    final app = _available.firstWhere((a) => a.slug == slug);
+    final app = _available.firstWhere((a) => a.appSlug == slug);
 
     setState(() => _saving = true);
     final error = await widget.cubit.addApp(
-      slug: app.slug,
-      name: app.name,
+      slug: app.appSlug,
+      name: app.displayName,
       dailyLimitMinutes: _limit,
       redeemCoinCost: _cost,
       redeemRewardMinutes: _reward,
@@ -84,6 +105,34 @@ class _AddAppSheetState extends State<_AddAppSheet> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+
+    if (_loading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 48),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_loadError != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(_loadError!, style: AppText.bodyRegular),
+          const SizedBox(height: 22),
+          DsPrimaryButton.secondary(
+            label: s.tryAgain,
+            onTap: () {
+              setState(() {
+                _loading = true;
+                _loadError = null;
+              });
+              unawaited(_loadCatalog());
+            },
+          ),
+        ],
+      );
+    }
 
     if (_available.isEmpty) {
       return Column(
@@ -114,15 +163,22 @@ class _AddAppSheetState extends State<_AddAppSheet> {
           children: [
             for (final app in _available)
               DsCategoryChip(
-                label: app.name,
-                emoji: AppData.getEmojiForApp(app.name),
-                selected: app.slug == _slug,
+                label: app.displayName,
+                emoji: AppData.getEmojiForApp(app.displayName),
+                selected: app.appSlug == _slug,
                 restBackground: AppColors.fill,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 9,
                 ),
-                onTap: () => setState(() => _slug = app.slug),
+                onTap: () => setState(() {
+                  _slug = app.appSlug;
+                  // Start from the catalog's own defaults rather than
+                  // whatever the previously selected app happened to use.
+                  _limit = app.defaultDailyLimitMinutes;
+                  _cost = app.defaultRedeemCoinCost;
+                  _reward = app.defaultRedeemRewardMinutes;
+                }),
               ),
           ],
         ),

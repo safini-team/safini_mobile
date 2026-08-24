@@ -57,7 +57,10 @@ class _ParentLimitsView extends StatelessWidget {
             emoji: AppData.getEmojiForApp(name),
             usedMinutes: (limit['used'] as int?) ?? 0,
             limitMinutes: (limit['limit'] as int?) ?? 0,
-            isEnabled: limit['isEnabled'] as bool? ?? true,
+            isLimited: limit['isLimited'] as bool? ?? true,
+            canRedeem: limit['canRedeem'] as bool? ?? true,
+            redeemCoinCost: (limit['cost'] as int?) ?? 100,
+            redeemRewardMinutes: (limit['reward'] as int?) ?? 30,
           );
         }).toList();
 

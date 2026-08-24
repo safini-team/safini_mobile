@@ -81,72 +81,78 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m26(minutes) => "${minutes} daqiqa qoldi";
 
-  static String m27(minutes) =>
+  static String m27(minutes) => "Bugun ${minutes} daqiqa qoldi";
+
+  static String m28(minutes) =>
       "${Intl.plural(minutes, other: '${minutes} daqiqa qoldi')}";
 
-  static String m28(count) =>
+  static String m29(count) =>
       "${Intl.plural(count, other: 'Yana ${count} tanga kerak')}";
 
-  static String m29(app) => "Koʻpi ${app}da";
+  static String m30(app) => "Koʻpi ${app}da";
 
-  static String m30(count) =>
+  static String m31(count) =>
       "${Intl.plural(count, other: '${count} kun ketma-ket')}";
 
-  static String m31(total) => "${total} dan";
+  static String m32(total) => "${total} dan";
 
-  static String m32(name) => "${name} telefoniga Safini oʻrnating";
+  static String m33(name) => "${name} telefoniga Safini oʻrnating";
 
-  static String m33(percent) => "Keyingi darajagacha ${percent}%";
+  static String m34(percent) => "Keyingi darajagacha ${percent}%";
 
-  static String m34(cost, time) =>
+  static String m35(cost, gap) => "${cost} · yana ${gap}";
+
+  static String m36(cost, time) => "${time} uchun ${cost} tanga";
+
+  static String m37(cost, time) =>
       "Bola kunlik limitdan tashqari ${time} ochish uchun ${cost} tanga sarflashi mumkin.";
 
-  static String m35(minutes) => "${minutes} daqiqa qoldi";
+  static String m38(minutes) => "${minutes} daqiqa qoldi";
 
-  static String m36(name) => "${name} uchun saqlash";
+  static String m39(name) => "${name} uchun saqlash";
 
-  static String m37(name) => "${name} uchun saqlandi";
+  static String m40(name) => "${name} uchun saqlandi";
 
-  static String m38(count) => "${Intl.plural(count, other: '${count} vazifa')}";
+  static String m41(count) => "${Intl.plural(count, other: '${count} vazifa')}";
 
-  static String m39(tasks, coins) => "${tasks} · ${coins}";
+  static String m42(tasks, coins) => "${tasks} · ${coins}";
 
-  static String m40(scope, tasks) => "${scope} · ${tasks}";
+  static String m43(scope, tasks) => "${scope} · ${tasks}";
 
-  static String m41(tasks, coins) => "${tasks} qoldi - ${coins} yoʻlda";
+  static String m44(tasks, coins) => "${tasks} qoldi - ${coins} yoʻlda";
 
-  static String m42(time) => "${time} qoldi";
+  static String m45(time) => "${time} qoldi";
 
-  static String m43(time) => "${time} ishlatildi";
+  static String m46(time) => "${time} ishlatildi";
 
-  static String m44(count) => "yana ${count}";
+  static String m47(count) => "yana ${count}";
 
-  static String m45(name) =>
+  static String m48(name) =>
       "${name} telefonida \"Men bolaman\" boʻlimiga kiriting.";
 
-  static String m46(used, limit) => "${used} ishlatildi / ${limit} cheklov";
+  static String m49(used, limit) => "${used} ishlatildi / ${limit} cheklov";
 
-  static String m47(used) => "${used} · cheklovsiz";
+  static String m50(used) => "${used} · cheklovsiz";
 
-  static String m48(used, limit) => "${limit} dan ${used}";
+  static String m51(used, limit) => "${limit} dan ${used}";
 
-  static String m49(used, limit) => "${limit} dan ${used} · oshdi";
+  static String m52(used, limit) => "${limit} dan ${used} · oshdi";
 
-  static String m50(time) => "Bugun ${time}";
+  static String m53(time) => "Bugun ${time}";
 
-  static String m51(count) =>
+  static String m54(count) =>
       "${Intl.plural(count, other: '${count} ta kutmoqda')}";
 
-  static String m52(name) => "${name} telefoni kutilmoqda…";
+  static String m55(name) => "${name} telefoni kutilmoqda…";
 
-  static String m53(name, coins) => "${name} · ${coins}";
+  static String m56(name, coins) => "${name} · ${coins}";
 
-  static String m54(age) => "${Intl.plural(age, other: '${age} yosh')}";
+  static String m57(age) => "${Intl.plural(age, other: '${age} yosh')}";
 
-  static String m55(count) =>
+  static String m58(count) =>
       "${Intl.plural(count, other: 'Sizga yana ${count} tanga kerak.')}";
 
-  static String m56(name) => "${name} (siz)";
+  static String m59(name) => "${name} (siz)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -162,6 +168,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "addAppAction": MessageLookupByLibrary.simpleMessage("Qoʻshish"),
     "addChild": MessageLookupByLibrary.simpleMessage("Farzand qoʻshish"),
+    "addPhoto": MessageLookupByLibrary.simpleMessage("Foto qoʻshish"),
     "addShort": MessageLookupByLibrary.simpleMessage("Qoʻshish"),
     "addToEveryonesList": MessageLookupByLibrary.simpleMessage(
       "Hammaga qoʻshish",
@@ -216,6 +223,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "buyIt": MessageLookupByLibrary.simpleMessage("Sotib olamiz! 🎉"),
     "buysLabel": MessageLookupByLibrary.simpleMessage("Beradi"),
+    "canBuyExtraTime": MessageLookupByLibrary.simpleMessage(
+      "Qoʻshimcha vaqt sotib olsa boʻladi",
+    ),
+    "canBuyExtraTimeHint": MessageLookupByLibrary.simpleMessage(
+      "Oʻchiq boʻlsa, kunlik limit oxirgi hisoblanadi",
+    ),
     "cancel": MessageLookupByLibrary.simpleMessage("Bekor qilish"),
     "catAll": MessageLookupByLibrary.simpleMessage("Hammasi"),
     "catFitness": MessageLookupByLibrary.simpleMessage("Sport"),
@@ -223,6 +236,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "catHome": MessageLookupByLibrary.simpleMessage("Uy"),
     "catLearn": MessageLookupByLibrary.simpleMessage("Oʻrganish"),
     "catLogic": MessageLookupByLibrary.simpleMessage("Mantiq"),
+    "catOther": MessageLookupByLibrary.simpleMessage("Boshqa"),
     "catOutdoor": MessageLookupByLibrary.simpleMessage("Koʻcha"),
     "catSchool": MessageLookupByLibrary.simpleMessage("Maktab"),
     "categoryAll": MessageLookupByLibrary.simpleMessage("Hammasi"),
@@ -246,6 +260,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "childUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
       "Farzand profili yangilandi.",
     ),
+    "chooseFromLibrary": MessageLookupByLibrary.simpleMessage(
+      "Galereyadan tanlash",
+    ),
     "chooseYourRole": MessageLookupByLibrary.simpleMessage(
       "Rolingizni tanlang",
     ),
@@ -258,7 +275,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "coins": MessageLookupByLibrary.simpleMessage("Tangalar"),
     "coinsCount": m12,
     "coinsPaidAfterApproval": MessageLookupByLibrary.simpleMessage(
-      "Tangalar siz tasdiqlaganingizdan keyingina beriladi.",
+      "Tangalar siz tasdiqlaganingizdan keyingina beriladi. Takrorlanuvchi vazifalar ertasi kuni qaytadi.",
     ),
     "coinsReward": m13,
     "coinsText": MessageLookupByLibrary.simpleMessage("Tangalar"),
@@ -332,6 +349,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyAllowanceFor": m16,
     "dailyChore": MessageLookupByLibrary.simpleMessage("Kundalik ish"),
     "dailyLimit": MessageLookupByLibrary.simpleMessage("Kunlik cheklov"),
+    "dailyLimitToggle": MessageLookupByLibrary.simpleMessage("Kunlik limit"),
+    "dailyLimitToggleHint": MessageLookupByLibrary.simpleMessage(
+      "Oʻchiq boʻlsa, ilova cheklanmaydi",
+    ),
+    "dateToday": MessageLookupByLibrary.simpleMessage("Bugun"),
+    "dateTomorrow": MessageLookupByLibrary.simpleMessage("Ertaga"),
+    "dateYesterday": MessageLookupByLibrary.simpleMessage("Kecha"),
     "dayStreak": MessageLookupByLibrary.simpleMessage("Kunlik seriya"),
     "deleteAccount": MessageLookupByLibrary.simpleMessage("Hisobni oʻchirish"),
     "deleteAccountConfirmBody": MessageLookupByLibrary.simpleMessage(
@@ -411,6 +435,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "everythingSent": MessageLookupByLibrary.simpleMessage("Hammasi yuborildi"),
     "expiresLabel": m18,
+    "expiresTonight": MessageLookupByLibrary.simpleMessage(
+      "Bugun ishlat, yarim tunda tugaydi.",
+    ),
     "extraBackpack": MessageLookupByLibrary.simpleMessage("Ryukzak"),
     "extraHair": MessageLookupByLibrary.simpleMessage("Soch"),
     "extraOutfit": MessageLookupByLibrary.simpleMessage("Kiyim"),
@@ -527,16 +554,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "minuteCount": m25,
     "minutes": MessageLookupByLibrary.simpleMessage("Daqiqalar"),
     "minutesLeftShort": m26,
-    "minutesRemainingLong": m27,
+    "minutesLeftToday": m27,
+    "minutesPerPurchase": MessageLookupByLibrary.simpleMessage(
+      "Har xarid uchun daqiqa",
+    ),
+    "minutesRemainingLong": m28,
     "mon": MessageLookupByLibrary.simpleMessage("DUS"),
     "monitor": MessageLookupByLibrary.simpleMessage("Kuzatuv"),
-    "moreCoinsNeeded": m28,
-    "mostOfItIn": m29,
+    "moreCoinsNeeded": m29,
+    "mostOfItIn": m30,
     "myAvatar": MessageLookupByLibrary.simpleMessage("Mening avatarim"),
     "myFamily": MessageLookupByLibrary.simpleMessage("Mening oilam"),
     "myProfile": MessageLookupByLibrary.simpleMessage("Mening profilim"),
     "myQuests": MessageLookupByLibrary.simpleMessage("Mening topshiriqlarim"),
-    "nDayStreak": m30,
+    "nDayStreak": m31,
     "name": MessageLookupByLibrary.simpleMessage("Ism"),
     "nameHintExample": MessageLookupByLibrary.simpleMessage("Amir"),
     "nameYourFamily": MessageLookupByLibrary.simpleMessage(
@@ -578,10 +609,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "noFamilySetupYet": MessageLookupByLibrary.simpleMessage(
       "Hali oila sozlanmagan",
     ),
+    "noFreeTime": MessageLookupByLibrary.simpleMessage("Bepul vaqt yoʻq"),
     "noLimitLabel": MessageLookupByLibrary.simpleMessage("Cheklovsiz"),
     "noLimitsSet": MessageLookupByLibrary.simpleMessage("Cheklov qoʻyilmagan"),
     "noQuestsInCategory": MessageLookupByLibrary.simpleMessage(
       "Bu turkumda topshiriq yoʻq",
+    ),
+    "noScreenTimeCap": MessageLookupByLibrary.simpleMessage(
+      "Umumiy limit yoʻq",
     ),
     "noTasksYet": MessageLookupByLibrary.simpleMessage(
       "Bu kun uchun topshiriq yoʻq.",
@@ -602,7 +637,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Doʻkon hozircha boʻsh.",
     ),
     "nothingLeft": MessageLookupByLibrary.simpleMessage("Hech narsa qolmadi"),
-    "ofTotal": m31,
+    "ofTotal": m32,
     "offMeansAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Oʻchiq boʻlsa - doim ochiq",
     ),
@@ -618,7 +653,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pairStepAllow": MessageLookupByLibrary.simpleMessage(
       "Soʻralganda ekran vaqtiga ruxsat bering",
     ),
-    "pairStepInstall": m32,
+    "pairStepInstall": m33,
     "pairStepTap": MessageLookupByLibrary.simpleMessage(
       "\"Men bolaman\" ni bosib, kodni kiriting",
     ),
@@ -647,13 +682,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "pendingApproval": MessageLookupByLibrary.simpleMessage(
       "Tasdiqlash kutilmoqda",
     ),
-    "percentToNextLevel": m33,
+    "percentToNextLevel": m34,
     "photoProofAsked": MessageLookupByLibrary.simpleMessage(
       "Foto tasdiq soʻralgan",
+    ),
+    "photoRequired": MessageLookupByLibrary.simpleMessage(
+      "Bu vazifa uchun foto kerak.",
+    ),
+    "photoUploadFailed": MessageLookupByLibrary.simpleMessage(
+      "Fotoni yuklab boʻlmadi. Qayta urinib koʻring.",
+    ),
+    "pickAtLeastOneDay": MessageLookupByLibrary.simpleMessage(
+      "Kamida bitta kunni tanlang.",
     ),
     "pillCheck": MessageLookupByLibrary.simpleMessage("Tekshir"),
     "pillPaid": MessageLookupByLibrary.simpleMessage("Toʻlangan"),
     "pillWaiting": MessageLookupByLibrary.simpleMessage("Kutmoqda"),
+    "priceAndGap": m35,
+    "priceLabel": MessageLookupByLibrary.simpleMessage("Narx"),
+    "priceUnit": m36,
     "profile": MessageLookupByLibrary.simpleMessage("Profil"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Saqlandi"),
     "questsDone": MessageLookupByLibrary.simpleMessage(
@@ -678,10 +725,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Kod bilan qayta ulash",
     ),
-    "redeemExplainer": m34,
+    "redeemExplainer": m37,
     "reject": MessageLookupByLibrary.simpleMessage("Rad etish"),
     "remaining": MessageLookupByLibrary.simpleMessage("Qoldi"),
-    "remainingTime": m35,
+    "remainingTime": m38,
     "removeFromFamily": MessageLookupByLibrary.simpleMessage(
       "Oiladan chiqarish",
     ),
@@ -692,6 +739,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Ota-ona chiqarilsinmi?",
     ),
+    "repeatDaily": MessageLookupByLibrary.simpleMessage("Har kuni"),
+    "repeatDailyShort": MessageLookupByLibrary.simpleMessage("Har kuni"),
+    "repeatLabel": MessageLookupByLibrary.simpleMessage("Takrorlash"),
+    "repeatOnce": MessageLookupByLibrary.simpleMessage("Bir marta"),
+    "repeatWeekly": MessageLookupByLibrary.simpleMessage("Tanlangan kunlar"),
+    "repeatWeeklyShort": MessageLookupByLibrary.simpleMessage("Haftalik"),
+    "retakePhoto": MessageLookupByLibrary.simpleMessage("Qayta olish"),
     "retry": MessageLookupByLibrary.simpleMessage("Qayta urinish"),
     "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
       "Izoh qoʻshing (ixtiyoriy)",
@@ -700,7 +754,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Topshiriqni tekshirish",
     ),
     "rewardBlurbAppTime": MessageLookupByLibrary.simpleMessage(
-      "Darhol qoʻshiladi.",
+      "Darhol qoʻshiladi. Bugun ishlat, yarim tunda tugaydi.",
     ),
     "rewardBlurbAvatar": MessageLookupByLibrary.simpleMessage(
       "Avataringga kiy. Sende qoladi.",
@@ -719,11 +773,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveChanges": MessageLookupByLibrary.simpleMessage(
       "Oʻzgarishlarni saqlash",
     ),
-    "saveForName": m36,
+    "saveForName": m39,
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Koʻrinishimni saqla!"),
-    "savedForName": m37,
+    "savedForName": m40,
     "scopeEveryone": MessageLookupByLibrary.simpleMessage("Hammasi"),
     "screenTime": MessageLookupByLibrary.simpleMessage("Ekran vaqti"),
+    "screenTimeCap": MessageLookupByLibrary.simpleMessage("Kunlik ekran vaqti"),
+    "screenTimeCapHint": MessageLookupByLibrary.simpleMessage(
+      "Barcha ilovalar birgalikda. Oʻchiq boʻlsa, faqat ilova limitlari.",
+    ),
     "sectionAccount": MessageLookupByLibrary.simpleMessage("Hisob"),
     "sectionApp": MessageLookupByLibrary.simpleMessage("Ilova"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Tilni tanlang"),
@@ -786,12 +844,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "tagline": MessageLookupByLibrary.simpleMessage(
       "Oʻrgan. Ishlab top. Oʻyna.",
     ),
+    "takePhoto": MessageLookupByLibrary.simpleMessage("Foto olish"),
     "taskApprovedMessage": MessageLookupByLibrary.simpleMessage(
       "Topshiriq tasdiqlandi!",
     ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Taxtani egalla"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Shaxmat darsi"),
-    "taskCount": m38,
+    "taskCount": m41,
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage(
       "Topshiriq yaratildi!",
     ),
@@ -808,7 +867,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Duolingo darsini tugat",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Vazifa"),
-    "taskGroupSummary": m39,
+    "taskGroupSummary": m42,
     "taskPuzzleSub": MessageLookupByLibrary.simpleMessage("Miya uchun mashq"),
     "taskPuzzleTitle": MessageLookupByLibrary.simpleMessage("Mantiqiy jumboq"),
     "taskReadingSub": MessageLookupByLibrary.simpleMessage(
@@ -824,7 +883,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage(
       "Xonangni yigʻishtir",
     ),
-    "taskScopeLine": m40,
+    "taskScopeLine": m43,
     "taskStepsSub": MessageLookupByLibrary.simpleMessage("Harakatda boʻl!"),
     "taskStepsTitle": MessageLookupByLibrary.simpleMessage("5 000 qadam yur"),
     "taskSubmittedForReview": MessageLookupByLibrary.simpleMessage(
@@ -838,7 +897,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tasksAndRewards": MessageLookupByLibrary.simpleMessage(
       "Topshiriqlar va mukofotlar",
     ),
-    "tasksLeftCoinsOnTable": m41,
+    "tasksLeftCoinsOnTable": m44,
     "theirNote": MessageLookupByLibrary.simpleMessage("Uning izohi"),
     "theyInstallSafini": MessageLookupByLibrary.simpleMessage(
       "Safini oʻrnatib, kirsin va shu kodni kiritsin.",
@@ -846,8 +905,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "thisWeek": MessageLookupByLibrary.simpleMessage("Bu hafta"),
     "thu": MessageLookupByLibrary.simpleMessage("PAY"),
     "timeCoins": MessageLookupByLibrary.simpleMessage("Vaqt tangalari"),
-    "timeLeft": m42,
-    "timeUsed": m43,
+    "timeLeft": m45,
+    "timeUsed": m46,
     "tip1": MessageLookupByLibrary.simpleMessage(
       "Masʼuliyatni oʻrgatadigan mazmunli topshiriqlar bering",
     ),
@@ -863,7 +922,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipsForParents": MessageLookupByLibrary.simpleMessage(
       "Ota-onalar uchun maslahatlar",
     ),
-    "toGo": m44,
+    "toGo": m47,
     "todaysQuests": MessageLookupByLibrary.simpleMessage(
       "Bugungi topshiriqlar",
     ),
@@ -875,7 +934,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "typeCodeFromParent": MessageLookupByLibrary.simpleMessage(
       "Ota-onangiz bergan kodni kiriting",
     ),
-    "typeItOnPhone": m45,
+    "typeItOnPhone": m48,
     "unitHour": MessageLookupByLibrary.simpleMessage("s"),
     "unitMinute": MessageLookupByLibrary.simpleMessage("d"),
     "unlockExtraTime": MessageLookupByLibrary.simpleMessage(
@@ -885,20 +944,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bir marta och - abadiy qoladi",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("ochilgan"),
-    "usedLimit": m46,
-    "usedNoLimit": m47,
-    "usedOfLimit": m48,
-    "usedOfLimitOver": m49,
-    "usedTodayShort": m50,
+    "usedLimit": m49,
+    "usedNoLimit": m50,
+    "usedOfLimit": m51,
+    "usedOfLimitOver": m52,
+    "usedTodayShort": m53,
     "uzbek": MessageLookupByLibrary.simpleMessage("Oʻzbek"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("Bola sifatida koʻrish"),
-    "waitingCount": m51,
+    "waitingCount": m54,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Ota-ona tekshirishini kutmoqdamiz",
     ),
-    "waitingForPhone": m52,
+    "waitingForPhone": m55,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Kiyish"),
     "wed": MessageLookupByLibrary.simpleMessage("CHOR"),
+    "weekdayFri": MessageLookupByLibrary.simpleMessage("Ju"),
+    "weekdayMon": MessageLookupByLibrary.simpleMessage("Du"),
+    "weekdaySat": MessageLookupByLibrary.simpleMessage("Sh"),
+    "weekdaySun": MessageLookupByLibrary.simpleMessage("Ya"),
+    "weekdayThu": MessageLookupByLibrary.simpleMessage("Pa"),
+    "weekdayTue": MessageLookupByLibrary.simpleMessage("Se"),
+    "weekdayWed": MessageLookupByLibrary.simpleMessage("Ch"),
     "weeklyScreenTime": MessageLookupByLibrary.simpleMessage(
       "Haftalik ekran vaqti",
     ),
@@ -910,10 +976,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "whoSection": MessageLookupByLibrary.simpleMessage("Kimga"),
     "wornLabel": MessageLookupByLibrary.simpleMessage("Kiyilgan"),
-    "worthCoins": m53,
-    "yearsOld": m54,
-    "youNeedMoreCoins": m55,
-    "youSuffix": m56,
+    "worthCoins": m56,
+    "yearsOld": m57,
+    "youNeedMoreCoins": m58,
+    "youSuffix": m59,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Hisobingiz"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Avataring"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("FARZANDLARINGIZ"),

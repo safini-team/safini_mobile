@@ -1,8 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 
 abstract class IParentAppUsageRepository {
+  /// GET /v1/apps - every app a parent can control, with its defaults.
+  Future<Either<Failure, List<CatalogAppModel>>> fetchCatalog();
+
   /// GET /v1/children/{child_id}/app-usage
   Future<Either<Failure, List<ChildAppUsageModel>>> fetchAppUsage(
     String childId,

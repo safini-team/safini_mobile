@@ -12,6 +12,7 @@ import 'package:safini/features/models/domain/models/task_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
+import 'package:safini/core/utils/task_category.dart';
 
 /// Opens the create/edit task sheet. [task] == null → CREATE, otherwise EDIT.
 Future<void> showTaskSheet(
@@ -57,19 +58,10 @@ class _TaskSheetState extends State<TaskSheet> {
     '🗑️',
   ];
 
-  static const List<({String emoji, String key})> _categories = [
-    (emoji: '🏠', key: 'home'),
-    (emoji: '🎓', key: 'school'),
-    (emoji: '🦷', key: 'health'),
-    (emoji: '⚽', key: 'outdoor'),
-  ];
-
-  static String _categoryLabel(S s, String key) => switch (key) {
-    'school' => s.catSchool,
-    'health' => s.catHealth,
-    'outdoor' => s.catOutdoor,
-    _ => s.catHome,
-  };
+  /// All eight, from the shared catalogue. The sheet used to offer four of
+  /// its own invention while the backend seeded four different ones into the
+  /// same column.
+  static const List<TaskCategory> _categories = TaskCategory.values;
 
   static const int _coinStep = 5;
 
@@ -77,7 +69,10 @@ class _TaskSheetState extends State<TaskSheet> {
   final _details = TextEditingController();
 
   String _emoji = _emojis.first;
-  String _category = _categories.first.key;
+  TaskCategory _category = TaskCategory.home;
+  String _recurrence = 'none';
+  int _recurrenceDays = 0;
+  String? _recurrenceError;
   int _coins = 15;
   bool _photoProof = true;
 
@@ -109,11 +104,9 @@ class _TaskSheetState extends State<TaskSheet> {
       _details.text = task.description ?? '';
       _coins = task.coinReward;
       _photoProof = (task.proofMode ?? '').toLowerCase().contains('image');
-      // A task seeded by the backend carries a category this sheet has no chip
-      // for (`learn`, `fitness`, `logic`, `real_world`). Keep it instead of
-      // defaulting to `home`, or every edit silently rewrites the category.
-      final key = (task.category ?? '').toLowerCase();
-      if (key.isNotEmpty) _category = key;
+      _category = TaskCategory.tryParse(task.category) ?? TaskCategory.home;
+      _recurrence = task.recurrence;
+      _recurrenceDays = task.recurrenceDays ?? 0;
       final emoji = task.metadata?['emoji'];
       if (emoji is String && emoji.trim().isNotEmpty) _emoji = emoji.trim();
     }
@@ -128,6 +121,16 @@ class _TaskSheetState extends State<TaskSheet> {
     super.dispose();
   }
 
+  static String _weekdayLabel(S s, int index) => switch (index) {
+    0 => s.weekdayMon,
+    1 => s.weekdayTue,
+    2 => s.weekdayWed,
+    3 => s.weekdayThu,
+    4 => s.weekdayFri,
+    5 => s.weekdaySat,
+    _ => s.weekdaySun,
+  };
+
   /// Values the API documents: `text_image`, `reported_metric`, `none`.
   /// `text` was never one of them.
   String get _proofMode => _photoProof ? 'text_image' : 'none';
@@ -135,6 +138,13 @@ class _TaskSheetState extends State<TaskSheet> {
   Future<void> _submit() async {
     final title = _title.text.trim();
     if (title.isEmpty) return;
+
+    // The API rejects this too, but the parent should find out here rather
+    // than through a 422 after the sheet closes.
+    if (_recurrence == 'weekly' && _recurrenceDays == 0) {
+      setState(() => _recurrenceError = S.of(context).pickAtLeastOneDay);
+      return;
+    }
 
     final details = _details.text.trim();
     final coins = _coins.clamp(0, 100000);
@@ -145,12 +155,14 @@ class _TaskSheetState extends State<TaskSheet> {
       final request = TaskCreateRequestDto(
         title: title,
         description: details.isEmpty ? title : details,
-        category: _category,
+        category: _category.key,
         taskType: 'custom',
         proofMode: _proofMode,
         verificationMode: 'parent_approval',
         coinReward: coins,
         xpReward: coins,
+        recurrence: _recurrence,
+        recurrenceDays: _recurrence == 'weekly' ? _recurrenceDays : null,
         metadata: {'emoji': _emoji},
       );
       final targetIds = _targetChildId == null
@@ -168,9 +180,11 @@ class _TaskSheetState extends State<TaskSheet> {
     final request = TaskUpdateRequestDto(
       title: title != original.title ? title : null,
       description: details != (original.description ?? '') ? details : null,
-      category: _category != original.category ? _category : null,
+      category: _category.key != original.category ? _category.key : null,
       coinReward: coins != original.coinReward ? coins : null,
       xpReward: coins != original.coinReward ? coins : null,
+      recurrence: _recurrence != original.recurrence ? _recurrence : null,
+      recurrenceDays: _recurrence == 'weekly' ? _recurrenceDays : null,
       metadata: _emoji != originalEmoji ? {'emoji': _emoji} : null,
     );
 
@@ -277,18 +291,82 @@ class _TaskSheetState extends State<TaskSheet> {
                 children: [
                   for (final category in _categories)
                     DsCategoryChip(
-                      label: _categoryLabel(s, category.key),
+                      label: category.label(s),
                       emoji: category.emoji,
-                      selected: category.key == _category,
+                      selected: category == _category,
                       restBackground: AppColors.fill,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 9,
                       ),
-                      onTap: () => setState(() => _category = category.key),
+                      onTap: () => setState(() => _category = category),
                     ),
                 ],
               ),
+              const SizedBox(height: 20),
+              DsOverlineText(s.repeatLabel),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final option in const [
+                    ('none', '1️⃣'),
+                    ('daily', '🔁'),
+                    ('weekly', '📅'),
+                  ])
+                    DsCategoryChip(
+                      label: switch (option.$1) {
+                        'daily' => s.repeatDaily,
+                        'weekly' => s.repeatWeekly,
+                        _ => s.repeatOnce,
+                      },
+                      emoji: option.$2,
+                      selected: option.$1 == _recurrence,
+                      restBackground: AppColors.fill,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 9,
+                      ),
+                      onTap: () => setState(() {
+                        _recurrence = option.$1;
+                        _recurrenceError = null;
+                        // Mon-Fri is what a parent almost always means by
+                        // "some days", so it beats an empty picker.
+                        if (_recurrence == 'weekly' && _recurrenceDays == 0) {
+                          _recurrenceDays = 1 | 2 | 4 | 8 | 16;
+                        }
+                      }),
+                    ),
+                ],
+              ),
+              if (_recurrence == 'weekly') ...[
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (var index = 0; index < 7; index++)
+                      DsCategoryChip(
+                        label: _weekdayLabel(s, index),
+                        selected: _recurrenceDays & (1 << index) != 0,
+                        restBackground: AppColors.fill,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        onTap: () => setState(() {
+                          _recurrenceDays ^= 1 << index;
+                          _recurrenceError = null;
+                        }),
+                      ),
+                  ],
+                ),
+              ],
+              if (_recurrenceError != null) ...[
+                const SizedBox(height: 8),
+                DsFootnote(_recurrenceError!, top: 0),
+              ],
               if (!widget.isEdit && _children.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 DsOverlineText(s.whoSection),

@@ -2277,10 +2277,10 @@ class S {
     );
   }
 
-  /// `Coins are paid out only after you approve.`
+  /// `Coins are paid out only after you approve. Repeating tasks come back the next day.`
   String get coinsPaidAfterApproval {
     return Intl.message(
-      'Coins are paid out only after you approve.',
+      'Coins are paid out only after you approve. Repeating tasks come back the next day.',
       name: 'coinsPaidAfterApproval',
       desc: '',
       args: [],
@@ -3118,10 +3118,10 @@ class S {
     );
   }
 
-  /// `Added straight away.`
+  /// `Added straight away. Use it today, it expires at midnight.`
   String get rewardBlurbAppTime {
     return Intl.message(
-      'Added straight away.',
+      'Added straight away. Use it today, it expires at midnight.',
       name: 'rewardBlurbAppTime',
       desc: '',
       args: [],
@@ -3654,6 +3654,281 @@ class S {
   /// `m`
   String get unitMinute {
     return Intl.message('m', name: 'unitMinute', desc: '', args: []);
+  }
+
+  /// `Other`
+  String get catOther {
+    return Intl.message('Other', name: 'catOther', desc: '', args: []);
+  }
+
+  /// `Repeat`
+  String get repeatLabel {
+    return Intl.message('Repeat', name: 'repeatLabel', desc: '', args: []);
+  }
+
+  /// `Once`
+  String get repeatOnce {
+    return Intl.message('Once', name: 'repeatOnce', desc: '', args: []);
+  }
+
+  /// `Every day`
+  String get repeatDaily {
+    return Intl.message('Every day', name: 'repeatDaily', desc: '', args: []);
+  }
+
+  /// `Some days`
+  String get repeatWeekly {
+    return Intl.message('Some days', name: 'repeatWeekly', desc: '', args: []);
+  }
+
+  /// `Daily`
+  String get repeatDailyShort {
+    return Intl.message('Daily', name: 'repeatDailyShort', desc: '', args: []);
+  }
+
+  /// `Weekly`
+  String get repeatWeeklyShort {
+    return Intl.message(
+      'Weekly',
+      name: 'repeatWeeklyShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mon`
+  String get weekdayMon {
+    return Intl.message('Mon', name: 'weekdayMon', desc: '', args: []);
+  }
+
+  /// `Tue`
+  String get weekdayTue {
+    return Intl.message('Tue', name: 'weekdayTue', desc: '', args: []);
+  }
+
+  /// `Wed`
+  String get weekdayWed {
+    return Intl.message('Wed', name: 'weekdayWed', desc: '', args: []);
+  }
+
+  /// `Thu`
+  String get weekdayThu {
+    return Intl.message('Thu', name: 'weekdayThu', desc: '', args: []);
+  }
+
+  /// `Fri`
+  String get weekdayFri {
+    return Intl.message('Fri', name: 'weekdayFri', desc: '', args: []);
+  }
+
+  /// `Sat`
+  String get weekdaySat {
+    return Intl.message('Sat', name: 'weekdaySat', desc: '', args: []);
+  }
+
+  /// `Sun`
+  String get weekdaySun {
+    return Intl.message('Sun', name: 'weekdaySun', desc: '', args: []);
+  }
+
+  /// `Pick at least one day.`
+  String get pickAtLeastOneDay {
+    return Intl.message(
+      'Pick at least one day.',
+      name: 'pickAtLeastOneDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today`
+  String get dateToday {
+    return Intl.message('Today', name: 'dateToday', desc: '', args: []);
+  }
+
+  /// `Tomorrow`
+  String get dateTomorrow {
+    return Intl.message('Tomorrow', name: 'dateTomorrow', desc: '', args: []);
+  }
+
+  /// `Yesterday`
+  String get dateYesterday {
+    return Intl.message('Yesterday', name: 'dateYesterday', desc: '', args: []);
+  }
+
+  /// `Can buy extra time`
+  String get canBuyExtraTime {
+    return Intl.message(
+      'Can buy extra time',
+      name: 'canBuyExtraTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off means the daily limit is final`
+  String get canBuyExtraTimeHint {
+    return Intl.message(
+      'Off means the daily limit is final',
+      name: 'canBuyExtraTimeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily limit`
+  String get dailyLimitToggle {
+    return Intl.message(
+      'Daily limit',
+      name: 'dailyLimitToggle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off means this app is never capped`
+  String get dailyLimitToggleHint {
+    return Intl.message(
+      'Off means this app is never capped',
+      name: 'dailyLimitToggleHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No free time`
+  String get noFreeTime {
+    return Intl.message('No free time', name: 'noFreeTime', desc: '', args: []);
+  }
+
+  /// `Price`
+  String get priceLabel {
+    return Intl.message('Price', name: 'priceLabel', desc: '', args: []);
+  }
+
+  /// `{cost} coins for {time}`
+  String priceUnit(Object cost, Object time) {
+    return Intl.message(
+      '$cost coins for $time',
+      name: 'priceUnit',
+      desc: '',
+      args: [cost, time],
+    );
+  }
+
+  /// `Use it today, it expires at midnight.`
+  String get expiresTonight {
+    return Intl.message(
+      'Use it today, it expires at midnight.',
+      name: 'expiresTonight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{minutes} m left today`
+  String minutesLeftToday(Object minutes) {
+    return Intl.message(
+      '$minutes m left today',
+      name: 'minutesLeftToday',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Daily screen time`
+  String get screenTimeCap {
+    return Intl.message(
+      'Daily screen time',
+      name: 'screenTimeCap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Across every controlled app. Off means per-app limits only.`
+  String get screenTimeCapHint {
+    return Intl.message(
+      'Across every controlled app. Off means per-app limits only.',
+      name: 'screenTimeCapHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No overall cap`
+  String get noScreenTimeCap {
+    return Intl.message(
+      'No overall cap',
+      name: 'noScreenTimeCap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a photo`
+  String get addPhoto {
+    return Intl.message('Add a photo', name: 'addPhoto', desc: '', args: []);
+  }
+
+  /// `Retake`
+  String get retakePhoto {
+    return Intl.message('Retake', name: 'retakePhoto', desc: '', args: []);
+  }
+
+  /// `Could not upload the photo. Try again.`
+  String get photoUploadFailed {
+    return Intl.message(
+      'Could not upload the photo. Try again.',
+      name: 'photoUploadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This task needs a photo.`
+  String get photoRequired {
+    return Intl.message(
+      'This task needs a photo.',
+      name: 'photoRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take a photo`
+  String get takePhoto {
+    return Intl.message('Take a photo', name: 'takePhoto', desc: '', args: []);
+  }
+
+  /// `Choose from library`
+  String get chooseFromLibrary {
+    return Intl.message(
+      'Choose from library',
+      name: 'chooseFromLibrary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minutes per purchase`
+  String get minutesPerPurchase {
+    return Intl.message(
+      'Minutes per purchase',
+      name: 'minutesPerPurchase',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{cost} · {gap} to go`
+  String priceAndGap(Object cost, Object gap) {
+    return Intl.message(
+      '$cost · $gap to go',
+      name: 'priceAndGap',
+      desc: '',
+      args: [cost, gap],
+    );
   }
 }
 

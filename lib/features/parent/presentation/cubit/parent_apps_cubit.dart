@@ -3,6 +3,9 @@ import 'package:safini/features/parent/domain/models/child_app_usage_model.dart'
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:dartz/dartz.dart';
+import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 
 class ParentAppsCubit extends Cubit<ParentAppsState> {
   final ParentFamilyCubit _familyCubit;
@@ -52,12 +55,18 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   /// Creates (upserts) an app rule for the selected child via
   /// PUT /children/{id}/app-rules/{slug}, then refreshes the list.
   /// Returns an error message on failure, or null on success.
+  /// The controlled-app catalog from `GET /v1/apps`.
+  Future<Either<Failure, List<CatalogAppModel>>> loadCatalog() =>
+      _appUsageRepo.fetchCatalog();
+
   Future<String?> addApp({
     required String slug,
     required String name,
     required int dailyLimitMinutes,
     required int redeemCoinCost,
     required int redeemRewardMinutes,
+    bool isLimited = true,
+    bool canRedeem = true,
   }) async {
     if (_childId == null) return 'No child selected.';
     if (slug.isEmpty) return 'Please choose an app.';
@@ -65,7 +74,8 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     final rule = ChildAppUsageModel(
       appSlug: slug,
       displayName: name.trim(),
-      isEnabled: true,
+      isLimited: isLimited,
+      canRedeem: canRedeem,
       dailyLimitMinutes: dailyLimitMinutes,
       usedMinutes: 0,
       remainingMinutesToday: 0,
@@ -101,7 +111,10 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       'used': app.usedMinutes,
       'limit': app.dailyLimitMinutes,
       'icon': null,
-      'isEnabled': app.isEnabled,
+      'isLimited': app.isLimited,
+      'canRedeem': app.canRedeem,
+      'cost': app.redeemCoinCost,
+      'reward': app.redeemRewardMinutes,
     };
   }
 
@@ -110,9 +123,27 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     await _persist(appSlug, (app) => app.copyWith(dailyLimitMinutes: newLimit));
   }
 
-  /// Enables/disables an app's redemption rule and persists it.
-  Future<void> toggleApp(String appSlug, bool isEnabled) async {
-    await _persist(appSlug, (app) => app.copyWith(isEnabled: isEnabled));
+  /// Persists the whole rule: both flags and the coin price, which the parent
+  /// could not reach at all before - the steppers only existed in the add
+  /// sheet, and the add sheet was never reachable.
+  Future<void> updateRule(
+    String appSlug, {
+    int? dailyLimitMinutes,
+    bool? isLimited,
+    bool? canRedeem,
+    int? redeemCoinCost,
+    int? redeemRewardMinutes,
+  }) async {
+    await _persist(
+      appSlug,
+      (app) => app.copyWith(
+        dailyLimitMinutes: dailyLimitMinutes,
+        isLimited: isLimited,
+        canRedeem: canRedeem,
+        redeemCoinCost: redeemCoinCost,
+        redeemRewardMinutes: redeemRewardMinutes,
+      ),
+    );
   }
 
   Future<void> _persist(
