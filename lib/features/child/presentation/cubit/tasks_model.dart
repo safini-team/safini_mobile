@@ -47,6 +47,13 @@ class TaskItem {
   final bool isCompleted;
   final String status;
 
+  /// `text` | `text_image` | `none`, straight from the task row. The parent
+  /// ticks "Needs photo proof" and the server stores `text_image`; until now
+  /// the child was never asked for the photo.
+  final String? proofMode;
+
+  bool get needsPhoto => (proofMode ?? '').toLowerCase().contains('image');
+
   bool get isSubmitted {
     final s = status.toLowerCase();
     return s == 'submitted' ||
@@ -73,6 +80,7 @@ class TaskItem {
     required this.coins,
     required this.xp,
     this.emoji,
+    this.proofMode,
     this.isCompleted = false,
     this.status = 'available',
   });
@@ -89,6 +97,7 @@ class TaskItem {
       category: category,
       coins: coins,
       xp: xp,
+      proofMode: proofMode,
       isCompleted: isCompleted ?? this.isCompleted,
       status: status ?? this.status,
     );

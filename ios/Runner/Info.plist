@@ -39,6 +39,8 @@
 	<string>82130591868-33vccthbac202r7n1cthp64cj5kn9an8.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Safini uses the camera so you can photograph a finished task for your parent to check.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

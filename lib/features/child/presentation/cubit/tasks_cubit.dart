@@ -71,14 +71,38 @@ class TasksCubit extends Cubit<TasksState> {
       category: category,
       coins: coins,
       xp: task.xpReward ?? 0,
+      proofMode: task.proofMode,
       isCompleted: task.isCompleted,
       status: task.status,
     );
   }
 
+  /// Uploads a proof photo and returns its object key, or null if it did not
+  /// land. The sheet uploads as soon as the child takes the photo, so a bad
+  /// connection surfaces while they are still writing their note rather than
+  /// after the hold gesture.
+  Future<String?> uploadPhoto(String taskId, String filePath) async {
+    final childId = await _resolveChildId();
+    if (childId == null) return null;
+    final result = await _childRepository.uploadTaskProof(
+      childId: childId,
+      taskId: taskId,
+      filePath: filePath,
+    );
+    return result.fold((_) => null, (objectKey) => objectKey);
+  }
+
   /// Returns an error message on failure, or null on success.
-  Future<String?> submitTask(String taskId, {String? note}) async {
-    final result = await _childRepository.submitTask(taskId, note: note);
+  Future<String?> submitTask(
+    String taskId, {
+    String? note,
+    String? imageObjectKey,
+  }) async {
+    final result = await _childRepository.submitTask(
+      taskId,
+      note: note,
+      imageObjectKey: imageObjectKey,
+    );
     return result.fold((failure) => failure.message, (_) {
       final updated = state.tasks.map((t) {
         if (t.id == taskId) return t.copyWith(status: 'submitted');
