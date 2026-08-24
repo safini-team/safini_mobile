@@ -343,17 +343,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "dateYesterday": MessageLookupByLibrary.simpleMessage("Yesterday"),
     "dayStreak": MessageLookupByLibrary.simpleMessage("Day Streak"),
     "deleteAccount": MessageLookupByLibrary.simpleMessage("Delete Account"),
+    "deleteAccountChildConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Your account, child profile, tasks, rewards, proof photos, and activity will be permanently deleted. This cannot be undone.",
+    ),
     "deleteAccountConfirmBody": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete your account? This action cannot be undone.",
     ),
     "deleteAccountConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Delete Account?",
     ),
+    "deleteAccountFailed": MessageLookupByLibrary.simpleMessage(
+      "Your session is no longer valid. Sign in again before deleting your account.",
+    ),
+    "deleteAccountParentConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Your account and personal data will be permanently deleted. If you are the only parent, the family and all child activity will also be deleted. This cannot be undone.",
+    ),
+    "deleteAccountRetry": MessageLookupByLibrary.simpleMessage(
+      "Account deletion is temporarily unavailable. Please try again.",
+    ),
     "deleteTaskBody": MessageLookupByLibrary.simpleMessage(
       "This can\'t be undone.",
     ),
     "deleteTaskButton": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteTaskTitle": MessageLookupByLibrary.simpleMessage("Delete task?"),
+    "deletingAccount": MessageLookupByLibrary.simpleMessage(
+      "Deleting your account…",
+    ),
     "detailsFieldLabel": MessageLookupByLibrary.simpleMessage("Details"),
     "detailsSection": MessageLookupByLibrary.simpleMessage("Details"),
     "displayNameFallback": MessageLookupByLibrary.simpleMessage("This parent"),
@@ -672,6 +687,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "priceAndGap": m35,
     "priceLabel": MessageLookupByLibrary.simpleMessage("Price"),
     "priceUnit": m36,
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
+    "privacyPolicyOpenFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not open the Privacy Policy.",
+    ),
+    "privacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "How Safini handles family data",
+    ),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Saved"),
     "questsDone": MessageLookupByLibrary.simpleMessage("Quests Done"),

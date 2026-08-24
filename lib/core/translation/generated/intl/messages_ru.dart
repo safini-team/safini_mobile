@@ -348,17 +348,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "dateYesterday": MessageLookupByLibrary.simpleMessage("Вчера"),
     "dayStreak": MessageLookupByLibrary.simpleMessage("Дней подряд"),
     "deleteAccount": MessageLookupByLibrary.simpleMessage("Удалить аккаунт"),
+    "deleteAccountChildConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Ваш аккаунт, профиль ребёнка, задания, награды, фотографии-подтверждения и активность будут удалены навсегда. Это действие нельзя отменить.",
+    ),
     "deleteAccountConfirmBody": MessageLookupByLibrary.simpleMessage(
       "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
     ),
     "deleteAccountConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Удалить аккаунт?",
     ),
+    "deleteAccountFailed": MessageLookupByLibrary.simpleMessage(
+      "Сессия недействительна. Войдите снова, прежде чем удалять аккаунт.",
+    ),
+    "deleteAccountParentConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Ваш аккаунт и персональные данные будут удалены навсегда. Если вы единственный родитель, семья и вся активность детей также будут удалены. Это действие нельзя отменить.",
+    ),
+    "deleteAccountRetry": MessageLookupByLibrary.simpleMessage(
+      "Удаление аккаунта временно недоступно. Попробуйте ещё раз.",
+    ),
     "deleteTaskBody": MessageLookupByLibrary.simpleMessage(
       "Это нельзя отменить.",
     ),
     "deleteTaskButton": MessageLookupByLibrary.simpleMessage("Удалить"),
     "deleteTaskTitle": MessageLookupByLibrary.simpleMessage("Удалить задание?"),
+    "deletingAccount": MessageLookupByLibrary.simpleMessage("Удаляем аккаунт…"),
     "detailsFieldLabel": MessageLookupByLibrary.simpleMessage("Детали"),
     "detailsSection": MessageLookupByLibrary.simpleMessage("Данные"),
     "displayNameFallback": MessageLookupByLibrary.simpleMessage("Родитель"),
@@ -687,6 +700,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "priceAndGap": m35,
     "priceLabel": MessageLookupByLibrary.simpleMessage("Цена"),
     "priceUnit": m36,
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage(
+      "Политика конфиденциальности",
+    ),
+    "privacyPolicyOpenFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось открыть политику конфиденциальности.",
+    ),
+    "privacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "Как Safini обрабатывает данные семьи",
+    ),
     "profile": MessageLookupByLibrary.simpleMessage("Профиль"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Сохранено"),
     "questsDone": MessageLookupByLibrary.simpleMessage("Заданий выполнено"),

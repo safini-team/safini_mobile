@@ -17,7 +17,6 @@ import 'package:safini/core/utils/widgets/skeleton/skeleton_loader.dart';
 import 'package:safini/features/common/profile/data/datasources/local/profile_local_datasource.dart';
 import 'package:safini/features/common/profile/domain/models/profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -153,7 +152,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final name = _nameController.text.trim();
     final surname = _surnameController.text.trim();
     final newDisplayName = surname.isEmpty ? name : '$name $surname';
-    
+
     if (newDisplayName != (_initialDisplayName ?? '')) {
       changedPayload['display_name'] = newDisplayName;
     }
@@ -205,72 +204,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _errorMessage = 'Service unavailable. Please try again later.';
       });
     } on http.ClientException {
-      setState(() {
-        _isSaving = false;
-        _errorMessage = 'Service unavailable. Please try again later.';
-      });
-    }
-  }
-
-  Future<void> _deleteAccount() async {
-    final s = S.of(context);
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(s.deleteAccountConfirmTitle),
-        content: Text(s.deleteAccountConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(s.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(s.deleteAccount),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm != true) return;
-
-    setState(() {
-      _isSaving = true;
-      _errorMessage = null;
-    });
-
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      setState(() {
-        _isSaving = false;
-        _errorMessage = 'Session expired. Please log in again.';
-      });
-      return;
-    }
-
-    try {
-      final response = await http
-          .delete(
-            Uri.parse('${SupabaseConfig.apiBaseUrl}/v1/me'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
-          )
-          .timeout(AppConstants.apiTimeout);
-
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        setState(() {
-          _isSaving = false;
-          _errorMessage = _messageForStatus(response.statusCode);
-        });
-        return;
-      }
-
-      if (!mounted) return;
-      await getIt<AuthSessionCubit>().forceSignOut('Account deleted');
-    } catch (_) {
       setState(() {
         _isSaving = false;
         _errorMessage = 'Service unavailable. Please try again later.';
@@ -351,8 +284,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                         TextCapitalization.words,
                                     cursorColor: AppColors.primary,
                                     style: AppText.rowTitleLg,
-                                    decoration: DsFieldRow.decoration(s.name)
-                                        .copyWith(counterText: ''),
+                                    decoration: DsFieldRow.decoration(
+                                      s.name,
+                                    ).copyWith(counterText: ''),
                                     validator: (value) {
                                       final text = value?.trim() ?? '';
                                       if (text.isEmpty) {
@@ -371,8 +305,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                         TextCapitalization.words,
                                     cursorColor: AppColors.primary,
                                     style: AppText.rowTitleLg,
-                                    decoration: DsFieldRow.decoration(s.surname)
-                                        .copyWith(counterText: ''),
+                                    decoration: DsFieldRow.decoration(
+                                      s.surname,
+                                    ).copyWith(counterText: ''),
                                   ),
                                 ),
                               ],
@@ -400,18 +335,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               label: s.save,
                               busy: _isSaving,
                               onTap: _save,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppSpacing.gutter,
-                              32,
-                              AppSpacing.gutter,
-                              0,
-                            ),
-                            child: DsDestructiveButton(
-                              label: s.deleteAccount,
-                              onTap: _isSaving ? null : _deleteAccount,
                             ),
                           ),
                         ],

@@ -1801,6 +1801,86 @@ class S {
     );
   }
 
+  /// `Your account and personal data will be permanently deleted. If you are the only parent, the family and all child activity will also be deleted. This cannot be undone.`
+  String get deleteAccountParentConfirmBody {
+    return Intl.message(
+      'Your account and personal data will be permanently deleted. If you are the only parent, the family and all child activity will also be deleted. This cannot be undone.',
+      name: 'deleteAccountParentConfirmBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your account, child profile, tasks, rewards, proof photos, and activity will be permanently deleted. This cannot be undone.`
+  String get deleteAccountChildConfirmBody {
+    return Intl.message(
+      'Your account, child profile, tasks, rewards, proof photos, and activity will be permanently deleted. This cannot be undone.',
+      name: 'deleteAccountChildConfirmBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deleting your account…`
+  String get deletingAccount {
+    return Intl.message(
+      'Deleting your account…',
+      name: 'deletingAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account deletion is temporarily unavailable. Please try again.`
+  String get deleteAccountRetry {
+    return Intl.message(
+      'Account deletion is temporarily unavailable. Please try again.',
+      name: 'deleteAccountRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your session is no longer valid. Sign in again before deleting your account.`
+  String get deleteAccountFailed {
+    return Intl.message(
+      'Your session is no longer valid. Sign in again before deleting your account.',
+      name: 'deleteAccountFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How Safini handles family data`
+  String get privacyPolicySubtitle {
+    return Intl.message(
+      'How Safini handles family data',
+      name: 'privacyPolicySubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not open the Privacy Policy.`
+  String get privacyPolicyOpenFailed {
+    return Intl.message(
+      'Could not open the Privacy Policy.',
+      name: 'privacyPolicyOpenFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remove from Family`
   String get removeParent {
     return Intl.message(

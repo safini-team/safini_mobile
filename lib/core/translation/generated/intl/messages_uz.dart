@@ -358,11 +358,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "dateYesterday": MessageLookupByLibrary.simpleMessage("Kecha"),
     "dayStreak": MessageLookupByLibrary.simpleMessage("Kunlik seriya"),
     "deleteAccount": MessageLookupByLibrary.simpleMessage("Hisobni oʻchirish"),
+    "deleteAccountChildConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Hisobingiz, farzand profili, vazifalar, mukofotlar, tasdiqlovchi suratlar va faoliyat butunlay oʻchiriladi. Bu amalni ortga qaytarib boʻlmaydi.",
+    ),
     "deleteAccountConfirmBody": MessageLookupByLibrary.simpleMessage(
       "Hisobingizni oʻchirmoqchimisiz? Bu amalni ortga qaytarib boʻlmaydi.",
     ),
     "deleteAccountConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Hisob oʻchirilsinmi?",
+    ),
+    "deleteAccountFailed": MessageLookupByLibrary.simpleMessage(
+      "Seans yaroqsiz. Hisobni oʻchirishdan oldin qayta kiring.",
+    ),
+    "deleteAccountParentConfirmBody": MessageLookupByLibrary.simpleMessage(
+      "Hisobingiz va shaxsiy maʼlumotlaringiz butunlay oʻchiriladi. Agar siz yagona ota-ona boʻlsangiz, oila va farzandlarning barcha faoliyati ham oʻchiriladi. Bu amalni ortga qaytarib boʻlmaydi.",
+    ),
+    "deleteAccountRetry": MessageLookupByLibrary.simpleMessage(
+      "Hisobni oʻchirish vaqtincha ishlamayapti. Qayta urinib koʻring.",
     ),
     "deleteTaskBody": MessageLookupByLibrary.simpleMessage(
       "Buni ortga qaytarib boʻlmaydi.",
@@ -370,6 +382,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteTaskButton": MessageLookupByLibrary.simpleMessage("Oʻchirish"),
     "deleteTaskTitle": MessageLookupByLibrary.simpleMessage(
       "Topshiriq oʻchirilsinmi?",
+    ),
+    "deletingAccount": MessageLookupByLibrary.simpleMessage(
+      "Hisob oʻchirilmoqda…",
     ),
     "detailsFieldLabel": MessageLookupByLibrary.simpleMessage("Tafsilotlar"),
     "detailsSection": MessageLookupByLibrary.simpleMessage("Maʼlumotlar"),
@@ -701,6 +716,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "priceAndGap": m35,
     "priceLabel": MessageLookupByLibrary.simpleMessage("Narx"),
     "priceUnit": m36,
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("Maxfiylik siyosati"),
+    "privacyPolicyOpenFailed": MessageLookupByLibrary.simpleMessage(
+      "Maxfiylik siyosatini ochib boʻlmadi.",
+    ),
+    "privacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "Safini oila maʼlumotlarini qanday qayta ishlaydi",
+    ),
     "profile": MessageLookupByLibrary.simpleMessage("Profil"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Saqlandi"),
     "questsDone": MessageLookupByLibrary.simpleMessage(
