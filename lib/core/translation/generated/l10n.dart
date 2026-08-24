@@ -760,10 +760,12 @@ class S {
     );
   }
 
-  /// `You need {count} more coins.`
+  /// `{count, plural, =1{You need 1 more coin.} other{You need {count} more coins.}}`
   String youNeedMoreCoins(int count) {
-    return Intl.message(
-      'You need $count more coins.',
+    return Intl.plural(
+      count,
+      one: 'You need 1 more coin.',
+      other: 'You need $count more coins.',
       name: 'youNeedMoreCoins',
       desc: '',
       args: [count],
@@ -775,10 +777,12 @@ class S {
     return Intl.message('Coming soon!', name: 'comingSoon', desc: '', args: []);
   }
 
-  /// `{count} coins`
+  /// `{count, plural, =1{1 coin} other{{count} coins}}`
   String coinsCount(int count) {
-    return Intl.message(
-      '$count coins',
+    return Intl.plural(
+      count,
+      one: '1 coin',
+      other: '$count coins',
       name: 'coinsCount',
       desc: '',
       args: [count],
@@ -1105,10 +1109,12 @@ class S {
     );
   }
 
-  /// `{minutes} minutes remaining`
+  /// `{minutes, plural, =1{1 minute remaining} other{{minutes} minutes remaining}}`
   String minutesRemainingLong(int minutes) {
-    return Intl.message(
-      '$minutes minutes remaining',
+    return Intl.plural(
+      minutes,
+      one: '1 minute remaining',
+      other: '$minutes minutes remaining',
       name: 'minutesRemainingLong',
       desc: '',
       args: [minutes],
@@ -2676,10 +2682,12 @@ class S {
     return Intl.message('Not set', name: 'notSet', desc: '', args: []);
   }
 
-  /// `{age} years old`
-  String yearsOld(Object age) {
-    return Intl.message(
-      '$age years old',
+  /// `{age, plural, =1{1 year old} other{{age} years old}}`
+  String yearsOld(num age) {
+    return Intl.plural(
+      age,
+      one: '1 year old',
+      other: '$age years old',
       name: 'yearsOld',
       desc: '',
       args: [age],
@@ -2951,10 +2959,12 @@ class S {
     );
   }
 
-  /// `{count}-day streak`
-  String nDayStreak(Object count) {
-    return Intl.message(
-      '$count-day streak',
+  /// `{count, plural, =1{1-day streak} other{{count}-day streak}}`
+  String nDayStreak(num count) {
+    return Intl.plural(
+      count,
+      one: '1-day streak',
+      other: '$count-day streak',
       name: 'nDayStreak',
       desc: '',
       args: [count],
@@ -3006,10 +3016,12 @@ class S {
     );
   }
 
-  /// `{count} coins to go`
-  String coinsToGo(Object count) {
-    return Intl.message(
-      '$count coins to go',
+  /// `{count, plural, =1{1 coin to go} other{{count} coins to go}}`
+  String coinsToGo(num count) {
+    return Intl.plural(
+      count,
+      one: '1 coin to go',
+      other: '$count coins to go',
       name: 'coinsToGo',
       desc: '',
       args: [count],
@@ -3136,10 +3148,12 @@ class S {
     return Intl.message('Not yet', name: 'notYet', desc: '', args: []);
   }
 
-  /// `{count} more coins needed`
-  String moreCoinsNeeded(Object count) {
-    return Intl.message(
-      '$count more coins needed',
+  /// `{count, plural, =1{1 more coin needed} other{{count} more coins needed}}`
+  String moreCoinsNeeded(num count) {
+    return Intl.plural(
+      count,
+      one: '1 more coin needed',
+      other: '$count more coins needed',
       name: 'moreCoinsNeeded',
       desc: '',
       args: [count],
@@ -3166,20 +3180,24 @@ class S {
     );
   }
 
-  /// `{count} tasks done`
-  String badgeTasksDone(Object count) {
-    return Intl.message(
-      '$count tasks done',
+  /// `{count, plural, =1{1 task done} other{{count} tasks done}}`
+  String badgeTasksDone(num count) {
+    return Intl.plural(
+      count,
+      one: '1 task done',
+      other: '$count tasks done',
       name: 'badgeTasksDone',
       desc: '',
       args: [count],
     );
   }
 
-  /// `{count} coins`
-  String badgeCoins(Object count) {
-    return Intl.message(
-      '$count coins',
+  /// `{count, plural, =1{1 coin} other{{count} coins}}`
+  String badgeCoins(num count) {
+    return Intl.plural(
+      count,
+      one: '1 coin',
+      other: '$count coins',
       name: 'badgeCoins',
       desc: '',
       args: [count],
@@ -3246,10 +3264,12 @@ class S {
     );
   }
 
-  /// `{count} coins to go`
-  String coinsToGoShort(Object count) {
-    return Intl.message(
-      '$count coins to go',
+  /// `{count, plural, =1{1 coin to go} other{{count} coins to go}}`
+  String coinsToGoShort(num count) {
+    return Intl.plural(
+      count,
+      one: '1 coin to go',
+      other: '$count coins to go',
       name: 'coinsToGoShort',
       desc: '',
       args: [count],

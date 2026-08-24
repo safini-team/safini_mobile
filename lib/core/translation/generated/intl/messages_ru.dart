@@ -30,9 +30,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m4(coins) => "Одобрить · начислить ${coins}";
 
-  static String m5(count) => "${count} монет";
+  static String m5(count) =>
+      "${Intl.plural(count, one: '${count} монета', few: '${count} монеты', many: '${count} монет', other: '${count} монет')}";
 
-  static String m6(count) => "${count} заданий";
+  static String m6(count) =>
+      "${Intl.plural(count, one: '${count} задание', few: '${count} задания', many: '${count} заданий', other: '${count} заданий')}";
 
   static String m7(name) => "Прогресс ${name}";
 
@@ -47,14 +49,17 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m11(count) =>
       "${Intl.plural(count, one: '${count} монета', few: '${count} монеты', many: '${count} монет', other: '${count} монет')}";
 
-  static String m12(count) => "${count} монет";
+  static String m12(count) =>
+      "${Intl.plural(count, one: '${count} монета', few: '${count} монеты', many: '${count} монет', other: '${count} монет')}";
 
   static String m13(count) =>
       "${Intl.plural(count, one: 'Награда: ${count} монета', few: 'Награда: ${count} монеты', many: 'Награда: ${count} монет', other: 'Награда: ${count} монеты')}";
 
-  static String m14(count) => "Ещё ${count} монет";
+  static String m14(count) =>
+      "${Intl.plural(count, one: 'Ещё ${count} монета', few: 'Ещё ${count} монеты', many: 'Ещё ${count} монет', other: 'Ещё ${count} монет')}";
 
-  static String m15(count) => "Ещё ${count} монет";
+  static String m15(count) =>
+      "${Intl.plural(count, one: 'Ещё ${count} монета', few: 'Ещё ${count} монеты', many: 'Ещё ${count} монет', other: 'Ещё ${count} монет')}";
 
   static String m16(name) => "${name} · все приложения вместе";
 
@@ -80,13 +85,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m26(minutes) => "${minutes} мин осталось";
 
-  static String m27(minutes) => "Осталось ${minutes} мин.";
+  static String m27(minutes) =>
+      "${Intl.plural(minutes, one: 'Осталась ${minutes} минута', few: 'Осталось ${minutes} минуты', many: 'Осталось ${minutes} минут', other: 'Осталось ${minutes} минут')}";
 
-  static String m28(count) => "Нужно ещё ${count} монет";
+  static String m28(count) =>
+      "${Intl.plural(count, one: 'Нужна ещё ${count} монета', few: 'Нужно ещё ${count} монеты', many: 'Нужно ещё ${count} монет', other: 'Нужно ещё ${count} монет')}";
 
   static String m29(app) => "Больше всего - в ${app}";
 
-  static String m30(count) => "${count} дней подряд";
+  static String m30(count) =>
+      "${Intl.plural(count, one: '${count} день подряд', few: '${count} дня подряд', many: '${count} дней подряд', other: '${count} дней подряд')}";
 
   static String m31(total) => "из ${total}";
 
@@ -138,9 +146,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m53(name, coins) => "${name} · ${coins}";
 
-  static String m54(age) => "${age} лет";
+  static String m54(age) =>
+      "${Intl.plural(age, one: '${age} год', few: '${age} года', many: '${age} лет', other: '${age} лет')}";
 
-  static String m55(count) => "Вам нужно еще ${count} монет.";
+  static String m55(count) =>
+      "${Intl.plural(count, one: 'Нужна ещё ${count} монета.', few: 'Нужно ещё ${count} монеты.', many: 'Нужно ещё ${count} монет.', other: 'Нужно ещё ${count} монет.')}";
 
   static String m56(name) => "${name} (вы)";
 

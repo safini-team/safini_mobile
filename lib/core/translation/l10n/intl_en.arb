@@ -125,7 +125,7 @@
   "readyToSpend": "Ready to spend your coins?",
   "buyIt": "Buy it! 🎉",
   "notEnoughCoins": "Not enough coins!",
-  "youNeedMoreCoins": "You need {count} more coins.",
+  "youNeedMoreCoins": "{count, plural, =1{You need 1 more coin.} other{You need {count} more coins.}}",
   "@youNeedMoreCoins": {
     "placeholders": {
       "count": {
@@ -134,7 +134,7 @@
     }
   },
   "comingSoon": "Coming soon!",
-  "coinsCount": "{count} coins",
+  "coinsCount": "{count, plural, =1{1 coin} other{{count} coins}}",
   "@coinsCount": {
     "placeholders": {
       "count": {
@@ -213,7 +213,7 @@
       }
     }
   },
-  "minutesRemainingLong": "{minutes} minutes remaining",
+  "minutesRemainingLong": "{minutes, plural, =1{1 minute remaining} other{{minutes} minutes remaining}}",
   "@minutesRemainingLong": {
     "placeholders": {
       "minutes": {
@@ -424,7 +424,7 @@
   "copyCode": "Copy code",
   "codeCopied": "Code copied",
   "notSet": "Not set",
-  "yearsOld": "{age} years old",
+  "yearsOld": "{age, plural, =1{1 year old} other{{age} years old}}",
   "createAnInviteCode": "Create an invite code",
   "reconnectWithCode": "Re-connect with a code",
   "doneAction": "Done",
@@ -456,13 +456,13 @@
   "ofTotal": "of {total}",
   "tasksLeftCoinsOnTable": "{tasks} left - {coins} on the table",
   "everythingIsWithParent": "Everything is with your parent",
-  "nDayStreak": "{count}-day streak",
+  "nDayStreak": "{count, plural, =1{1-day streak} other{{count}-day streak}}",
   "holdToMarkDone": "Hold to mark it done",
   "markItDone": "Mark it done",
   "keepHolding": "Keep holding…",
   "everythingSent": "Everything's sent",
   "parentReviewsNext": "Your parent reviews them next. Coins land after that.",
-  "coinsToGo": "{count} coins to go",
+  "coinsToGo": "{count, plural, =1{1 coin to go} other{{count} coins to go}}",
   "childTasksSubtitle": "{done} of {total} done today · {coins} coins waiting",
   "nothingHereYet": "Nothing here yet",
   "askForSomethingNew": "Ask for something new and your parent can add it to the store.",
@@ -478,12 +478,12 @@
   "rewardBlurbAvatar": "Wear it on your avatar. Yours to keep.",
   "askForThis": "Unlock now",
   "notYet": "Not yet",
-  "moreCoinsNeeded": "{count} more coins needed",
+  "moreCoinsNeeded": "{count, plural, =1{1 more coin needed} other{{count} more coins needed}}",
   "thisWeek": "This week",
   "badges": "Badges",
   "changeAvatar": "Change avatar",
-  "badgeTasksDone": "{count} tasks done",
-  "badgeCoins": "{count} coins",
+  "badgeTasksDone": "{count, plural, =1{1 task done} other{{count} tasks done}}",
+  "badgeCoins": "{count, plural, =1{1 coin} other{{count} coins}}",
   "percentToNextLevel": "{percent}% to the next level",
   "yourAvatar": "Your avatar",
   "faceSection": "Face",
@@ -493,7 +493,7 @@
   "wearLabel": "Wear",
   "lockedLabel": "Locked",
   "unlockOnceKeepForever": "Unlock once, keep forever",
-  "coinsToGoShort": "{count} coins to go",
+  "coinsToGoShort": "{count, plural, =1{1 coin to go} other{{count} coins to go}}",
   "extraOutfit": "Outfit",
   "extraHair": "Hair",
   "extraBackpack": "Backpack",

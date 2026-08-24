@@ -30,9 +30,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m4(coins) => "Approve · pay ${coins}";
 
-  static String m5(count) => "${count} coins";
+  static String m5(count) =>
+      "${Intl.plural(count, one: '1 coin', other: '${count} coins')}";
 
-  static String m6(count) => "${count} tasks done";
+  static String m6(count) =>
+      "${Intl.plural(count, one: '1 task done', other: '${count} tasks done')}";
 
   static String m7(name) => "${name}\'s Progress";
 
@@ -47,14 +49,17 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m11(count) =>
       "${Intl.plural(count, one: '1 coin', other: '${count} coins')}";
 
-  static String m12(count) => "${count} coins";
+  static String m12(count) =>
+      "${Intl.plural(count, one: '1 coin', other: '${count} coins')}";
 
   static String m13(count) =>
       "${Intl.plural(count, one: '${count} coin reward', other: '${count} coins reward')}";
 
-  static String m14(count) => "${count} coins to go";
+  static String m14(count) =>
+      "${Intl.plural(count, one: '1 coin to go', other: '${count} coins to go')}";
 
-  static String m15(count) => "${count} coins to go";
+  static String m15(count) =>
+      "${Intl.plural(count, one: '1 coin to go', other: '${count} coins to go')}";
 
   static String m16(name) => "${name} · all apps combined";
 
@@ -79,13 +84,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m26(minutes) => "${minutes} m left";
 
-  static String m27(minutes) => "${minutes} minutes remaining";
+  static String m27(minutes) =>
+      "${Intl.plural(minutes, one: '1 minute remaining', other: '${minutes} minutes remaining')}";
 
-  static String m28(count) => "${count} more coins needed";
+  static String m28(count) =>
+      "${Intl.plural(count, one: '1 more coin needed', other: '${count} more coins needed')}";
 
   static String m29(app) => "Most of it in ${app}";
 
-  static String m30(count) => "${count}-day streak";
+  static String m30(count) =>
+      "${Intl.plural(count, one: '1-day streak', other: '${count}-day streak')}";
 
   static String m31(total) => "of ${total}";
 
@@ -137,9 +145,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m53(name, coins) => "${name} · worth ${coins}";
 
-  static String m54(age) => "${age} years old";
+  static String m54(age) =>
+      "${Intl.plural(age, one: '1 year old', other: '${age} years old')}";
 
-  static String m55(count) => "You need ${count} more coins.";
+  static String m55(count) =>
+      "${Intl.plural(count, one: 'You need 1 more coin.', other: 'You need ${count} more coins.')}";
 
   static String m56(name) => "${name} (you)";
 

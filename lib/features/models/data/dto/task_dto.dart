@@ -238,8 +238,8 @@ class TaskInstanceDto {
       completedAt: json['completed_at'] != null
           ? DateTime.parse(json['completed_at'] as String)
           : null,
-      proofUrl: json['proof_url'] as String?,
-      parentNote: json['parent_note'] as String?,
+      proofUrl: json['submission_image_url'] as String?,
+      parentNote: json['review_note'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : DateTime.now(),
@@ -286,7 +286,7 @@ class TaskSubmissionDto {
   TaskSubmissionDto({required this.proofUrl});
 
   factory TaskSubmissionDto.fromJson(Map<String, dynamic> json) {
-    return TaskSubmissionDto(proofUrl: json['proof_url'] as String? ?? '');
+    return TaskSubmissionDto(proofUrl: json['submission_image_url'] as String? ?? '');
   }
 
   Map<String, dynamic> toJson() {
@@ -303,7 +303,7 @@ class TaskReviewDto {
   factory TaskReviewDto.fromJson(Map<String, dynamic> json) {
     return TaskReviewDto(
       status: json['status'] as String? ?? '',
-      parentNote: json['parent_note'] as String?,
+      parentNote: json['review_note'] as String?,
     );
   }
 

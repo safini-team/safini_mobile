@@ -30,9 +30,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m4(coins) => "Tasdiqlash · ${coins} berish";
 
-  static String m5(count) => "${count} tanga";
+  static String m5(count) => "${Intl.plural(count, other: '${count} tanga')}";
 
-  static String m6(count) => "${count} vazifa";
+  static String m6(count) => "${Intl.plural(count, other: '${count} vazifa')}";
 
   static String m7(name) => "${name} taraqqiyoti";
 
@@ -46,14 +46,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m11(count) => "${Intl.plural(count, other: '${count} tanga')}";
 
-  static String m12(count) => "${count} tanga";
+  static String m12(count) => "${Intl.plural(count, other: '${count} tanga')}";
 
   static String m13(count) =>
       "${Intl.plural(count, one: '${count} tanga mukofot', other: '${count} tanga mukofot')}";
 
-  static String m14(count) => "Yana ${count} tanga";
+  static String m14(count) =>
+      "${Intl.plural(count, other: 'Yana ${count} tanga')}";
 
-  static String m15(count) => "Yana ${count} tanga";
+  static String m15(count) =>
+      "${Intl.plural(count, other: 'Yana ${count} tanga')}";
 
   static String m16(name) => "${name} · barcha ilovalar birgalikda";
 
@@ -79,13 +81,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m26(minutes) => "${minutes} daqiqa qoldi";
 
-  static String m27(minutes) => "${minutes} daqiqa qoldi";
+  static String m27(minutes) =>
+      "${Intl.plural(minutes, other: '${minutes} daqiqa qoldi')}";
 
-  static String m28(count) => "Yana ${count} tanga kerak";
+  static String m28(count) =>
+      "${Intl.plural(count, other: 'Yana ${count} tanga kerak')}";
 
   static String m29(app) => "Koʻpi ${app}da";
 
-  static String m30(count) => "${count} kun ketma-ket";
+  static String m30(count) =>
+      "${Intl.plural(count, other: '${count} kun ketma-ket')}";
 
   static String m31(total) => "${total} dan";
 
@@ -136,9 +141,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m53(name, coins) => "${name} · ${coins}";
 
-  static String m54(age) => "${age} yosh";
+  static String m54(age) => "${Intl.plural(age, other: '${age} yosh')}";
 
-  static String m55(count) => "Sizga yana ${count} tanga kerak.";
+  static String m55(count) =>
+      "${Intl.plural(count, other: 'Sizga yana ${count} tanga kerak.')}";
 
   static String m56(name) => "${name} (siz)";
 

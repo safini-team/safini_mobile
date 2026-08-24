@@ -379,9 +379,14 @@ class DsFieldRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: Row(
+        // Baseline, not centre. A row whose input carries a suffix button is
+        // taller than one without, and centring put the label ~40px below the
+        // text it labels - visible on the sign-in sheet, where Email lined up
+        // and Password did not.
         crossAxisAlignment: alignTop
             ? CrossAxisAlignment.start
-            : CrossAxisAlignment.center,
+            : CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
         children: [
           Padding(
             padding: EdgeInsets.only(top: alignTop ? 2 : 0),
