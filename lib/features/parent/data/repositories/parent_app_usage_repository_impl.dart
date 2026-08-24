@@ -4,40 +4,28 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
-  final http.Client _client;
+  final AuthenticatedHttpClient _client;
 
-  ParentAppUsageRepositoryImpl({http.Client? client})
-    : _client = client ?? http.Client();
+  ParentAppUsageRepositoryImpl(this._client);
 
   @override
   Future<Either<Failure, List<CatalogAppModel>>> fetchCatalog() async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
     late final http.Response response;
     try {
       response = await _client
-          .get(
-            _uri('/v1/apps'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
-          )
+          .get(_uri('/v1/apps'), headers: {'Accept': 'application/json'})
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {
@@ -87,24 +75,16 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
   Future<Either<Failure, ChildAppUsageSnapshot>> fetchAppUsage(
     String childId,
   ) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
     late final http.Response response;
     try {
       response = await _client
           .get(
             _uri('/v1/children/$childId/app-usage'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: {'Accept': 'application/json'},
           )
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {
@@ -150,9 +130,7 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
               ),
             )
             .toList();
-        return Right(
-          ChildAppUsageSnapshot(apps: list, screenTime: screenTime),
-        );
+        return Right(ChildAppUsageSnapshot(apps: list, screenTime: screenTime));
       }
       // Response shape is valid but has no apps — treat as empty.
       return Right(
@@ -168,26 +146,20 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
     String childId,
     ChildAppUsageModel rule,
   ) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
     late final http.Response response;
     try {
       response = await _client
           .put(
             _uri('/v1/children/$childId/app-rules/${rule.appSlug}'),
             headers: {
-              'Authorization': 'Bearer $token',
               'Accept': 'application/json',
               'Content-Type': 'application/json',
             },
             body: jsonEncode(rule.toRuleJson()),
           )
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {
@@ -228,17 +200,11 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
 
   @override
   Future<String?> fetchChildFaceEmoji(String childId) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) return null;
-
     try {
       final response = await _client
           .get(
             _uri('/v1/children/$childId/dashboard'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: {'Accept': 'application/json'},
           )
           .timeout(AppConstants.apiTimeout);
       if (response.statusCode < 200 || response.statusCode >= 300) return null;
@@ -269,7 +235,8 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
   String _extractErrorMessage(String body, String fallback) {
     final decoded = _decodeBody(body);
     if (decoded is Map<String, dynamic>) {
-      final candidate = decoded['message'] ?? decoded['detail'] ?? decoded['error'];
+      final candidate =
+          decoded['message'] ?? decoded['detail'] ?? decoded['error'];
       if (candidate is String && candidate.trim().isNotEmpty) {
         return candidate.trim();
       }

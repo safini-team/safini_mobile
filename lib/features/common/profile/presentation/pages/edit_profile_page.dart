@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -16,7 +17,6 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/skeleton/skeleton_loader.dart';
 import 'package:safini/features/common/profile/data/datasources/local/profile_local_datasource.dart';
 import 'package:safini/features/common/profile/domain/models/profile_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -57,23 +57,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _errorMessage = null;
     });
 
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Session expired. Please log in again.';
-      });
-      return;
-    }
-
     try {
-      final response = await http
+      final response = await getIt<AuthenticatedHttpClient>()
           .get(
             Uri.parse('${SupabaseConfig.apiBaseUrl}/v1/me'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: {'Accept': 'application/json'},
           )
           .timeout(AppConstants.apiTimeout);
 
@@ -107,6 +95,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _isLoading = false;
         });
       }
+    } on AuthSessionUnavailableException {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Session is unavailable. Please try again.';
+      });
     } on SocketException {
       setState(() {
         _isLoading = false;
@@ -139,15 +132,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _errorMessage = null;
     });
 
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      setState(() {
-        _isSaving = false;
-        _errorMessage = 'Session expired. Please log in again.';
-      });
-      return;
-    }
-
     final changedPayload = <String, dynamic>{};
     final name = _nameController.text.trim();
     final surname = _surnameController.text.trim();
@@ -158,11 +142,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     try {
-      final response = await http
+      final response = await getIt<AuthenticatedHttpClient>()
           .patch(
             Uri.parse('${SupabaseConfig.apiBaseUrl}/v1/me'),
             headers: {
-              'Authorization': 'Bearer $token',
               'Content-Type': 'application/json',
               'Accept': 'application/json',
             },
@@ -193,6 +176,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
       if (!mounted) return;
       context.router.maybePop(true);
+    } on AuthSessionUnavailableException {
+      setState(() {
+        _isSaving = false;
+        _errorMessage = 'Session is unavailable. Please try again.';
+      });
     } on SocketException {
       setState(() {
         _isSaving = false;

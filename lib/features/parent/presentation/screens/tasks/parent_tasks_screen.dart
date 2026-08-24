@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
-import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
@@ -64,7 +62,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         if (state is ParentTasksError) {
           return ParentTasksErrorState(
             message: state.message,
-            canRetry: state.canRetry && !state.isUnauthorized,
+            canRetry: state.canRetry,
             onRetry: _reload,
           );
         }
@@ -93,8 +91,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       final message = state is ParentTasksError
           ? state.message
           : (state as ParentTaskActionError).message;
-      unawaited(context.read<AuthSessionCubit>().forceSignOut(message));
-      context.router.replace(const NamedRoute('login'));
+      AppSnackBar.error(context, message);
       return;
     }
     if (state is ParentTaskActionError && state.isConflict) {
@@ -153,13 +150,14 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   ParentTasksData _buildData(BuildContext context, ParentTasksLoaded loaded) {
     final s = S.of(context);
 
-    final children = context
-        .watch<ParentFamilyCubit>()
-        .state
-        .family
-        ?.children
-        .where((child) => child.id.isNotEmpty)
-        .toList() ??
+    final children =
+        context
+            .watch<ParentFamilyCubit>()
+            .state
+            .family
+            ?.children
+            .where((child) => child.id.isNotEmpty)
+            .toList() ??
         const [];
 
     // In all-children mode the cubit tags each task with its child's name; in
@@ -201,10 +199,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     // Group in family order so the cards do not reshuffle between filters.
     final order = children.map((child) => child.nickname).toList();
     final groups = <TaskGroupData>[];
-    for (final name in [
-      ...order,
-      if (order.isEmpty) loaded.childName,
-    ]) {
+    for (final name in [...order, if (order.isEmpty) loaded.childName]) {
       final groupRows = rows.where((row) => row.childName == name).toList();
       if (groupRows.isEmpty) continue;
       final child = children.where((c) => c.nickname == name).firstOrNull;
@@ -215,9 +210,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
           rows: groupRows,
           summary: s.taskGroupSummary(
             s.taskCount(groupRows.length),
-            s.coinCountShort(
-              groupRows.fold(0, (sum, row) => sum + row.coins),
-            ),
+            s.coinCountShort(groupRows.fold(0, (sum, row) => sum + row.coins)),
           ),
         ),
       );
@@ -231,11 +224,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     return ParentTasksData(
       scopeLine: s.taskScopeLine(scopeName, s.taskCount(loaded.tasks.length)),
       chips: [
-        TaskScopeChip(
-          key: _allScope,
-          label: s.scopeEveryone,
-          hasAvatar: false,
-        ),
+        TaskScopeChip(key: _allScope, label: s.scopeEveryone, hasAvatar: false),
         for (final child in children)
           TaskScopeChip(
             key: child.id,

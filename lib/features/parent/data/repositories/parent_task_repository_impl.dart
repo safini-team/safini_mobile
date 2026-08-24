@@ -4,40 +4,31 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ParentTaskRepositoryImpl implements IParentTaskRepository {
-  final http.Client _client;
+  final AuthenticatedHttpClient _client;
 
-  ParentTaskRepositoryImpl({http.Client? client})
-    : _client = client ?? http.Client();
+  ParentTaskRepositoryImpl(this._client);
 
   @override
   Future<Either<Failure, ParentTasksResponseModel>> fetchTasks(
     String childId,
   ) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
     late final http.Response response;
     try {
       response = await _client
           .get(
             _uri('/v1/children/$childId/tasks'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: {'Accept': 'application/json'},
           )
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {
@@ -103,13 +94,6 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
     required String decision,
     String? note,
   }) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
     final body = <String, dynamic>{'decision': decision};
     if (note != null && note.trim().isNotEmpty) body['note'] = note.trim();
 
@@ -119,13 +103,14 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
           .post(
             _uri('/v1/tasks/$taskId/review'),
             headers: {
-              'Authorization': 'Bearer $token',
               'Accept': 'application/json',
               'Content-Type': 'application/json',
             },
             body: jsonEncode(body),
           )
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {

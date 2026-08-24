@@ -3,9 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/error/failures.dart';
-import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/controllers/family_controller.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
@@ -226,15 +224,12 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     ParentInviteCodeModel? inviteCode;
     await result.fold(
       (failure) async {
-        if (failure is UnauthorizedFailure) {
-          await _signOutAndRedirect(failure.message);
-          return;
-        }
         emit(
           state.copyWith(
             isParentInviteCodeLoading: false,
             errorMessage: failure.message,
-            canRetry: false,
+            canRetry: failure is UnauthorizedFailure,
+            isUnauthorized: failure is UnauthorizedFailure,
             keepFamily: true,
           ),
         );
@@ -270,15 +265,12 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     ChildInviteCodeModel? inviteCode;
     await result.fold(
       (failure) async {
-        if (failure is UnauthorizedFailure) {
-          await _signOutAndRedirect(failure.message);
-          return;
-        }
         emit(
           state.copyWith(
             issuingChildInviteCodeForId: null,
             errorMessage: failure.message,
-            canRetry: false,
+            canRetry: failure is UnauthorizedFailure,
+            isUnauthorized: failure is UnauthorizedFailure,
             keepFamily: true,
           ),
         );
@@ -312,12 +304,6 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     Failure? capturedFailure;
     await result.fold(
       (failure) async {
-        if (failure is UnauthorizedFailure) {
-          await _signOutAndRedirect(failure.message);
-          capturedFailure = failure;
-          return;
-        }
-
         capturedFailure = failure;
       },
       (_) async {
@@ -348,11 +334,6 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     Failure? capturedFailure;
     await result.fold(
       (failure) async {
-        if (failure is UnauthorizedFailure) {
-          await _signOutAndRedirect(failure.message);
-          capturedFailure = failure;
-          return;
-        }
         capturedFailure = failure;
       },
       (_) async {
@@ -369,11 +350,6 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     Failure? capturedFailure;
     await result.fold(
       (failure) async {
-        if (failure is UnauthorizedFailure) {
-          await _signOutAndRedirect(failure.message);
-          capturedFailure = failure;
-          return;
-        }
         capturedFailure = failure;
       },
       (_) async {
@@ -458,11 +434,6 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
   }
 
   Future<void> _handleLoadFailure(Failure failure) async {
-    if (failure is UnauthorizedFailure) {
-      await _signOutAndRedirect(failure.message);
-      return;
-    }
-
     if (failure is NotFoundFailure && state.family == null) {
       await _persistStage(ParentFamilyStage.decision);
       emit(ParentFamilyState.initial(stage: ParentFamilyStage.decision));
@@ -474,7 +445,7 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
         isLoading: false,
         errorMessage: failure.message,
         canRetry: true,
-        isUnauthorized: false,
+        isUnauthorized: failure is UnauthorizedFailure,
         keepFamily: true,
       ),
     );
@@ -485,11 +456,6 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     required ParentFamilyStage stage,
     bool keepStagedFamily = false,
   }) async {
-    if (failure is UnauthorizedFailure) {
-      await _signOutAndRedirect(failure.message);
-      return;
-    }
-
     final inlineMessage = failure is ValidationFailure ? failure.message : null;
 
     emit(
@@ -501,17 +467,10 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
             ? (inlineMessage ?? failure.message)
             : null,
         canRetry: true,
-        isUnauthorized: false,
+        isUnauthorized: failure is UnauthorizedFailure,
         keepFamily: keepStagedFamily,
       ),
     );
-  }
-
-  Future<void> _signOutAndRedirect(String message) async {
-    await _prefs.remove(_familyCacheKey);
-    await _prefs.remove(_familyStageKey);
-    await getIt<AuthSessionCubit>().forceSignOut(message);
-    emit(ParentFamilyState.initial());
   }
 
   Future<void> _saveFamily(FamilyModel family) async {
