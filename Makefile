@@ -1,4 +1,4 @@
-.PHONY: help increment-build build-ios build-android build clean icons generate get
+.PHONY: help increment-build build-ios build-android build clean icons generate get openapi
 
 # Default target: list commands
 help:
@@ -6,6 +6,7 @@ help:
 	@echo "  make get             - Fetch dependencies (flutter pub get)"
 	@echo "  make increment-build - Bump build number in pubspec.yaml (1.0.0+N -> 1.0.0+N+1)"
 	@echo "  make generate        - Run codegen (intl + build_runner: freezed/json_serializable)"
+	@echo "  make openapi         - Refresh lib/api_reference/api.json from production"
 	@echo "  make icons           - Generate app launcher icons (flutter_launcher_icons)"
 	@echo "  make build-ios       - Increment build, then build iOS release IPA"
 	@echo "  make build-android   - Increment build, then build Android App Bundle (.aab) + APK"
@@ -29,6 +30,15 @@ increment-build:
 generate:
 	flutter pub run intl_utils:generate
 	flutter pub run build_runner build --delete-conflicting-outputs
+
+# Refresh the vendored OpenAPI spec. CI fails when it and api.safini.fun
+# describe different routes, and the indentation has to match or the diff is
+# the whole file.
+openapi:
+	@curl -fsS --max-time 30 https://api.safini.fun/openapi.json \
+	| python3 -c "import json, sys; json.dump(json.load(sys.stdin), sys.stdout, indent=2, ensure_ascii=False); print()" \
+	> lib/api_reference/api.json
+	@echo "lib/api_reference/api.json refreshed from api.safini.fun"
 
 # Generate app launcher icons
 icons:
