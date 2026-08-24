@@ -1379,7 +1379,7 @@
           "children"
         ],
         "summary": "Get Child Home",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads a lightweight home-screen payload for the kid experience with today's top summary information.\n\n**Frontend note:** Use this for the first kid tab where you want a fast greeting card plus short task progress summary.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads a lightweight home-screen payload for the kid experience with today's top summary information.\n\n**Frontend note:** Use this for the first kid tab where you want a fast greeting card plus short task progress summary. It shares the day view with `/today`, so it materialises today's recurring instances too.",
         "operationId": "get_child_home_v1_children__child_id__home_get",
         "security": [
           {
@@ -1478,7 +1478,7 @@
           "children"
         ],
         "summary": "Get Today's Child Tasks",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the child-focused task feed for today, including daily summary counts and task instances.\n\n**Frontend note:** This is the main endpoint behind the kid task list screen. It returns the tasks that already exist for the requested day and does not create any.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the child-focused task feed for today, including daily summary counts and task instances.\n\n**Frontend note:** This is the main endpoint behind the kid task list screen. Today's recurring instances are materialised on read, so a daily task appears here the first time the day is opened. Never for a future day.",
         "operationId": "get_child_today_v1_children__child_id__today_get",
         "security": [
           {
@@ -1728,7 +1728,7 @@
           "tasks"
         ],
         "summary": "List Child Tasks",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today. Recurring instances for that day are materialised on read, so the parent sees today's list whichever app opens first. Never for a future day.",
         "operationId": "list_child_tasks_v1_children__child_id__tasks_get",
         "security": [
           {
