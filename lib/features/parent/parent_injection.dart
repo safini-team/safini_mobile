@@ -10,6 +10,7 @@ import 'package:safini/features/models/domain/repositories/i_family_repository.d
 import 'package:safini/features/models/domain/repositories/i_task_repository.dart';
 import 'package:safini/features/parent/data/datasources/parent_remote_datasource.dart';
 import 'package:safini/features/parent/data/repositories/parent_app_usage_repository_impl.dart';
+import 'package:safini/features/parent/data/services/parent_app_blocking_service.dart';
 import 'package:safini/features/parent/data/repositories/parent_task_repository_impl.dart';
 import 'package:safini/features/parent/data/repositories/parent_user_repository_impl.dart';
 import 'package:safini/features/parent/domain/controllers/parent_controller.dart';
@@ -55,6 +56,9 @@ void registerParentDependencies(GetIt sl) {
   sl.registerFactory<ParentHomeCubit>(() => ParentHomeCubit());
   sl.registerLazySingleton<IParentAppUsageRepository>(
     () => ParentAppUsageRepositoryImpl(sl<AuthenticatedHttpClient>()),
+  );
+  sl.registerLazySingleton<ParentAppBlockingService>(
+    () => ParentAppBlockingService(sl<Dio>()),
   );
   sl.registerFactory<ParentMonitorCubit>(
     () => ParentMonitorCubit(

@@ -1,5 +1,25 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- App-blocking feature (child device). PACKAGE_USAGE_STATS and
+         SYSTEM_ALERT_WINDOW are special permissions granted from Settings, not
+         a runtime prompt (see MainActivity.request* + observation/app_blocking.md). -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Full package visibility so the child device can enumerate every installed
+         app and upload the list for the parent. This is a sensitive permission:
+         Google Play requires a Declaration Form justifying it (parental control
+         is an accepted use). Launchable apps are also visible via the <queries>
+         block below without it. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:label="Safini"
@@ -31,6 +51,29 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!-- Foreground service that polls the foreground app and draws the block
+             overlay when a limit/manual block applies. -->
+        <service
+            android:name=".AppBlockForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="parental_control_app_time_enforcement" />
+        </service>
+
+        <!-- Restarts enforcement after a reboot when it was previously active. -->
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -47,5 +90,16 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Apps that can be launched; lets the picker resolve launchable apps. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <!-- Controlled apps the blocking engine must see by package name. Keep in
+             sync with ControlledApps.slugToPackage (Dart). -->
+        <package android:name="com.google.android.apps.youtube.kids" />
+        <package android:name="com.roblox.client" />
+        <package android:name="com.supercell.brawlstars" />
+        <package android:name="com.mojang.minecraftpe" />
     </queries>
 </manifest>

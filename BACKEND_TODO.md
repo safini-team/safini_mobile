@@ -34,20 +34,14 @@ Backend behaviour here is correct. Nothing to change.
 
 ---
 
-## 1. Controlled apps catalog — MISSING
+## 1. Controlled apps catalog — ✅ NOW LIVE (backend done; client not wired yet)
 
-**Problem:** the parent "Add app" flow fails with
-`Controlled app was not found`, because `PUT /children/{id}/app-rules/{slug}`
-only accepts a slug from the server-side `app_catalog`, and there is **no
-endpoint to fetch that catalog**. The mobile app currently hardcodes the list
-(`youtube-kids`, `roblox`, `brawl-stars`, `minecraft`).
+**Was:** the parent "Add app" flow hardcoded the list
+(`youtube-kids`, `roblox`, `brawl-stars`, `minecraft`) because no catalog
+endpoint existed.
 
-**Fix:**
-
-```
-GET /v1/apps
-Auth: Bearer <access_token> (parent)
-```
+**Now:** `GET /v1/apps` is live (verified against `https://api.safini.fun/openapi.json`
+on 2026-08-24). It returns:
 
 ```json
 {
@@ -57,15 +51,20 @@ Auth: Bearer <access_token> (parent)
       "display_name": "YouTube Kids",
       "default_daily_limit_minutes": 60,
       "default_redeem_coin_cost": 100,
-      "default_redeem_reward_minutes": 30
+      "default_redeem_reward_minutes": 30,
+      "default_is_limited": true,
+      "default_can_redeem": true,
+      "is_default_for_new_child": true
     }
   ]
 }
 ```
 
-Source: the same `app_catalog` table that validates `PUT /app-rules`.
+**Client TODO:** replace the hardcoded `_knownApps` list in
+`parent_apps_screen.dart` with a fetch of `GET /v1/apps`.
 
-**Unblocks:** the real, current catalog in "Add app" with no client hardcoding.
+Note: `GET /children/{id}/app-usage` also gained `bonus_minutes_remaining` and
+`total_minutes_available` fields (additive; existing parsing still works).
 
 ---
 
@@ -100,6 +99,56 @@ Auth: Bearer <access_token> (parent of this child)
 
 ---
 
+## 4. Child installed-apps list — MISSING (app-blocking feature)
+
+**Problem:** the parent needs to see the apps that are actually installed on the
+child's device (to monitor and, later, to pick which apps to control). The child
+device can enumerate them natively, but there is **no endpoint to store or read
+that list**. The mobile side is already built against the contract below (child
+uploads on app start; parent reads).
+
+**Fix:**
+
+```
+PUT /v1/children/{child_id}/installed-apps      (child uploads its own snapshot)
+GET /v1/children/{child_id}/installed-apps      (parent of child, or the child, reads)
+Auth: Bearer <access_token>
+```
+
+Request body for `PUT` (full snapshot — replace, not merge):
+
+```json
+{
+  "apps": [
+    { "package_name": "com.roblox.client", "app_name": "Roblox" },
+    { "package_name": "com.google.android.apps.youtube.kids", "app_name": "YouTube Kids" }
+  ]
+}
+```
+
+Response for `GET`:
+
+```json
+{
+  "apps": [
+    { "package_name": "com.roblox.client", "app_name": "Roblox" }
+  ],
+  "updated_at": "2026-08-24T12:00:00Z"
+}
+```
+
+- Access control: a child may write/read **only their own** row; a parent may
+  read (and should not write) their child's row.
+- Suggested storage: one `child_installed_apps` row per child holding the JSON
+  array + `updated_at`, replaced wholesale on each `PUT`.
+- Platform is Android-only for now (iOS cannot enumerate installed apps); an
+  optional `platform` field can be added later if needed.
+
+**Unblocks:** parent visibility of the child's real apps; foundation for a
+"pick from the child's apps" flow instead of the hardcoded catalog in #1.
+
+---
+
 ## 3. Child avatar in the family list — optional optimization
 
 `GET /families/current` does not include `avatar_state` in `children[]`, so to
@@ -116,9 +165,10 @@ show each child's face the app fetches that child's `/dashboard` separately.
 | # | Endpoint | Type | Status |
 |---|---|---|---|
 | — | `GET /children/{id}/home` | — | ✅ already complete, no change |
-| 1 | `GET /apps` | new | needed — unblocks "Add app" |
+| 1 | `GET /apps` | new | ✅ live — client needs to consume it |
 | 2 | `GET /children/{id}/activity` | new | needed — unblocks monitor widgets |
 | 3 | `avatar_state` in `families/current.children[]` | change | optional |
+| 4 | `PUT/GET /children/{id}/installed-apps` | new | needed — parent sees child's apps |
 
 Per `AGENTS.md`: branch `codex/...`, test-first, access control on every route,
 Alembic migration if schema changes, update the Scalar docs, then

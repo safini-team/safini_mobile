@@ -21,4 +21,17 @@ class ApiConst {
       '/v1/children/$childId/redemptions/app-time';
   static String redeemAvatarItem(String childId) =>
       '/v1/children/$childId/redemptions/avatar-items';
+
+  /// GET/POST — per-app usage + remaining minutes for a child.
+  static String childAppUsage(String childId) =>
+      '/v1/children/$childId/app-usage';
+
+  /// PUT — upsert a controlled-app rule (limit / enabled) for a child.
+  static String childAppRule(String childId, String appSlug) =>
+      '/v1/children/$childId/app-rules/$appSlug';
+
+  /// PUT (child uploads) / GET (parent reads) — the full list of apps installed
+  /// on the child's device. Proposed endpoint; see BACKEND_TODO.md.
+  static String childInstalledApps(String childId) =>
+      '/v1/children/$childId/installed-apps';
 }
