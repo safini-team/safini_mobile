@@ -72,23 +72,24 @@ class ChildAppBlockCubit extends Cubit<AppBlockState> {
   /// activates enforcement once both permissions are granted.
   Future<void> refreshPermissions() async {
     if (!_blockService.isSupported) return;
+    emit(state.copyWith(isChecking: true, errorMessage: null));
 
     final usage = await _blockService.hasUsageAccess();
     final overlay = await _blockService.hasOverlayPermission();
     if (isClosed) return;
 
-    emit(
-      state.copyWith(
-        hasUsageAccess: usage,
-        hasOverlayPermission: overlay,
-        status: (usage && overlay)
-            ? state.status
-            : AppBlockStatus.needsPermissions,
-      ),
-    );
-
     if (usage && overlay) {
+      emit(state.copyWith(hasUsageAccess: usage, hasOverlayPermission: overlay));
       await _activate();
+    } else {
+      emit(
+        state.copyWith(
+          hasUsageAccess: usage,
+          hasOverlayPermission: overlay,
+          status: AppBlockStatus.needsPermissions,
+          isChecking: false,
+        ),
+      );
     }
   }
 
@@ -158,7 +159,9 @@ class ChildAppBlockCubit extends Cubit<AppBlockState> {
       await syncNow();
       await _blockService.startService();
       _startSyncTimer();
-      if (!isClosed) emit(state.copyWith(status: AppBlockStatus.active));
+      if (!isClosed) {
+        emit(state.copyWith(status: AppBlockStatus.active, isChecking: false));
+      }
     } catch (e) {
       debugPrint('[ChildAppBlockCubit] activation failed: $e');
       if (!isClosed) {
@@ -166,6 +169,7 @@ class ChildAppBlockCubit extends Cubit<AppBlockState> {
           state.copyWith(
             status: AppBlockStatus.error,
             errorMessage: e.toString(),
+            isChecking: false,
           ),
         );
       }

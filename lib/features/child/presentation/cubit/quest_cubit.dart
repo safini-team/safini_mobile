@@ -20,6 +20,7 @@ class QuestCubit extends Cubit<QuestState> {
   Future<void> loadQuests() async {
     emit(state.copyWith(isLoading: true));
     final childId = await _resolveChildId();
+    if (isClosed) return;
     if (childId == null) {
       emit(state.copyWith(quests: const [], isLoading: false));
       return;
@@ -30,6 +31,7 @@ class QuestCubit extends Cubit<QuestState> {
     final tasksFuture = _childRepository.fetchChildToday(childId);
     final homeResult = await homeFuture;
     final tasksResult = await tasksFuture;
+    if (isClosed) return;
 
     String? nickname;
     int? doneToday;

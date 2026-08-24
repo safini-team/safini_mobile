@@ -22,12 +22,14 @@ class TasksCubit extends Cubit<TasksState> {
   Future<void> loadTasks() async {
     emit(state.copyWith(isLoading: true));
     final childId = await _resolveChildId();
+    if (isClosed) return;
     if (childId == null) {
       emit(state.copyWith(tasks: const [], isLoading: false));
       return;
     }
 
     final result = await _childRepository.fetchChildToday(childId);
+    if (isClosed) return;
     result.fold(
       (_) => emit(state.copyWith(tasks: const [], isLoading: false)),
       (response) => emit(

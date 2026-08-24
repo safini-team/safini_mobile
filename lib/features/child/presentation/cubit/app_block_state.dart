@@ -19,12 +19,14 @@ class AppBlockState {
   final AppBlockStatus status;
   final bool hasUsageAccess;
   final bool hasOverlayPermission;
+  final bool isChecking;
   final String? errorMessage;
 
   const AppBlockState({
     this.status = AppBlockStatus.initial,
     this.hasUsageAccess = false,
     this.hasOverlayPermission = false,
+    this.isChecking = false,
     this.errorMessage,
   });
 
@@ -38,12 +40,14 @@ class AppBlockState {
     AppBlockStatus? status,
     bool? hasUsageAccess,
     bool? hasOverlayPermission,
+    bool? isChecking,
     String? errorMessage,
   }) {
     return AppBlockState(
       status: status ?? this.status,
       hasUsageAccess: hasUsageAccess ?? this.hasUsageAccess,
       hasOverlayPermission: hasOverlayPermission ?? this.hasOverlayPermission,
+      isChecking: isChecking ?? this.isChecking,
       errorMessage: errorMessage,
     );
   }

@@ -46,6 +46,96 @@ class _ChildAppBlockGateState extends State<ChildAppBlockGate>
     }
   }
 
+  Future<void> _handleRecheck() async {
+    final cubit = context.read<ChildAppBlockCubit>();
+    await cubit.refreshPermissions();
+    if (!mounted) return;
+
+    final state = cubit.state;
+    if (state.status == AppBlockStatus.error) {
+      _showResultSheet(
+        icon: Icons.error_outline_rounded,
+        iconColor: AppColors.error,
+        title: 'Something went wrong',
+        message: state.errorMessage?.isNotEmpty == true
+            ? state.errorMessage!
+            : "Couldn't turn on app limits. Please try again.",
+      );
+    } else if (!state.hasAllPermissions) {
+      _showResultSheet(
+        icon: Icons.info_outline_rounded,
+        iconColor: AppColors.primary,
+        title: 'Permissions not detected yet',
+        message: "Safini still can't see both permissions turned on. Open "
+            'Settings, grant them, then come back and tap this button again.',
+      );
+    }
+  }
+
+  void _showResultSheet({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String message,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Icon(icon, color: iconColor, size: 32),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.ink,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(sheetContext),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Text(
+                    'Got it',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChildAppBlockCubit, AppBlockState>(
@@ -60,7 +150,7 @@ class _ChildAppBlockGateState extends State<ChildAppBlockGate>
               context.read<ChildAppBlockCubit>().requestUsageAccess(),
           onGrantOverlay: () =>
               context.read<ChildAppBlockCubit>().requestOverlayPermission(),
-          onRecheck: () => context.read<ChildAppBlockCubit>().refreshPermissions(),
+          onRecheck: _handleRecheck,
           onSkip: () => setState(() => _dismissedForSession = true),
         );
       },
@@ -72,7 +162,7 @@ class _PermissionScreen extends StatelessWidget {
   final AppBlockState state;
   final VoidCallback onGrantUsage;
   final VoidCallback onGrantOverlay;
-  final VoidCallback onRecheck;
+  final Future<void> Function() onRecheck;
   final VoidCallback onSkip;
 
   const _PermissionScreen({
@@ -149,26 +239,40 @@ class _PermissionScreen extends StatelessWidget {
               SizedBox(
                 height: 54,
                 child: ElevatedButton(
-                  onPressed: onRecheck,
+                  onPressed: state.isChecking ? null : onRecheck,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
+                    disabledBackgroundColor: AppColors.primary.withValues(
+                      alpha: 0.6,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: Text(
-                    state.hasAllPermissions ? 'Continue' : 'I\'ve granted these',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  child: state.isChecking
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          state.hasAllPermissions
+                              ? 'Continue'
+                              : 'I\'ve granted these',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: onSkip,
+                onPressed: state.isChecking ? null : onSkip,
                 child: const Text(
                   'Not now',
                   style: TextStyle(
