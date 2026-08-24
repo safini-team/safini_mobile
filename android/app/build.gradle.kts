@@ -59,6 +59,14 @@ android {
                 storeFile = file(keyLocalProperties["storeFile"] as String)
             }
         }
+        getByName("debug") {
+            // Shared debug key so every dev's debug build has the same SHA-1
+            // (needed for Google Sign-In's Android OAuth client to work for everyone).
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {

@@ -12,3 +12,5 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+# Shared debug-only key (not sensitive) — used so every dev's debug build has the same SHA-1.
+!app/debug.keystore
