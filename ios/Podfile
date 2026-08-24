@@ -1,5 +1,8 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '15.0'
+# iOS 17.4, matching the PRD and the landing FAQ. FamilyControls and the
+# Screen Time shield behaviour Safini needs are not usable below it, so
+# installing on an older device could never enforce anything.
+platform :ios, '17.4'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'

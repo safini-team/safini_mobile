@@ -56,7 +56,9 @@ class _ReviewSheetState extends State<_ReviewSheet> {
     final kid = widget.childName ?? '';
     final coins = task.rewardCoins ?? 0;
     final note = (task.submissionNote ?? '').trim();
-    final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('photo');
+    // proof_mode is `text_image` when a photo was asked for. The old check
+    // looked for 'photo', which never matches, so this panel never rendered.
+    final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('image');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

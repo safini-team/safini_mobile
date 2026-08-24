@@ -15,6 +15,8 @@ import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_v
 import 'package:safini/features/parent/presentation/widgets/layout/parent_task_states.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/task_sheet.dart';
+import 'package:safini/core/utils/task_category.dart';
+import 'package:safini/core/utils/relative_date.dart';
 
 /// Scope key used by the "Everyone" chip.
 const String _allScope = 'all';
@@ -29,6 +31,11 @@ class ParentTasksScreen extends StatefulWidget {
 class _ParentTasksScreenState extends State<ParentTasksScreen> {
   String _scope = _allScope;
   TaskLane _lane = TaskLane.review;
+
+  /// Until the parent picks a lane themselves, the screen opens on whichever
+  /// one has something in it. Landing on an empty "To review" was the default
+  /// on most days.
+  bool _laneChosenByUser = false;
 
   Future<void> _reload() {
     final cubit = context.read<ParentTasksCubit>();
@@ -68,7 +75,10 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         return ParentTasksView(
           data: _buildData(context, loaded),
           onSelectScope: _selectScope,
-          onSelectLane: (lane) => setState(() => _lane = lane),
+          onSelectLane: (lane) => setState(() {
+            _lane = lane;
+            _laneChosenByUser = true;
+          }),
           onOpenTask: (row) => _openTask(context, loaded, row.id),
           onNewTask: () => _openTask(context, loaded, null),
           onRefresh: _reload,
@@ -169,13 +179,17 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       TaskLane.done: loaded.completedTasks.length,
     };
 
+    final lane = _laneChosenByUser
+        ? _lane
+        : (counts[TaskLane.review]! > 0 ? TaskLane.review : TaskLane.active);
+
     final rows = loaded.tasks
-        .where((task) => laneOf(task) == _lane)
+        .where((task) => laneOf(task) == lane)
         .map(
           (task) => TaskRowData(
             id: task.id,
             title: task.displayTitle,
-            meta: _metaFor(task),
+            meta: _metaFor(context, s, task),
             emoji: task.emoji ?? '📋',
             lane: laneOf(task),
             coins: task.rewardCoins ?? 0,
@@ -231,14 +245,14 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       ],
       selectedScope: _scope,
       laneCounts: counts,
-      lane: _lane,
+      lane: lane,
       groups: groups,
-      emptyTitle: switch (_lane) {
+      emptyTitle: switch (lane) {
         TaskLane.review => s.emptyNothingToReview,
         TaskLane.active => s.emptyNoActiveTasks,
         TaskLane.done => s.emptyNothingPaidYet,
       },
-      emptyBody: switch (_lane) {
+      emptyBody: switch (lane) {
         TaskLane.review => s.emptyReviewBody,
         TaskLane.active => s.emptyActiveBody,
         TaskLane.done => s.emptyDoneBody,
@@ -246,11 +260,15 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     );
   }
 
-  String _metaFor(ParentTaskInstanceModel task) {
+  /// "Home · Today", not "home · 2026-08-23". The row used to print the raw
+  /// category slug and an ISO date, untranslated, in all three languages.
+  String _metaFor(BuildContext context, S s, ParentTaskInstanceModel task) {
     final parts = <String>[
-      if ((task.category ?? '').isNotEmpty) task.category!,
-      if ((task.dueOn ?? '').isNotEmpty) task.dueOn!,
-    ];
+      taskCategoryLabel(s, task.category),
+      relativeDateLabel(context, s, DateTime.tryParse(task.dueOn ?? '')),
+      if (task.recurrence == 'daily') s.repeatDailyShort,
+      if (task.recurrence == 'weekly') s.repeatWeeklyShort,
+    ].where((part) => part.isNotEmpty).toList();
     return parts.join(' · ');
   }
 }

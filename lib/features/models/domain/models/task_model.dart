@@ -56,6 +56,12 @@ class TaskModel {
   final String? targetUnit;
   final Map<String, dynamic>? metadata;
   final String? dueOn;
+
+  /// `none` | `daily` | `weekly`, and the weekday bitmask for `weekly`
+  /// (Mon=1 ... Sun=64). A rule makes the task a template.
+  final String recurrence;
+  final int? recurrenceDays;
+
   final String? status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -76,6 +82,8 @@ class TaskModel {
     this.targetUnit,
     this.metadata,
     this.dueOn,
+    this.recurrence = 'none',
+    this.recurrenceDays,
     this.status,
     this.createdAt,
     this.updatedAt,

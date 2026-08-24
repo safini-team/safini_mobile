@@ -1,3 +1,4 @@
+import 'package:safini/core/utils/display_name.dart';
 class ParentUserModel {
   final String userId;
   final String? email;
@@ -45,6 +46,7 @@ class ParentUserModel {
     };
   }
 
-  String get name =>
-      displayName?.trim().isNotEmpty == true ? displayName!.trim() : 'NoName';
+  /// Empty when the server has no name and no usable email; the widget
+  /// substitutes a localized placeholder.
+  String get name => resolveDisplayName(displayName, email: email);
 }

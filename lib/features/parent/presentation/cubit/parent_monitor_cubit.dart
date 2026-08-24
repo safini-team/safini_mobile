@@ -130,13 +130,17 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
       'used': app.usedMinutes,
       'limit': app.dailyLimitMinutes,
       'icon': null,
-      'isEnabled': app.isEnabled,
+      'isLimited': app.isLimited,
+      'canRedeem': app.canRedeem,
+      'cost': app.redeemCoinCost,
+      'reward': app.redeemRewardMinutes,
     };
   }
 
-  /// Toggles an app's redemption rule for the selected child and persists it
-  /// via PUT /children/{id}/app-rules/{slug}. Optimistic with revert on failure.
-  Future<void> toggleAppLimit(String appSlug, bool isEnabled) async {
+  /// Toggles whether the daily limit applies for the selected child and
+  /// persists it via PUT /children/{id}/app-rules/{slug}. Optimistic with
+  /// revert on failure.
+  Future<void> toggleAppLimit(String appSlug, bool isLimited) async {
     final current = state;
     if (current is! ParentMonitorLoaded) return;
     final child = current.selectedChild;
@@ -147,7 +151,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
     final previous = _appUsage;
     _appUsage = List.of(_appUsage)
-      ..[index] = _appUsage[index].copyWith(isEnabled: isEnabled);
+      ..[index] = _appUsage[index].copyWith(isLimited: isLimited);
     emit(current.copyWith(appLimits: _appUsage.map(_toLimitMap).toList()));
 
     final result = await _appUsageRepo.updateAppRule(child.id, _appUsage[index]);

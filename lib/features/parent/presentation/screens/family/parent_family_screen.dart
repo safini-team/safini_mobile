@@ -190,7 +190,9 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
           : DateFormat.yMMM(
               Localizations.localeOf(context).toLanguageTag(),
             ).format(parent!.joinedAt!),
-      canRemove: !row.isYou,
+      // DELETE /v1/families/parents/{id} does not exist on the API, so the
+      // button only ever produced a 404. Hidden until SAF-134 ships it.
+      canRemove: false,
       onCreateCode: () async {
         final invite = await cubit.createParentInviteCode();
         if (invite == null && mounted) {
@@ -296,19 +298,23 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
   Future<void> _openChild(FamilyChildCard card) async {
     final cubit = context.read<ParentFamilyCubit>();
     final navigator = Navigator.of(context);
+    // Resolved up front: the callback runs after an await, so reaching for
+    // `context` inside it would be a use-after-async-gap.
+    final fallbackError = S.of(context).genericErrorRetry;
 
     final action = await showChildSheet(
       context,
       child: card,
       onCreateCode: () async {
         final invite = await cubit.createChildInviteCode(card.id);
-        if (invite == null && mounted) {
-          final message = cubit.state.errorMessage;
-          if (message != null && message.isNotEmpty) {
-            AppSnackBar.error(context, message);
-          }
-        }
-        return invite?.inviteCode;
+        if (invite != null) return (code: invite.inviteCode, error: null);
+        // The backend refuses a code for a child who is already connected, and
+        // there is no unlink endpoint yet, so say what the parent has to do.
+        final message = cubit.state.errorMessage;
+        return (
+          code: null,
+          error: message == null || message.isEmpty ? fallbackError : message,
+        );
       },
     );
 

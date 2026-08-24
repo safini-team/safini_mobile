@@ -114,6 +114,7 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           final locked = map['is_locked'] == true || map['locked'] == true;
           return AvatarItem(
             id: key,
+            name: _stringValue(map, ['name', 'display_name']),
             emoji: _emojiForAvatarKey(key),
             cost: owned ? null : _intValue(map, ['coin_cost', 'cost']),
             isEquipped: equipped,

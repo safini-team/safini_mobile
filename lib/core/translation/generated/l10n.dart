@@ -760,10 +760,12 @@ class S {
     );
   }
 
-  /// `You need {count} more coins.`
+  /// `{count, plural, =1{You need 1 more coin.} other{You need {count} more coins.}}`
   String youNeedMoreCoins(int count) {
-    return Intl.message(
-      'You need $count more coins.',
+    return Intl.plural(
+      count,
+      one: 'You need 1 more coin.',
+      other: 'You need $count more coins.',
       name: 'youNeedMoreCoins',
       desc: '',
       args: [count],
@@ -775,10 +777,12 @@ class S {
     return Intl.message('Coming soon!', name: 'comingSoon', desc: '', args: []);
   }
 
-  /// `{count} coins`
+  /// `{count, plural, =1{1 coin} other{{count} coins}}`
   String coinsCount(int count) {
-    return Intl.message(
-      '$count coins',
+    return Intl.plural(
+      count,
+      one: '1 coin',
+      other: '$count coins',
       name: 'coinsCount',
       desc: '',
       args: [count],
@@ -1105,10 +1109,12 @@ class S {
     );
   }
 
-  /// `{minutes} minutes remaining`
+  /// `{minutes, plural, =1{1 minute remaining} other{{minutes} minutes remaining}}`
   String minutesRemainingLong(int minutes) {
-    return Intl.message(
-      '$minutes minutes remaining',
+    return Intl.plural(
+      minutes,
+      one: '1 minute remaining',
+      other: '$minutes minutes remaining',
       name: 'minutesRemainingLong',
       desc: '',
       args: [minutes],
@@ -2055,10 +2061,10 @@ class S {
     return Intl.message('Saved', name: 'profileUpdated', desc: '', args: []);
   }
 
-  /// `Your parent approves before it is yours`
+  /// `Your coins, your choice`
   String get storeSubtitle {
     return Intl.message(
-      'Your parent approves before it is yours',
+      'Your coins, your choice',
       name: 'storeSubtitle',
       desc: '',
       args: [],
@@ -2070,10 +2076,10 @@ class S {
     return Intl.message('Screen time', name: 'screenTime', desc: '', args: []);
   }
 
-  /// `{name} has {time} left today`
+  /// `{name} has {time} left across all apps`
   String kidHasLeftToday(Object name, Object time) {
     return Intl.message(
-      '$name has $time left today',
+      '$name has $time left across all apps',
       name: 'kidHasLeftToday',
       desc: '',
       args: [name, time],
@@ -2271,10 +2277,10 @@ class S {
     );
   }
 
-  /// `Coins are paid out only after you approve. Repeating tasks reset at midnight.`
+  /// `Coins are paid out only after you approve. Repeating tasks come back the next day.`
   String get coinsPaidAfterApproval {
     return Intl.message(
-      'Coins are paid out only after you approve. Repeating tasks reset at midnight.',
+      'Coins are paid out only after you approve. Repeating tasks come back the next day.',
       name: 'coinsPaidAfterApproval',
       desc: '',
       args: [],
@@ -2351,10 +2357,10 @@ class S {
     );
   }
 
-  /// `{name} · daily allowance`
+  /// `{name} · all apps combined`
   String dailyAllowanceFor(Object name) {
     return Intl.message(
-      '$name · daily allowance',
+      '$name · all apps combined',
       name: 'dailyAllowanceFor',
       desc: '',
       args: [name],
@@ -2396,11 +2402,21 @@ class S {
     return Intl.message('Add an app', name: 'addAnApp', desc: '', args: []);
   }
 
-  /// `A blocked app disappears from the home screen. Apps with no limit are always allowed.`
+  /// `When the daily limit runs out, the app stops opening and shows the Safini screen instead.`
   String get limitsFootnote {
     return Intl.message(
-      'A blocked app disappears from the home screen. Apps with no limit are always allowed.',
+      'When the daily limit runs out, the app stops opening and shows the Safini screen instead.',
       name: 'limitsFootnote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limits are counted, not yet enforced. Finish setup on your child's phone.`
+  String get limitsNotYetEnforced {
+    return Intl.message(
+      'Limits are counted, not yet enforced. Finish setup on your child\'s phone.',
+      name: 'limitsNotYetEnforced',
       desc: '',
       args: [],
     );
@@ -2666,10 +2682,12 @@ class S {
     return Intl.message('Not set', name: 'notSet', desc: '', args: []);
   }
 
-  /// `{age} years old`
-  String yearsOld(Object age) {
-    return Intl.message(
-      '$age years old',
+  /// `{age, plural, =1{1 year old} other{{age} years old}}`
+  String yearsOld(num age) {
+    return Intl.plural(
+      age,
+      one: '1 year old',
+      other: '$age years old',
       name: 'yearsOld',
       desc: '',
       args: [age],
@@ -2941,10 +2959,12 @@ class S {
     );
   }
 
-  /// `{count}-day streak`
-  String nDayStreak(Object count) {
-    return Intl.message(
-      '$count-day streak',
+  /// `{count, plural, =1{1-day streak} other{{count}-day streak}}`
+  String nDayStreak(num count) {
+    return Intl.plural(
+      count,
+      one: '1-day streak',
+      other: '$count-day streak',
       name: 'nDayStreak',
       desc: '',
       args: [count],
@@ -2996,10 +3016,12 @@ class S {
     );
   }
 
-  /// `{count} coins to go`
-  String coinsToGo(Object count) {
-    return Intl.message(
-      '$count coins to go',
+  /// `{count, plural, =1{1 coin to go} other{{count} coins to go}}`
+  String coinsToGo(num count) {
+    return Intl.plural(
+      count,
+      one: '1 coin to go',
+      other: '$count coins to go',
       name: 'coinsToGo',
       desc: '',
       args: [count],
@@ -3096,10 +3118,10 @@ class S {
     );
   }
 
-  /// `Added to today only, once your parent approves.`
+  /// `Added straight away. Use it today, it expires at midnight.`
   String get rewardBlurbAppTime {
     return Intl.message(
-      'Added to today only, once your parent approves.',
+      'Added straight away. Use it today, it expires at midnight.',
       name: 'rewardBlurbAppTime',
       desc: '',
       args: [],
@@ -3116,9 +3138,9 @@ class S {
     );
   }
 
-  /// `Ask for this`
+  /// `Unlock now`
   String get askForThis {
-    return Intl.message('Ask for this', name: 'askForThis', desc: '', args: []);
+    return Intl.message('Unlock now', name: 'askForThis', desc: '', args: []);
   }
 
   /// `Not yet`
@@ -3126,10 +3148,12 @@ class S {
     return Intl.message('Not yet', name: 'notYet', desc: '', args: []);
   }
 
-  /// `{count} more coins needed`
-  String moreCoinsNeeded(Object count) {
-    return Intl.message(
-      '$count more coins needed',
+  /// `{count, plural, =1{1 more coin needed} other{{count} more coins needed}}`
+  String moreCoinsNeeded(num count) {
+    return Intl.plural(
+      count,
+      one: '1 more coin needed',
+      other: '$count more coins needed',
       name: 'moreCoinsNeeded',
       desc: '',
       args: [count],
@@ -3156,20 +3180,24 @@ class S {
     );
   }
 
-  /// `{count} tasks done`
-  String badgeTasksDone(Object count) {
-    return Intl.message(
-      '$count tasks done',
+  /// `{count, plural, =1{1 task done} other{{count} tasks done}}`
+  String badgeTasksDone(num count) {
+    return Intl.plural(
+      count,
+      one: '1 task done',
+      other: '$count tasks done',
       name: 'badgeTasksDone',
       desc: '',
       args: [count],
     );
   }
 
-  /// `{count} coins`
-  String badgeCoins(Object count) {
-    return Intl.message(
-      '$count coins',
+  /// `{count, plural, =1{1 coin} other{{count} coins}}`
+  String badgeCoins(num count) {
+    return Intl.plural(
+      count,
+      one: '1 coin',
+      other: '$count coins',
       name: 'badgeCoins',
       desc: '',
       args: [count],
@@ -3236,10 +3264,12 @@ class S {
     );
   }
 
-  /// `{count} coins to go`
-  String coinsToGoShort(Object count) {
-    return Intl.message(
-      '$count coins to go',
+  /// `{count, plural, =1{1 coin to go} other{{count} coins to go}}`
+  String coinsToGoShort(num count) {
+    return Intl.plural(
+      count,
+      one: '1 coin to go',
+      other: '$count coins to go',
       name: 'coinsToGoShort',
       desc: '',
       args: [count],
@@ -3546,6 +3576,16 @@ class S {
     return Intl.message('Try again', name: 'tryAgain', desc: '', args: []);
   }
 
+  /// `Something went wrong. Please try again.`
+  String get genericErrorRetry {
+    return Intl.message(
+      'Something went wrong. Please try again.',
+      name: 'genericErrorRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Your name`
   String get yourName {
     return Intl.message('Your name', name: 'yourName', desc: '', args: []);
@@ -3563,6 +3603,16 @@ class S {
       name: 'youSuffix',
       desc: '',
       args: [name],
+    );
+  }
+
+  /// `This parent`
+  String get displayNameFallback {
+    return Intl.message(
+      'This parent',
+      name: 'displayNameFallback',
+      desc: '',
+      args: [],
     );
   }
 
@@ -3604,6 +3654,281 @@ class S {
   /// `m`
   String get unitMinute {
     return Intl.message('m', name: 'unitMinute', desc: '', args: []);
+  }
+
+  /// `Other`
+  String get catOther {
+    return Intl.message('Other', name: 'catOther', desc: '', args: []);
+  }
+
+  /// `Repeat`
+  String get repeatLabel {
+    return Intl.message('Repeat', name: 'repeatLabel', desc: '', args: []);
+  }
+
+  /// `Once`
+  String get repeatOnce {
+    return Intl.message('Once', name: 'repeatOnce', desc: '', args: []);
+  }
+
+  /// `Every day`
+  String get repeatDaily {
+    return Intl.message('Every day', name: 'repeatDaily', desc: '', args: []);
+  }
+
+  /// `Some days`
+  String get repeatWeekly {
+    return Intl.message('Some days', name: 'repeatWeekly', desc: '', args: []);
+  }
+
+  /// `Daily`
+  String get repeatDailyShort {
+    return Intl.message('Daily', name: 'repeatDailyShort', desc: '', args: []);
+  }
+
+  /// `Weekly`
+  String get repeatWeeklyShort {
+    return Intl.message(
+      'Weekly',
+      name: 'repeatWeeklyShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mon`
+  String get weekdayMon {
+    return Intl.message('Mon', name: 'weekdayMon', desc: '', args: []);
+  }
+
+  /// `Tue`
+  String get weekdayTue {
+    return Intl.message('Tue', name: 'weekdayTue', desc: '', args: []);
+  }
+
+  /// `Wed`
+  String get weekdayWed {
+    return Intl.message('Wed', name: 'weekdayWed', desc: '', args: []);
+  }
+
+  /// `Thu`
+  String get weekdayThu {
+    return Intl.message('Thu', name: 'weekdayThu', desc: '', args: []);
+  }
+
+  /// `Fri`
+  String get weekdayFri {
+    return Intl.message('Fri', name: 'weekdayFri', desc: '', args: []);
+  }
+
+  /// `Sat`
+  String get weekdaySat {
+    return Intl.message('Sat', name: 'weekdaySat', desc: '', args: []);
+  }
+
+  /// `Sun`
+  String get weekdaySun {
+    return Intl.message('Sun', name: 'weekdaySun', desc: '', args: []);
+  }
+
+  /// `Pick at least one day.`
+  String get pickAtLeastOneDay {
+    return Intl.message(
+      'Pick at least one day.',
+      name: 'pickAtLeastOneDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today`
+  String get dateToday {
+    return Intl.message('Today', name: 'dateToday', desc: '', args: []);
+  }
+
+  /// `Tomorrow`
+  String get dateTomorrow {
+    return Intl.message('Tomorrow', name: 'dateTomorrow', desc: '', args: []);
+  }
+
+  /// `Yesterday`
+  String get dateYesterday {
+    return Intl.message('Yesterday', name: 'dateYesterday', desc: '', args: []);
+  }
+
+  /// `Can buy extra time`
+  String get canBuyExtraTime {
+    return Intl.message(
+      'Can buy extra time',
+      name: 'canBuyExtraTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off means the daily limit is final`
+  String get canBuyExtraTimeHint {
+    return Intl.message(
+      'Off means the daily limit is final',
+      name: 'canBuyExtraTimeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily limit`
+  String get dailyLimitToggle {
+    return Intl.message(
+      'Daily limit',
+      name: 'dailyLimitToggle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off means this app is never capped`
+  String get dailyLimitToggleHint {
+    return Intl.message(
+      'Off means this app is never capped',
+      name: 'dailyLimitToggleHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No free time`
+  String get noFreeTime {
+    return Intl.message('No free time', name: 'noFreeTime', desc: '', args: []);
+  }
+
+  /// `Price`
+  String get priceLabel {
+    return Intl.message('Price', name: 'priceLabel', desc: '', args: []);
+  }
+
+  /// `{cost} coins for {time}`
+  String priceUnit(Object cost, Object time) {
+    return Intl.message(
+      '$cost coins for $time',
+      name: 'priceUnit',
+      desc: '',
+      args: [cost, time],
+    );
+  }
+
+  /// `Use it today, it expires at midnight.`
+  String get expiresTonight {
+    return Intl.message(
+      'Use it today, it expires at midnight.',
+      name: 'expiresTonight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{minutes} m left today`
+  String minutesLeftToday(Object minutes) {
+    return Intl.message(
+      '$minutes m left today',
+      name: 'minutesLeftToday',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Daily screen time`
+  String get screenTimeCap {
+    return Intl.message(
+      'Daily screen time',
+      name: 'screenTimeCap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Across every controlled app. Off means per-app limits only.`
+  String get screenTimeCapHint {
+    return Intl.message(
+      'Across every controlled app. Off means per-app limits only.',
+      name: 'screenTimeCapHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No overall cap`
+  String get noScreenTimeCap {
+    return Intl.message(
+      'No overall cap',
+      name: 'noScreenTimeCap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a photo`
+  String get addPhoto {
+    return Intl.message('Add a photo', name: 'addPhoto', desc: '', args: []);
+  }
+
+  /// `Retake`
+  String get retakePhoto {
+    return Intl.message('Retake', name: 'retakePhoto', desc: '', args: []);
+  }
+
+  /// `Could not upload the photo. Try again.`
+  String get photoUploadFailed {
+    return Intl.message(
+      'Could not upload the photo. Try again.',
+      name: 'photoUploadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This task needs a photo.`
+  String get photoRequired {
+    return Intl.message(
+      'This task needs a photo.',
+      name: 'photoRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take a photo`
+  String get takePhoto {
+    return Intl.message('Take a photo', name: 'takePhoto', desc: '', args: []);
+  }
+
+  /// `Choose from library`
+  String get chooseFromLibrary {
+    return Intl.message(
+      'Choose from library',
+      name: 'chooseFromLibrary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minutes per purchase`
+  String get minutesPerPurchase {
+    return Intl.message(
+      'Minutes per purchase',
+      name: 'minutesPerPurchase',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{cost} · {gap} to go`
+  String priceAndGap(Object cost, Object gap) {
+    return Intl.message(
+      '$cost · $gap to go',
+      name: 'priceAndGap',
+      desc: '',
+      args: [cost, gap],
+    );
   }
 }
 

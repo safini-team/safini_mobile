@@ -163,7 +163,8 @@ class SampleData {
         emoji: '🎮',
         usedMinutes: 62,
         limitMinutes: 45,
-        isEnabled: true,
+        isLimited: true,
+        canRedeem: true,
       ),
       LimitsApp(
         slug: 'youtube-kids',
@@ -171,7 +172,8 @@ class SampleData {
         emoji: '📺',
         usedMinutes: 38,
         limitMinutes: 60,
-        isEnabled: true,
+        isLimited: true,
+        canRedeem: true,
       ),
       LimitsApp(
         slug: 'telegram',
@@ -179,7 +181,8 @@ class SampleData {
         emoji: '💬',
         usedMinutes: 21,
         limitMinutes: 0,
-        isEnabled: false,
+        isLimited: false,
+        canRedeem: false,
       ),
       LimitsApp(
         slug: 'spotify',
@@ -187,7 +190,8 @@ class SampleData {
         emoji: '🎵',
         usedMinutes: 9,
         limitMinutes: 30,
-        isEnabled: true,
+        isLimited: true,
+        canRedeem: true,
       ),
       LimitsApp(
         slug: 'duolingo',
@@ -195,7 +199,8 @@ class SampleData {
         emoji: '📚',
         usedMinutes: 24,
         limitMinutes: 45,
-        isEnabled: true,
+        isLimited: true,
+        canRedeem: true,
       ),
     ],
   );
