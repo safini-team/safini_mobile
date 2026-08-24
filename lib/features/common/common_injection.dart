@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
+import 'package:safini/features/common/auth/data/account_deletion_service.dart';
 import 'package:safini/features/common/auth/data/user_me_service.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
@@ -19,6 +20,9 @@ import 'package:safini/features/models/domain/repositories/i_child_repository.da
 
 void registerCommonDependencies(GetIt sl) {
   // ── Auth ───────────────────────────────────────────────────────────────────
+  sl.registerLazySingleton<AccountDeletionService>(
+    () => AccountDeletionService(sl()),
+  );
   sl.registerLazySingleton<AuthGoogleSignInService>(
     AuthGoogleSignInService.new,
   );

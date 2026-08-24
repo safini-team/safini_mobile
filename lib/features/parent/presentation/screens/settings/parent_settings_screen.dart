@@ -10,6 +10,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/language_sheet.dart';
+import 'package:safini/features/common/auth/presentation/account_deletion_flow.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 
 /// Parent · Settings, pushed from My family.
@@ -90,6 +91,13 @@ class ParentSettingsScreen extends StatelessWidget {
                             ],
                           ),
                         ),
+                        DsRow(
+                          onTap: () => openPrivacyPolicy(context),
+                          title: s.privacyPolicy,
+                          subtitle: s.privacyPolicySubtitle,
+                          verticalPadding: 15,
+                          trailing: AppIcons.chevronRight(),
+                        ),
                       ],
                     ),
                   ),
@@ -103,6 +111,18 @@ class ParentSettingsScreen extends StatelessWidget {
                     child: DsDestructiveButton(
                       label: s.logout,
                       onTap: () => _confirmSignOut(context, s),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.gutter,
+                      12,
+                      AppSpacing.gutter,
+                      0,
+                    ),
+                    child: DsDestructiveButton(
+                      label: s.deleteAccount,
+                      onTap: () => showAccountDeletionFlow(context),
                     ),
                   ),
                   const SizedBox(height: 16),

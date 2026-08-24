@@ -17,6 +17,7 @@ import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
+import 'package:safini/features/common/auth/presentation/account_deletion_flow.dart';
 
 class ChildProfileScreen extends StatelessWidget {
   const ChildProfileScreen({super.key});
@@ -198,11 +199,25 @@ class ChildMeSettings extends StatelessWidget {
             ),
           ),
           DsRow(
+            title: s.privacyPolicy,
+            subtitle: s.privacyPolicySubtitle,
+            verticalPadding: 15,
+            onTap: () => openPrivacyPolicy(context),
+            trailing: AppIcons.chevronRight(),
+          ),
+          DsRow(
             title: s.logout,
             verticalPadding: 15,
             titleColor: AppColors.danger,
             titleStyle: AppText.rowTitleStrong,
             onTap: () => _signOut(context, s),
+          ),
+          DsRow(
+            title: s.deleteAccount,
+            verticalPadding: 15,
+            titleColor: AppColors.danger,
+            titleStyle: AppText.rowTitleStrong,
+            onTap: () => showAccountDeletionFlow(context),
           ),
         ],
       ),
