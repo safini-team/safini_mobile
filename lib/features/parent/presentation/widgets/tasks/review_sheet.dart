@@ -59,6 +59,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
     // proof_mode is `text_image` when a photo was asked for. The old check
     // looked for 'photo', which never matches, so this panel never rendered.
     final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('image');
+    final photoUrl = (task.submissionImageUrl ?? '').trim();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -93,6 +94,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
           const SizedBox(height: 18),
           Container(
             height: 170,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: AppColors.fill,
               borderRadius: BorderRadius.circular(AppRadius.card),
@@ -101,17 +103,41 @@ class _ReviewSheetState extends State<_ReviewSheet> {
                 style: BorderStyle.solid,
               ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppIcons.camera(),
-                const SizedBox(height: 8),
-                Text(
-                  s.photoProofAsked,
-                  style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
-                ),
-              ],
-            ),
+            child: photoUrl.isEmpty
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AppIcons.camera(),
+                      const SizedBox(height: 8),
+                      Text(
+                        s.photoProofAsked,
+                        style: AppText.metaSm.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                    ],
+                  )
+                : Image.network(
+                    photoUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    // The URL expires in five minutes. A sheet left open past
+                    // that shows the same panel as a task with no photo, not a
+                    // broken image.
+                    errorBuilder: (context, _, _) => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AppIcons.camera(),
+                        const SizedBox(height: 8),
+                        Text(
+                          s.photoProofAsked,
+                          style: AppText.metaSm.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
           ),
         ],
         if (note.isNotEmpty) ...[

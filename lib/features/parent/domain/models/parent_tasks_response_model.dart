@@ -192,6 +192,11 @@ class ParentTaskInstanceModel {
   /// The note the child wrote when submitting the task for review.
   final String? submissionNote;
 
+  /// Short-lived signed URL for the proof photo. The API attaches it only to
+  /// tasks still awaiting review - signing every historical row would be a
+  /// Storage round trip per task on a hot path.
+  final String? submissionImageUrl;
+
   /// The note the parent left when approving/rejecting the task.
   final String? reviewNote;
 
@@ -214,6 +219,7 @@ class ParentTaskInstanceModel {
     this.recurrence = 'none',
     this.recurrenceDays,
     this.submissionNote,
+    this.submissionImageUrl,
     this.reviewNote,
   });
 
@@ -261,6 +267,10 @@ class ParentTaskInstanceModel {
         'submission_note',
         'submissionNote',
         'note',
+      ]),
+      submissionImageUrl: _nullableStringValue(json, [
+        'submission_image_url',
+        'submissionImageUrl',
       ]),
       reviewNote: _nullableStringValue(json, [
         'review_note',
