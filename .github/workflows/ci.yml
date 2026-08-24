@@ -111,7 +111,7 @@ jobs:
               print(f"::error::live API serves {route}, which the vendored spec does not describe")
           if stale or missing:
               print(f"vendored {vendored_version}, live {live_version}")
-              print("Refresh: curl -s https://api.safini.fun/openapi.json | python3 -m json.tool > lib/api_reference/api.json")
+              print("Refresh: make openapi")
               sys.exit(1)
           print(f"In sync at {live_version}: {len(live)} routes")
           PY
