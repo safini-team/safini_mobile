@@ -1,0 +1,7 @@
+# Copy to android/key.properties (gitignored) and fill in real values.
+# Get the release keystore + these values from the team password manager —
+# never commit the real file or the .jks/.keystore itself.
+storePassword=
+keyPassword=
+keyAlias=
+storeFile=/absolute/path/to/release.keystore
