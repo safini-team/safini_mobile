@@ -138,6 +138,27 @@ void main() {
           );
         });
 
+        // The capped panel puts an uppercased label and the stepper on one
+        // row. "ЕЖЕДНЕВНОЕ ЭКРАННОЕ ВРЕМЯ" next to a 92pt control on a 320pt
+        // phone is the tightest line on the screen.
+        testWidgets('Parent Limits with a cap lays out cleanly', (
+          tester,
+        ) async {
+          await _pumpClean(
+            tester,
+            (context) => ParentLimitsView(
+              data: SampleData.parentLimitsWithCap,
+              onSelectKid: (_) {},
+              onOpenApp: (_) {},
+              onAddApp: () {},
+              onSetCap: (_) {},
+            ),
+            locale: locale,
+            device: device,
+            label: 'Parent Limits with a cap',
+          );
+        });
+
         testWidgets('Parent Family lays out cleanly', (tester) async {
           await _pumpClean(
             tester,

@@ -133,6 +133,8 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     String? nickname,
     int? age,
     String? gender,
+    int? dailyScreenTimeMinutes,
+    bool clearDailyScreenTime = false,
   }) async {
     final payload = <String, dynamic>{};
     if (nickname != null) {
@@ -143,6 +145,11 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     }
     if (gender != null) {
       payload['gender'] = gender.trim().isEmpty ? null : gender.trim();
+    }
+    if (clearDailyScreenTime) {
+      payload['daily_screen_time_minutes'] = null;
+    } else if (dailyScreenTimeMinutes != null) {
+      payload['daily_screen_time_minutes'] = dailyScreenTimeMinutes;
     }
 
     final response = await _request(

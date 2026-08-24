@@ -143,10 +143,12 @@ class _ParentMonitorView extends StatelessWidget {
         }).toList()
           ..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));
 
-    // No family-wide allowance exists yet, so the ring reads the child's total
-    // against the sum of their per-app limits.
+    // The ring draws against the whole-device cap the parent set. When there
+    // is none the card falls back to usage only: the sum of the per-app limits
+    // used to stand in for a budget here, and it is not one - nothing draws
+    // from it, so "3 h 15 m left" was a number the child could not spend.
     final used = apps.fold<int>(0, (sum, app) => sum + app.usedMinutes);
-    final limit = apps.fold<int>(0, (sum, app) => sum + app.limitMinutes);
+    final limit = state.screenTime.limitMinutes ?? 0;
 
     final reviews = (tasks?.pendingApproval ?? const <ParentTaskInstanceModel>[])
         .map(

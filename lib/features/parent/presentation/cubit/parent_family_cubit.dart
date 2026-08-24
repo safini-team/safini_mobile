@@ -333,12 +333,16 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     String? nickname,
     int? age,
     String? gender,
+    int? dailyScreenTimeMinutes,
+    bool clearDailyScreenTime = false,
   }) async {
     final result = await _controller.updateChild(
       childId,
       nickname: nickname,
       age: age,
       gender: gender,
+      dailyScreenTimeMinutes: dailyScreenTimeMinutes,
+      clearDailyScreenTime: clearDailyScreenTime,
     );
 
     Failure? capturedFailure;

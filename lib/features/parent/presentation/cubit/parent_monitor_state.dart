@@ -1,4 +1,5 @@
 import 'package:safini/features/models/domain/models/family_model.dart';
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
 abstract class ParentMonitorState {
   const ParentMonitorState();
@@ -26,6 +27,11 @@ class ParentMonitorLoaded extends ParentMonitorState {
   /// App limits for the currently selected child.
   final List<Map<String, dynamic>> appLimits;
 
+  /// The selected child's whole-device daily budget. The screen-time ring
+  /// reads this; before it existed the ring drew usage against the sum of the
+  /// per-app limits, which is not a budget anyone can spend.
+  final ScreenTimeModel screenTime;
+
   /// The selected child's chosen face emoji (null → default avatar).
   final String? faceEmoji;
 
@@ -43,6 +49,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
     required this.lessonsChange,
     required this.weeklyUsage,
     required this.appLimits,
+    this.screenTime = ScreenTimeModel.none,
     this.hasActivityData = false,
     this.faceEmoji,
   });
@@ -56,6 +63,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
     List<ChildSummaryModel>? children,
     int? selectedIndex,
     List<Map<String, dynamic>>? appLimits,
+    ScreenTimeModel? screenTime,
     bool? hasActivityData,
     String? faceEmoji,
     bool clearFaceEmoji = false,
@@ -69,6 +77,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
       lessonsChange: lessonsChange,
       weeklyUsage: weeklyUsage,
       appLimits: appLimits ?? this.appLimits,
+      screenTime: screenTime ?? this.screenTime,
       hasActivityData: hasActivityData ?? this.hasActivityData,
       faceEmoji: clearFaceEmoji ? null : (faceEmoji ?? this.faceEmoji),
     );

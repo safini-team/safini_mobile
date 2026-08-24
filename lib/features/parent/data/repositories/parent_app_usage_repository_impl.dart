@@ -8,6 +8,7 @@ import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -83,7 +84,7 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
   }
 
   @override
-  Future<Either<Failure, List<ChildAppUsageModel>>> fetchAppUsage(
+  Future<Either<Failure, ChildAppUsageSnapshot>> fetchAppUsage(
     String childId,
   ) async {
     final token = Supabase.instance.client.auth.currentSession?.accessToken;
@@ -133,6 +134,12 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
 
     final decoded = _decodeBody(response.body);
     if (decoded is Map<String, dynamic>) {
+      final rawScreenTime = decoded['screen_time'];
+      final screenTime = rawScreenTime is Map
+          ? ScreenTimeModel.fromJson(
+              rawScreenTime.map((k, v) => MapEntry(k.toString(), v)),
+            )
+          : ScreenTimeModel.none;
       final apps = decoded['apps'];
       if (apps is List) {
         final list = apps
@@ -143,10 +150,14 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
               ),
             )
             .toList();
-        return Right(list);
+        return Right(
+          ChildAppUsageSnapshot(apps: list, screenTime: screenTime),
+        );
       }
       // Response shape is valid but has no apps — treat as empty.
-      return const Right([]);
+      return Right(
+        ChildAppUsageSnapshot(apps: const [], screenTime: screenTime),
+      );
     }
 
     return const Left(ServerFailure('Unexpected app usage response format.'));
