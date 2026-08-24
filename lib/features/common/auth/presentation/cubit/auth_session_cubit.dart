@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/network/auth_token_provider.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
@@ -15,19 +16,24 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 /// Manages the entire authentication lifecycle:
 ///
 /// 1. **App start** — [checkExistingSession] reads the persisted Supabase
-///    session and, if valid, immediately fetches the user profile.
+///    session and, if present, refreshes as needed before fetching the profile.
 /// 2. **Login** — Google is the public flow. [signInWithEmail] supports only
 ///    pre-created debug and App Review accounts.
 /// 3. **Profile** — [_fetchProfile] calls `GET /v1/me` and emits
 ///    [AuthSessionStatus.authenticated] with `userId` / `accountType`.
 /// 4. **Sign out** — [signOut] clears Google, Supabase, and local auth state.
 class AuthSessionCubit extends Cubit<AuthSessionState> {
-  AuthSessionCubit(this._googleAuth, this._emailAuth, this._meService)
-    : super(const AuthSessionState.initial());
+  AuthSessionCubit(
+    this._googleAuth,
+    this._emailAuth,
+    this._meService,
+    this._tokens,
+  ) : super(const AuthSessionState.initial());
 
   final AuthGoogleSignInService _googleAuth;
   final AuthEmailSignInService _emailAuth;
   final UserMeService _meService;
+  final AuthTokenProvider _tokens;
 
   // ── App-start path ──────────────────────────────────────────────────────
 
@@ -42,17 +48,12 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
       ),
     );
 
-    final session = Supabase.instance.client.auth.currentSession;
-
-    if (session == null || session.isExpired) {
-      if (session != null) {
-        await Supabase.instance.client.auth.signOut();
-      }
+    if (!_tokens.hasSession) {
       emit(state.copyWith(status: AuthSessionStatus.unauthenticated));
       return;
     }
 
-    await _fetchProfile(session.accessToken);
+    await _fetchProfile();
   }
 
   // ── Sign-in path ───────────────────────────────────────────────────────
@@ -113,7 +114,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
       _emitSignInError(missingSessionMessage);
       return;
     }
-    await _fetchProfile(accessToken);
+    await _fetchProfile();
   }
 
   void _emitSignInError(String message) {
@@ -129,7 +130,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
 
   // ── Profile fetch ──────────────────────────────────────────────────────
 
-  Future<void> _fetchProfile(String accessToken) async {
+  Future<void> _fetchProfile() async {
     emit(
       state.copyWith(
         status: AuthSessionStatus.fetchingProfile,
@@ -140,7 +141,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
     );
 
     try {
-      final me = await _meService.fetchMe(accessToken);
+      final me = await _meService.fetchMe();
       emit(
         AuthSessionState(
           status: AuthSessionStatus.authenticated,
@@ -149,8 +150,19 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
         ),
       );
     } on UnauthorizedException {
-      // Token is invalid — force re-login.
-      await forceSignOut('Your session expired. Please sign in again.');
+      // A failed refresh is not a user sign-out. Keep the persisted Supabase
+      // session and allow retry when connectivity/auth availability recovers.
+      final sessionStillAvailable = _tokens.hasSession;
+      emit(
+        state.copyWith(
+          status: AuthSessionStatus.profileError,
+          errorMessage: sessionStillAvailable
+              ? 'Could not refresh your session. Please try again.'
+              : 'This session is no longer available. Please sign in again.',
+          canRetry: sessionStillAvailable,
+          isUnauthorized: sessionStillAvailable,
+        ),
+      );
     } on NetworkException catch (e) {
       emit(
         state.copyWith(
@@ -184,15 +196,19 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
 
   /// Retry fetching the profile with the current session token.
   Future<void> retryFetchProfile() async {
-    final session = Supabase.instance.client.auth.currentSession;
-    if (session == null || session.isExpired) {
-      if (session != null) {
-        await Supabase.instance.client.auth.signOut();
-      }
-      emit(state.copyWith(status: AuthSessionStatus.unauthenticated));
+    if (!_tokens.hasSession) {
+      emit(
+        state.copyWith(
+          status: AuthSessionStatus.profileError,
+          errorMessage:
+              'This session is no longer available. Please sign in again.',
+          canRetry: false,
+          isUnauthorized: false,
+        ),
+      );
       return;
     }
-    await _fetchProfile(session.accessToken);
+    await _fetchProfile();
   }
 
   // ── Sign out ───────────────────────────────────────────────────────────
@@ -205,19 +221,6 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
         status: AuthSessionStatus.unauthenticated,
         isUnauthorized: false,
         canRetry: false,
-      ),
-    );
-  }
-
-  Future<void> forceSignOut(String message) async {
-    await _clearFamilyState();
-    await _clearAuthState();
-    emit(
-      AuthSessionState(
-        status: AuthSessionStatus.unauthenticated,
-        errorMessage: message,
-        canRetry: false,
-        isUnauthorized: true,
       ),
     );
   }

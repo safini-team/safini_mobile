@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
@@ -14,11 +15,12 @@ import 'package:safini/features/models/domain/models/child_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 @Injectable(as: IFamilyRepository)
 class FamilyRepositoryImpl implements IFamilyRepository {
-  final http.Client _client = http.Client();
+  FamilyRepositoryImpl(this._client);
+
+  final AuthenticatedHttpClient _client;
 
   @override
   Future<Either<Failure, FamilyModel>> createFamily(
@@ -240,17 +242,13 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     bool treat404AsEmpty = false,
     Map<int, String>? statusMessages,
   }) async {
-    final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Session expired. Please log in again.'),
-      );
-    }
-
     late final http.Response response;
     try {
       response = await request().timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(
+        UnauthorizedFailure('Session is unavailable. Please try again.'),
+      );
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {
@@ -299,12 +297,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
   }
 
   Map<String, String> _headers() {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    return {
-      'Authorization': 'Bearer $token',
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    };
+    return {'Accept': 'application/json', 'Content-Type': 'application/json'};
   }
 
   dynamic _decodeBody(String body) {
