@@ -16,6 +16,9 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
+    # Written by `make generate` (intl_utils); its style is not ours to fix.
+    - lib/core/translation/generated/**
+    - test_api.dart
 include: package:flutter_lints/flutter.yaml
 
 linter:
