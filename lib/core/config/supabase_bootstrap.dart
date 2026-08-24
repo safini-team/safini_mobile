@@ -25,6 +25,7 @@ Future<void> initializeSupabaseIfConfigured() async {
       url: url,
       anonKey: anonKey,
       authOptions: FlutterAuthClientOptions(
+        autoRefreshToken: true,
         localStorage: const EmptyLocalStorage(),
         pkceAsyncStorage: MemoryGotrueAsyncStorage(),
       ),
@@ -35,5 +36,6 @@ Future<void> initializeSupabaseIfConfigured() async {
   await Supabase.initialize(
     url: url,
     anonKey: anonKey,
+    authOptions: const FlutterAuthClientOptions(autoRefreshToken: true),
   );
 }

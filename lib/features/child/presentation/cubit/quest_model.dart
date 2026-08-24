@@ -20,6 +20,12 @@ class QuestModel {
   final int xp;
   final String status;
 
+  /// `text_image` when the parent asked for a photo. The sheet asks for one
+  /// and refuses to send without it.
+  final String? proofMode;
+
+  bool get needsPhoto => (proofMode ?? '').toLowerCase().contains('image');
+
   bool get isSubmitted {
     final s = status.toLowerCase();
     return s == 'submitted' ||
@@ -44,6 +50,7 @@ class QuestModel {
     required this.iconBackground,
     this.emoji,
     this.reviewNote,
+    this.proofMode,
     this.isCompleted = false,
     this.coins = 0,
     this.xp = 0,
@@ -60,6 +67,7 @@ class QuestModel {
       iconBackground: iconBackground,
       emoji: emoji,
       reviewNote: reviewNote,
+      proofMode: proofMode,
       isCompleted: isCompleted ?? this.isCompleted,
       coins: coins,
       xp: xp,

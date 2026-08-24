@@ -116,11 +116,15 @@ void main() {
       expect(ChildSummaryModel.fromJson({'id': 'c', 'rank': 7}).level, 7);
     });
 
-    test('names a child NoName rather than leaving the row blank', () {
-      expect(ChildSummaryModel.fromJson({'id': 'c'}).nickname, 'NoName');
+    test('leaves a missing child name empty rather than inventing one', () {
+      // This asserted 'NoName' until the audit: the literal string was
+      // hard-coded in ten files and reached the UI, so a parent read
+      // "NoName (you)" on their own Family screen. Empty lets the widget put
+      // a localized placeholder in, which "NoName" never could.
+      expect(ChildSummaryModel.fromJson({'id': 'c'}).nickname, '');
       expect(
         ChildSummaryModel.fromJson({'id': 'c', 'nickname': '   '}).nickname,
-        'NoName',
+        '',
       );
       expect(
         ChildSummaryModel.fromJson({'id': 'c', 'name': ' Amir '}).nickname,
@@ -134,10 +138,17 @@ void main() {
   });
 
   group('ParentSummaryModel', () {
-    test('names a parent NoName rather than leaving the row blank', () {
+    test('falls back to the email local part, then to empty', () {
+      // GET /v1/me returns display_name: null for every email sign-up, so
+      // this is the common path. The email at least belongs to them; the
+      // literal "NoName" belonged to nobody.
+      expect(ParentSummaryModel.fromJson({'user_id': 'u1'}).displayName, '');
       expect(
-        ParentSummaryModel.fromJson({'user_id': 'u1'}).displayName,
-        'NoName',
+        ParentSummaryModel.fromJson({
+          'user_id': 'u1',
+          'email': 'safini.team@gmail.com',
+        }).displayName,
+        'safini.team',
       );
       expect(
         ParentSummaryModel.fromJson({

@@ -5,15 +5,17 @@ import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import '../../domain/models/child_model.dart';
 import '../../domain/repositories/i_child_repository.dart';
 import '../../../../core/utils/error/failures.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 @Injectable(as: IChildRepository)
 class ChildRepositoryImpl implements IChildRepository {
-  final http.Client _client = http.Client();
+  ChildRepositoryImpl(this._client);
+
+  final AuthenticatedHttpClient _client;
 
   @override
   Future<Either<Failure, ChildModel>> createChild(
@@ -37,26 +39,20 @@ class ChildRepositoryImpl implements IChildRepository {
 
   @override
   Future<Either<Failure, ChildModel>> claimChild(String inviteCode) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Session expired. Please sign in again.'),
-      );
-    }
-
     late final http.Response response;
     try {
       response = await _client
           .post(
             Uri.parse('${SupabaseConfig.apiBaseUrl}/v1/children/claim'),
             headers: {
-              'Authorization': 'Bearer $token',
               'Accept': 'application/json',
               'Content-Type': 'application/json',
             },
             body: jsonEncode({'invite_code': inviteCode}),
           )
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {

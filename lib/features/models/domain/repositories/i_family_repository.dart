@@ -21,11 +21,16 @@ abstract class IFamilyRepository {
     required int age,
     String? gender,
   });
+  /// PATCH /v1/children/{child_id}. [clearDailyScreenTime] is the only way to
+  /// send `daily_screen_time_minutes: null`, which is what removes a cap - a
+  /// plain null argument is indistinguishable from "leave it alone".
   Future<Either<Failure, ChildModel>> updateChild(
     String childId, {
     String? nickname,
     int? age,
     String? gender,
+    int? dailyScreenTimeMinutes,
+    bool clearDailyScreenTime = false,
   });
   Future<Either<Failure, void>> removeParent(String parentUserId);
 }

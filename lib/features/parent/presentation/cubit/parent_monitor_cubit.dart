@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
@@ -15,6 +16,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   List<ChildSummaryModel> _children = const [];
   int _selectedIndex = 0;
   List<ChildAppUsageModel> _appUsage = const [];
+  ScreenTimeModel _screenTime = ScreenTimeModel.none;
 
   ParentMonitorCubit(this._familyCubit, this._appUsageRepo)
     : super(const ParentMonitorInitial()) {
@@ -64,8 +66,9 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     }
 
     _appUsage = const [];
+    _screenTime = ScreenTimeModel.none;
     final result = await _appUsageRepo.fetchAppUsage(_children.first.id);
-    result.fold((_) => _appUsage = const [], (apps) => _appUsage = apps);
+    result.fold(_clearUsage, _takeUsage);
     final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
       _children.first.id,
     );
@@ -84,6 +87,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         // TODO(backend): app-usage only returns today; no weekly aggregation.
         weeklyUsage: const [0, 0, 0, 0, 0, 0, 0],
         appLimits: _appUsage.map(_toLimitMap).toList(),
+        screenTime: _screenTime,
       ),
     );
   }
@@ -98,17 +102,19 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
     _selectedIndex = index;
     _appUsage = const [];
+    _screenTime = ScreenTimeModel.none;
     // Update the selection immediately; clear limits/face while the child loads.
     emit(
       current.copyWith(
         selectedIndex: index,
         appLimits: const [],
+        screenTime: ScreenTimeModel.none,
         clearFaceEmoji: true,
       ),
     );
 
     final result = await _appUsageRepo.fetchAppUsage(_children[index].id);
-    result.fold((_) => _appUsage = const [], (apps) => _appUsage = apps);
+    result.fold(_clearUsage, _takeUsage);
     final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
       _children[index].id,
     );
@@ -117,10 +123,21 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
       emit(
         (state as ParentMonitorLoaded).copyWith(
           appLimits: _appUsage.map(_toLimitMap).toList(),
+          screenTime: _screenTime,
           faceEmoji: faceEmoji,
         ),
       );
     }
+  }
+
+  void _clearUsage(Object _) {
+    _appUsage = const [];
+    _screenTime = ScreenTimeModel.none;
+  }
+
+  void _takeUsage(ChildAppUsageSnapshot snapshot) {
+    _appUsage = snapshot.apps;
+    _screenTime = snapshot.screenTime;
   }
 
   Map<String, dynamic> _toLimitMap(ChildAppUsageModel app) {
@@ -130,13 +147,17 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
       'used': app.usedMinutes,
       'limit': app.dailyLimitMinutes,
       'icon': null,
-      'isEnabled': app.isEnabled,
+      'isLimited': app.isLimited,
+      'canRedeem': app.canRedeem,
+      'cost': app.redeemCoinCost,
+      'reward': app.redeemRewardMinutes,
     };
   }
 
-  /// Toggles an app's redemption rule for the selected child and persists it
-  /// via PUT /children/{id}/app-rules/{slug}. Optimistic with revert on failure.
-  Future<void> toggleAppLimit(String appSlug, bool isEnabled) async {
+  /// Toggles whether the daily limit applies for the selected child and
+  /// persists it via PUT /children/{id}/app-rules/{slug}. Optimistic with
+  /// revert on failure.
+  Future<void> toggleAppLimit(String appSlug, bool isLimited) async {
     final current = state;
     if (current is! ParentMonitorLoaded) return;
     final child = current.selectedChild;
@@ -147,7 +168,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
     final previous = _appUsage;
     _appUsage = List.of(_appUsage)
-      ..[index] = _appUsage[index].copyWith(isEnabled: isEnabled);
+      ..[index] = _appUsage[index].copyWith(isLimited: isLimited);
     emit(current.copyWith(appLimits: _appUsage.map(_toLimitMap).toList()));
 
     final result = await _appUsageRepo.updateAppRule(child.id, _appUsage[index]);

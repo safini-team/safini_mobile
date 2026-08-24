@@ -23,6 +23,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 
 void registerParentDependencies(GetIt sl) {
   sl.registerLazySingleton<ParentRemoteDataSource>(
@@ -35,7 +36,9 @@ void registerParentDependencies(GetIt sl) {
     () => ParentController(sl<IParentUserRepository>()),
   );
 
-  sl.registerLazySingleton<IFamilyRepository>(() => FamilyRepositoryImpl());
+  sl.registerLazySingleton<IFamilyRepository>(
+    () => FamilyRepositoryImpl(sl<AuthenticatedHttpClient>()),
+  );
   sl.registerLazySingleton<FamilyController>(
     () => FamilyController(sl<IFamilyRepository>()),
   );
@@ -52,7 +55,7 @@ void registerParentDependencies(GetIt sl) {
   );
   sl.registerFactory<ParentHomeCubit>(() => ParentHomeCubit());
   sl.registerLazySingleton<IParentAppUsageRepository>(
-    () => ParentAppUsageRepositoryImpl(),
+    () => ParentAppUsageRepositoryImpl(sl<AuthenticatedHttpClient>()),
   );
   sl.registerLazySingleton<ParentAppBlockingService>(
     () => ParentAppBlockingService(sl<Dio>()),
@@ -70,7 +73,7 @@ void registerParentDependencies(GetIt sl) {
     ),
   );
   sl.registerLazySingleton<IParentTaskRepository>(
-    () => ParentTaskRepositoryImpl(),
+    () => ParentTaskRepositoryImpl(sl<AuthenticatedHttpClient>()),
   );
   sl.registerFactory<ParentTasksCubit>(
     () => ParentTasksCubit(

@@ -5,6 +5,8 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/core/utils/screen_time_cap.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
@@ -24,7 +26,10 @@ class LimitsApp {
     required this.emoji,
     required this.usedMinutes,
     required this.limitMinutes,
-    required this.isEnabled,
+    required this.isLimited,
+    required this.canRedeem,
+    this.redeemCoinCost = 100,
+    this.redeemRewardMinutes = 30,
   });
 
   final String slug;
@@ -32,16 +37,28 @@ class LimitsApp {
   final String emoji;
   final int usedMinutes;
   final int limitMinutes;
-  final bool isEnabled;
 
-  bool get isOver => limitMinutes > 0 && usedMinutes > limitMinutes;
+  /// Does the daily cap apply at all. This is the real "no limit".
+  final bool isLimited;
 
-  /// The design's second line: "1 h of 45 m · over", "21 m · no limit", or the
-  /// always-allowed note when redemptions are switched off.
+  /// May the child buy extra minutes. Independent of [isLimited]: a parent may
+  /// want a capped app the child cannot buy past, or an uncapped one.
+  final bool canRedeem;
+
+  final int redeemCoinCost;
+  final int redeemRewardMinutes;
+
+  bool get isOver => isLimited && limitMinutes > 0 && usedMinutes > limitMinutes;
+
+  /// "1 h of 45 m · over", "21 m · no limit", "21 m · no free time".
+  ///
+  /// A limit of zero used to render as "no limit", which is the opposite of
+  /// what the server does with it: with a cap of 0 every minute is overage
+  /// and the child has no free time at all.
   String subtitle(S s) {
-    if (!isEnabled) return s.alwaysAllowedNoRedemption;
-    if (limitMinutes <= 0) return s.usedNoLimit(formatHm(s, usedMinutes));
     final used = formatHm(s, usedMinutes);
+    if (!isLimited) return s.usedNoLimit(used);
+    if (limitMinutes <= 0) return '$used · ${s.noFreeTime}';
     final limit = formatHm(s, limitMinutes);
     return isOver ? s.usedOfLimitOver(used, limit) : s.usedOfLimit(used, limit);
   }
@@ -53,6 +70,7 @@ class ParentLimitsData {
     required this.selectedKidId,
     required this.kidName,
     required this.apps,
+    this.capMinutes,
   });
 
   final List<LimitsKid> kids;
@@ -60,10 +78,21 @@ class ParentLimitsData {
   final String kidName;
   final List<LimitsApp> apps;
 
+  /// `daily_screen_time_minutes`: the whole-device budget, or null when the
+  /// parent has not set one. Zero is a cap of zero, not the absence of one.
+  final int? capMinutes;
+
+  bool get hasCap => capMinutes != null;
+
   int get usedMinutes => apps.fold(0, (sum, app) => sum + app.usedMinutes);
 
-  int get allowanceMinutes =>
+  /// The sum of the per-app limits. Shown only when there is no cap, and
+  /// labelled as the sum it is - nothing spends from this figure.
+  int get combinedLimitMinutes =>
       apps.fold(0, (sum, app) => sum + app.limitMinutes);
+
+  /// What the panel counts down: the real cap when set, else the sum.
+  int get allowanceMinutes => capMinutes ?? combinedLimitMinutes;
 
   int get leftMinutes => allowanceMinutes <= 0
       ? 0
@@ -77,9 +106,9 @@ class ParentLimitsData {
 /// Parent · Limits: kid chips, the deep-purple allowance panel, then the app
 /// list.
 ///
-/// The panel's −/+ stepper from the artboard is not wired: the API has no
-/// family-wide allowance field, only per-app limits, so the figure here is the
-/// sum of those and each app's own limit is edited in its sheet.
+/// The panel's −/+ stepper from the artboard is wired now that the child row
+/// carries `daily_screen_time_minutes`. Its bottom rung is "no cap", so the
+/// same control that sets the budget is the one that removes it.
 class ParentLimitsView extends StatelessWidget {
   const ParentLimitsView({
     super.key,
@@ -87,6 +116,7 @@ class ParentLimitsView extends StatelessWidget {
     required this.onSelectKid,
     required this.onOpenApp,
     required this.onAddApp,
+    this.onSetCap,
     this.onRefresh,
   });
 
@@ -94,6 +124,10 @@ class ParentLimitsView extends StatelessWidget {
   final ValueChanged<String> onSelectKid;
   final ValueChanged<LimitsApp> onOpenApp;
   final VoidCallback onAddApp;
+
+  /// Null minutes removes the cap. Absent entirely in the design preview,
+  /// where the panel renders read-only.
+  final ValueChanged<int?>? onSetCap;
   final Future<void> Function()? onRefresh;
 
   @override
@@ -157,9 +191,11 @@ class ParentLimitsView extends StatelessWidget {
               AppSpacing.gutter,
               0,
             ),
-            child: _AllowancePanel(data: data),
+            child: _AllowancePanel(data: data, onSetCap: onSetCap),
           ),
         ),
+        if (onSetCap != null)
+          SliverToBoxAdapter(child: DsFootnote(s.screenTimeCapHint, top: 10)),
         SliverToBoxAdapter(
           child: DsOverline(s.kidsApps(data.kidName), top: 28),
         ),
@@ -177,6 +213,8 @@ class ParentLimitsView extends StatelessWidget {
                   ],
                 ),
                 DsFootnote(s.limitsFootnote),
+                if (!AppConstants.enforcementShipped)
+                  DsFootnote(s.limitsNotYetEnforced),
               ],
             ),
           ),
@@ -187,28 +225,59 @@ class ParentLimitsView extends StatelessWidget {
 }
 
 class _AllowancePanel extends StatelessWidget {
-  const _AllowancePanel({required this.data});
+  const _AllowancePanel({required this.data, this.onSetCap});
 
   final ParentLimitsData data;
+  final ValueChanged<int?>? onSetCap;
+
+  /// With a cap: the cap. Without: the old sum, and the label says so.
+  String _headline(S s) {
+    if (data.hasCap) return formatHm(s, data.capMinutes!);
+    return data.combinedLimitMinutes <= 0
+        ? s.noLimitsSet
+        : formatHm(s, data.combinedLimitMinutes);
+  }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final overline = data.hasCap
+        ? s.screenTimeCap
+        : s.dailyAllowanceFor(data.kidName);
 
     return DsCard.deep(
       radius: AppRadius.feature,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            s.dailyAllowanceFor(data.kidName).toUpperCase(),
-            style: AppText.overline.copyWith(color: const Color(0x80FFFFFF)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  overline.toUpperCase(),
+                  style: AppText.overline.copyWith(
+                    color: const Color(0x80FFFFFF),
+                  ),
+                ),
+              ),
+              if (onSetCap != null) ...[
+                const SizedBox(width: 12),
+                DsStepper.onDeep(
+                  onLess: () => onSetCap!(screenTimeCapDown(data.capMinutes)),
+                  onMore: () => onSetCap!(
+                    screenTimeCapUp(
+                      data.capMinutes,
+                      combinedMinutes: data.combinedLimitMinutes,
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
           const SizedBox(height: 8),
           Text(
-            data.allowanceMinutes <= 0
-                ? s.noLimitsSet
-                : formatHm(s, data.allowanceMinutes),
+            _headline(s),
             style: AppText.title2.copyWith(
               letterSpacing: -0.64,
               color: AppColors.textOnPrimary,

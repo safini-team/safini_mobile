@@ -114,11 +114,17 @@ class _ChildTasksScreen extends StatelessWidget {
         isCompleted: task.isCompleted,
         coins: task.coins,
         xp: task.xp,
+        proofMode: task.proofMode,
         status: task.status,
       ),
       onSubmit: task.isCompleted || task.isSubmitted
           ? null
-          : (note) => cubit.submitTask(task.id, note: note),
+          : (note, imageObjectKey) => cubit.submitTask(
+              task.id,
+              note: note,
+              imageObjectKey: imageObjectKey,
+            ),
+      onUploadPhoto: (path) => cubit.uploadPhoto(task.id, path),
     );
   }
 }

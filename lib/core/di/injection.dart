@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/app/app_router.dart';
 import 'package:safini/core/network/dio_network.dart';
+import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/child/child_injection.dart';
 import 'package:safini/features/common/common_injection.dart';
 import 'package:safini/features/parent/parent_injection.dart';
@@ -22,6 +23,10 @@ Future<void> configureDependencies() async {
   try {
     final preferences = await SharedPreferences.getInstance();
     _sharedPreferencesPluginAvailable = true;
+    // SAF-150 migration: Supabase persists the complete rotating session.
+    // Delete the app's obsolete second access-token copy without touching the
+    // real Supabase session, so stale bearer tokens cannot survive upgrades.
+    await preferences.remove(AppConstants.accessToken);
     if (!getIt.isRegistered<SharedPreferences>()) {
       getIt.registerSingleton<SharedPreferences>(preferences);
     }

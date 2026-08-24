@@ -38,19 +38,35 @@ class _ParentMonitorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ParentMonitorCubit, ParentMonitorState>(
-      // When the parent switches child, reload that child's tasks so the review
-      // list and the stat row match the child on the card.
-      listenWhen: (prev, curr) =>
-          curr is ParentMonitorLoaded &&
-          (prev is! ParentMonitorLoaded ||
-              prev.selectedChild?.id != curr.selectedChild?.id),
-      listener: (context, state) {
-        final childId = (state as ParentMonitorLoaded).selectedChild?.id;
-        if (childId != null) {
-          context.read<ParentTasksCubit>().loadTasks(childId: childId);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ParentMonitorCubit, ParentMonitorState>(
+          // When the parent switches child, reload that child's tasks so the
+          // review list and the stat row match the child on the card.
+          listenWhen: (prev, curr) =>
+              curr is ParentMonitorLoaded &&
+              (prev is! ParentMonitorLoaded ||
+                  prev.selectedChild?.id != curr.selectedChild?.id),
+          listener: (context, state) {
+            final childId = (state as ParentMonitorLoaded).selectedChild?.id;
+            if (childId != null) {
+              context.read<ParentTasksCubit>().loadTasks(childId: childId);
+            }
+          },
+        ),
+        BlocListener<ParentTasksCubit, ParentTasksState>(
+          // Approving pays coins and moves the streak, and both of those live
+          // on the monitor's child row, not in the tasks cubit. Without this
+          // the card kept showing the pre-approval balance until the parent
+          // pulled to refresh.
+          listenWhen: (prev, curr) =>
+              curr is ParentTaskReviewed ||
+              curr is ParentTaskSaved ||
+              curr is ParentTaskDeleted,
+          listener: (context, _) =>
+              context.read<ParentMonitorCubit>().loadMonitorData(),
+        ),
+      ],
       child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
         builder: (context, state) {
           if (state is ParentMonitorNoChild) {
@@ -127,10 +143,12 @@ class _ParentMonitorView extends StatelessWidget {
         }).toList()
           ..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));
 
-    // No family-wide allowance exists yet, so the ring reads the child's total
-    // against the sum of their per-app limits.
+    // The ring draws against the whole-device cap the parent set. When there
+    // is none the card falls back to usage only: the sum of the per-app limits
+    // used to stand in for a budget here, and it is not one - nothing draws
+    // from it, so "3 h 15 m left" was a number the child could not spend.
     final used = apps.fold<int>(0, (sum, app) => sum + app.usedMinutes);
-    final limit = apps.fold<int>(0, (sum, app) => sum + app.limitMinutes);
+    final limit = state.screenTime.limitMinutes ?? 0;
 
     final reviews = (tasks?.pendingApproval ?? const <ParentTaskInstanceModel>[])
         .map(
@@ -167,6 +185,7 @@ class _ParentMonitorView extends StatelessWidget {
       tasksDone: tasks?.completedTasks.length ?? 0,
       tasksTotal: tasks?.tasks.length ?? 0,
       coins: child?.coinsBalance ?? 0,
+      streakDays: child?.currentStreakDays,
       reviews: reviews,
       apps: apps.take(3).toList(),
     );

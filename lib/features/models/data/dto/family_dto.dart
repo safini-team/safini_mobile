@@ -1,4 +1,5 @@
 import '../../domain/models/family_model.dart';
+import 'package:safini/core/utils/display_name.dart';
 
 class FamilyDto {
   final String id;
@@ -87,9 +88,7 @@ class ChildSummaryDto {
   factory ChildSummaryDto.fromJson(Map<String, dynamic> json) {
     return ChildSummaryDto(
       id: json['id'] as String? ?? '',
-      nickname: (json['nickname'] as String?)?.trim().isNotEmpty == true
-          ? (json['nickname'] as String).trim()
-          : 'NoName',
+      nickname: resolveDisplayName(json['nickname']),
       age: json['age'] as int? ?? 0,
       gender: json['gender'] as String?,
       claimedByUserId: json['claimed_by_user_id'] as String?,

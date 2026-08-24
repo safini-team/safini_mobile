@@ -1,4 +1,5 @@
 import '../../domain/models/profile_model.dart';
+import 'package:safini/core/utils/display_name.dart';
 
 class ProfileDto {
   final String userId;
@@ -25,9 +26,10 @@ class ProfileDto {
     return ProfileDto(
       userId: json['user_id'] as String? ?? '',
       email: json['email'] as String? ?? '',
-      displayName: (json['display_name'] as String?)?.trim().isNotEmpty == true
-          ? (json['display_name'] as String).trim()
-          : 'NoName',
+      displayName: resolveDisplayName(
+        json['display_name'],
+        email: json['email'],
+      ),
       avatarUrl: json['avatar_url'] as String? ?? '',
       bio: json['bio'] as String? ?? '',
       timezone: json['timezone'] as String? ?? '',

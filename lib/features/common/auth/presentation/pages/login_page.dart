@@ -158,30 +158,40 @@ class _LoginView extends StatelessWidget {
                           ),
                         ),
                       ),
-                    DsPrimaryButton(
-                      label: loading ? s.signingIn : s.loginWithGoogle,
-                      enabled: !googleBlocked,
-                      busy: loading,
-                      onTap: () =>
-                          context.read<AuthSessionCubit>().signInWithGoogle(),
-                    ),
-                    if (SupabaseConfig.isEmailSignInEnabled) ...[
-                      const SizedBox(height: 10),
-                      DsPrimaryButton.secondary(
-                        label: s.loginWithEmailTest,
-                        enabled: !supabaseBlocked && !loading,
-                        onTap: () => _showEmailSignInSheet(context),
+                    if (!(state.status == AuthSessionStatus.profileError &&
+                        state.isUnauthorized)) ...[
+                      DsPrimaryButton(
+                        label: loading ? s.signingIn : s.loginWithGoogle,
+                        enabled: !googleBlocked,
+                        busy: loading,
+                        onTap: () =>
+                            context.read<AuthSessionCubit>().signInWithGoogle(),
                       ),
+                      if (SupabaseConfig.isEmailSignInEnabled) ...[
+                        const SizedBox(height: 10),
+                        DsPrimaryButton.secondary(
+                          label: s.loginWithEmailTest,
+                          enabled: !supabaseBlocked && !loading,
+                          onTap: () => _showEmailSignInSheet(context),
+                        ),
+                      ],
                     ],
                     if (state.status == AuthSessionStatus.profileError &&
-                        state.canRetry &&
-                        !state.isUnauthorized) ...[
+                        state.canRetry) ...[
                       const SizedBox(height: 10),
                       DsPrimaryButton.secondary(
                         label: s.retry,
                         onTap: () => context
                             .read<AuthSessionCubit>()
                             .retryFetchProfile(),
+                      ),
+                    ],
+                    if (state.status == AuthSessionStatus.profileError &&
+                        state.isUnauthorized) ...[
+                      const SizedBox(height: 10),
+                      DsPrimaryButton.secondary(
+                        label: s.logout,
+                        onTap: () => context.read<AuthSessionCubit>().signOut(),
                       ),
                     ],
                   ],

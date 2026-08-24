@@ -1,3 +1,5 @@
+import 'package:safini/core/utils/display_name.dart';
+
 class FamilyModel {
   final String id;
   final String ownerUserId;
@@ -44,7 +46,9 @@ class FamilyModel {
                     ParentSummaryModel(
                       userId: ownerUserId,
                       email: null,
-                      displayName: 'NoName',
+                      // No name and no email to derive one from; the widget
+                      // shows a localized placeholder for an empty name.
+                      displayName: '',
                       avatarUrl: null,
                       role: 'admin',
                       joinedAt: null,
@@ -105,13 +109,10 @@ class ParentSummaryModel {
       userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
       email: json['email'] as String?,
       displayName:
-          (json['display_name'] ?? json['displayName'])
-                  ?.toString()
-                  .trim()
-                  .isNotEmpty ==
-              true
-          ? (json['display_name'] ?? json['displayName']).toString().trim()
-          : 'NoName',
+          resolveDisplayName(
+            json['display_name'] ?? json['displayName'],
+            email: json['email'],
+          ),
       avatarUrl:
           (json['avatar_url'] ?? json['avatarUrl'] ?? json['picture'])
               as String?,
@@ -143,6 +144,10 @@ class ChildSummaryModel {
   final int coinsBalance;
   final int level;
 
+  /// `current_streak_days` from the child row. Every endpoint that serialises a
+  /// child returns it, including `GET /v1/families/current`.
+  final int currentStreakDays;
+
   const ChildSummaryModel({
     required this.id,
     required this.nickname,
@@ -151,6 +156,7 @@ class ChildSummaryModel {
     this.claimedByUserId,
     required this.coinsBalance,
     required this.level,
+    this.currentStreakDays = 0,
   });
 
   factory ChildSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -159,16 +165,9 @@ class ChildSummaryModel {
     final rawLevel = json['level'] ?? json['rank'];
     return ChildSummaryModel(
       id: (json['id'] ?? json['child_id']) as String? ?? '',
-      nickname:
-          (json['nickname'] ?? json['name'] ?? json['display_name'])
-                  ?.toString()
-                  .trim()
-                  .isNotEmpty ==
-              true
-          ? (json['nickname'] ?? json['name'] ?? json['display_name'])
-                .toString()
-                .trim()
-          : 'NoName',
+      nickname: resolveDisplayName(
+        json['nickname'] ?? json['name'] ?? json['display_name'],
+      ),
       age: rawAge is int ? rawAge : int.tryParse(rawAge?.toString() ?? '') ?? 0,
       gender: (json['gender'] as String?)?.trim(),
       claimedByUserId:
@@ -179,6 +178,11 @@ class ChildSummaryModel {
       level: rawLevel is int
           ? rawLevel
           : int.tryParse(rawLevel?.toString() ?? '') ?? 0,
+      currentStreakDays: switch (json['currentStreakDays'] ??
+          json['current_streak_days']) {
+        final int value => value,
+        final Object? value => int.tryParse(value?.toString() ?? '') ?? 0,
+      },
     );
   }
 
@@ -191,6 +195,7 @@ class ChildSummaryModel {
       'claimed_by_user_id': claimedByUserId,
       'coinsBalance': coinsBalance,
       'level': level,
+      'currentStreakDays': currentStreakDays,
     };
   }
 }

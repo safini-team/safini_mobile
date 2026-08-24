@@ -336,6 +336,11 @@ class AvatarCubit extends Cubit<AvatarState> {
   /// child's owned inventory).
   Map<String, String> _equipped = const {};
 
+  /// True once `equipped` has been read from the child row. Until then the
+  /// in-memory map is a guess, and PATCHing it would clear whatever the server
+  /// actually holds.
+  bool _equippedLoaded = false;
+
   AvatarCubit(this._coins, this._dio, this._profileController)
     : super(const AvatarState.initial()) {
     loadItems();
@@ -352,21 +357,31 @@ class AvatarCubit extends Cubit<AvatarState> {
     try {
       final response = await _dio.get(ApiConst.childStore(childId));
       final data = _asMap(response.data);
-      final level = await _loadLevel(childId);
+      // `avatar_state` lives on the child row, and `GET /store` does not return
+      // it — it returns balance, app_time_offers and avatar_items only. Reading
+      // it from the store response left `equipped` empty, so every face change
+      // PATCHed `equipped: {}` and wiped the child's items (SAF-131).
+      final child = await _loadChildFromHome(childId);
       if (isClosed) return;
       final balance = _intValue(data, ['balance', 'coins_balance']);
       if (balance != null) {
         _coins.set(balance);
       }
-      final equipped = _extractEquipped(data['avatar_state']);
+      final avatarState = child['avatar_state'];
+      final equipped = _extractEquipped(avatarState);
       // Keep the owned/equipped items so saving a face never wipes them — the
-      // backend validates `equipped` against the child's owned inventory.
-      _equipped = equipped;
+      // backend validates `equipped` against the child's owned inventory. Only
+      // trust the value when the child row really loaded; on a failed fetch
+      // `child` is empty and overwriting here would wipe it just the same.
+      if (child.isNotEmpty) {
+        _equipped = equipped;
+        _equippedLoaded = true;
+      }
       emit(
         state.copyWith(
           avatarItems: _parseAvatarItems(data['avatar_items'], equipped),
-          level: level,
-          selectedFaceEmoji: _extractFaceEmoji(data['avatar_state']),
+          level: _intValue(child, ['level']) ?? 0,
+          selectedFaceEmoji: _extractFaceEmoji(avatarState),
         ),
       );
     } catch (_) {
@@ -394,6 +409,13 @@ class AvatarCubit extends Cubit<AvatarState> {
     emit(state.copyWith(selectedFaceEmoji: emoji));
     final childId = await _resolveChildId();
     if (childId == null) return;
+    if (!_equippedLoaded) {
+      // PATCH replaces avatar_state wholesale, so never send a guess.
+      final child = await _loadChildFromHome(childId);
+      if (child.isEmpty) return;
+      _equipped = _extractEquipped(child['avatar_state']);
+      _equippedLoaded = true;
+    }
     try {
       await _dio.patch(
         ApiConst.childAvatar(childId),
@@ -409,16 +431,16 @@ class AvatarCubit extends Cubit<AvatarState> {
     }
   }
 
-  /// Reads the child's level from `/home` — the child-accessible endpoint.
-  /// `/dashboard` is parent-only and returns 403 for a child.
-  Future<int> _loadLevel(String childId) async {
+  /// The child row from `/home` — the child-accessible endpoint that carries
+  /// `level`, `avatar_state` and the rest. `/dashboard` is parent-only and
+  /// returns 403 for a child. Empty map when the call fails, which leaves
+  /// `equipped` untouched rather than wiping it.
+  Future<Map<String, dynamic>> _loadChildFromHome(String childId) async {
     try {
       final response = await _dio.get(ApiConst.childHome(childId));
-      final data = _asMap(response.data);
-      final child = _asMap(data['child']);
-      return _intValue(child, ['level']) ?? 0;
+      return _asMap(_asMap(response.data)['child']);
     } catch (_) {
-      return 0;
+      return const {};
     }
   }
 

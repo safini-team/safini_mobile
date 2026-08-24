@@ -17,8 +17,8 @@ analyzer:
     - macos/**
     - linux/**
     # Written by `make generate` (intl_utils); its style is not ours to fix.
+    # Committed so CI can check it is current, so it stays in the tree.
     - lib/core/translation/generated/**
-    - test_api.dart
 include: package:flutter_lints/flutter.yaml
 
 linter:

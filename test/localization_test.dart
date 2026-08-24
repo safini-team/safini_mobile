@@ -23,12 +23,54 @@ Set<String> _keys(Map<String, dynamic> arb) =>
 ///
 /// Skips ICU keywords and the literal branch text inside `=1{1 task}`, which is
 /// not a placeholder even though it sits behind a brace.
-Set<String> _placeholders(String message) => RegExp(r'\{([A-Za-z_]\w*)')
-    .allMatches(message)
-    .map((m) => m.group(1)!)
-    .where((name) => !const {'plural', 'select', 'other', 'one', 'few', 'many',
-        'two', 'zero'}.contains(name))
-    .toSet();
+Set<String> _placeholders(String message) {
+  // Strip the literal text inside ICU branches first. `one{{count} монета}`
+  // contributes `count` and nothing else; without this the branch body itself
+  // parses as a placeholder, so "You need 1 more coin." reads as a `You`
+  // placeholder that Russian does not have.
+  final stripped = _stripBranchBodies(message);
+  return RegExp(r'\{\s*([A-Za-z_]\w*)\s*[,}]')
+      .allMatches(stripped)
+      .map((m) => m.group(1)!)
+      .where(
+        (name) => !const {
+          'plural',
+          'select',
+          'other',
+          'one',
+          'few',
+          'many',
+          'two',
+          'zero',
+        }.contains(name),
+      )
+      .toSet();
+}
+
+/// Replaces `=1{…}` / `other{…}` branch bodies with their placeholders only.
+String _stripBranchBodies(String message) {
+  final selector = RegExp(r'(=\d+|zero|one|two|few|many|other)\s*\{');
+  var result = message;
+  while (true) {
+    final match = selector.firstMatch(result);
+    if (match == null) return result;
+
+    var depth = 1;
+    var index = match.end;
+    while (index < result.length && depth > 0) {
+      if (result[index] == '{') depth++;
+      if (result[index] == '}') depth--;
+      index++;
+    }
+    final body = result.substring(match.end, index - 1);
+    // Keep any nested placeholders, drop the prose around them.
+    final kept = RegExp(r'\{\s*[A-Za-z_]\w*\s*\}')
+        .allMatches(body)
+        .map((m) => m.group(0)!)
+        .join();
+    result = result.replaceRange(match.start, index, kept);
+  }
+}
 
 /// Keys whose translation legitimately matches English: proper nouns and words
 /// that are spelled the same in the target language.
@@ -232,6 +274,43 @@ void main() {
       expect(s.taskCount(1), contains('задание'));
       expect(s.taskCount(3), contains('задания'));
       expect(s.taskCount(5), contains('заданий'));
+    });
+
+    testWidgets('every count-bearing string inflects in Russian', (tester) async {
+      // These all used to be plain interpolations, so the child badge read
+      // "1 заданий" - genitive plural applied to one - and Russian is the
+      // parent app's default language.
+      await S.load(const Locale('ru'));
+      final s = S.current;
+
+      expect(s.badgeTasksDone(1), contains('задание'));
+      expect(s.badgeTasksDone(2), contains('задания'));
+      expect(s.badgeTasksDone(7), contains('заданий'));
+
+      expect(s.coinsCount(1), contains('монета'));
+      expect(s.coinsCount(3), contains('монеты'));
+      expect(s.coinsCount(11), contains('монет'));
+
+      expect(s.nDayStreak(1), contains('день'));
+      expect(s.nDayStreak(2), contains('дня'));
+      expect(s.nDayStreak(5), contains('дней'));
+
+      expect(s.yearsOld(1), contains('год'));
+      expect(s.yearsOld(4), contains('года'));
+      expect(s.yearsOld(8), contains('лет'));
+
+      expect(s.minutesRemainingLong(1), contains('минута'));
+      expect(s.minutesRemainingLong(30), contains('минут'));
+    });
+
+    testWidgets('English count strings read naturally at one', (tester) async {
+      await S.load(const Locale('en'));
+      final s = S.current;
+
+      expect(s.badgeTasksDone(1), '1 task done');
+      expect(s.badgeTasksDone(3), '3 tasks done');
+      expect(s.coinsCount(1), '1 coin');
+      expect(s.yearsOld(1), '1 year old');
     });
   });
 }
