@@ -130,7 +130,12 @@ class _ChildTodayScreen extends StatelessWidget {
       quest,
       onSubmit: quest.isCompleted || quest.isSubmitted
           ? null
-          : (note) => cubit.submitQuest(quest.id, note: note),
+          : (note, imageObjectKey) => cubit.submitQuest(
+              quest.id,
+              note: note,
+              imageObjectKey: imageObjectKey,
+            ),
+      onUploadPhoto: (path) => cubit.uploadPhoto(quest.id, path),
     );
   }
 

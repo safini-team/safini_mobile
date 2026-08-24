@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:safini/core/error/exceptions.dart';
@@ -6,6 +8,7 @@ import 'package:safini/features/child/data/datasources/child_remote_datasource.d
 import 'package:safini/features/child/domain/models/child_home_response.dart';
 import 'package:safini/features/child/domain/models/child_model.dart';
 import 'package:safini/features/child/domain/models/child_today_response.dart';
+import 'package:safini/features/child/domain/models/task_proof_upload.dart';
 import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
 
 class ChildRepositoryImpl implements IChildRepository {
@@ -100,11 +103,48 @@ class ChildRepositoryImpl implements IChildRepository {
   Future<Either<Failure, void>> submitTask(
     String taskId, {
     String? note,
+    String? imageObjectKey,
   }) async {
     debugPrint('[ChildRepositoryImpl] submitTask called for $taskId');
     try {
-      await _remote.submitTask(taskId, note: note);
+      await _remote.submitTask(
+        taskId,
+        note: note,
+        imageObjectKey: imageObjectKey,
+      );
       return const Right(null);
+    } on ServerException catch (e) {
+      debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      debugPrint('[ChildRepositoryImpl] Unexpected error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadTaskProof({
+    required String childId,
+    required String taskId,
+    required String filePath,
+  }) async {
+    final extension = proofExtensionFor(filePath);
+    if (extension == null) {
+      return const Left(ValidationFailure('That image type is not supported.'));
+    }
+
+    try {
+      final upload = await _remote.createProofUploadUrl(
+        childId: childId,
+        taskId: taskId,
+        extension: extension,
+      );
+      final objectKey = await _remote.uploadProofPhoto(
+        upload: upload,
+        file: File(filePath),
+        extension: extension,
+      );
+      return Right(objectKey);
     } on ServerException catch (e) {
       debugPrint('[ChildRepositoryImpl] ServerException: ${e.message}');
       return Left(ServerFailure(e.message));
