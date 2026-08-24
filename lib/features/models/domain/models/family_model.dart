@@ -1,3 +1,5 @@
+import 'package:safini/core/utils/display_name.dart';
+
 class FamilyModel {
   final String id;
   final String ownerUserId;
@@ -44,7 +46,9 @@ class FamilyModel {
                     ParentSummaryModel(
                       userId: ownerUserId,
                       email: null,
-                      displayName: 'NoName',
+                      // No name and no email to derive one from; the widget
+                      // shows a localized placeholder for an empty name.
+                      displayName: '',
                       avatarUrl: null,
                       role: 'admin',
                       joinedAt: null,
@@ -105,13 +109,10 @@ class ParentSummaryModel {
       userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
       email: json['email'] as String?,
       displayName:
-          (json['display_name'] ?? json['displayName'])
-                  ?.toString()
-                  .trim()
-                  .isNotEmpty ==
-              true
-          ? (json['display_name'] ?? json['displayName']).toString().trim()
-          : 'NoName',
+          resolveDisplayName(
+            json['display_name'] ?? json['displayName'],
+            email: json['email'],
+          ),
       avatarUrl:
           (json['avatar_url'] ?? json['avatarUrl'] ?? json['picture'])
               as String?,
@@ -164,16 +165,9 @@ class ChildSummaryModel {
     final rawLevel = json['level'] ?? json['rank'];
     return ChildSummaryModel(
       id: (json['id'] ?? json['child_id']) as String? ?? '',
-      nickname:
-          (json['nickname'] ?? json['name'] ?? json['display_name'])
-                  ?.toString()
-                  .trim()
-                  .isNotEmpty ==
-              true
-          ? (json['nickname'] ?? json['name'] ?? json['display_name'])
-                .toString()
-                .trim()
-          : 'NoName',
+      nickname: resolveDisplayName(
+        json['nickname'] ?? json['name'] ?? json['display_name'],
+      ),
       age: rawAge is int ? rawAge : int.tryParse(rawAge?.toString() ?? '') ?? 0,
       gender: (json['gender'] as String?)?.trim(),
       claimedByUserId:

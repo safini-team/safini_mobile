@@ -3556,6 +3556,16 @@ class S {
     return Intl.message('Try again', name: 'tryAgain', desc: '', args: []);
   }
 
+  /// `Something went wrong. Please try again.`
+  String get genericErrorRetry {
+    return Intl.message(
+      'Something went wrong. Please try again.',
+      name: 'genericErrorRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Your name`
   String get yourName {
     return Intl.message('Your name', name: 'yourName', desc: '', args: []);
@@ -3573,6 +3583,16 @@ class S {
       name: 'youSuffix',
       desc: '',
       args: [name],
+    );
+  }
+
+  /// `This parent`
+  String get displayNameFallback {
+    return Intl.message(
+      'This parent',
+      name: 'displayNameFallback',
+      desc: '',
+      args: [],
     );
   }
 

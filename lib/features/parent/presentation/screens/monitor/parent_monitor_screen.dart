@@ -38,19 +38,35 @@ class _ParentMonitorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ParentMonitorCubit, ParentMonitorState>(
-      // When the parent switches child, reload that child's tasks so the review
-      // list and the stat row match the child on the card.
-      listenWhen: (prev, curr) =>
-          curr is ParentMonitorLoaded &&
-          (prev is! ParentMonitorLoaded ||
-              prev.selectedChild?.id != curr.selectedChild?.id),
-      listener: (context, state) {
-        final childId = (state as ParentMonitorLoaded).selectedChild?.id;
-        if (childId != null) {
-          context.read<ParentTasksCubit>().loadTasks(childId: childId);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ParentMonitorCubit, ParentMonitorState>(
+          // When the parent switches child, reload that child's tasks so the
+          // review list and the stat row match the child on the card.
+          listenWhen: (prev, curr) =>
+              curr is ParentMonitorLoaded &&
+              (prev is! ParentMonitorLoaded ||
+                  prev.selectedChild?.id != curr.selectedChild?.id),
+          listener: (context, state) {
+            final childId = (state as ParentMonitorLoaded).selectedChild?.id;
+            if (childId != null) {
+              context.read<ParentTasksCubit>().loadTasks(childId: childId);
+            }
+          },
+        ),
+        BlocListener<ParentTasksCubit, ParentTasksState>(
+          // Approving pays coins and moves the streak, and both of those live
+          // on the monitor's child row, not in the tasks cubit. Without this
+          // the card kept showing the pre-approval balance until the parent
+          // pulled to refresh.
+          listenWhen: (prev, curr) =>
+              curr is ParentTaskReviewed ||
+              curr is ParentTaskSaved ||
+              curr is ParentTaskDeleted,
+          listener: (context, _) =>
+              context.read<ParentMonitorCubit>().loadMonitorData(),
+        ),
+      ],
       child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
         builder: (context, state) {
           if (state is ParentMonitorNoChild) {

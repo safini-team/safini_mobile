@@ -1,3 +1,4 @@
+import 'package:safini/core/utils/display_name.dart';
 class ChildModel {
   final String id;
   final String familyId;
@@ -42,9 +43,7 @@ class ChildModel {
     return ChildModel(
       id: json['id'] as String,
       familyId: (json['familyId'] ?? json['family_id']) as String,
-      nickname: (json['nickname'] as String?)?.trim().isNotEmpty == true
-          ? (json['nickname'] as String).trim()
-          : 'NoName',
+      nickname: resolveDisplayName(json['nickname']),
       age: json['age'] as int,
       gender: (json['gender'] as String?) ?? '',
       avatarState: AvatarStateModel.fromJson(avatarStateJson),

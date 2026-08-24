@@ -322,6 +322,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteTaskTitle": MessageLookupByLibrary.simpleMessage("Delete task?"),
     "detailsFieldLabel": MessageLookupByLibrary.simpleMessage("Details"),
     "detailsSection": MessageLookupByLibrary.simpleMessage("Details"),
+    "displayNameFallback": MessageLookupByLibrary.simpleMessage("This parent"),
     "doHomework": MessageLookupByLibrary.simpleMessage("Do homework"),
     "doThisNext": MessageLookupByLibrary.simpleMessage("Do this next"),
     "doneAction": MessageLookupByLibrary.simpleMessage("Done"),
@@ -402,6 +403,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "genderGirl": MessageLookupByLibrary.simpleMessage("Girl"),
     "genderOptional": MessageLookupByLibrary.simpleMessage("Gender (optional)"),
     "genderOther": MessageLookupByLibrary.simpleMessage("Other"),
+    "genericErrorRetry": MessageLookupByLibrary.simpleMessage(
+      "Something went wrong. Please try again.",
+    ),
     "goToMyFamily": MessageLookupByLibrary.simpleMessage("Go to my family"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Go to Tasks"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Good afternoon 👋"),

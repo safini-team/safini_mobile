@@ -40,8 +40,78 @@ jobs:
           git diff --exit-code --stat lib/core/translation/generated \
             || { echo "::error::lib/core/translation/generated is stale - run 'make generate' and commit the result"; exit 1; }
 
+      # en is the template; a key added to it and forgotten in ru or uz ships
+      # as a blank string in that language, and nothing else catches it.
+      - name: Check .arb key parity across en / ru / uz
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          locales = ("en", "ru", "uz")
+          keys = {}
+          for loc in locales:
+              with open(f"lib/core/translation/l10n/intl_{loc}.arb", encoding="utf-8") as handle:
+                  keys[loc] = {k for k in json.load(handle) if not k.startswith("@")}
+          base = keys["en"]
+          failed = False
+          for loc in locales[1:]:
+              missing = sorted(base - keys[loc])
+              extra = sorted(keys[loc] - base)
+              if missing:
+                  print(f"::error::intl_{loc}.arb is missing {len(missing)} keys: {missing[:10]}")
+                  failed = True
+              if extra:
+                  print(f"::error::intl_{loc}.arb has {len(extra)} keys en does not: {extra[:10]}")
+                  failed = True
+          print(f"{len(base)} strings per locale")
+          sys.exit(1 if failed else 0)
+          PY
+
       - name: Analyze
         run: flutter analyze
 
       - name: Test
         run: flutter test --reporter=expanded
+
+  openapi-drift:
+    name: Vendored OpenAPI matches production
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # The vendored spec sat two versions behind for months, and the app shipped
+    # calls to endpoints that had already been deleted. This is the guard for
+    # that class of bug.
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compare lib/api_reference/api.json with api.safini.fun
+        run: |
+          if ! curl -fsS --max-time 30 https://api.safini.fun/openapi.json -o /tmp/live.json; then
+            echo "::warning::Could not reach api.safini.fun; skipping the drift check."
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json, sys
+
+          def routes(path):
+              with open(path, encoding="utf-8") as handle:
+                  spec = json.load(handle)
+              return spec["info"]["version"], {
+                  f"{method.upper()} {route}"
+                  for route, methods in spec["paths"].items()
+                  for method in methods
+              }
+
+          live_version, live = routes("/tmp/live.json")
+          vendored_version, vendored = routes("lib/api_reference/api.json")
+
+          stale = sorted(vendored - live)
+          missing = sorted(live - vendored)
+          for route in stale:
+              print(f"::error::vendored spec still describes {route}, which the API no longer serves")
+          for route in missing:
+              print(f"::error::live API serves {route}, which the vendored spec does not describe")
+          if stale or missing:
+              print(f"vendored {vendored_version}, live {live_version}")
+              print("Refresh: curl -s https://api.safini.fun/openapi.json | python3 -m json.tool > lib/api_reference/api.json")
+              sys.exit(1)
+          print(f"In sync at {live_version}: {len(live)} routes")
+          PY

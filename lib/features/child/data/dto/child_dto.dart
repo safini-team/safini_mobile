@@ -1,4 +1,5 @@
 import 'package:safini/features/child/domain/models/child_model.dart';
+import 'package:safini/core/utils/display_name.dart';
 
 class ChildDto {
   final String id;
@@ -39,9 +40,7 @@ class ChildDto {
     return ChildDto(
       id: json['id'] as String,
       familyId: json['family_id'] as String,
-      nickname: (json['nickname'] as String?)?.trim().isNotEmpty == true
-          ? (json['nickname'] as String).trim()
-          : 'NoName',
+      nickname: resolveDisplayName(json['nickname']),
       age: json['age'] as int,
       gender: json['gender'] as String?,
       level: (json['level'] as num?)?.toInt() ?? 1,

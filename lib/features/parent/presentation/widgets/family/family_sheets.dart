@@ -157,10 +157,15 @@ class _ParentSheetState extends State<_ParentSheet> {
 
 /// The artboard's child sheet: avatar and status, stat tiles, a details panel,
 /// then the re-connect code and the edit action.
+/// Either a fresh invite code or the reason there is not one. A bare
+/// `String?` lost the reason, so a refusal (the backend will not issue a code
+/// for a child who is already connected) showed up as nothing happening.
+typedef InviteCodeResult = ({String? code, String? error});
+
 Future<FamilySheetAction?> showChildSheet(
   BuildContext context, {
   required FamilyChildCard child,
-  required Future<String?> Function() onCreateCode,
+  required Future<InviteCodeResult> Function() onCreateCode,
 }) {
   return showDsSheet<FamilySheetAction>(
     context: context,
@@ -172,7 +177,7 @@ class _ChildSheet extends StatefulWidget {
   const _ChildSheet({required this.child, required this.onCreateCode});
 
   final FamilyChildCard child;
-  final Future<String?> Function() onCreateCode;
+  final Future<InviteCodeResult> Function() onCreateCode;
 
   @override
   State<_ChildSheet> createState() => _ChildSheetState();
@@ -180,6 +185,7 @@ class _ChildSheet extends StatefulWidget {
 
 class _ChildSheetState extends State<_ChildSheet> {
   String? _code;
+  String? _error;
   bool _busy = false;
 
   Future<void> _makeCode() async {
@@ -187,12 +193,16 @@ class _ChildSheetState extends State<_ChildSheet> {
       Navigator.of(context).pop(FamilySheetAction.none);
       return;
     }
-    setState(() => _busy = true);
-    final code = await widget.onCreateCode();
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    final result = await widget.onCreateCode();
     if (!mounted) return;
     setState(() {
       _busy = false;
-      _code = code;
+      _code = result.code;
+      _error = result.code == null ? result.error : null;
     });
   }
 
@@ -255,6 +265,10 @@ class _ChildSheetState extends State<_ChildSheet> {
             code: _code!,
             footnote: s.typeItOnPhone(child.name),
           ),
+        ],
+        if (_error != null) ...[
+          const SizedBox(height: 12),
+          DsFootnote(_error!, top: 0),
         ],
         const SizedBox(height: 14),
         DsPrimaryButton(

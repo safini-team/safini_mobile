@@ -327,6 +327,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteTaskTitle": MessageLookupByLibrary.simpleMessage("Удалить задание?"),
     "detailsFieldLabel": MessageLookupByLibrary.simpleMessage("Детали"),
     "detailsSection": MessageLookupByLibrary.simpleMessage("Данные"),
+    "displayNameFallback": MessageLookupByLibrary.simpleMessage("Родитель"),
     "doHomework": MessageLookupByLibrary.simpleMessage("Сделать уроки"),
     "doThisNext": MessageLookupByLibrary.simpleMessage("Следующее"),
     "doneAction": MessageLookupByLibrary.simpleMessage("Готово"),
@@ -415,6 +416,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пол (необязательно)",
     ),
     "genderOther": MessageLookupByLibrary.simpleMessage("Другое"),
+    "genericErrorRetry": MessageLookupByLibrary.simpleMessage(
+      "Что-то пошло не так. Попробуйте ещё раз.",
+    ),
     "goToMyFamily": MessageLookupByLibrary.simpleMessage("К моей семье"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Перейти к заданиям"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Добрый день 👋"),

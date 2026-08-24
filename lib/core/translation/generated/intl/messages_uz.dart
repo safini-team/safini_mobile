@@ -343,6 +343,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "detailsFieldLabel": MessageLookupByLibrary.simpleMessage("Tafsilotlar"),
     "detailsSection": MessageLookupByLibrary.simpleMessage("Maʼlumotlar"),
+    "displayNameFallback": MessageLookupByLibrary.simpleMessage("Ota-ona"),
     "doHomework": MessageLookupByLibrary.simpleMessage("Uy vazifasini bajar"),
     "doThisNext": MessageLookupByLibrary.simpleMessage("Keyingisi"),
     "doneAction": MessageLookupByLibrary.simpleMessage("Tayyor"),
@@ -427,6 +428,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "genderGirl": MessageLookupByLibrary.simpleMessage("Qiz bola"),
     "genderOptional": MessageLookupByLibrary.simpleMessage("Jins (ixtiyoriy)"),
     "genderOther": MessageLookupByLibrary.simpleMessage("Boshqa"),
+    "genericErrorRetry": MessageLookupByLibrary.simpleMessage(
+      "Nimadir xato ketdi. Qayta urinib koʻring.",
+    ),
     "goToMyFamily": MessageLookupByLibrary.simpleMessage("Oilamga oʻtish"),
     "goToTasks": MessageLookupByLibrary.simpleMessage("Topshiriqlarga oʻtish"),
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Xayrli kun 👋"),
