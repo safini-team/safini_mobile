@@ -1,17 +1,18 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
-import 'package:safini/core/utils/extension/theme_extension.dart';
-import 'package:safini/core/utils/widgets/skeleton/skeleton_widgets.dart';
+import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/features/parent/data/app_data.dart';
+import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
-import 'package:safini/features/parent/presentation/widgets/charts/parent_screen_time_chart.dart';
-import 'package:safini/features/parent/presentation/widgets/layout/parent_no_child_empty_state.dart';
-import 'package:safini/features/parent/presentation/screens/monitor/monitor_header.dart';
-import 'package:safini/features/parent/presentation/screens/monitor/monitor_stats_row.dart';
-import 'package:safini/features/parent/presentation/screens/monitor/monitor_app_limits_section.dart';
-import 'package:safini/features/parent/presentation/screens/monitor/monitor_tasks_section.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
+import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
+import 'package:safini/features/parent/presentation/widgets/layout/parent_monitor_states.dart';
+import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
 
 class ParentMonitorScreen extends StatelessWidget {
   const ParentMonitorScreen({super.key});
@@ -35,23 +36,11 @@ class ParentMonitorScreen extends StatelessWidget {
 class _ParentMonitorView extends StatelessWidget {
   const _ParentMonitorView();
 
-  // Base height of the progress-card block (padding + a 2-line title layout)
-  // at a text scale of 1.0. It grows with the device font-scale factor.
-  static const double _toolbarHeight = 80;
-  static const double _cardBlockBaseHeight = 224;
-
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context);
-    final topPadding = media.padding.top;
-    // Clamp so an extreme system font size can't blow the header height up.
-    final textScale = media.textScaler.scale(1.0).clamp(1.0, 1.3);
-    final expandedHeight =
-        topPadding + _toolbarHeight + (_cardBlockBaseHeight * textScale);
-
     return BlocListener<ParentMonitorCubit, ParentMonitorState>(
-      // When the parent swipes to another child, reload that child's tasks so
-      // the "tasks" section matches the child shown on the card.
+      // When the parent switches child, reload that child's tasks so the review
+      // list and the stat row match the child on the card.
       listenWhen: (prev, curr) =>
           curr is ParentMonitorLoaded &&
           (prev is! ParentMonitorLoaded ||
@@ -62,90 +51,124 @@ class _ParentMonitorView extends StatelessWidget {
           context.read<ParentTasksCubit>().loadTasks(childId: childId);
         }
       },
-      child: Scaffold(
-      backgroundColor: context.colorScheme.primary,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            floating: false,
-            // toolbarHeight covers greeting text + name (no overflow)
-            toolbarHeight: _toolbarHeight,
-            expandedHeight: expandedHeight,
-            backgroundColor: context.colorScheme.primary,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            automaticallyImplyLeading: false,
-            centerTitle: false,
-            titleSpacing: 0,
-            title: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: MonitorGreetingTitle(),
-            ),
-            flexibleSpace: const FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              background: MonitorFlexBackground(),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(36),
-                  topRight: Radius.circular(36),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 32,
-                ),
-                child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
-                  builder: (context, state) {
-                    if (state is ParentMonitorLoading) {
-                      return const MonitorSkeleton();
-                    }
+      child: BlocBuilder<ParentMonitorCubit, ParentMonitorState>(
+        builder: (context, state) {
+          if (state is ParentMonitorNoChild) {
+            return const ParentTodayEmpty();
+          }
+          if (state is! ParentMonitorLoaded) {
+            return const ParentTodaySkeleton();
+          }
 
-                    if (state is ParentMonitorNoChild) {
-                      return const ParentNoChildEmptyState();
-                    }
-
-                    if (state is ParentMonitorLoaded) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Steps / lessons / weekly chart are hidden until the
-                          // backend exposes real data for them.
-                          if (state.hasActivityData) ...[
-                            MonitorStatsRow(
-                              stepsToday: state.stepsToday,
-                              lessonsToday: state.lessonsToday,
-                            ),
-                            const SizedBox(height: 24),
-                            ParentScreenTimeChart(
-                              weeklyUsage: state.weeklyUsage,
-                            ),
-                            const SizedBox(height: 40),
-                          ],
-                          MonitorAppLimitsSection(appLimits: state.appLimits),
-                          const SizedBox(height: 40),
-                          const MonitorTasksSection(),
-                          const SizedBox(height: 100),
-                        ],
-                      );
-                    }
-
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ),
+          return BlocBuilder<ParentTasksCubit, ParentTasksState>(
+            builder: (context, tasksState) => ParentTodayView(
+              data: _buildData(context, state, tasksState),
+              onSelectKid: (index) =>
+                  context.read<ParentMonitorCubit>().selectChild(index),
+              onOpenSettings: () =>
+                  context.router.push(const NamedRoute('parentSettings')),
+              onOpenLimits: () => context.read<ParentHomeCubit>().selectTab(2),
+              onOpenReview: (review) => _openReview(context, review.id),
+              onApproveReview: (review) => context
+                  .read<ParentTasksCubit>()
+                  .reviewTask(review.id, approve: true),
+              onRefresh: () async {
+                await context.read<ParentMonitorCubit>().loadMonitorData();
+                if (context.mounted) {
+                  await context.read<ParentTasksCubit>().loadTasks();
+                }
+              },
             ),
-          ),
-        ],
+          );
+        },
       ),
-      ),
+    );
+  }
+
+  void _openReview(BuildContext context, String taskId) {
+    final cubit = context.read<ParentTasksCubit>();
+    final task = _loadedOf(cubit.state)?.tasks.firstWhere(
+      (t) => t.id == taskId,
+      orElse: () => const ParentTaskInstanceModel(id: '', status: ''),
+    );
+    if (task == null || task.id.isEmpty) return;
+    showReviewSheet(context, cubit: cubit, task: task);
+  }
+
+  static ParentTasksLoaded? _loadedOf(ParentTasksState state) => switch (state) {
+    ParentTasksLoaded() => state,
+    ParentTaskSaving() => state.base,
+    ParentTaskSaved() => state.base,
+    ParentTaskDeleting() => state.base,
+    ParentTaskDeleted() => state.base,
+    ParentTaskReviewing() => state.base,
+    ParentTaskReviewed() => state.base,
+    ParentTaskActionError() => state.base,
+    _ => null,
+  };
+
+  ParentTodayData _buildData(
+    BuildContext context,
+    ParentMonitorLoaded state,
+    ParentTasksState tasksState,
+  ) {
+    final child = state.selectedChild;
+    final tasks = _loadedOf(tasksState);
+
+    final apps =
+        state.appLimits.map((limit) {
+          final name = (limit['name'] ?? '').toString();
+          return TodayApp(
+            name: name,
+            emoji: AppData.getEmojiForApp(name),
+            usedMinutes: (limit['used'] as int?) ?? 0,
+            limitMinutes: (limit['limit'] as int?) ?? 0,
+          );
+        }).toList()
+          ..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));
+
+    // No family-wide allowance exists yet, so the ring reads the child's total
+    // against the sum of their per-app limits.
+    final used = apps.fold<int>(0, (sum, app) => sum + app.usedMinutes);
+    final limit = apps.fold<int>(0, (sum, app) => sum + app.limitMinutes);
+
+    final reviews = (tasks?.pendingApproval ?? const <ParentTaskInstanceModel>[])
+        .map(
+          (task) => TodayReview(
+            id: task.id,
+            title: task.displayTitle,
+            meta: [
+              child?.nickname ?? '',
+              if ((task.category ?? '').isNotEmpty) task.category!,
+            ].where((part) => part.isNotEmpty).join(' · '),
+            kidName: child?.nickname ?? '',
+            color: AppColors.kidColor(child?.id ?? child?.nickname),
+            coins: task.rewardCoins ?? 0,
+          ),
+        )
+        .toList();
+
+    return ParentTodayData(
+      kids: [
+        for (final kid in state.children)
+          TodayKid(
+            id: kid.id,
+            name: kid.nickname,
+            color: AppColors.kidColor(kid.id),
+          ),
+      ],
+      selectedIndex: state.selectedIndex,
+      kidName: child?.nickname ?? '',
+      usedMinutes: used,
+      limitMinutes: limit,
+      topApp: apps.isEmpty || apps.first.usedMinutes == 0
+          ? ''
+          : apps.first.name,
+      tasksDone: tasks?.completedTasks.length ?? 0,
+      tasksTotal: tasks?.tasks.length ?? 0,
+      coins: child?.coinsBalance ?? 0,
+      reviews: reviews,
+      apps: apps.take(3).toList(),
     );
   }
 }

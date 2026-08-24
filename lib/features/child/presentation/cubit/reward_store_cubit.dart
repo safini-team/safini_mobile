@@ -19,9 +19,17 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
   }
 
   Future<void> loadStore() async {
+    emit(state.copyWith(isLoading: true, hasLoadError: false));
     final childId = await _resolveChildId();
     if (childId == null) {
-      emit(state.copyWith(appTimeItems: const [], avatarItems: const []));
+      emit(
+        state.copyWith(
+          appTimeItems: const [],
+          avatarItems: const [],
+          isLoading: false,
+          hasLoadError: true,
+        ),
+      );
       return;
     }
 
@@ -36,10 +44,19 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
         state.copyWith(
           appTimeItems: _parseAppTimeItems(data['app_time_offers']),
           avatarItems: _parseAvatarItems(data['avatar_items']),
+          isLoading: false,
+          hasLoadError: false,
         ),
       );
     } catch (_) {
-      emit(state.copyWith(appTimeItems: const [], avatarItems: const []));
+      emit(
+        state.copyWith(
+          appTimeItems: const [],
+          avatarItems: const [],
+          isLoading: false,
+          hasLoadError: true,
+        ),
+      );
     }
   }
 
@@ -72,7 +89,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
                 _intValue(map, ['redeem_coin_cost', 'coin_cost', 'cost']) ?? 0,
             // Absent/true → enabled; only an explicit false disables redemption.
             isEnabled: map['is_enabled'] != false,
-            remainingMinutes: _intValue(map, [
+            remainingMinutes:
+                _intValue(map, [
                   'remaining_minutes',
                   'bonus_minutes_remaining',
                 ]) ??

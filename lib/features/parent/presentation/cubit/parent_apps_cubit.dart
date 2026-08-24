@@ -14,16 +14,23 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   ParentAppsCubit(this._familyCubit, this._appUsageRepo)
     : super(const ParentAppsInitial());
 
-  Future<void> loadAppLimits() async {
+  /// Child the Limits screen is scoped to; the chip strip switches it.
+  String? get childId => _childId;
+
+  Future<void> loadAppLimits({String? childId}) async {
     emit(const ParentAppsLoading());
 
     if (_familyCubit.state.family == null) {
       await _familyCubit.loadCurrentFamily(refresh: true);
     }
 
-    final child = _familyCubit.state.family?.children
-        .where((c) => c.id.isNotEmpty)
-        .firstOrNull;
+    final children =
+        _familyCubit.state.family?.children.where((c) => c.id.isNotEmpty) ??
+        const [];
+    final child = childId != null
+        ? children.where((c) => c.id == childId).firstOrNull
+        : children.where((c) => c.id == _childId).firstOrNull ??
+              children.firstOrNull;
     _childId = child?.id;
 
     if (_childId == null) {
@@ -74,6 +81,13 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
         return null;
       },
     );
+  }
+
+  /// Switches which child's limits are shown.
+  Future<void> selectChild(String childId) {
+    if (childId == _childId) return Future.value();
+    _appUsage = const [];
+    return loadAppLimits(childId: childId);
   }
 
   /// Slugs already configured for the selected child (to exclude from the

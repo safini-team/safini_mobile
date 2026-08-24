@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/user_me_service.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
@@ -22,6 +23,7 @@ void registerCommonDependencies(GetIt sl) {
   sl.registerLazySingleton<AuthGoogleSignInService>(
     AuthGoogleSignInService.new,
   );
+  sl.registerLazySingleton<AuthEmailSignInService>(AuthEmailSignInService.new);
   sl.registerFactory<LoginCubit>(
     () => LoginCubit(
       sl<AuthGoogleSignInService>(),
@@ -31,7 +33,11 @@ void registerCommonDependencies(GetIt sl) {
   );
   sl.registerLazySingleton<UserMeService>(UserMeService.new);
   sl.registerLazySingleton<AuthSessionCubit>(
-    () => AuthSessionCubit(sl<AuthGoogleSignInService>(), sl<UserMeService>()),
+    () => AuthSessionCubit(
+      sl<AuthGoogleSignInService>(),
+      sl<AuthEmailSignInService>(),
+      sl<UserMeService>(),
+    ),
   );
   sl.registerLazySingleton<models_child.IChildRepository>(
     () => models_child.ChildRepositoryImpl(),

@@ -45,5 +45,6 @@ class ParentUserModel {
     };
   }
 
-  String get name => displayName ?? 'Safinio Parent';
+  String get name =>
+      displayName?.trim().isNotEmpty == true ? displayName!.trim() : 'NoName';
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/features/child/presentation/cubit/tasks_model.dart';
 
 class QuestModel {
   final String id;
@@ -20,8 +22,18 @@ class QuestModel {
 
   bool get isSubmitted {
     final s = status.toLowerCase();
-    return s == 'submitted' || s == 'pending' || s == 'pending_approval' || s == 'awaiting_approval';
+    return s == 'submitted' ||
+        s == 'pending' ||
+        s == 'pending_approval' ||
+        s == 'awaiting_approval';
   }
+
+  String localizedSubtitle(S s) => localizedTaskSubtitle(
+    s,
+    customSubtitle: subtitle,
+    coins: coins,
+    isCompleted: isCompleted,
+  );
 
   const QuestModel({
     required this.id,
