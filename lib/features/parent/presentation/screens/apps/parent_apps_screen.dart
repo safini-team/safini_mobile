@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
@@ -24,6 +25,17 @@ class ParentAppsScreen extends StatelessWidget {
 
 class _ParentLimitsView extends StatelessWidget {
   const _ParentLimitsView();
+
+  Future<void> _setCap(
+    BuildContext context,
+    ParentAppsCubit cubit,
+    int? minutes,
+  ) async {
+    final error = await cubit.setScreenTimeCap(minutes);
+    if (error != null && context.mounted) {
+      AppSnackBar.error(context, error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +69,10 @@ class _ParentLimitsView extends StatelessWidget {
             emoji: AppData.getEmojiForApp(name),
             usedMinutes: (limit['used'] as int?) ?? 0,
             limitMinutes: (limit['limit'] as int?) ?? 0,
-            isEnabled: limit['isEnabled'] as bool? ?? true,
+            isLimited: limit['isLimited'] as bool? ?? true,
+            canRedeem: limit['canRedeem'] as bool? ?? true,
+            redeemCoinCost: (limit['cost'] as int?) ?? 100,
+            redeemRewardMinutes: (limit['reward'] as int?) ?? 30,
           );
         }).toList();
 
@@ -74,8 +89,10 @@ class _ParentLimitsView extends StatelessWidget {
             selectedKidId: selectedId,
             kidName: selected?.nickname ?? '',
             apps: apps,
+            capMinutes: state.screenTime.limitMinutes,
           ),
           onSelectKid: cubit.selectChild,
+          onSetCap: (minutes) => _setCap(context, cubit, minutes),
           onOpenApp: (app) => showAppLimitSheet(
             context,
             cubit: cubit,

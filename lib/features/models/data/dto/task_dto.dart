@@ -105,6 +105,14 @@ class TaskCreateRequestDto {
   final String? targetUnit;
   final String? contentRef;
   final String? dueOn;
+
+  /// `none` | `daily` | `weekly`. A rule makes this a template the server
+  /// materialises one instance from per matching day.
+  final String recurrence;
+
+  /// Weekday bitmask for `weekly`: Mon=1, Tue=2, Wed=4 ... Sun=64.
+  final int? recurrenceDays;
+
   final Map<String, dynamic>? metadata;
 
   const TaskCreateRequestDto({
@@ -120,6 +128,8 @@ class TaskCreateRequestDto {
     this.targetUnit,
     this.contentRef,
     this.dueOn,
+    this.recurrence = 'none',
+    this.recurrenceDays,
     this.metadata,
   });
 
@@ -145,6 +155,10 @@ class TaskCreateRequestDto {
     addOptional('target_unit', targetUnit);
     addOptional('content_ref', contentRef);
     addOptional('due_on', dueOn);
+    json['recurrence'] = recurrence;
+    // The API rejects a weekly rule with no days, and days on a rule that is
+    // not weekly, so only ever send the pair together.
+    if (recurrence == 'weekly') json['recurrence_days'] = recurrenceDays;
     addOptional('metadata', metadata);
     return json;
   }
@@ -164,6 +178,8 @@ class TaskUpdateRequestDto {
   final String? targetUnit;
   final String? contentRef;
   final String? dueOn;
+  final String? recurrence;
+  final int? recurrenceDays;
   final Map<String, dynamic>? metadata;
 
   const TaskUpdateRequestDto({
@@ -178,6 +194,8 @@ class TaskUpdateRequestDto {
     this.targetUnit,
     this.contentRef,
     this.dueOn,
+    this.recurrence,
+    this.recurrenceDays,
     this.metadata,
   });
 
@@ -194,6 +212,10 @@ class TaskUpdateRequestDto {
     if (targetUnit != null) json['target_unit'] = targetUnit;
     if (contentRef != null) json['content_ref'] = contentRef;
     if (dueOn != null) json['due_on'] = dueOn;
+    if (recurrence != null) {
+      json['recurrence'] = recurrence;
+      if (recurrence == 'weekly') json['recurrence_days'] = recurrenceDays;
+    }
     if (metadata != null) json['metadata'] = metadata;
     return json;
   }
@@ -238,8 +260,8 @@ class TaskInstanceDto {
       completedAt: json['completed_at'] != null
           ? DateTime.parse(json['completed_at'] as String)
           : null,
-      proofUrl: json['proof_url'] as String?,
-      parentNote: json['parent_note'] as String?,
+      proofUrl: json['submission_image_url'] as String?,
+      parentNote: json['review_note'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : DateTime.now(),
@@ -286,7 +308,7 @@ class TaskSubmissionDto {
   TaskSubmissionDto({required this.proofUrl});
 
   factory TaskSubmissionDto.fromJson(Map<String, dynamic> json) {
-    return TaskSubmissionDto(proofUrl: json['proof_url'] as String? ?? '');
+    return TaskSubmissionDto(proofUrl: json['submission_image_url'] as String? ?? '');
   }
 
   Map<String, dynamic> toJson() {
@@ -303,7 +325,7 @@ class TaskReviewDto {
   factory TaskReviewDto.fromJson(Map<String, dynamic> json) {
     return TaskReviewDto(
       status: json['status'] as String? ?? '',
-      parentNote: json['parent_note'] as String?,
+      parentNote: json['review_note'] as String?,
     );
   }
 

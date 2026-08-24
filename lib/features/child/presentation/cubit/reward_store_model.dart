@@ -46,6 +46,11 @@ class AppTimeItem {
 
 class AvatarItem {
   final String id;
+
+  /// Display name straight from the API (`avatar_items[].name`), e.g.
+  /// "Cosmic Cape". Empty only when the payload omitted it.
+  final String name;
+
   final String emoji;
   final int? cost;
   final bool isEquipped;
@@ -54,6 +59,7 @@ class AvatarItem {
 
   const AvatarItem({
     required this.id,
+    this.name = '',
     required this.emoji,
     this.cost,
     this.isEquipped = false,

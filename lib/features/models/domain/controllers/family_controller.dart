@@ -36,11 +36,15 @@ class FamilyController {
     String? nickname,
     int? age,
     String? gender,
+    int? dailyScreenTimeMinutes,
+    bool clearDailyScreenTime = false,
   }) => _repository.updateChild(
     childId,
     nickname: nickname,
     age: age,
     gender: gender,
+    dailyScreenTimeMinutes: dailyScreenTimeMinutes,
+    clearDailyScreenTime: clearDailyScreenTime,
   );
   Future<Either<Failure, void>> removeParent(String parentUserId) =>
       _repository.removeParent(parentUserId);

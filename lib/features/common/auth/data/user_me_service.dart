@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/common/auth/data/me_response.dart';
 
@@ -32,20 +33,23 @@ class UnexpectedResponseException implements Exception {
   final String message;
   const UnexpectedResponseException(this.statusCode, this.message);
   @override
-  String toString() =>
-      'UnexpectedResponseException($statusCode): $message';
+  String toString() => 'UnexpectedResponseException($statusCode): $message';
 }
 
 // ── Service ─────────────────────────────────────────────────────────────────
 
 /// HTTP client for `GET /v1/me`.
 class UserMeService {
+  UserMeService(this._client);
+
+  final AuthenticatedHttpClient _client;
+
   /// Fetches the current user profile using the Supabase access token.
   ///
   /// Throws [UnauthorizedException] on 401,
   /// [NetworkException] on connectivity issues,
   /// [UnexpectedResponseException] on anything else unexpected.
-  Future<MeResponse> fetchMe(String accessToken) async {
+  Future<MeResponse> fetchMe() async {
     final baseUrl = SupabaseConfig.apiBaseUrl;
     if (baseUrl.isEmpty) {
       throw const UnexpectedResponseException(
@@ -58,15 +62,11 @@ class UserMeService {
 
     late final http.Response response;
     try {
-      response = await http
-          .get(
-            uri,
-            headers: {
-              'Authorization': 'Bearer $accessToken',
-              'Accept': 'application/json',
-            },
-          )
+      response = await _client
+          .get(uri, headers: {'Accept': 'application/json'})
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      throw const UnauthorizedException('No authenticated session');
     } on TimeoutException {
       throw const NetworkException(
         'Server is not responding. Please check your internet connection and try again.',

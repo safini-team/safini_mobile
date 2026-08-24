@@ -80,8 +80,9 @@ class ParentTodayData {
   final List<TodayReview> reviews;
   final List<TodayApp> apps;
 
-  /// Null until the backend exposes streaks - the cell then reads "-", the
-  /// same no-data treatment the design uses in the week table.
+  /// `current_streak_days` from the child row, which every child-bearing
+  /// endpoint returns. Null only while the dashboard has not loaded yet;
+  /// the cell reads "-" in that window.
   final int? streakDays;
 
   int get leftMinutes =>

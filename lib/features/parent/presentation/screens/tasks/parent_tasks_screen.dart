@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
-import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
@@ -15,6 +13,8 @@ import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_v
 import 'package:safini/features/parent/presentation/widgets/layout/parent_task_states.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/task_sheet.dart';
+import 'package:safini/core/utils/task_category.dart';
+import 'package:safini/core/utils/relative_date.dart';
 
 /// Scope key used by the "Everyone" chip.
 const String _allScope = 'all';
@@ -29,6 +29,11 @@ class ParentTasksScreen extends StatefulWidget {
 class _ParentTasksScreenState extends State<ParentTasksScreen> {
   String _scope = _allScope;
   TaskLane _lane = TaskLane.review;
+
+  /// Until the parent picks a lane themselves, the screen opens on whichever
+  /// one has something in it. Landing on an empty "To review" was the default
+  /// on most days.
+  bool _laneChosenByUser = false;
 
   Future<void> _reload() {
     final cubit = context.read<ParentTasksCubit>();
@@ -57,7 +62,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         if (state is ParentTasksError) {
           return ParentTasksErrorState(
             message: state.message,
-            canRetry: state.canRetry && !state.isUnauthorized,
+            canRetry: state.canRetry,
             onRetry: _reload,
           );
         }
@@ -68,7 +73,10 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         return ParentTasksView(
           data: _buildData(context, loaded),
           onSelectScope: _selectScope,
-          onSelectLane: (lane) => setState(() => _lane = lane),
+          onSelectLane: (lane) => setState(() {
+            _lane = lane;
+            _laneChosenByUser = true;
+          }),
           onOpenTask: (row) => _openTask(context, loaded, row.id),
           onNewTask: () => _openTask(context, loaded, null),
           onRefresh: _reload,
@@ -83,8 +91,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       final message = state is ParentTasksError
           ? state.message
           : (state as ParentTaskActionError).message;
-      unawaited(context.read<AuthSessionCubit>().forceSignOut(message));
-      context.router.replace(const NamedRoute('login'));
+      AppSnackBar.error(context, message);
       return;
     }
     if (state is ParentTaskActionError && state.isConflict) {
@@ -143,13 +150,14 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   ParentTasksData _buildData(BuildContext context, ParentTasksLoaded loaded) {
     final s = S.of(context);
 
-    final children = context
-        .watch<ParentFamilyCubit>()
-        .state
-        .family
-        ?.children
-        .where((child) => child.id.isNotEmpty)
-        .toList() ??
+    final children =
+        context
+            .watch<ParentFamilyCubit>()
+            .state
+            .family
+            ?.children
+            .where((child) => child.id.isNotEmpty)
+            .toList() ??
         const [];
 
     // In all-children mode the cubit tags each task with its child's name; in
@@ -169,13 +177,17 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       TaskLane.done: loaded.completedTasks.length,
     };
 
+    final lane = _laneChosenByUser
+        ? _lane
+        : (counts[TaskLane.review]! > 0 ? TaskLane.review : TaskLane.active);
+
     final rows = loaded.tasks
-        .where((task) => laneOf(task) == _lane)
+        .where((task) => laneOf(task) == lane)
         .map(
           (task) => TaskRowData(
             id: task.id,
             title: task.displayTitle,
-            meta: _metaFor(task),
+            meta: _metaFor(context, s, task),
             emoji: task.emoji ?? '📋',
             lane: laneOf(task),
             coins: task.rewardCoins ?? 0,
@@ -187,10 +199,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     // Group in family order so the cards do not reshuffle between filters.
     final order = children.map((child) => child.nickname).toList();
     final groups = <TaskGroupData>[];
-    for (final name in [
-      ...order,
-      if (order.isEmpty) loaded.childName,
-    ]) {
+    for (final name in [...order, if (order.isEmpty) loaded.childName]) {
       final groupRows = rows.where((row) => row.childName == name).toList();
       if (groupRows.isEmpty) continue;
       final child = children.where((c) => c.nickname == name).firstOrNull;
@@ -201,9 +210,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
           rows: groupRows,
           summary: s.taskGroupSummary(
             s.taskCount(groupRows.length),
-            s.coinCountShort(
-              groupRows.fold(0, (sum, row) => sum + row.coins),
-            ),
+            s.coinCountShort(groupRows.fold(0, (sum, row) => sum + row.coins)),
           ),
         ),
       );
@@ -217,11 +224,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     return ParentTasksData(
       scopeLine: s.taskScopeLine(scopeName, s.taskCount(loaded.tasks.length)),
       chips: [
-        TaskScopeChip(
-          key: _allScope,
-          label: s.scopeEveryone,
-          hasAvatar: false,
-        ),
+        TaskScopeChip(key: _allScope, label: s.scopeEveryone, hasAvatar: false),
         for (final child in children)
           TaskScopeChip(
             key: child.id,
@@ -231,14 +234,14 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       ],
       selectedScope: _scope,
       laneCounts: counts,
-      lane: _lane,
+      lane: lane,
       groups: groups,
-      emptyTitle: switch (_lane) {
+      emptyTitle: switch (lane) {
         TaskLane.review => s.emptyNothingToReview,
         TaskLane.active => s.emptyNoActiveTasks,
         TaskLane.done => s.emptyNothingPaidYet,
       },
-      emptyBody: switch (_lane) {
+      emptyBody: switch (lane) {
         TaskLane.review => s.emptyReviewBody,
         TaskLane.active => s.emptyActiveBody,
         TaskLane.done => s.emptyDoneBody,
@@ -246,11 +249,15 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     );
   }
 
-  String _metaFor(ParentTaskInstanceModel task) {
+  /// "Home · Today", not "home · 2026-08-23". The row used to print the raw
+  /// category slug and an ISO date, untranslated, in all three languages.
+  String _metaFor(BuildContext context, S s, ParentTaskInstanceModel task) {
     final parts = <String>[
-      if ((task.category ?? '').isNotEmpty) task.category!,
-      if ((task.dueOn ?? '').isNotEmpty) task.dueOn!,
-    ];
+      taskCategoryLabel(s, task.category),
+      relativeDateLabel(context, s, DateTime.tryParse(task.dueOn ?? '')),
+      if (task.recurrence == 'daily') s.repeatDailyShort,
+      if (task.recurrence == 'weekly') s.repeatWeeklyShort,
+    ].where((part) => part.isNotEmpty).toList();
     return parts.join(' · ');
   }
 }

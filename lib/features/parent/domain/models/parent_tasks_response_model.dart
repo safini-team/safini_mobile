@@ -182,8 +182,20 @@ class ParentTaskInstanceModel {
   final String? dueOn;
   final Map<String, dynamic>? metadata;
 
+  /// `none` | `daily` | `weekly`. A task with a rule is a template the server
+  /// materialises one instance from per matching day.
+  final String recurrence;
+
+  /// Weekday bitmask for `weekly`: Mon=1, Tue=2, Wed=4 … Sun=64.
+  final int? recurrenceDays;
+
   /// The note the child wrote when submitting the task for review.
   final String? submissionNote;
+
+  /// Short-lived signed URL for the proof photo. The API attaches it only to
+  /// tasks still awaiting review - signing every historical row would be a
+  /// Storage round trip per task on a hot path.
+  final String? submissionImageUrl;
 
   /// The note the parent left when approving/rejecting the task.
   final String? reviewNote;
@@ -204,7 +216,10 @@ class ParentTaskInstanceModel {
     this.targetUnit,
     this.dueOn,
     this.metadata,
+    this.recurrence = 'none',
+    this.recurrenceDays,
     this.submissionNote,
+    this.submissionImageUrl,
     this.reviewNote,
   });
 
@@ -241,6 +256,10 @@ class ParentTaskInstanceModel {
       targetValue: _intValue(json, ['target_value', 'targetValue']),
       targetUnit: _nullableStringValue(json, ['target_unit', 'targetUnit']),
       dueOn: _nullableStringValue(json, ['due_on', 'dueOn']),
+      recurrence:
+          _nullableStringValue(json, ['recurrence', 'recurrence_rule']) ??
+          'none',
+      recurrenceDays: _intValue(json, ['recurrence_days', 'recurrenceDays']),
       metadata: rawMetadata is Map
           ? rawMetadata.map((key, value) => MapEntry(key.toString(), value))
           : null,
@@ -248,6 +267,10 @@ class ParentTaskInstanceModel {
         'submission_note',
         'submissionNote',
         'note',
+      ]),
+      submissionImageUrl: _nullableStringValue(json, [
+        'submission_image_url',
+        'submissionImageUrl',
       ]),
       reviewNote: _nullableStringValue(json, [
         'review_note',
@@ -303,6 +326,8 @@ class ParentTaskInstanceModel {
       targetUnit: targetUnit,
       metadata: metadata,
       dueOn: dueOn,
+      recurrence: recurrence,
+      recurrenceDays: recurrenceDays,
       status: status,
     );
   }

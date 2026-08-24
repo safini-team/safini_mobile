@@ -143,11 +143,18 @@ class _StoreTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The price and the gap, not just the gap. An unaffordable tile used to
+    // read only "75 to go" - the child never saw what the thing actually
+    // cost, while the landing page promised they see the same prices as the
+    // parent.
     final label =
         card.badge ??
         (card.affordable
             ? '${card.cost}'
-            : S.of(context).toGo(card.toGo ?? card.cost));
+            : S.of(context).priceAndGap(
+                '${card.cost}',
+                '${card.toGo ?? card.cost}',
+              ));
 
     return DsCard(
       onTap: onTap,

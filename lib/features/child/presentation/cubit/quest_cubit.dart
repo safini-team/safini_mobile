@@ -95,6 +95,7 @@ class QuestCubit extends Cubit<QuestState> {
       iconBackground: spec.background,
       emoji: task.emoji,
       reviewNote: task.reviewNote,
+      proofMode: task.proofMode,
       isCompleted: task.isCompleted,
       coins: task.rewardCoins ?? 0,
       xp: task.xpReward ?? 0,
@@ -102,9 +103,30 @@ class QuestCubit extends Cubit<QuestState> {
     );
   }
 
+  /// See `TasksCubit.uploadPhoto` - the photo goes to Storage first, and the
+  /// submission carries only its object key.
+  Future<String?> uploadPhoto(String questId, String filePath) async {
+    final childId = await _resolveChildId();
+    if (childId == null) return null;
+    final result = await _childRepository.uploadTaskProof(
+      childId: childId,
+      taskId: questId,
+      filePath: filePath,
+    );
+    return result.fold((_) => null, (objectKey) => objectKey);
+  }
+
   /// Returns an error message on failure, or null on success.
-  Future<String?> submitQuest(String questId, {String? note}) async {
-    final result = await _childRepository.submitTask(questId, note: note);
+  Future<String?> submitQuest(
+    String questId, {
+    String? note,
+    String? imageObjectKey,
+  }) async {
+    final result = await _childRepository.submitTask(
+      questId,
+      note: note,
+      imageObjectKey: imageObjectKey,
+    );
     return result.fold((failure) => failure.message, (_) {
       final updated = state.quests.map((q) {
         if (q.id == questId) return q.copyWith(status: 'submitted');

@@ -4,40 +4,31 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
+import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ParentTaskRepositoryImpl implements IParentTaskRepository {
-  final http.Client _client;
+  final AuthenticatedHttpClient _client;
 
-  ParentTaskRepositoryImpl({http.Client? client})
-    : _client = client ?? http.Client();
+  ParentTaskRepositoryImpl(this._client);
 
   @override
   Future<Either<Failure, ParentTasksResponseModel>> fetchTasks(
     String childId,
   ) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
     late final http.Response response;
     try {
       response = await _client
           .get(
             _uri('/v1/children/$childId/tasks'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-            },
+            headers: {'Accept': 'application/json'},
           )
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {
@@ -98,106 +89,11 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
   }
 
   @override
-  Future<Either<Failure, ParentTaskTemplateCreateResult>> createTaskTemplate(
-    String childId,
-    ParentTaskTemplateCreateRequest request,
-  ) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
-    late final http.Response response;
-    try {
-      response = await _client
-          .post(
-            _uri('/v1/children/$childId/task-templates'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode(request.toJson()),
-          )
-          .timeout(AppConstants.apiTimeout);
-    } on SocketException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } on HttpException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } on http.ClientException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (e) {
-      return Left(NetworkFailure(e.toString()));
-    }
-
-    if (response.statusCode == 401) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
-    if (response.statusCode == 422) {
-      final fieldErrors = _extractFieldErrors(response.body);
-      return Left(
-        FieldValidationFailure(
-          _extractErrorMessage(
-            response.body,
-            defaultMessage: 'Please check the form fields.',
-          ),
-          fieldErrors,
-        ),
-      );
-    }
-
-    if (response.statusCode == 503) {
-      return const Left(
-        ServerFailure('Service unavailable. Please try again later.'),
-      );
-    }
-
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      return Left(
-        ServerFailure(
-          _extractErrorMessage(
-            response.body,
-            defaultMessage: 'Unable to create task template. Please try again.',
-          ),
-        ),
-      );
-    }
-
-    final decoded = _decodeBody(response.body);
-    if (decoded is Map<String, dynamic>) {
-      return Right(ParentTaskTemplateCreateResult.fromJson(decoded));
-    }
-    if (decoded is Map) {
-      return Right(
-        ParentTaskTemplateCreateResult.fromJson(
-          decoded.map((key, value) => MapEntry(key.toString(), value)),
-        ),
-      );
-    }
-
-    return const Left(
-      ServerFailure('Unexpected create-template response format.'),
-    );
-  }
-
-  @override
   Future<Either<Failure, void>> reviewTask(
     String taskId, {
     required String decision,
     String? note,
   }) async {
-    final token = Supabase.instance.client.auth.currentSession?.accessToken;
-    if (token == null || token.isEmpty) {
-      return const Left(
-        UnauthorizedFailure('Missing, expired, or invalid token.'),
-      );
-    }
-
     final body = <String, dynamic>{'decision': decision};
     if (note != null && note.trim().isNotEmpty) body['note'] = note.trim();
 
@@ -207,13 +103,14 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
           .post(
             _uri('/v1/tasks/$taskId/review'),
             headers: {
-              'Authorization': 'Bearer $token',
               'Accept': 'application/json',
               'Content-Type': 'application/json',
             },
             body: jsonEncode(body),
           )
           .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
     } on HttpException catch (e) {
@@ -305,46 +202,6 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
     } catch (_) {
       return null;
     }
-  }
-
-  Map<String, String> _extractFieldErrors(String body) {
-    final decoded = _decodeBody(body);
-    final out = <String, String>{};
-
-    if (decoded is Map<String, dynamic>) {
-      final detail = decoded['detail'];
-      if (detail is List) {
-        for (final item in detail) {
-          if (item is! Map) continue;
-          final mapped = item.map(
-            (key, value) => MapEntry(key.toString(), value),
-          );
-          final rawField = mapped['field'] ?? mapped['path'] ?? mapped['loc'];
-          final field = rawField
-              ?.toString()
-              .split('.')
-              .last
-              .split('/')
-              .last
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .trim();
-          final message =
-              (mapped['message'] ?? mapped['msg'] ?? mapped['error'])
-                  ?.toString()
-                  .trim();
-
-          if (field != null &&
-              field.isNotEmpty &&
-              message != null &&
-              message.isNotEmpty) {
-            out[field] = message;
-          }
-        }
-      }
-    }
-
-    return out;
   }
 
   String _extractErrorMessage(String body, {required String defaultMessage}) {

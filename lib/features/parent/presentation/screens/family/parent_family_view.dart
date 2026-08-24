@@ -107,31 +107,41 @@ class ParentFamilyView extends StatelessWidget {
                 DsGroup(
                   children: [
                     for (final parent in data.parents)
-                      DsRow(
-                        onTap: () => onOpenParent(parent),
-                        title: parent.isYou
-                            ? s.youSuffix(parent.name)
-                            : parent.name,
-                        subtitle: parent.subtitle,
-                        subtitleStyle: AppText.metaSm,
-                        leading: DsInitialAvatar(
-                          name: parent.name,
-                          color: parent.color,
-                          imageUrl: parent.avatarUrl,
-                          size: 38,
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (parent.isPending) ...[
-                              // The chevron keeps its width; the pill is what
-                              // gives if the label runs long.
-                              Flexible(child: DsPill.pending(label: s.invited)),
-                              const SizedBox(width: 4),
-                            ],
-                            AppIcons.chevronRight(),
-                          ],
-                        ),
+                      // The name is empty when the server has no display_name
+                      // and no email to derive one from - email sign-ups, for
+                      // one. Never render a placeholder as if it were a name.
+                      Builder(
+                        builder: (context) {
+                          final name = parent.name.isEmpty
+                              ? s.displayNameFallback
+                              : parent.name;
+                          return DsRow(
+                            onTap: () => onOpenParent(parent),
+                            title: parent.isYou ? s.youSuffix(name) : name,
+                            subtitle: parent.subtitle,
+                            subtitleStyle: AppText.metaSm,
+                            leading: DsInitialAvatar(
+                              name: name,
+                              color: parent.color,
+                              imageUrl: parent.avatarUrl,
+                              size: 38,
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (parent.isPending) ...[
+                                  // The chevron keeps its width; the pill is what
+                                  // gives if the label runs long.
+                                  Flexible(
+                                    child: DsPill.pending(label: s.invited),
+                                  ),
+                                  const SizedBox(width: 4),
+                                ],
+                                AppIcons.chevronRight(),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     _InviteParentRow(
                       onTap: onInviteParent,

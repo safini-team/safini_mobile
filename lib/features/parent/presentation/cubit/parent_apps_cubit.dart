@@ -3,6 +3,10 @@ import 'package:safini/features/parent/domain/models/child_app_usage_model.dart'
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:dartz/dartz.dart';
+import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
 class ParentAppsCubit extends Cubit<ParentAppsState> {
   final ParentFamilyCubit _familyCubit;
@@ -10,6 +14,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
 
   String? _childId;
   List<ChildAppUsageModel> _appUsage = const [];
+  ScreenTimeModel _screenTime = ScreenTimeModel.none;
 
   ParentAppsCubit(this._familyCubit, this._appUsageRepo)
     : super(const ParentAppsInitial());
@@ -42,22 +47,72 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     result.fold(
       // Degrade to an empty list so the screen still renders (tip + add button).
       (_) => emit(const ParentAppsLoaded(appLimits: [])),
-      (apps) {
-        _appUsage = apps;
-        emit(ParentAppsLoaded(appLimits: _appUsage.map(_toLimitMap).toList()));
+      (snapshot) {
+        _appUsage = snapshot.apps;
+        _screenTime = snapshot.screenTime;
+        _emitLoaded();
       },
     );
+  }
+
+  void _emitLoaded() {
+    emit(
+      ParentAppsLoaded(
+        appLimits: _appUsage.map(_toLimitMap).toList(),
+        screenTime: _screenTime,
+      ),
+    );
+  }
+
+  /// Sets or removes the whole-device daily cap via
+  /// `PATCH /v1/children/{id}` and reloads, so the per-app remaining minutes
+  /// come back recomputed against the new budget.
+  ///
+  /// Null removes the cap. Returns an error message on failure, or null.
+  Future<String?> setScreenTimeCap(int? minutes) async {
+    final childId = _childId;
+    if (childId == null) return null;
+
+    final previous = _screenTime;
+    _screenTime = ScreenTimeModel(
+      limitMinutes: minutes,
+      usedMinutes: previous.usedMinutes,
+      remainingMinutes: minutes == null
+          ? null
+          : (minutes - previous.usedMinutes).clamp(0, minutes),
+    );
+    _emitLoaded();
+
+    final failure = await _familyCubit.updateChild(
+      childId,
+      dailyScreenTimeMinutes: minutes,
+      clearDailyScreenTime: minutes == null,
+    );
+    if (failure != null) {
+      _screenTime = previous;
+      _emitLoaded();
+      return failure.message;
+    }
+
+    await loadAppLimits();
+    return null;
   }
 
   /// Creates (upserts) an app rule for the selected child via
   /// PUT /children/{id}/app-rules/{slug}, then refreshes the list.
   /// Returns an error message on failure, or null on success.
+  /// The controlled-app catalog from `GET /v1/apps`.
+  Future<Either<Failure, List<CatalogAppModel>>> loadCatalog() =>
+      _appUsageRepo.fetchCatalog();
+
   Future<String?> addApp({
     required String slug,
     required String name,
     required int dailyLimitMinutes,
     required int redeemCoinCost,
     required int redeemRewardMinutes,
+    bool isLimited = true,
+    bool canRedeem = true,
   }) async {
     if (_childId == null) return 'No child selected.';
     if (slug.isEmpty) return 'Please choose an app.';
@@ -65,7 +120,8 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     final rule = ChildAppUsageModel(
       appSlug: slug,
       displayName: name.trim(),
-      isEnabled: true,
+      isLimited: isLimited,
+      canRedeem: canRedeem,
       dailyLimitMinutes: dailyLimitMinutes,
       usedMinutes: 0,
       remainingMinutesToday: 0,
@@ -87,6 +143,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   Future<void> selectChild(String childId) {
     if (childId == _childId) return Future.value();
     _appUsage = const [];
+    _screenTime = ScreenTimeModel.none;
     return loadAppLimits(childId: childId);
   }
 
@@ -101,7 +158,10 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       'used': app.usedMinutes,
       'limit': app.dailyLimitMinutes,
       'icon': null,
-      'isEnabled': app.isEnabled,
+      'isLimited': app.isLimited,
+      'canRedeem': app.canRedeem,
+      'cost': app.redeemCoinCost,
+      'reward': app.redeemRewardMinutes,
     };
   }
 
@@ -110,9 +170,27 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     await _persist(appSlug, (app) => app.copyWith(dailyLimitMinutes: newLimit));
   }
 
-  /// Enables/disables an app's redemption rule and persists it.
-  Future<void> toggleApp(String appSlug, bool isEnabled) async {
-    await _persist(appSlug, (app) => app.copyWith(isEnabled: isEnabled));
+  /// Persists the whole rule: both flags and the coin price, which the parent
+  /// could not reach at all before - the steppers only existed in the add
+  /// sheet, and the add sheet was never reachable.
+  Future<void> updateRule(
+    String appSlug, {
+    int? dailyLimitMinutes,
+    bool? isLimited,
+    bool? canRedeem,
+    int? redeemCoinCost,
+    int? redeemRewardMinutes,
+  }) async {
+    await _persist(
+      appSlug,
+      (app) => app.copyWith(
+        dailyLimitMinutes: dailyLimitMinutes,
+        isLimited: isLimited,
+        canRedeem: canRedeem,
+        redeemCoinCost: redeemCoinCost,
+        redeemRewardMinutes: redeemRewardMinutes,
+      ),
+    );
   }
 
   Future<void> _persist(
@@ -125,14 +203,14 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
 
     final previous = _appUsage;
     _appUsage = List.of(_appUsage)..[index] = update(_appUsage[index]);
-    emit(ParentAppsLoaded(appLimits: _appUsage.map(_toLimitMap).toList()));
+    _emitLoaded();
 
     final result = await _appUsageRepo.updateAppRule(_childId!, _appUsage[index]);
     result.fold(
       (_) {
         // Revert on failure.
         _appUsage = previous;
-        emit(ParentAppsLoaded(appLimits: _appUsage.map(_toLimitMap).toList()));
+        _emitLoaded();
       },
       (_) {},
     );
