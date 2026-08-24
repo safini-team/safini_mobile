@@ -205,6 +205,65 @@ class SampleData {
     ],
   );
 
+  /// The same screen once the parent sets a whole-device cap: the panel
+  /// swaps the combined sum for the real budget and grows a stepper.
+  static const ParentLimitsData parentLimitsWithCap = ParentLimitsData(
+    kids: [
+      LimitsKid(id: 'amir', name: 'Amir', color: Color(0xFF8100D1)),
+      LimitsKid(id: 'layla', name: 'Layla', color: Color(0xFFEE4FA2)),
+    ],
+    selectedKidId: 'amir',
+    kidName: 'Amir',
+    capMinutes: 180,
+    apps: [
+      LimitsApp(
+        slug: 'roblox',
+        name: 'Roblox',
+        emoji: '🎮',
+        usedMinutes: 62,
+        limitMinutes: 45,
+        isLimited: true,
+        canRedeem: true,
+      ),
+      LimitsApp(
+        slug: 'youtube-kids',
+        name: 'YouTube',
+        emoji: '📺',
+        usedMinutes: 38,
+        limitMinutes: 60,
+        isLimited: true,
+        canRedeem: true,
+      ),
+      LimitsApp(
+        slug: 'telegram',
+        name: 'Telegram',
+        emoji: '💬',
+        usedMinutes: 21,
+        limitMinutes: 0,
+        isLimited: false,
+        canRedeem: false,
+      ),
+      LimitsApp(
+        slug: 'spotify',
+        name: 'Spotify',
+        emoji: '🎵',
+        usedMinutes: 9,
+        limitMinutes: 30,
+        isLimited: true,
+        canRedeem: true,
+      ),
+      LimitsApp(
+        slug: 'duolingo',
+        name: 'Duolingo',
+        emoji: '📚',
+        usedMinutes: 24,
+        limitMinutes: 45,
+        isLimited: true,
+        canRedeem: true,
+      ),
+    ],
+  );
+
   static const ParentFamilyData parentFamily = ParentFamilyData(
     parents: [
       FamilyParentRow(

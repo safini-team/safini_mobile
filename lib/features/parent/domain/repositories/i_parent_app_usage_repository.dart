@@ -7,10 +7,9 @@ abstract class IParentAppUsageRepository {
   /// GET /v1/apps - every app a parent can control, with its defaults.
   Future<Either<Failure, List<CatalogAppModel>>> fetchCatalog();
 
-  /// GET /v1/children/{child_id}/app-usage
-  Future<Either<Failure, List<ChildAppUsageModel>>> fetchAppUsage(
-    String childId,
-  );
+  /// GET /v1/children/{child_id}/app-usage - the per-app rows and the child's
+  /// whole-device budget for the day.
+  Future<Either<Failure, ChildAppUsageSnapshot>> fetchAppUsage(String childId);
 
   /// PUT /v1/children/{child_id}/app-rules/{app_slug}
   Future<Either<Failure, Unit>> updateAppRule(

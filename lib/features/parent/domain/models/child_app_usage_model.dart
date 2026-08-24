@@ -1,3 +1,28 @@
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
+
+/// One `GET /v1/children/{child_id}/app-usage` response: the per-app rows and
+/// the whole-device budget they sit under. They arrive together because the
+/// remaining minutes on a row are already capped by the global budget - reading
+/// one without the other gives a number the child cannot actually spend.
+class ChildAppUsageSnapshot {
+  final List<ChildAppUsageModel> apps;
+  final ScreenTimeModel screenTime;
+
+  const ChildAppUsageSnapshot({required this.apps, required this.screenTime});
+
+  static const ChildAppUsageSnapshot empty = ChildAppUsageSnapshot(
+    apps: [],
+    screenTime: ScreenTimeModel.none,
+  );
+
+  /// The old headline figure: the per-app limits added up. Still shown when no
+  /// global cap is set, labelled as the sum it is.
+  int get combinedLimitMinutes => apps.fold(
+    0,
+    (sum, app) => sum + (app.isLimited ? app.dailyLimitMinutes : 0),
+  );
+}
+
 /// One app's usage + redemption rule for a child, as returned by
 /// `GET /v1/children/{child_id}/app-usage`.
 class ChildAppUsageModel {

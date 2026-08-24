@@ -6,6 +6,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 import 'package:dartz/dartz.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
 class ParentAppsCubit extends Cubit<ParentAppsState> {
   final ParentFamilyCubit _familyCubit;
@@ -13,6 +14,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
 
   String? _childId;
   List<ChildAppUsageModel> _appUsage = const [];
+  ScreenTimeModel _screenTime = ScreenTimeModel.none;
 
   ParentAppsCubit(this._familyCubit, this._appUsageRepo)
     : super(const ParentAppsInitial());
@@ -45,11 +47,55 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     result.fold(
       // Degrade to an empty list so the screen still renders (tip + add button).
       (_) => emit(const ParentAppsLoaded(appLimits: [])),
-      (apps) {
-        _appUsage = apps;
-        emit(ParentAppsLoaded(appLimits: _appUsage.map(_toLimitMap).toList()));
+      (snapshot) {
+        _appUsage = snapshot.apps;
+        _screenTime = snapshot.screenTime;
+        _emitLoaded();
       },
     );
+  }
+
+  void _emitLoaded() {
+    emit(
+      ParentAppsLoaded(
+        appLimits: _appUsage.map(_toLimitMap).toList(),
+        screenTime: _screenTime,
+      ),
+    );
+  }
+
+  /// Sets or removes the whole-device daily cap via
+  /// `PATCH /v1/children/{id}` and reloads, so the per-app remaining minutes
+  /// come back recomputed against the new budget.
+  ///
+  /// Null removes the cap. Returns an error message on failure, or null.
+  Future<String?> setScreenTimeCap(int? minutes) async {
+    final childId = _childId;
+    if (childId == null) return null;
+
+    final previous = _screenTime;
+    _screenTime = ScreenTimeModel(
+      limitMinutes: minutes,
+      usedMinutes: previous.usedMinutes,
+      remainingMinutes: minutes == null
+          ? null
+          : (minutes - previous.usedMinutes).clamp(0, minutes),
+    );
+    _emitLoaded();
+
+    final failure = await _familyCubit.updateChild(
+      childId,
+      dailyScreenTimeMinutes: minutes,
+      clearDailyScreenTime: minutes == null,
+    );
+    if (failure != null) {
+      _screenTime = previous;
+      _emitLoaded();
+      return failure.message;
+    }
+
+    await loadAppLimits();
+    return null;
   }
 
   /// Creates (upserts) an app rule for the selected child via
@@ -97,6 +143,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   Future<void> selectChild(String childId) {
     if (childId == _childId) return Future.value();
     _appUsage = const [];
+    _screenTime = ScreenTimeModel.none;
     return loadAppLimits(childId: childId);
   }
 
@@ -156,14 +203,14 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
 
     final previous = _appUsage;
     _appUsage = List.of(_appUsage)..[index] = update(_appUsage[index]);
-    emit(ParentAppsLoaded(appLimits: _appUsage.map(_toLimitMap).toList()));
+    _emitLoaded();
 
     final result = await _appUsageRepo.updateAppRule(_childId!, _appUsage[index]);
     result.fold(
       (_) {
         // Revert on failure.
         _appUsage = previous;
-        emit(ParentAppsLoaded(appLimits: _appUsage.map(_toLimitMap).toList()));
+        _emitLoaded();
       },
       (_) {},
     );
