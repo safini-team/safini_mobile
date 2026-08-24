@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Pinned rather than tracking `stable`: the suite asserts artboard
       # values, and a Flutter bump that changes text metrics should fail on a
