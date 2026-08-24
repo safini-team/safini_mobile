@@ -153,6 +153,54 @@
           }
         ]
       },
+      "delete": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Delete My Account",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Permanently deletes the authenticated Safini account and its associated personal data.\n\n**Frontend note:** Require an explicit destructive confirmation before calling this endpoint. A child account deletion removes its claimed child profile and activity. A parent in a shared family leaves the family; deleting the last parent removes the family and its child data. A successful response invalidates the Supabase account, so route directly to sign-in.",
+        "operationId": "delete_my_account_v1_me_delete",
+        "responses": {
+          "204": {
+            "description": "Account and associated data deleted."
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      },
       "patch": {
         "tags": [
           "profiles"
