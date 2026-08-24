@@ -7,11 +7,13 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/utils/widgets/ds/app_icons.dart';
 import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/child/domain/controllers/child_controller.dart';
+import 'package:safini/features/child/presentation/cubit/app_block_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
+import 'package:safini/features/child/presentation/screens/blocking/child_app_block_gate.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/child/presentation/screens/home/child_home_screen.dart';
@@ -48,13 +50,14 @@ class ChildMainScreen extends StatelessWidget {
           ),
         ),
         BlocProvider(create: (_) => getIt<RewardStoreCubit>()),
+        BlocProvider(create: (_) => getIt<ChildAppBlockCubit>()..start()),
       ],
       child: BlocBuilder<LocaleCubit, Locale?>(
         builder: (context, locale) {
           return Localizations.override(
             context: context,
             locale: locale,
-            child: const _ChildMainView(),
+            child: const ChildAppBlockGate(child: _ChildMainView()),
           );
         },
       ),

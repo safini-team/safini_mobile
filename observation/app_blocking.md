@@ -75,7 +75,8 @@ Relevant endpoints (all `Authorization: Bearer <supabase_access_token>`):
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| `GET`  | `/v1/children/{child_id}/app-usage` | Read per-app `used_minutes`, `remaining_minutes_today`, `is_enabled`, `daily_limit_minutes` |
+| `GET`  | `/v1/apps` | Controlled-app **catalog** (slug, display name, defaults). ✅ live — replaces the hardcoded `_knownApps` list |
+| `GET`  | `/v1/children/{child_id}/app-usage` | Read per-app `used_minutes`, `remaining_minutes_today`, `is_enabled`, `daily_limit_minutes` (also returns `bonus_minutes_remaining`, `total_minutes_available`) |
 | `PUT`  | `/v1/children/{child_id}/app-rules/{app_slug}` | Upsert a rule: `is_enabled`, `daily_limit_minutes`, `redeem_coin_cost`, `redeem_reward_minutes` |
 | `POST` | `/v1/children/{child_id}/app-usage` | Report actual usage; backend reduces remaining granted minutes |
 | `POST` | `/v1/children/{child_id}/redemptions/app-time` | Child spends Time Coins for extra minutes |
@@ -317,19 +318,34 @@ resets server-side at the day boundary and `getStartOfDay()` resets the native w
 
 ## 7. Files to create / change (checklist)
 
-**Native (Android)**
-- [ ] `android/app/src/main/AndroidManifest.xml` — permissions + `<service>` + `tools` ns
-- [ ] `android/app/src/main/kotlin/com/safini/app/AppBlockForegroundService.kt` — new
-- [ ] `android/app/src/main/kotlin/com/safini/app/MainActivity.kt` — add MethodChannel
-- [ ] `android/app/src/main/kotlin/com/safini/app/BootReceiver.kt` — optional
+**Native (Android)** — implemented; compiles (`:app:compileDebugKotlin` OK)
+- [x] `android/app/src/main/AndroidManifest.xml` — permissions + `<service>` + `<receiver>` + `tools` ns + `<queries>`
+- [x] `android/app/src/main/kotlin/com/safini/app/AppBlockStore.kt` — shared prefs rule store + `UPDATE_BLOCKED_APPS` broadcast
+- [x] `android/app/src/main/kotlin/com/safini/app/AppBlockForegroundService.kt` — 500ms poll, `UsageStatsManager` measurement, `WindowManager` overlay
+- [x] `android/app/src/main/kotlin/com/safini/app/MainActivity.kt` — MethodChannel `com.safini.app/app_block`
+- [x] `android/app/src/main/kotlin/com/safini/app/BootReceiver.kt` — restart on boot when enforcing
 
 **Dart**
-- [ ] `lib/features/child/data/services/app_block_service.dart` — MethodChannel wrapper
-- [ ] `lib/core/utils/constants/controlled_apps.dart` — slug→package map
-- [ ] `lib/features/child/domain/repositories/…` + `data/repositories/…` — child app-usage read/report (mirror `parent_app_usage_repository_impl.dart`)
-- [ ] `lib/features/child/presentation/cubit/app_block_cubit.dart` + state — orchestration
-- [ ] Child permission-onboarding screen + wire into `child_main_screen.dart`
-- [ ] `lib/features/child/child_injection.dart` — register service, repo, cubit
+- [x] `lib/features/child/data/services/app_block_service.dart` — MethodChannel wrapper + `AppBlockRule` + `syncFromUsage` mapping (native no-op until Steps 1-3 land)
+- [x] `lib/features/child/data/services/child_app_rules_service.dart` — backend: fetch rules to enforce + report usage (`GET`/`POST /app-usage`)
+- [x] `lib/features/parent/data/services/parent_app_blocking_service.dart` — backend: fetch rules + set limit / block (`GET /app-usage`, `PUT /app-rules/{slug}`)
+- [x] `lib/core/utils/constants/controlled_apps.dart` — slug↔package map
+- [x] `lib/core/network/dio_error_mapper.dart` — shared `DioException → Failure` mapper
+- [x] `lib/core/utils/constants/api_const.dart` — `childAppUsage` / `childAppRule` endpoints
+- [x] `lib/features/child/child_injection.dart` + `parent_injection.dart` — services registered in DI
+- [x] `lib/features/child/presentation/cubit/app_block_cubit.dart` + `app_block_state.dart` — orchestration (permissions → resolve child → fetch rules → `syncFromUsage` → `startService` → 5-min re-sync + on-resume re-check)
+- [x] `lib/features/child/presentation/screens/blocking/child_app_block_gate.dart` — permission-onboarding gate, wired into `child_main_screen.dart`
+- [x] Periodic **usage reporting** back to the backend (`POST /app-usage`) — native `usageSinceMidnight(packages)` measures the day total (not the limit window); the cubit's cycle now runs **report → fetch → sync** so `remaining_minutes_today` stays accurate
+
+**Installed-apps list (child → backend → parent)** — client done; backend pending
+- [x] `android/app/src/main/kotlin/com/safini/app/MainActivity.kt` — `installedApps` MethodChannel (launchable apps)
+- [x] `android/app/src/main/AndroidManifest.xml` — `QUERY_ALL_PACKAGES` (Play Declaration Form required)
+- [x] `lib/features/models/domain/models/installed_app.dart` — shared `InstalledApp` model
+- [x] `AppBlockService.installedApps()` — enumerate on the child device
+- [x] `ChildAppRulesService.reportInstalledApps()` — `PUT /children/{id}/installed-apps` (child uploads once per session in `ChildAppBlockCubit.start()`)
+- [x] `ParentAppBlockingService.fetchInstalledApps()` — `GET /children/{id}/installed-apps` (parent reads)
+- [ ] **Backend endpoints** `PUT/GET /children/{id}/installed-apps` — see `BACKEND_TODO.md` #4 (blocker)
+- [ ] Parent UI to display the fetched list (not wired yet)
 
 **Optional / cleanup**
 - [ ] Decide fate of the `models` app-rule stub (`app_repository_impl.dart` returns "Not implemented"). Either implement it against the live endpoints or delete it to avoid confusion with the live `parent` path.

@@ -2,8 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:safini/features/child/data/datasources/child_remote_datasource.dart';
 import 'package:safini/features/child/data/repositories/child_repository_impl.dart';
+import 'package:safini/features/child/data/services/app_block_service.dart';
+import 'package:safini/features/child/data/services/child_app_rules_service.dart';
 import 'package:safini/features/child/domain/controllers/child_controller.dart';
 import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
+import 'package:safini/features/child/presentation/cubit/app_block_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/child_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_cubit.dart';
@@ -21,6 +24,12 @@ void registerChildDependencies(GetIt sl) {
     () => ChildRemoteDataSource(sl<Dio>()),
   );
 
+  // App-blocking services (child device enforces rules).
+  sl.registerLazySingleton<AppBlockService>(() => const AppBlockService());
+  sl.registerLazySingleton<ChildAppRulesService>(
+    () => ChildAppRulesService(sl<Dio>()),
+  );
+
   // Repositories
   sl.registerLazySingleton<IChildRepository>(
     () => ChildRepositoryImpl(sl<ChildRemoteDataSource>()),
@@ -35,6 +44,13 @@ void registerChildDependencies(GetIt sl) {
 
   sl.registerFactory<ChildCubit>(() => ChildCubit(sl<ChildController>()));
   sl.registerFactory<ChildHomeCubit>(() => ChildHomeCubit());
+  sl.registerFactory<ChildAppBlockCubit>(
+    () => ChildAppBlockCubit(
+      sl<AppBlockService>(),
+      sl<ChildAppRulesService>(),
+      sl<safini_profile.ProfileController>(),
+    ),
+  );
   sl.registerFactory<TasksCubit>(
     () => TasksCubit(
       sl<CoinsCubit>(),
