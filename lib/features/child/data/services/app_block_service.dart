@@ -115,8 +115,8 @@ class AppBlockService {
   ///
   /// Rule mapping (see `observation/app_blocking.md`, Step 6):
   ///  - unknown slug (no package mapping)      → skipped
-  ///  - `is_enabled == false`                   → manual block
-  ///  - `remaining_minutes_today <= 0`          → blocked (limit consumed)
+  ///  - `is_limited == false`                   → manual block
+  ///  - `remaining_minutes_today` null or `<= 0` → blocked (limit consumed)
   ///  - otherwise                               → limit = remaining × 60 000 ms
   Future<void> syncFromUsage(List<ChildAppUsageModel> apps) {
     final rules = <AppBlockRule>[];
@@ -124,15 +124,16 @@ class AppBlockService {
       final packageName = ControlledApps.packageFor(app.appSlug);
       if (packageName == null) continue;
 
-      if (!app.isEnabled) {
+      final remaining = app.remainingMinutesToday;
+      if (!app.isLimited) {
         rules.add(AppBlockRule(packageName: packageName, blocked: true));
-      } else if (app.remainingMinutesToday <= 0) {
+      } else if (remaining == null || remaining <= 0) {
         rules.add(AppBlockRule(packageName: packageName, blocked: true));
       } else {
         rules.add(
           AppBlockRule(
             packageName: packageName,
-            limitMs: app.remainingMinutesToday * 60 * 1000,
+            limitMs: remaining * 60 * 1000,
           ),
         );
       }

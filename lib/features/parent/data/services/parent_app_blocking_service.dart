@@ -79,7 +79,7 @@ class ParentAppBlockingService {
     String childId,
     ChildAppUsageModel rule,
     bool blocked,
-  ) => upsertRule(childId, rule.copyWith(isEnabled: !blocked));
+  ) => upsertRule(childId, rule.copyWith(isLimited: !blocked));
 
   /// Sets the base daily limit (minutes) for an app.
   Future<Either<Failure, Unit>> setDailyLimit(
