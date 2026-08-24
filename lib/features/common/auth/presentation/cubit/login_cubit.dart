@@ -71,7 +71,7 @@ class LoginCubit extends Cubit<LoginState> {
       await _googleAuth.signOut();
       await _prefs.remove(AppConstants.accessToken);
       emit(const LoginState.initial());
-    } catch (e, st) {
+    } catch (e) {
       debugPrint('[LoginCubit] Logout error: $e');
     }
   }
