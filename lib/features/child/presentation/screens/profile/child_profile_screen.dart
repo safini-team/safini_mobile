@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
@@ -14,6 +15,7 @@ import 'package:safini/core/utils/widgets/language_sheet.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
+import 'package:safini/features/child/presentation/screens/dev/child_apps_debug_screen.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
@@ -179,6 +181,20 @@ class ChildMeSettings extends StatelessWidget {
         radius: AppRadius.card,
         shadow: AppShadows.flat,
         children: [
+          // DEV-only: verify the device can enumerate its installed apps.
+          // Hidden in release builds (kDebugMode).
+          if (kDebugMode)
+            DsRow(
+              title: 'DEV · Installed apps',
+              subtitle: 'Check app enumeration on this device',
+              verticalPadding: 15,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const ChildAppsDebugScreen(),
+                ),
+              ),
+              trailing: AppIcons.chevronRight(),
+            ),
           DsRow(
             title: s.changeLanguage,
             verticalPadding: 15,
