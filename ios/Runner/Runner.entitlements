@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Do NOT add com.apple.developer.family-controls here by hand.
+
+	  If the key is in the signed binary but missing from the provisioning
+	  profile, iOS kills the app on launch (flutter run hangs on
+	  "Dart VM Service was not discovered").
+
+	  When Apple has granted Family Controls, add it in Xcode:
+	    Runner target → Signing & Capabilities → + Capability → Family Controls
+	  That updates both this file AND the provisioning profile together.
+	-->
+</dict>
+</plist>

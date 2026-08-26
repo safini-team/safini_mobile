@@ -16,6 +16,7 @@ import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/child/presentation/screens/dev/child_apps_debug_screen.dart';
+import 'package:safini/features/child/presentation/screens/dev/child_screen_time_debug_screen.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
@@ -191,6 +192,19 @@ class ChildMeSettings extends StatelessWidget {
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => const ChildAppsDebugScreen(),
+                ),
+              ),
+              trailing: AppIcons.chevronRight(),
+            ),
+          // DEV-only: exercise the iOS Screen Time / FamilyControls shield path.
+          if (kDebugMode)
+            DsRow(
+              title: 'DEV · Screen Time (iOS)',
+              subtitle: 'Authorize, pick apps, apply/clear shield',
+              verticalPadding: 15,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const ChildScreenTimeDebugScreen(),
                 ),
               ),
               trailing: AppIcons.chevronRight(),

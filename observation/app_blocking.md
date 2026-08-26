@@ -384,6 +384,8 @@ Safini-specific:
   iOS requires Apple's **FamilyControls / DeviceActivity / ManagedSettings** (Screen Time)
   framework, a special entitlement (`com.apple.developer.family-controls`), and a separate
   implementation. Ship Android first; make all Dart calls no-ops on iOS.
+  **Increment 1 of the iOS track is now implemented** (authorize → pick → apply/clear
+  shield, via `ScreenTimeService`) — see `observation/ios_screen_time_impl.md`.
 - **Slug/package drift.** The slug list is server-driven (`GET /v1/apps`), but each new
   controlled app still needs a `ControlledApps.slugToPackage` entry (and a `<queries>`
   `<package>` line) or the native engine can't see it.
@@ -403,4 +405,4 @@ Safini-specific:
 3. Child app-usage repository + `syncRules` from backend.
 4. Periodic usage reporting back to backend.
 5. Parent status visibility (optional).
-6. iOS Screen Time track (separate epic).
+6. iOS Screen Time track (separate epic) — Increment 1 done; see `observation/ios_screen_time_impl.md`.
