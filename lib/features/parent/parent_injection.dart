@@ -20,6 +20,7 @@ import 'package:safini/features/parent/domain/repositories/i_parent_user_reposit
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_installed_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
@@ -59,6 +60,9 @@ void registerParentDependencies(GetIt sl) {
   );
   sl.registerLazySingleton<ParentAppBlockingService>(
     () => ParentAppBlockingService(sl<Dio>()),
+  );
+  sl.registerFactory<ParentInstalledAppsCubit>(
+    () => ParentInstalledAppsCubit(sl<ParentAppBlockingService>()),
   );
   sl.registerFactory<ParentMonitorCubit>(
     () => ParentMonitorCubit(

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:safini/features/parent/presentation/screens/apps/parent_installed_apps_screen.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/add_app_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet.dart';
@@ -61,6 +63,22 @@ class _ParentLimitsView extends StatelessWidget {
             .where((child) => child.id == selectedId)
             .firstOrNull;
 
+        // Read-only "apps on this phone" list. Hidden until the backend
+        // installed-apps endpoint is live (see AppConstants).
+        final VoidCallback? onSeeAllApps =
+            AppConstants.childInstalledAppsShipped &&
+                selectedId != null &&
+                selectedId.isNotEmpty
+            ? () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ParentInstalledAppsScreen(
+                    childId: selectedId,
+                    childName: selected?.nickname ?? '',
+                  ),
+                ),
+              )
+            : null;
+
         final apps = state.appLimits.map((limit) {
           final name = (limit['name'] ?? '').toString();
           return LimitsApp(
@@ -101,6 +119,7 @@ class _ParentLimitsView extends StatelessWidget {
           ),
           onAddApp: () => showAddAppSheet(context, cubit: cubit),
           onRefresh: () => cubit.loadAppLimits(),
+          onSeeAllApps: onSeeAllApps,
         );
       },
     );

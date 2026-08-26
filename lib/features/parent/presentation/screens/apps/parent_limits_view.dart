@@ -118,6 +118,7 @@ class ParentLimitsView extends StatelessWidget {
     required this.onAddApp,
     this.onSetCap,
     this.onRefresh,
+    this.onSeeAllApps,
   });
 
   final ParentLimitsData data;
@@ -129,6 +130,10 @@ class ParentLimitsView extends StatelessWidget {
   /// where the panel renders read-only.
   final ValueChanged<int?>? onSetCap;
   final Future<void> Function()? onRefresh;
+
+  /// Opens the read-only list of every app installed on the child's device.
+  /// Null hides the entry point (feature-flagged / no child selected).
+  final VoidCallback? onSeeAllApps;
 
   @override
   Widget build(BuildContext context) {
@@ -219,6 +224,32 @@ class ParentLimitsView extends StatelessWidget {
             ),
           ),
         ),
+        if (onSeeAllApps != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.gutter,
+                14,
+                AppSpacing.gutter,
+                0,
+              ),
+              child: DsGroup(
+                children: [
+                  DsRow(
+                    onTap: onSeeAllApps,
+                    title: s.seeAllApps,
+                    leading: const DsEmojiTile(
+                      emoji: '📱',
+                      size: 36,
+                      radius: AppRadius.sm,
+                      fontSize: 18,
+                    ),
+                    trailing: AppIcons.chevronRight(),
+                  ),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }

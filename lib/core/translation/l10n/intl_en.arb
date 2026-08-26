@@ -400,6 +400,19 @@
   "addAnApp": "Add an app",
   "limitsFootnote": "When the daily limit runs out, the app stops opening and shows the Safini screen instead.",
   "limitsNotYetEnforced": "Limits are counted, not yet enforced. Finish setup on your child's phone.",
+  "seeAllApps": "See all apps on this phone",
+  "installedAppsTitle": "Installed apps",
+  "installedAppsSubtitle": "Everything installed on {name}'s phone",
+  "installedAppsCount": "{count, plural, =0{No apps} =1{1 app} other{{count} apps}}",
+  "@installedAppsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "installedAppsEmptyTitle": "No apps synced yet",
+  "installedAppsEmptyBody": "When {name} opens Safini on their phone, their installed apps show up here.",
   "alwaysAllowedNoRedemption": "Always allowed · no redemption",
   "usedOfLimit": "{used} of {limit}",
   "usedOfLimitOver": "{used} of {limit} · over",

@@ -19,5 +19,14 @@ class AppConstants {
   /// the caveats disappear on their own.
   static const bool enforcementShipped = false;
 
+  /// Whether the parent "See all apps on this phone" entry point is shown.
+  ///
+  /// The child device already enumerates and uploads its installed apps, and the
+  /// parent read path is built, but the backend endpoint is not live yet (see
+  /// `BACKEND_TODO.md` #4). Keep this false so the row stays hidden in
+  /// production; flip it to true to preview the screen (it shows an empty state
+  /// until real data flows).
+  static const bool childInstalledAppsShipped = false;
+
   const AppConstants._();
 }

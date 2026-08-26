@@ -2,8 +2,8 @@
 /// (e.g. `youtube-kids`) to the Android **package name** the native blocking
 /// engine needs (e.g. `com.google.android.apps.youtube.kids`).
 ///
-/// The backend keys every app rule by slug (see `_knownApps` in
-/// `parent_apps_screen.dart` and the `app-rules` / `app-usage` endpoints), but
+/// The backend keys every app rule by slug (the `GET /v1/apps` catalog and the
+/// `app-rules` / `app-usage` endpoints — see `CatalogAppModel`), but
 /// `UsageStatsManager` and the overlay service on the child device operate on
 /// package names. Keep this map in sync with the backend catalog whenever a new
 /// controlled app is added.
