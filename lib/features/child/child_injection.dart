@@ -4,6 +4,7 @@ import 'package:safini/features/child/data/datasources/child_remote_datasource.d
 import 'package:safini/features/child/data/repositories/child_repository_impl.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/features/child/data/services/child_app_rules_service.dart';
+import 'package:safini/features/child/data/services/screen_time_service.dart';
 import 'package:safini/features/child/domain/controllers/child_controller.dart';
 import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_cubit.dart';
@@ -25,7 +26,9 @@ void registerChildDependencies(GetIt sl) {
   );
 
   // App-blocking services (child device enforces rules).
+  // AppBlockService is Android-only; ScreenTimeService is the iOS counterpart.
   sl.registerLazySingleton<AppBlockService>(() => const AppBlockService());
+  sl.registerLazySingleton<ScreenTimeService>(() => const ScreenTimeService());
   sl.registerLazySingleton<ChildAppRulesService>(
     () => ChildAppRulesService(sl<Dio>()),
   );
