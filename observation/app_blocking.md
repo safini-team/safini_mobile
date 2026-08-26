@@ -81,10 +81,10 @@ Relevant endpoints (all `Authorization: Bearer <supabase_access_token>`):
 | `POST` | `/v1/children/{child_id}/app-usage` | Report actual usage; backend reduces remaining granted minutes |
 | `POST` | `/v1/children/{child_id}/redemptions/app-time` | Child spends Time Coins for extra minutes |
 
-**Slug vs package name:** the backend keys apps by **slug** (`youtube-kids`, `roblox`,
-`brawl-stars`, `minecraft` — see `_knownApps` in `parent_apps_screen.dart`). Android blocking
-needs a **package name** (`com.google.android.apps.youtube.kids`, …). We must maintain a
-`slug → packageName` map (see Step 5).
+**Slug vs package name:** the backend keys apps by **slug** (from the live
+`GET /v1/apps` catalog — see `CatalogAppModel`; the client no longer hardcodes the list).
+Android blocking needs a **package name** (`com.google.android.apps.youtube.kids`, …). We
+must maintain a `slug → packageName` map (`ControlledApps.slugToPackage`, see Step 5).
 
 ---
 
@@ -247,7 +247,8 @@ const Map<String, String> kSlugToPackage = {
 };
 ```
 
-Keep this in sync with `_knownApps` in `parent_apps_screen.dart`.
+Keep this in sync with the live `GET /v1/apps` catalog (`CatalogAppModel`) — only the
+native package mapping is maintained by hand; the slug list itself is server-driven.
 
 ### Step 6 — Convert backend rules → native limit map
 
@@ -345,7 +346,11 @@ resets server-side at the day boundary and `getStartOfDay()` resets the native w
 - [x] `ChildAppRulesService.reportInstalledApps()` — `PUT /children/{id}/installed-apps` (child uploads once per session in `ChildAppBlockCubit.start()`)
 - [x] `ParentAppBlockingService.fetchInstalledApps()` — `GET /children/{id}/installed-apps` (parent reads)
 - [ ] **Backend endpoints** `PUT/GET /children/{id}/installed-apps` — see `BACKEND_TODO.md` #4 (blocker)
-- [ ] Parent UI to display the fetched list (not wired yet)
+- [x] Parent UI to display the fetched list — `ParentInstalledAppsScreen` +
+  `ParentInstalledAppsCubit`, reachable from the Limits screen via a
+  "See all apps on this phone" row. Gated behind
+  `AppConstants.childInstalledAppsShipped` (false) until the endpoint lands; a
+  404 renders the "No apps synced yet" empty state.
 
 **Optional / cleanup**
 - [ ] Decide fate of the `models` app-rule stub (`app_repository_impl.dart` returns "Not implemented"). Either implement it against the live endpoints or delete it to avoid confusion with the live `parent` path.
@@ -379,7 +384,9 @@ Safini-specific:
   iOS requires Apple's **FamilyControls / DeviceActivity / ManagedSettings** (Screen Time)
   framework, a special entitlement (`com.apple.developer.family-controls`), and a separate
   implementation. Ship Android first; make all Dart calls no-ops on iOS.
-- **Slug/package drift.** New controlled apps must be added to both `_knownApps` and `kSlugToPackage`.
+- **Slug/package drift.** The slug list is server-driven (`GET /v1/apps`), but each new
+  controlled app still needs a `ControlledApps.slugToPackage` entry (and a `<queries>`
+  `<package>` line) or the native engine can't see it.
 - **Battery / background limits.** OEM battery optimizers (Xiaomi, Samsung, etc.) may kill the
   foreground service; consider requesting battery-optimization exemption.
 - **Two-device latency.** Parent changes propagate only when the child device next syncs

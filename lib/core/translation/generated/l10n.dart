@@ -2502,6 +2502,69 @@ class S {
     );
   }
 
+  /// `See all apps on this phone`
+  String get seeAllApps {
+    return Intl.message(
+      'See all apps on this phone',
+      name: 'seeAllApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Installed apps`
+  String get installedAppsTitle {
+    return Intl.message(
+      'Installed apps',
+      name: 'installedAppsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Everything installed on {name}'s phone`
+  String installedAppsSubtitle(Object name) {
+    return Intl.message(
+      'Everything installed on $name\'s phone',
+      name: 'installedAppsSubtitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `{count, plural, =0{No apps} =1{1 app} other{{count} apps}}`
+  String installedAppsCount(int count) {
+    return Intl.plural(
+      count,
+      zero: 'No apps',
+      one: '1 app',
+      other: '$count apps',
+      name: 'installedAppsCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No apps synced yet`
+  String get installedAppsEmptyTitle {
+    return Intl.message(
+      'No apps synced yet',
+      name: 'installedAppsEmptyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When {name} opens Safini on their phone, their installed apps show up here.`
+  String installedAppsEmptyBody(Object name) {
+    return Intl.message(
+      'When $name opens Safini on their phone, their installed apps show up here.',
+      name: 'installedAppsEmptyBody',
+      desc: '',
+      args: [name],
+    );
+  }
+
   /// `Always allowed · no redemption`
   String get alwaysAllowedNoRedemption {
     return Intl.message(

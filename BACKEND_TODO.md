@@ -34,14 +34,18 @@ Backend behaviour here is correct. Nothing to change.
 
 ---
 
-## 1. Controlled apps catalog — ✅ NOW LIVE (backend done; client not wired yet)
+## 1. Controlled apps catalog — ✅ DONE (backend live; client wired)
 
 **Was:** the parent "Add app" flow hardcoded the list
 (`youtube-kids`, `roblox`, `brawl-stars`, `minecraft`) because no catalog
 endpoint existed.
 
 **Now:** `GET /v1/apps` is live (verified against `https://api.safini.fun/openapi.json`
-on 2026-08-24). It returns:
+on 2026-08-24) **and the client already consumes it** — `CatalogAppModel`,
+`IParentAppUsageRepository.fetchCatalog()` →
+`ParentAppUsageRepositoryImpl` (`GET /v1/apps`), `ParentAppsCubit.loadCatalog()`,
+and `add_app_sheet.dart` (filters already-added slugs, seeds defaults from the
+catalog). The old `_knownApps` list is gone. It returns:
 
 ```json
 {
@@ -59,9 +63,6 @@ on 2026-08-24). It returns:
   ]
 }
 ```
-
-**Client TODO:** replace the hardcoded `_knownApps` list in
-`parent_apps_screen.dart` with a fetch of `GET /v1/apps`.
 
 Note: `GET /children/{id}/app-usage` also gained `bonus_minutes_remaining` and
 `total_minutes_available` fields (additive; existing parsing still works).
@@ -144,6 +145,13 @@ Response for `GET`:
 - Platform is Android-only for now (iOS cannot enumerate installed apps); an
   optional `platform` field can be added later if needed.
 
+**Client status:** fully built and waiting on this endpoint. Child upload
+(`ChildAppRulesService.reportInstalledApps`) and the parent read path
+(`ParentAppBlockingService.fetchInstalledApps` → `ParentInstalledAppsScreen`,
+reachable from the Limits screen) are done, gated behind
+`AppConstants.childInstalledAppsShipped`. Flip that flag to `true` once this
+endpoint ships.
+
 **Unblocks:** parent visibility of the child's real apps; foundation for a
 "pick from the child's apps" flow instead of the hardcoded catalog in #1.
 
@@ -165,7 +173,7 @@ show each child's face the app fetches that child's `/dashboard` separately.
 | # | Endpoint | Type | Status |
 |---|---|---|---|
 | — | `GET /children/{id}/home` | — | ✅ already complete, no change |
-| 1 | `GET /apps` | new | ✅ live — client needs to consume it |
+| 1 | `GET /apps` | new | ✅ live — client wired (`fetchCatalog`) |
 | 2 | `GET /children/{id}/activity` | new | needed — unblocks monitor widgets |
 | 3 | `avatar_state` in `families/current.children[]` | change | optional |
 | 4 | `PUT/GET /children/{id}/installed-apps` | new | needed — parent sees child's apps |
