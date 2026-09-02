@@ -413,6 +413,21 @@
   },
   "installedAppsEmptyTitle": "No apps synced yet",
   "installedAppsEmptyBody": "When {name} opens Safini on their phone, their installed apps show up here.",
+  "installedAppsLastSynced": "Last synced {date}",
+  "@installedAppsLastSynced": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "installedAppsTapHint": "Tap an app you recognise to set a limit or block it.",
+  "installedAppsNotControllable": "Safini can't limit this app yet.",
+  "installedAppsAddTitle": "Limit {name}?",
+  "installedAppsAddBody": "Add it to this phone's limits. You can adjust the daily limit next.",
+  "installedAppsSetLimit": "Set a daily limit",
+  "installedAppsBlockCompletely": "Block completely",
+  "installedAppsBlockedSnack": "{name} is now blocked",
   "alwaysAllowedNoRedemption": "Always allowed · no redemption",
   "usedOfLimit": "{used} of {limit}",
   "usedOfLimitOver": "{used} of {limit} · over",

@@ -6,6 +6,7 @@ import 'package:safini/core/network/dio_error_mapper.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
+import 'package:safini/features/models/domain/models/screen_time_status.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 
 /// Backend-facing service the **child** device uses for the blocking feature.
@@ -80,6 +81,9 @@ class ChildAppRulesService {
     }
   }
 
+  /// The backend caps a snapshot at 1000 apps (`InstalledAppsReplaceRequest`).
+  static const int _maxInstalledApps = 1000;
+
   /// Uploads the full snapshot of apps installed on the child's device so the
   /// parent can see them. Replaces the previous snapshot (PUT).
   Future<Either<Failure, Unit>> reportInstalledApps(
@@ -87,15 +91,83 @@ class ChildAppRulesService {
     List<InstalledApp> apps,
   ) async {
     try {
+      final payload = apps.length > _maxInstalledApps
+          ? apps.sublist(0, _maxInstalledApps)
+          : apps;
       await _dio.put<dynamic>(
         ApiConst.childInstalledApps(childId),
-        data: {'apps': apps.map((a) => a.toJson()).toList()},
+        data: {'apps': payload.map((a) => a.toJson()).toList()},
       );
       return const Right(unit);
     } on DioException catch (e) {
       return Left(mapDioError(e, 'Unable to sync installed apps.'));
     } catch (e) {
       debugPrint('[ChildAppRulesService] reportInstalledApps error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  /// Reads back the snapshot the child device previously uploaded (the child may
+  /// read its own row). Used by the dev screen to verify the round-trip.
+  Future<Either<Failure, InstalledAppsSnapshot>> fetchInstalledApps(
+    String childId,
+  ) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiConst.childInstalledApps(childId),
+      );
+      final data = response.data;
+      if (data == null) {
+        return const Right(InstalledAppsSnapshot(apps: []));
+      }
+      return Right(InstalledAppsSnapshot.fromJson(data));
+    } on DioException catch (e) {
+      return Left(mapDioError(e, 'Unable to load installed apps.'));
+    } catch (e) {
+      debugPrint('[ChildAppRulesService] fetchInstalledApps error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  /// Pushes the iOS Screen Time status (auth + token counts + shield flag) so
+  /// the parent can see it. The iOS analogue of [reportInstalledApps]. The
+  /// endpoint is not deployed yet (SAF-154) — a 404 here is expected until it
+  /// ships.
+  Future<Either<Failure, Unit>> reportScreenTimeStatus(
+    String childId,
+    ScreenTimeStatus status,
+  ) async {
+    try {
+      await _dio.put<dynamic>(
+        ApiConst.childScreenTimeStatus(childId),
+        data: status.toJson(),
+      );
+      return const Right(unit);
+    } on DioException catch (e) {
+      return Left(mapDioError(e, 'Unable to sync Screen Time status.'));
+    } catch (e) {
+      debugPrint('[ChildAppRulesService] reportScreenTimeStatus error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  /// Reads the Screen Time status back (child may read its own row).
+  Future<Either<Failure, ScreenTimeStatus>> fetchScreenTimeStatus(
+    String childId,
+  ) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiConst.childScreenTimeStatus(childId),
+      );
+      final data = response.data;
+      if (data == null) {
+        return const Right(ScreenTimeStatus(authorization: 'unavailable'));
+      }
+      return Right(ScreenTimeStatus.fromJson(data));
+    } on DioException catch (e) {
+      return Left(mapDioError(e, 'Unable to load Screen Time status.'));
+    } catch (e) {
+      debugPrint('[ChildAppRulesService] fetchScreenTimeStatus error: $e');
       return Left(ServerFailure(e.toString()));
     }
   }

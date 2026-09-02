@@ -4,6 +4,8 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
+import 'package:safini/features/child/data/services/child_app_rules_service.dart';
+import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 
@@ -12,7 +14,11 @@ import 'package:safini/features/parent/data/app_data.dart';
 /// Verifies that the child device can actually enumerate the apps installed on
 /// it, exercising [AppBlockService.installedApps] (the native `installedApps`
 /// MethodChannel backed by `PackageManager` + `QUERY_ALL_PACKAGES`). It also
-/// surfaces the two special-permission states for quick reference.
+/// surfaces the two special-permission states for quick reference, and — via
+/// the two buttons — runs the full backend round-trip (`PUT` then `GET
+/// /v1/children/{id}/installed-apps`) so "I added apps but the parent sees
+/// nothing" can be pinned to a layer. The automatic upload only runs once, on
+/// child-shell mount (`ChildAppBlockCubit.start`), and never on iOS.
 ///
 /// This screen is reachable from Kid · Me only in debug builds (see the
 /// `kDebugMode` guard in `ChildMeSettings`), so it never appears in release.
@@ -25,6 +31,8 @@ class ChildAppsDebugScreen extends StatefulWidget {
 
 class _ChildAppsDebugScreenState extends State<ChildAppsDebugScreen> {
   final AppBlockService _service = getIt<AppBlockService>();
+  final ChildAppRulesService _rules = getIt<ChildAppRulesService>();
+  final ProfileController _profile = getIt<ProfileController>();
 
   bool _loading = true;
   String? _error;
@@ -33,10 +41,66 @@ class _ChildAppsDebugScreenState extends State<ChildAppsDebugScreen> {
   bool _overlay = false;
   int _elapsedMs = 0;
 
+  String? _childId;
+  bool _syncBusy = false;
+  String? _syncMessage;
+
   @override
   void initState() {
     super.initState();
     _load();
+  }
+
+  Future<String?> _resolveChildId() async {
+    if (_childId != null) return _childId;
+    final result = await _profile.fetchMe();
+    _childId = result.fold((_) => null, (p) {
+      final id = p.childId?.trim();
+      return (id == null || id.isEmpty) ? null : id;
+    });
+    return _childId;
+  }
+
+  /// PUT the enumerated list, then GET it straight back, so the whole pipeline
+  /// (auth, child id, endpoint, serialisation) is exercised in one tap.
+  Future<void> _syncRoundTrip() async {
+    setState(() {
+      _syncBusy = true;
+      _syncMessage = null;
+    });
+
+    final childId = await _resolveChildId();
+    if (!mounted) return;
+    if (childId == null) {
+      setState(() {
+        _syncBusy = false;
+        _syncMessage =
+            'No child id — /me returned no child_id. Not signed in '
+            'as a child?';
+      });
+      return;
+    }
+
+    final put = await _rules.reportInstalledApps(childId, _apps);
+    if (!mounted) return;
+    final putMsg = put.fold(
+      (f) => 'PUT failed: ${f.message}',
+      (_) => 'PUT ok (${_apps.length} apps)',
+    );
+
+    final get = await _rules.fetchInstalledApps(childId);
+    if (!mounted) return;
+    final getMsg = get.fold(
+      (f) => 'GET failed: ${f.message}',
+      (snap) =>
+          'GET ok: ${snap.apps.length} apps, updated_at='
+          '${snap.updatedAt?.toIso8601String() ?? "null"}',
+    );
+
+    setState(() {
+      _syncBusy = false;
+      _syncMessage = 'child_id=$childId\n$putMsg\n$getMsg';
+    });
   }
 
   Future<void> _load() async {
@@ -111,6 +175,40 @@ class _ChildAppsDebugScreenState extends State<ChildAppsDebugScreen> {
                 elapsedMs: _elapsedMs,
                 loading: _loading,
               ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: (_loading || _syncBusy) ? null : _syncRoundTrip,
+                  icon: _syncBusy
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.cloud_sync),
+                  label: Text(
+                    _syncBusy
+                        ? 'Syncing…'
+                        : 'Upload to backend, then read back',
+                  ),
+                ),
+              ),
+              if (_syncMessage != null) ...[
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(AppRadius.group),
+                  ),
+                  child: SelectableText(
+                    _syncMessage!,
+                    style: AppText.metaSm.copyWith(fontFamily: 'monospace'),
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
               if (_loading)
                 const Padding(
@@ -185,15 +283,9 @@ class _StatusCard extends StatelessWidget {
           const Divider(height: 1),
           _StatusRow(label: 'Overlay permission granted', value: overlay),
           const Divider(height: 1),
-          _InfoRow(
-            label: 'Apps returned',
-            value: loading ? '…' : '$appCount',
-          ),
+          _InfoRow(label: 'Apps returned', value: loading ? '…' : '$appCount'),
           const Divider(height: 1),
-          _InfoRow(
-            label: 'Load time',
-            value: loading ? '…' : '$elapsedMs ms',
-          ),
+          _InfoRow(label: 'Load time', value: loading ? '…' : '$elapsedMs ms'),
         ],
       ),
     );
@@ -287,9 +379,7 @@ class _AppRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   app.packageName,
-                  style: AppText.metaSm.copyWith(
-                    color: AppColors.textTertiary,
-                  ),
+                  style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
                 ),
               ],
             ),

@@ -21,12 +21,11 @@ class AppConstants {
 
   /// Whether the parent "See all apps on this phone" entry point is shown.
   ///
-  /// The child device already enumerates and uploads its installed apps, and the
-  /// parent read path is built, but the backend endpoint is not live yet (see
-  /// `BACKEND_TODO.md` #4). Keep this false so the row stays hidden in
-  /// production; flip it to true to preview the screen (it shows an empty state
-  /// until real data flows).
-  static const bool childInstalledAppsShipped = false;
+  /// The child device enumerates and uploads its installed apps
+  /// (`PUT /v1/children/{id}/installed-apps`) and the parent reads them back
+  /// (`GET`). Both are live (see `BACKEND_TODO.md` #4), so the row is shown.
+  /// Android-only in practice — iOS cannot enumerate installed apps.
+  static const bool childInstalledAppsShipped = true;
 
   const AppConstants._();
 }

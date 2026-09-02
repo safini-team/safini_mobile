@@ -63,17 +63,20 @@ class _ParentLimitsView extends StatelessWidget {
             .where((child) => child.id == selectedId)
             .firstOrNull;
 
-        // Read-only "apps on this phone" list. Hidden until the backend
-        // installed-apps endpoint is live (see AppConstants).
+        // "Apps on this phone" list. Rows for catalog-mapped apps are tappable
+        // (add / limit / block), so the screen needs the ParentAppsCubit.
         final VoidCallback? onSeeAllApps =
             AppConstants.childInstalledAppsShipped &&
                 selectedId != null &&
                 selectedId.isNotEmpty
             ? () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => ParentInstalledAppsScreen(
-                    childId: selectedId,
-                    childName: selected?.nickname ?? '',
+                  builder: (_) => BlocProvider.value(
+                    value: cubit,
+                    child: ParentInstalledAppsScreen(
+                      childId: selectedId,
+                      childName: selected?.nickname ?? '',
+                    ),
                   ),
                 ),
               )

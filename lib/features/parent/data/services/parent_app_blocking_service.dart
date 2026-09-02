@@ -88,26 +88,21 @@ class ParentAppBlockingService {
     int dailyLimitMinutes,
   ) => upsertRule(childId, rule.copyWith(dailyLimitMinutes: dailyLimitMinutes));
 
-  /// Loads the list of apps installed on the child's device (uploaded by the
-  /// child device — see `ChildAppRulesService.reportInstalledApps`).
-  Future<Either<Failure, List<InstalledApp>>> fetchInstalledApps(
+  /// Loads the apps installed on the child's device (uploaded by the child
+  /// device — see `ChildAppRulesService.reportInstalledApps`), plus the
+  /// `updated_at` of that upload (`null` → the phone has never synced).
+  Future<Either<Failure, InstalledAppsSnapshot>> fetchInstalledApps(
     String childId,
   ) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
         ApiConst.childInstalledApps(childId),
       );
-      final apps = response.data?['apps'];
-      if (apps is! List) return const Right([]);
-      final list = apps
-          .whereType<Map>()
-          .map(
-            (e) => InstalledApp.fromJson(
-              e.map((k, v) => MapEntry(k.toString(), v)),
-            ),
-          )
-          .toList();
-      return Right(list);
+      final data = response.data;
+      if (data == null) {
+        return const Right(InstalledAppsSnapshot(apps: []));
+      }
+      return Right(InstalledAppsSnapshot.fromJson(data));
     } on DioException catch (e) {
       return Left(mapDioError(e, 'Unable to load the child\'s apps.'));
     } catch (e) {

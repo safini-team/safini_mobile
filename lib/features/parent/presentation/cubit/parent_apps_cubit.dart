@@ -151,6 +151,12 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   /// "add app" picker).
   Set<String> get addedSlugs => _appUsage.map((a) => a.appSlug).toSet();
 
+  /// The current rule for [slug], or null when the selected child has none.
+  /// Used by the installed-apps screen to decide between "open the limit sheet"
+  /// and "add a rule first".
+  ChildAppUsageModel? ruleForSlug(String slug) =>
+      _appUsage.where((a) => a.appSlug == slug).firstOrNull;
+
   Map<String, dynamic> _toLimitMap(ChildAppUsageModel app) {
     return {
       'slug': app.appSlug,
