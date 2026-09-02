@@ -3,7 +3,10 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
+import 'package:safini/features/child/data/services/child_app_rules_service.dart';
 import 'package:safini/features/child/data/services/screen_time_service.dart';
+import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
+import 'package:safini/features/models/domain/models/screen_time_status.dart';
 
 /// DEV-ONLY diagnostic screen for the iOS Screen Time / FamilyControls path.
 ///
@@ -31,17 +34,89 @@ class ChildScreenTimeDebugScreen extends StatefulWidget {
 class _ChildScreenTimeDebugScreenState
     extends State<ChildScreenTimeDebugScreen> {
   final ScreenTimeService _service = getIt<ScreenTimeService>();
+  final ChildAppRulesService _rules = getIt<ChildAppRulesService>();
+  final ProfileController _profile = getIt<ProfileController>();
 
   bool _busy = false;
   ScreenTimeAuthStatus _status = ScreenTimeAuthStatus.unavailable;
   ScreenTimeSelection _selection = const ScreenTimeSelection();
+  bool _shieldActive = false;
   String? _lastMessage;
   bool _lastWasError = false;
+
+  String? _childId;
+  bool _syncBusy = false;
+  String? _syncMessage;
 
   @override
   void initState() {
     super.initState();
     _refreshStatus();
+  }
+
+  Future<String?> _resolveChildId() async {
+    if (_childId != null) return _childId;
+    final result = await _profile.fetchMe();
+    _childId = result.fold((_) => null, (p) {
+      final id = p.childId?.trim();
+      return (id == null || id.isEmpty) ? null : id;
+    });
+    return _childId;
+  }
+
+  /// PUT the current Screen Time status (auth + counts + shield flag), then GET
+  /// it back. Same diagnostic as the Android installed-apps round-trip. The
+  /// endpoint is not deployed yet (SAF-154) — expect `GET failed … 404` until
+  /// it ships; that is the useful signal, not a bug.
+  Future<void> _syncRoundTrip() async {
+    setState(() {
+      _syncBusy = true;
+      _syncMessage = null;
+    });
+
+    final childId = await _resolveChildId();
+    if (!mounted) return;
+    if (childId == null) {
+      setState(() {
+        _syncBusy = false;
+        _syncMessage =
+            'No child id — /me returned no child_id. Not signed in '
+            'as a child?';
+      });
+      return;
+    }
+
+    final status = ScreenTimeStatus(
+      authorization: _status.name,
+      selectedApplications: _selection.applications,
+      selectedCategories: _selection.categories,
+      shieldActive: _shieldActive,
+    );
+
+    final put = await _rules.reportScreenTimeStatus(childId, status);
+    if (!mounted) return;
+    final putMsg = put.fold(
+      (f) => 'PUT failed: ${f.message}',
+      (_) =>
+          'PUT ok (auth=${status.authorization}, '
+          'apps=${status.selectedApplications}, '
+          'cats=${status.selectedCategories}, shield=${status.shieldActive})',
+    );
+
+    final get = await _rules.fetchScreenTimeStatus(childId);
+    if (!mounted) return;
+    final getMsg = get.fold(
+      (f) => 'GET failed: ${f.message}',
+      (s) =>
+          'GET ok: auth=${s.authorization}, apps=${s.selectedApplications}, '
+          'cats=${s.selectedCategories}, shield=${s.shieldActive}, '
+          'updated_at=${s.updatedAt?.toIso8601String() ?? "null"}',
+    );
+
+    setState(() {
+      _syncBusy = false;
+      _syncMessage = 'child_id=$childId\n$putMsg\n$getMsg';
+    });
   }
 
   Future<void> _run(
@@ -84,6 +159,11 @@ class _ChildScreenTimeDebugScreenState
     });
   }
 
+  void _setShield(bool active) {
+    _shieldActive = active;
+    if (mounted) setState(() {});
+  }
+
   Future<void> _requestAuth() => _run('Request authorization', () async {
     _status = await _service.requestAuthorization();
   });
@@ -100,10 +180,12 @@ class _ChildScreenTimeDebugScreenState
         'Nothing selected — pick apps first.',
       );
     }
+    _setShield(true);
   });
 
   Future<void> _unblock() => _run('Clear shield', () async {
     await _service.clearShield();
+    _setShield(false);
   });
 
   @override
@@ -136,6 +218,7 @@ class _ChildScreenTimeDebugScreenState
               supported: supported,
               status: _status,
               selection: _selection,
+              shieldActive: _shieldActive,
             ),
             const SizedBox(height: 16),
             if (!supported)
@@ -174,6 +257,30 @@ class _ChildScreenTimeDebugScreenState
                 enabled: !_busy && _status == ScreenTimeAuthStatus.approved,
                 onTap: _unblock,
               ),
+              const SizedBox(height: 10),
+              _ActionButton(
+                label: _syncBusy
+                    ? 'Syncing status…'
+                    : 'Sync status to backend, then read back',
+                icon: Icons.cloud_sync,
+                enabled: !_busy && !_syncBusy,
+                onTap: _syncRoundTrip,
+              ),
+              if (_syncMessage != null) ...[
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(AppRadius.group),
+                  ),
+                  child: SelectableText(
+                    _syncMessage!,
+                    style: AppText.metaSm.copyWith(fontFamily: 'monospace'),
+                  ),
+                ),
+              ],
             ],
             if (_busy)
               const Padding(
@@ -212,11 +319,13 @@ class _StatusCard extends StatelessWidget {
     required this.supported,
     required this.status,
     required this.selection,
+    required this.shieldActive,
   });
 
   final bool supported;
   final ScreenTimeAuthStatus status;
   final ScreenTimeSelection selection;
+  final bool shieldActive;
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +347,8 @@ class _StatusCard extends StatelessWidget {
             label: 'Selected categories',
             value: '${selection.categories}',
           ),
+          const Divider(height: 1),
+          _BoolRow(label: 'Shield active (this session)', value: shieldActive),
         ],
       ),
     );

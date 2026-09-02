@@ -13,9 +13,23 @@ class ParentInstalledAppsLoading extends ParentInstalledAppsState {
 class ParentInstalledAppsLoaded extends ParentInstalledAppsState {
   final List<InstalledApp> apps;
 
-  const ParentInstalledAppsLoaded(this.apps);
+  /// When the child device last uploaded its list. `null` → never synced.
+  final DateTime? updatedAt;
+
+  /// The `GET` came back 404 (endpoint not deployed, or no such child) rather
+  /// than an empty-but-valid snapshot. Same empty UI, but the dev hint differs.
+  final bool endpointMissing;
+
+  const ParentInstalledAppsLoaded(
+    this.apps, {
+    this.updatedAt,
+    this.endpointMissing = false,
+  });
 
   bool get isEmpty => apps.isEmpty;
+
+  /// The child's phone has never uploaded a snapshot.
+  bool get neverSynced => updatedAt == null;
 }
 
 class ParentInstalledAppsError extends ParentInstalledAppsState {

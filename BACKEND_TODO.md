@@ -100,15 +100,22 @@ Auth: Bearer <access_token> (parent of this child)
 
 ---
 
-## 4. Child installed-apps list — MISSING (app-blocking feature)
+## 4. Child installed-apps list — ✅ DONE (backend live; client wired)
 
-**Problem:** the parent needs to see the apps that are actually installed on the
-child's device (to monitor and, later, to pick which apps to control). The child
-device can enumerate them natively, but there is **no endpoint to store or read
-that list**. The mobile side is already built against the contract below (child
-uploads on app start; parent reads).
+**Was:** the parent needed to see the apps actually installed on the child's
+device, but there was no endpoint to store or read that list.
 
-**Fix:**
+**Now:** both endpoints are live and the client consumes them —
+`ChildAppRulesService.reportInstalledApps` (child `PUT` on app start),
+`ParentAppBlockingService.fetchInstalledApps` →
+`InstalledAppsSnapshot` (apps + `updated_at`) → `ParentInstalledAppsCubit` →
+`ParentInstalledAppsScreen`. `AppConstants.childInstalledAppsShipped` is now
+`true`, so the "See all apps on this phone" row shows on the Limits screen.
+A parent `PUT` correctly returns **403** (child token only). `updated_at: null`
+is rendered as "no apps synced yet"; a non-null value shows a "Last synced …"
+line above the list.
+
+**Contract (as shipped):**
 
 ```
 PUT /v1/children/{child_id}/installed-apps      (child uploads its own snapshot)
@@ -145,15 +152,49 @@ Response for `GET`:
 - Platform is Android-only for now (iOS cannot enumerate installed apps); an
   optional `platform` field can be added later if needed.
 
-**Client status:** fully built and waiting on this endpoint. Child upload
-(`ChildAppRulesService.reportInstalledApps`) and the parent read path
-(`ParentAppBlockingService.fetchInstalledApps` → `ParentInstalledAppsScreen`,
-reachable from the Limits screen) are done, gated behind
-`AppConstants.childInstalledAppsShipped`. Flip that flag to `true` once this
-endpoint ships.
+**Unblocks:** parent visibility of the child's real **Android** apps. iOS cannot
+enumerate apps — that path is Screen Time **status** instead (see #5).
 
-**Unblocks:** parent visibility of the child's real apps; foundation for a
-"pick from the child's apps" flow instead of the hardcoded catalog in #1.
+Linear: [SAF-153](https://linear.app/safini-team/issue/SAF-153/backend-putget-installed-apps-so-parent-can-see-childs-android-apps)
+
+---
+
+## 5. iOS Screen Time status for the parent — MISSING
+
+**Problem:** iOS Screen Time Increment 1 works on-device, but the parent has no
+signal that the child's iPhone authorized Screen Time, how many apps were
+picked, or whether the shield is on. Apple does not allow an installed-app list
+or per-app minutes on iOS.
+
+**Fix:**
+
+```
+PUT /v1/children/{child_id}/screen-time-status    (child)
+GET /v1/children/{child_id}/screen-time-status    (parent of child, or the child)
+```
+
+```json
+{
+  "platform": "ios",
+  "authorization": "approved",
+  "selected_applications": 3,
+  "selected_categories": 1,
+  "shield_active": true,
+  "updated_at": "2026-08-27T00:00:00Z"
+}
+```
+
+- Never store Screen Time **tokens** (not names, not portable, not ours to send).
+- Access: child writes own row; parent reads.
+
+**Client status:** plumbing built ahead of the endpoint — `ApiConst.childScreenTimeStatus`,
+`ScreenTimeStatus` model, `ChildAppRulesService.reportScreenTimeStatus` /
+`fetchScreenTimeStatus`, and a round-trip button on the iOS
+`ChildScreenTimeDebugScreen` (Kid · Me → DEV · Screen Time). Until this ships
+the GET returns 404, which the dev screen shows verbatim. No parent UI yet.
+
+Linear: [SAF-154](https://linear.app/safini-team/issue/SAF-154/ios-report-screen-time-status-to-backend-so-parent-can-see-it)
+Design: `observation/ios_parent_backend_sync.md`.
 
 ---
 
@@ -176,7 +217,8 @@ show each child's face the app fetches that child's `/dashboard` separately.
 | 1 | `GET /apps` | new | ✅ live — client wired (`fetchCatalog`) |
 | 2 | `GET /children/{id}/activity` | new | needed — unblocks monitor widgets |
 | 3 | `avatar_state` in `families/current.children[]` | change | optional |
-| 4 | `PUT/GET /children/{id}/installed-apps` | new | needed — parent sees child's apps |
+| 4 | `PUT/GET /children/{id}/installed-apps` | new | ✅ live — client wired ([SAF-153](https://linear.app/safini-team/issue/SAF-153)) |
+| 5 | `PUT/GET /children/{id}/screen-time-status` | new | needed — [SAF-154](https://linear.app/safini-team/issue/SAF-154) iOS parent status |
 
 Per `AGENTS.md`: branch `codex/...`, test-first, access control on every route,
 Alembic migration if schema changes, update the Scalar docs, then

@@ -3255,6 +3255,228 @@
         }
       }
     },
+    "/v1/children/{child_id}/installed-apps": {
+      "put": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Replace Child Installed Apps",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Stores the full list of apps installed on the child's device so the parent can see the child's real apps instead of only the controlled-app catalog.\n\n**Frontend note:** Send the whole snapshot on every upload; it replaces the stored list rather than merging into it. Only the child's own device may write, so call this with the child's token, not the parent's. Android only in practice - iOS cannot enumerate installed apps, so an iPhone should not call this at all.",
+        "operationId": "replace_child_installed_apps_v1_children__child_id__installed_apps_put",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstalledAppsReplaceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Installed apps stored.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Replace Child Installed Apps V1 Children  Child Id  Installed Apps Put"
+                },
+                "example": {
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "apps": [
+                    {
+                      "package_name": "com.roblox.client",
+                      "app_name": "Roblox"
+                    },
+                    {
+                      "package_name": "com.google.android.apps.youtube.kids",
+                      "app_name": "YouTube Kids"
+                    }
+                  ],
+                  "updated_at": "2026-08-30T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Get Child Installed Apps",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the apps currently installed on the child's device, for the parent screen that lists what is actually on the phone.\n\n**Frontend note:** Readable by a parent of this child or by the child. `updated_at` is null when the device has never uploaded, which is how you tell an empty phone apart from one that has not reported yet - show the never-reported state rather than an empty list.",
+        "operationId": "get_child_installed_apps_v1_children__child_id__installed_apps_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Installed apps for the selected child.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Child Installed Apps V1 Children  Child Id  Installed Apps Get"
+                },
+                "example": {
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "apps": [
+                    {
+                      "package_name": "com.roblox.client",
+                      "app_name": "Roblox"
+                    }
+                  ],
+                  "updated_at": "2026-08-30T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/children/{child_id}/wallet": {
       "get": {
         "tags": [
@@ -4709,6 +4931,65 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "InstalledAppEntry": {
+        "properties": {
+          "package_name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Package Name",
+            "description": "Platform package identifier, e.g. the Android package name."
+          },
+          "app_name": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "App Name",
+            "description": "User-visible app label. Falls back to `package_name` when blank, so the parent screen never renders an unnamed row.",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "package_name"
+        ],
+        "title": "InstalledAppEntry",
+        "example": {
+          "app_name": "Roblox",
+          "package_name": "com.roblox.client"
+        }
+      },
+      "InstalledAppsReplaceRequest": {
+        "properties": {
+          "apps": {
+            "items": {
+              "$ref": "#/components/schemas/InstalledAppEntry"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Apps",
+            "description": "Full snapshot of the apps installed on the child's device. Replaces the stored list; duplicate `package_name` entries keep the last one. An empty list is honoured and clears the snapshot."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "apps"
+        ],
+        "title": "InstalledAppsReplaceRequest",
+        "example": {
+          "apps": [
+            {
+              "app_name": "Roblox",
+              "package_name": "com.roblox.client"
+            },
+            {
+              "app_name": "YouTube Kids",
+              "package_name": "com.google.android.apps.youtube.kids"
+            }
+          ]
+        }
       },
       "ParentTaskSuggestionRequest": {
         "properties": {

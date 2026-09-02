@@ -30,8 +30,15 @@ class ApiConst {
   static String childAppRule(String childId, String appSlug) =>
       '/v1/children/$childId/app-rules/$appSlug';
 
-  /// PUT (child uploads) / GET (parent reads) — the full list of apps installed
-  /// on the child's device. Proposed endpoint; see BACKEND_TODO.md.
+  /// PUT (child uploads) / GET (parent or child reads) — the full list of apps
+  /// installed on the child's device. Only a child token may write (parent PUT
+  /// → 403). See BACKEND_TODO.md #4.
   static String childInstalledApps(String childId) =>
       '/v1/children/$childId/installed-apps';
+
+  /// PUT (child) / GET (parent or child) — iOS Screen Time status: auth state +
+  /// token counts + shield flag. The iOS analogue of `installed-apps` (Apple
+  /// forbids an app list). Not deployed yet — see BACKEND_TODO.md #5 / SAF-154.
+  static String childScreenTimeStatus(String childId) =>
+      '/v1/children/$childId/screen-time-status';
 }

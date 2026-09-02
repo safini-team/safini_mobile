@@ -53,19 +53,19 @@ final class ScreenTimeManager {
   /// - `member`: `"individual"` (self-control, no Family Sharing needed — best for
   ///   dev testing) or `"child"` (parent-managed device enrolled in Family Sharing).
   ///
-  /// Completion is always delivered on the main queue.
+  /// Must run on the main actor: the Screen Time helper rejects off-main calls
+  /// with "Couldn't communicate with a helper application".
   func requestAuthorization(
     member: String,
     completion: @escaping (Result<String, Error>) -> Void
   ) {
     let target: FamilyControlsMember = (member == "child") ? .child : .individual
-    Task {
+    Task { @MainActor in
       do {
         try await AuthorizationCenter.shared.requestAuthorization(for: target)
-        let status = self.authorizationStatus()
-        DispatchQueue.main.async { completion(.success(status)) }
+        completion(.success(self.authorizationStatus()))
       } catch {
-        DispatchQueue.main.async { completion(.failure(error)) }
+        completion(.failure(error))
       }
     }
   }

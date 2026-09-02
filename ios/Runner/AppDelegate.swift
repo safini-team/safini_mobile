@@ -39,11 +39,12 @@ import UIKit
           case .success(let status):
             result(status)
           case .failure(let error):
+            let ns = error as NSError
             result(
               FlutterError(
-                code: "authorization_failed",
-                message: error.localizedDescription,
-                details: nil
+                code: Self.familyControlsCode(ns),
+                message: Self.familyControlsMessage(ns),
+                details: ["domain": ns.domain, "code": ns.code]
               )
             )
           }
@@ -78,6 +79,35 @@ import UIKit
       default:
         result(FlutterMethodNotImplemented)
       }
+    }
+  }
+
+  /// FamilyControlsError.Code raw values as reported on NSError.
+  private static func familyControlsCode(_ error: NSError) -> String {
+    switch error.code {
+    case 0: return "invalid_account"
+    case 1: return "restricted"
+    case 2: return "unavailable"
+    case 3: return "invalid_argument"
+    case 4: return "canceled"
+    case 5: return "network"
+    case 6: return "auth_failed"
+    default: return "authorization_failed"
+    }
+  }
+
+  private static func familyControlsMessage(_ error: NSError) -> String {
+    switch error.code {
+    case 0:
+      return "This Apple ID cannot use Individual Screen Time auth. Use a personal Apple ID, or Family Sharing with .child."
+    case 1:
+      return "Screen Time is restricted on this device (MDM or parent controls)."
+    case 2:
+      return "Couldn't talk to the Screen Time helper. Rebuild so Family Controls is in the signed app, turn Screen Time on in Settings, delete Safini from the phone, then reinstall."
+    case 4:
+      return "Authorization was canceled."
+    default:
+      return error.localizedDescription
     }
   }
 }

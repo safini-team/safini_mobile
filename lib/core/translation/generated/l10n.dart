@@ -2565,6 +2565,86 @@ class S {
     );
   }
 
+  /// `Last synced {date}`
+  String installedAppsLastSynced(String date) {
+    return Intl.message(
+      'Last synced $date',
+      name: 'installedAppsLastSynced',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Tap an app you recognise to set a limit or block it.`
+  String get installedAppsTapHint {
+    return Intl.message(
+      'Tap an app you recognise to set a limit or block it.',
+      name: 'installedAppsTapHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safini can't limit this app yet.`
+  String get installedAppsNotControllable {
+    return Intl.message(
+      'Safini can\'t limit this app yet.',
+      name: 'installedAppsNotControllable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limit {name}?`
+  String installedAppsAddTitle(Object name) {
+    return Intl.message(
+      'Limit $name?',
+      name: 'installedAppsAddTitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Add it to this phone's limits. You can adjust the daily limit next.`
+  String get installedAppsAddBody {
+    return Intl.message(
+      'Add it to this phone\'s limits. You can adjust the daily limit next.',
+      name: 'installedAppsAddBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set a daily limit`
+  String get installedAppsSetLimit {
+    return Intl.message(
+      'Set a daily limit',
+      name: 'installedAppsSetLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block completely`
+  String get installedAppsBlockCompletely {
+    return Intl.message(
+      'Block completely',
+      name: 'installedAppsBlockCompletely',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} is now blocked`
+  String installedAppsBlockedSnack(Object name) {
+    return Intl.message(
+      '$name is now blocked',
+      name: 'installedAppsBlockedSnack',
+      desc: '',
+      args: [name],
+    );
+  }
+
   /// `Always allowed · no redemption`
   String get alwaysAllowedNoRedemption {
     return Intl.message(

@@ -6,9 +6,10 @@ import 'package:safini/features/parent/presentation/cubit/parent_installed_apps_
 /// Loads the apps installed on a child's device for the parent to browse.
 ///
 /// The child device uploads its list (see `ChildAppRulesService`); this only
-/// reads it back via `GET /children/{id}/installed-apps`. The endpoint is not
-/// live yet (see `BACKEND_TODO.md` #4), so a 404 is treated as "nothing synced
-/// yet" rather than a hard error — the screen then shows its empty state.
+/// reads it back via `GET /children/{id}/installed-apps`. A 404 (no child, or a
+/// stale build) is treated as "nothing synced yet" rather than a hard error —
+/// the screen then shows its empty state. A live child that has simply never
+/// synced comes back as `200` with `updated_at: null`.
 class ParentInstalledAppsCubit extends Cubit<ParentInstalledAppsState> {
   final ParentAppBlockingService _service;
 
@@ -31,17 +32,17 @@ class ParentInstalledAppsCubit extends Cubit<ParentInstalledAppsState> {
     result.fold(
       (failure) {
         if (failure is NotFoundFailure) {
-          emit(const ParentInstalledAppsLoaded([]));
+          emit(const ParentInstalledAppsLoaded([], endpointMissing: true));
         } else {
           emit(ParentInstalledAppsError(failure.message));
         }
       },
-      (apps) {
-        final sorted = [...apps]..sort(
+      (snapshot) {
+        final sorted = [...snapshot.apps]..sort(
           (a, b) =>
               a.appName.toLowerCase().compareTo(b.appName.toLowerCase()),
         );
-        emit(ParentInstalledAppsLoaded(sorted));
+        emit(ParentInstalledAppsLoaded(sorted, updatedAt: snapshot.updatedAt));
       },
     );
   }

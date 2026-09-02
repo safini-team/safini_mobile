@@ -3,17 +3,18 @@
 This is the iOS counterpart to the Android app-blocking engine
 (`observation/app_blocking.md`). The mechanism is completely different — see
 `observation/child_get_apps.md` §6 and `observation/screenzen_research.md` for
-the "why". This file tracks **what is actually built** and **what remains**.
+the "why", and `observation/block_flow.md` for how the parent/child setup flow
+forks by platform. This file tracks **what is actually built** and **what
+remains**.
 
 ## TL;DR
 
 - **Increment 1 (done, in this branch):** authorize → pick apps in Apple's
   `FamilyActivityPicker` → apply / clear the **system shield** immediately, all
   from the main app target. A debug screen exercises the whole flow.
-- **Hard blocker:** Screen Time APIs stay inert until Family Controls is added
-  via Xcode Signing & Capabilities (and Apple has granted it for distribution).
-  Do not paste the entitlement into `Runner.entitlements` by hand — that
-  mismatches the provisioning profile and iOS kills the app on launch.
+- **Hard blocker:** Screen Time APIs stay inert until Family Controls is in
+  **both** the provisioning profile and `Runner.entitlements`. Development
+  authorize is verified on device. Confirm distribution (TestFlight) on SAF-135.
 - **Increment 2 (deferred):** scheduling + a branded overlay require separate
   Xcode **app-extension targets** and an **App Group** (must be added in Xcode).
 
@@ -33,11 +34,8 @@ the "why". This file tracks **what is actually built** and **what remains**.
 
 Native (Runner app target):
 
-- `ios/Runner/Runner.entitlements` — present so Xcode can attach capabilities.
-  **Do not** add `com.apple.developer.family-controls` by hand: if the key is in
-  the binary but not the provisioning profile, iOS kills the app on launch.
-  Add Family Controls later via Xcode → Signing & Capabilities (that updates
-  entitlements + profile together).
+- `ios/Runner/Runner.entitlements` — `com.apple.developer.family-controls`
+  (must match the profile; see helper-communication note in the file).
 - `ios/Runner.xcodeproj/project.pbxproj` — wires `CODE_SIGN_ENTITLEMENTS` into
   all three Runner configs (Debug/Release/Profile) and adds
   `ScreenTimeManager.swift` to the build.
@@ -76,54 +74,52 @@ interface would leak wrong assumptions (app lists, usage minutes) onto iOS.
 | `clearShield` | — | `null` |
 | `selectionCounts` | — | `{ applications: Int, categories: Int }` |
 
-## How to test (once the entitlement is approved)
+## How to test
 
 1. On a **real device** (Screen Time isn't in the Simulator), run a debug build.
 2. Kid · Me → **DEV · Screen Time (iOS)**.
-3. **Request authorization** → approve. (`.individual` needs no Family Sharing.)
-4. **Pick apps** → select a couple → Done. The card shows the token counts.
-5. **Block** → leave the app and open a blocked app → Apple's shield appears.
-6. **Unblock** → the shield is lifted.
+3. **Request authorization** → approve (`.individual`, no Family Sharing).
+4. **Pick apps** → Done. Card shows token counts.
+5. **Block** → open a picked app → system shield.
+6. **Unblock** → shield lifts.
 
-Before approval, step 3 returns `authorization_failed` with a missing-entitlement
-message — that is the expected state, surfaced in the "Last call failed" block.
+Family Controls must be in **both** the profile and `Runner.entitlements`.
+Profile-only → "Couldn't communicate with a helper application".
+Entitlements-only → install integrity failure.
 
 ## Remaining work
 
-### A. Request the entitlement (external, gating everything)
+### A. Entitlement — development works; confirm distribution
 
-- Apply at
-  https://developer.apple.com/contact/request/family-controls-distribution
-  for the **distribution** entitlement (development works under the automatically
-  granted development variant on a provisioned device/team).
-- Once approved, ensure the App ID / provisioning profile carries
-  `com.apple.developer.family-controls`.
+Increment 1 **authorizes on device**. Still confirm Certificates → Provisioning
+Support lists **TestFlight + App Store**
+([SAF-135](https://linear.app/safini-team/issue/SAF-135)).
 
 ### B. Increment 2 — scheduling + branded overlay (needs Xcode)
 
-These require **new app-extension targets** and a shared **App Group**
-(`group.com.safini.app`), which must be created in Xcode (cannot be safely
-hand-edited into the pbxproj):
+[SAF-155](https://linear.app/safini-team/issue/SAF-155). New app-extension
+targets + App Group `group.com.safini.app` (create in Xcode, do not hand-edit
+pbxproj):
 
-1. **DeviceActivityMonitor extension** — apply/clear the shield on schedules and
-   usage thresholds, so limits map to time-of-day / daily quotas and survive app
-   kill. This is where the Android "daily limit" concept lands on iOS.
-2. **ShieldConfiguration extension** (`ManagedSettingsUI`) — brand the overlay
-   (title, subtitle, icon, up to two buttons). Runs out-of-process: system types
-   only, **no SwiftUI, no animation**.
-3. **ShieldAction extension** — handle the overlay's button taps.
-4. **App Group** — share the selection/tokens and state across app + extensions.
-5. (Optional, ScreenZen-style) a **Shortcuts "Open App" automation** to launch
-   Safini for a richer "breathe / wait" interstitial, since the shield can't
-   animate.
+1. **DeviceActivityMonitor** — daily limits / schedules that survive app kill.
+2. **ShieldConfiguration** + **ShieldAction** — brand the system shield.
+3. Optional Shortcuts "Open App" interstitial.
 
-### C. Rule mapping (parent limits → iOS)
+### C. Backend + parent (do this next)
 
-Android maps backend slugs → package names → native rules. On iOS there is no
-package name and no readable identity, so the model is different: the backend
-stores *intent* (which categories/limits), but the concrete tokens live only on
-the child device (chosen via the picker). Design the parent→child contract for
-iOS separately once Increment 2 exists.
+Full write-up: `observation/ios_parent_backend_sync.md`.
+
+- [SAF-154](https://linear.app/safini-team/issue/SAF-154) — child PUTs Screen Time
+  status; parent GETs it (counts + auth, **never tokens**).
+  **Client plumbing already landed** (ahead of the endpoint): `ScreenTimeStatus`
+  model, `ChildAppRulesService.report/fetchScreenTimeStatus`, and a "Sync status
+  to backend, then read back" button on `ChildScreenTimeDebugScreen`. The GET
+  returns 404 until the route deploys — the dev screen prints that verbatim.
+  Still missing: automatic PUT after auth/pick/apply/clear, and the parent card.
+- [SAF-156](https://linear.app/safini-team/issue/SAF-156) — iOS child fetches
+  `/app-usage` and apply/clear the **local** shield from parent rules.
+- [SAF-153](https://linear.app/safini-team/issue/SAF-153) — installed-apps API
+  (Android only; iOS has no list).
 
 ## Constraints recap
 

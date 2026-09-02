@@ -6,6 +6,9 @@
 > The reference spike (`com.example.app_block_test`) is Android-only and enforces limits
 > **on-device** with a foreground service, `UsageStatsManager`, and a `WindowManager`
 > overlay. This document maps that design onto Safini's architecture and backend.
+>
+> For how the parent/child **setup flow** forks between Android (parent picks apps)
+> and iOS (child picks apps in Apple's picker), see `observation/block_flow.md`.
 
 ---
 
@@ -338,19 +341,22 @@ resets server-side at the day boundary and `getStartOfDay()` resets the native w
 - [x] `lib/features/child/presentation/screens/blocking/child_app_block_gate.dart` — permission-onboarding gate, wired into `child_main_screen.dart`
 - [x] Periodic **usage reporting** back to the backend (`POST /app-usage`) — native `usageSinceMidnight(packages)` measures the day total (not the limit window); the cubit's cycle now runs **report → fetch → sync** so `remaining_minutes_today` stays accurate
 
-**Installed-apps list (child → backend → parent)** — client done; backend pending
+**Installed-apps list (child → backend → parent)** — ✅ shipped end-to-end
 - [x] `android/app/src/main/kotlin/com/safini/app/MainActivity.kt` — `installedApps` MethodChannel (launchable apps)
 - [x] `android/app/src/main/AndroidManifest.xml` — `QUERY_ALL_PACKAGES` (Play Declaration Form required)
 - [x] `lib/features/models/domain/models/installed_app.dart` — shared `InstalledApp` model
 - [x] `AppBlockService.installedApps()` — enumerate on the child device
 - [x] `ChildAppRulesService.reportInstalledApps()` — `PUT /children/{id}/installed-apps` (child uploads once per session in `ChildAppBlockCubit.start()`)
-- [x] `ParentAppBlockingService.fetchInstalledApps()` — `GET /children/{id}/installed-apps` (parent reads)
-- [ ] **Backend endpoints** `PUT/GET /children/{id}/installed-apps` — see `BACKEND_TODO.md` #4 (blocker)
+- [x] `ParentAppBlockingService.fetchInstalledApps()` — `GET /children/{id}/installed-apps`, returns `InstalledAppsSnapshot` (apps + `updated_at`; `null` → never synced)
+- [x] **Backend endpoints** `PUT/GET /children/{id}/installed-apps` — live; parent `PUT` → 403 (child token only)
 - [x] Parent UI to display the fetched list — `ParentInstalledAppsScreen` +
   `ParentInstalledAppsCubit`, reachable from the Limits screen via a
-  "See all apps on this phone" row. Gated behind
-  `AppConstants.childInstalledAppsShipped` (false) until the endpoint lands; a
-  404 renders the "No apps synced yet" empty state.
+  "See all apps on this phone" row. `AppConstants.childInstalledAppsShipped`
+  is now `true`. `updated_at: null` / a 404 renders the "No apps synced yet"
+  empty state; a non-null `updated_at` shows a "Last synced …" line.
+- [x] Tap a catalog-mapped app in that list → add / set-limit / block, on the
+  shared `ParentAppsCubit` (Option D in `observation/block_flow.md` §10). Still
+  bounded to `ControlledApps.slugToPackage`; broadening it needs backend work.
 
 **Optional / cleanup**
 - [ ] Decide fate of the `models` app-rule stub (`app_repository_impl.dart` returns "Not implemented"). Either implement it against the live endpoints or delete it to avoid confusion with the live `parent` path.
@@ -405,4 +411,8 @@ Safini-specific:
 3. Child app-usage repository + `syncRules` from backend.
 4. Periodic usage reporting back to backend.
 5. Parent status visibility (optional).
-6. iOS Screen Time track (separate epic) — Increment 1 done; see `observation/ios_screen_time_impl.md`.
+6. iOS Screen Time Increment 1 done. **Next:** parent/backend sync —
+   `observation/ios_parent_backend_sync.md` ([SAF-153](https://linear.app/safini-team/issue/SAF-153),
+   [SAF-154](https://linear.app/safini-team/issue/SAF-154),
+   [SAF-156](https://linear.app/safini-team/issue/SAF-156),
+   [SAF-155](https://linear.app/safini-team/issue/SAF-155)).

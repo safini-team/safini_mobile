@@ -5,7 +5,7 @@
 
 This is the **child device** capability behind the installed-apps pipeline
 (child enumerates → uploads → parent reads). See `app_blocking.md` §7 for the
-full pipeline and `BACKEND_TODO.md` #4 for the (still pending) backend endpoint.
+full pipeline and `BACKEND_TODO.md` #4 for the backend endpoint (now live).
 
 ---
 
@@ -24,7 +24,7 @@ AppBlockService.installedApps() → List<InstalledApp>     ── dev screen rea
   │
   ▼
 ChildAppRulesService.reportInstalledApps(childId, apps)
-        PUT /v1/children/{id}/installed-apps  ───────────►  (pending #4)  ──►  GET → ParentInstalledAppsScreen
+        PUT /v1/children/{id}/installed-apps  ───────────►  (live, #4)   ──►  GET → ParentInstalledAppsScreen
 ```
 
 The **dev screen added here taps in at `AppBlockService.installedApps()`** — it
@@ -305,8 +305,9 @@ to pass tokens and state. Full breakdown, code, and sources:
 4. Confirm the count is non-zero and the list contains the device's apps
    (install Roblox / YouTube Kids first to see recognizable entries).
 5. Tap reload / pull-to-refresh; the list and load time refresh.
-6. (Optional) Compare against the upload path: once backend #4 is live, the same
-   list should appear in the parent's "See all apps on this phone" screen.
+6. (Optional) Compare against the upload path: backend #4 is live, so the same
+   list appears in the parent's "See all apps on this phone" screen after the
+   child app has run once.
 
 ---
 
@@ -328,3 +329,5 @@ to pass tokens and state. Full breakdown, code, and sources:
   pipeline (the ScreenZen reverse-engineering behind §6, Option B).
 - `observation/app_blocking.md` — the Android enforcement engine and the overall
   parent↔child blocking architecture.
+- `observation/ios_parent_backend_sync.md` — **next:** backend + parent (status,
+  installed-apps, iOS rule sync).
