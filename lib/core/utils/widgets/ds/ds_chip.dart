@@ -9,7 +9,7 @@ import 'package:safini/core/utils/widgets/ds/pressable.dart';
 
 /// The kid scope chip on Parent Today / Tasks / Limits.
 ///
-/// Selected: `background:#fff` with `0 0 0 1.5px #8100D1` ring + lift shadow.
+/// Selected: `background:#fff` with `0 0 0 1.5px #1A5C4A` ring + lift shadow.
 /// Rest: `rgba(23,21,28,.05)`, no ring, `#6C6A75` label.
 class DsKidChip extends StatelessWidget {
   const DsKidChip({
@@ -73,7 +73,7 @@ class DsKidChip extends StatelessWidget {
 }
 
 /// Category chip on Kid Tasks and the New task sheet:
-/// selected fills with purple, rest is `rgba(23,21,28,.05)` / `#F2F0F6`.
+/// selected fills with purple, rest is `rgba(23,21,28,.05)` / `#EFEBE3`.
 class DsCategoryChip extends StatelessWidget {
   const DsCategoryChip({
     super.key,

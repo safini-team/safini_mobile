@@ -178,7 +178,7 @@ class _ProfileCard extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0x4D17151C),
+                              color: Color(0x4D0C231C),
                               offset: Offset(0, 2),
                               blurRadius: 8,
                               spreadRadius: -2,

@@ -6,7 +6,7 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/utils/widgets/ds/app_icons.dart';
 import 'package:safini/core/utils/widgets/ds/pressable.dart';
 
-/// `padding:17px;border-radius:18px;background:#8100D1;color:#fff;17/640/-.01em`
+/// `padding:17px;border-radius:18px;background:#1A5C4A;color:#fff;17/640/-.01em`
 /// plus the purple glow. Press scales to `.975`.
 class DsPrimaryButton extends StatelessWidget {
   const DsPrimaryButton({
@@ -23,7 +23,7 @@ class DsPrimaryButton extends StatelessWidget {
     this.busy = false,
   });
 
-  /// `background:#F2F0F6;color:#17151C;font-weight:600` - the quiet twin that
+  /// `background:#EFEBE3;color:#0C231C;font-weight:600` - the quiet twin that
   /// always sits under the primary one.
   const DsPrimaryButton.secondary({
     super.key,

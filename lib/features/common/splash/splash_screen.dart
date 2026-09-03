@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/theme/app_colors.dart';
-import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
@@ -152,17 +151,12 @@ class _SplashScreenState extends State<SplashScreen>
               children: [
                 ScaleTransition(
                   scale: _scaleAnimation,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: const DecoratedBox(
-                      decoration: BoxDecoration(boxShadow: AppShadows.logo),
-                      child: Image(
-                        image: AssetImage('assets/logo/app_logo.png'),
-                        width: 104,
-                        height: 104,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  // Fini alone - the wordmark is right below in the Text.
+                  child: const Image(
+                    image: AssetImage('assets/logo/safini-mascot.png'),
+                    width: 132,
+                    height: 132,
+                    fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(height: 20),

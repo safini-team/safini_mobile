@@ -262,10 +262,10 @@ class DsNavBar extends StatelessWidget {
     this.onBack,
     this.actionLabel,
     this.onAction,
-    this.background = const Color(0xD1F5F4F8),
+    this.background = const Color(0xD1F7F5F0),
   });
 
-  /// Child-side nav bar over `#FBF8FF`.
+  /// Child-side nav bar over `#FBFAF6`.
   const DsNavBar.child({
     super.key,
     required this.title,
@@ -273,7 +273,7 @@ class DsNavBar extends StatelessWidget {
     this.onBack,
     this.actionLabel,
     this.onAction,
-  }) : background = const Color(0xD1FBF8FF);
+  }) : background = const Color(0xD1FBFAF6);
 
   final String title;
   final String backLabel;

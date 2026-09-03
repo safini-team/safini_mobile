@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pine & Sand. Keep in sync with lib/core/theme/app_colors.dart. -->
+    <color name="safini_sand">#F7F5F0</color>
+    <color name="safini_ink">#0C231C</color>
+    <color name="safini_pine">#1A5C4A</color>
+	<color name="ic_launcher_background">#F7F5F0</color>
+</resources>

@@ -9,20 +9,20 @@ import 'package:flutter/material.dart';
 class AppShadows {
   const AppShadows._();
 
-  static const Color _ink04 = Color(0x0A17151C);
-  static const Color _ink06 = Color(0x0F17151C);
-  static const Color _ink18 = Color(0x2E17151C);
-  static const Color _ink20 = Color(0x3317151C);
-  static const Color _ink24 = Color(0x3D17151C);
-  static const Color _ink30 = Color(0x4D17151C);
-  static const Color _ink35 = Color(0x5917151C);
+  static const Color _ink04 = Color(0x0A0C231C);
+  static const Color _ink06 = Color(0x0F0C231C);
+  static const Color _ink18 = Color(0x2E0C231C);
+  static const Color _ink20 = Color(0x330C231C);
+  static const Color _ink24 = Color(0x3D0C231C);
+  static const Color _ink30 = Color(0x4D0C231C);
+  static const Color _ink35 = Color(0x590C231C);
 
-  /// `0 1px 2px rgba(23,21,28,.04)` - flat card, no lift.
+  /// `0 1px 2px rgba(12,35,28,.04)` - flat card, no lift.
   static const List<BoxShadow> flat = [
     BoxShadow(color: _ink04, offset: Offset(0, 1), blurRadius: 2),
   ];
 
-  /// `0 1px 2px rgba(23,21,28,.06)` - pill button, settings icon button.
+  /// `0 1px 2px rgba(12,35,28,.06)` - pill button, settings icon button.
   static const List<BoxShadow> hairline = [
     BoxShadow(color: _ink06, offset: Offset(0, 1), blurRadius: 2),
   ];
@@ -42,7 +42,7 @@ class AppShadows {
   static const List<BoxShadow> cardSoft = [
     BoxShadow(color: _ink04, offset: Offset(0, 1), blurRadius: 2),
     BoxShadow(
-      color: Color(0x2917151C),
+      color: Color(0x290C231C),
       offset: Offset(0, 12),
       blurRadius: 28,
       spreadRadius: -18,
@@ -83,67 +83,67 @@ class AppShadows {
     ),
   ];
 
-  /// `0 6px 16px -10px rgba(23,21,28,.4)` - selected kid chip.
+  /// `0 6px 16px -10px rgba(12,35,28,.4)` - selected kid chip.
   static const List<BoxShadow> chipSelected = [
     BoxShadow(
-      color: Color(0x6617151C),
+      color: Color(0x660C231C),
       offset: Offset(0, 6),
       blurRadius: 16,
       spreadRadius: -10,
     ),
   ];
 
-  /// `0 10px 28px -14px rgba(129,0,209,.8)` - primary button glow.
+  /// `0 10px 28px -14px rgba(16,59,47,.65)` - primary button shadow.
   static const List<BoxShadow> primaryGlow = [
     BoxShadow(
-      color: Color(0xCC8100D1),
+      color: Color(0xA6103B2F),
       offset: Offset(0, 10),
       blurRadius: 28,
       spreadRadius: -14,
     ),
   ];
 
-  /// `0 12px 28px -14px rgba(129,0,209,.8)` - sheet primary button, hold pill.
+  /// `0 12px 28px -14px rgba(16,59,47,.65)` - sheet primary button, hold pill.
   static const List<BoxShadow> primaryGlowLg = [
     BoxShadow(
-      color: Color(0xCC8100D1),
+      color: Color(0xA6103B2F),
       offset: Offset(0, 12),
       blurRadius: 28,
       spreadRadius: -14,
     ),
   ];
 
-  /// `0 14px 30px -12px rgba(129,0,209,.7)` - floating "New task" button.
+  /// `0 14px 30px -12px rgba(16,59,47,.6)` - floating "New task" button.
   static const List<BoxShadow> fabGlow = [
     BoxShadow(
-      color: Color(0xB38100D1),
+      color: Color(0x99103B2F),
       offset: Offset(0, 14),
       blurRadius: 30,
       spreadRadius: -12,
     ),
   ];
 
-  /// `0 18px 40px -22px rgba(45,0,95,.8)` - deep-purple panel (code, limits).
+  /// `0 18px 40px -22px rgba(12,35,28,.7)` - deep panel (code, limits).
   static const List<BoxShadow> deep = [
     BoxShadow(
-      color: Color(0xCC2D005F),
+      color: Color(0xB30C231C),
       offset: Offset(0, 18),
       blurRadius: 40,
       spreadRadius: -22,
     ),
   ];
 
-  /// `0 20px 44px -24px rgba(45,0,95,.85)` - kid hero card.
+  /// `0 20px 44px -24px rgba(12,35,28,.75)` - kid hero card.
   static const List<BoxShadow> deepHero = [
     BoxShadow(
-      color: Color(0xD92D005F),
+      color: Color(0xBF0C231C),
       offset: Offset(0, 20),
       blurRadius: 44,
       spreadRadius: -24,
     ),
   ];
 
-  /// `0 -20px 50px -20px rgba(23,21,28,.35)` - bottom sheet.
+  /// `0 -20px 50px -20px rgba(12,35,28,.35)` - bottom sheet.
   static const List<BoxShadow> sheet = [
     BoxShadow(
       color: _ink35,
@@ -168,10 +168,10 @@ class AppShadows {
     BoxShadow(color: Color(0x33000000), offset: Offset(0, 1), blurRadius: 3),
   ];
 
-  /// `0 8px 24px -10px rgba(129,0,209,.45)` - app logo on Welcome.
+  /// `0 8px 24px -10px rgba(16,59,47,.4)` - app logo on Welcome.
   static const List<BoxShadow> logo = [
     BoxShadow(
-      color: Color(0x738100D1),
+      color: Color(0x66103B2F),
       offset: Offset(0, 8),
       blurRadius: 24,
       spreadRadius: -10,

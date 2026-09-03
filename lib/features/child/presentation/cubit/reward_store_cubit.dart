@@ -1,3 +1,4 @@
+import 'package:safini/core/theme/app_colors.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,8 +84,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
             title: title.isEmpty ? slug : title,
             minutes: _intValue(map, ['redeem_reward_minutes', 'minutes']) ?? 0,
             icon: _iconForApp(slug),
-            iconColor: const Color(0xFF4A90D9),
-            iconBackground: const Color(0xFFDEEEFB),
+            iconColor: AppColors.catLearn,
+            iconBackground: AppColors.catLearnBg,
             cost:
                 _intValue(map, ['redeem_coin_cost', 'coin_cost', 'cost']) ?? 0,
             // Absent/true → enabled; only an explicit false disables redemption.

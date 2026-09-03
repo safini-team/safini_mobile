@@ -56,9 +56,14 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/logo/app_logo.png
+  # Fini's head on a solid sand field, phone prop cropped out. The full-body
+  # mascot was unreadable below ~60px and, being transparent, got flattened onto
+  # a box by remove_alpha_ios. Verified legible at 40px.
+  image_path: assets/logo/app_icon.png
   min_sdk_android: 21
   remove_alpha_ios: true
+  adaptive_icon_background: "#F7F5F0"
+  adaptive_icon_foreground: assets/logo/app_icon_adaptive_fg.png
 flutter_intl:
   enabled: true
   arb_dir: lib/core/translation/l10n

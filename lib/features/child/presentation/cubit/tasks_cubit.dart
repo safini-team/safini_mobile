@@ -1,3 +1,4 @@
+import 'package:safini/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
@@ -131,21 +132,21 @@ class TasksCubit extends Cubit<TasksState> {
       case TaskCategory.fitness:
         return const _TaskVisualSpec(
           Icons.directions_walk_rounded,
-          Color(0xFFE89B4B),
-          Color(0xFFFDF1E1),
+          AppColors.catFitness,
+          AppColors.catFitnessBg,
         );
       case TaskCategory.logic:
         return const _TaskVisualSpec(
           Icons.extension_rounded,
-          Color(0xFF7B6EF6),
-          Color(0xFFEEECFD),
+          AppColors.catLogic,
+          AppColors.catLogicBg,
         );
       case TaskCategory.all:
       case TaskCategory.learn:
         return const _TaskVisualSpec(
           Icons.menu_book_rounded,
-          Color(0xFF4A90D9),
-          Color(0xFFDEEEFB),
+          AppColors.catLearn,
+          AppColors.catLearnBg,
         );
     }
   }

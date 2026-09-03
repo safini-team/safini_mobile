@@ -11,7 +11,7 @@ import 'package:safini/features/parent/presentation/screens/apps/parent_limits_v
 /// it were a budget.
 ParentLimitsData _data({int? cap, List<LimitsApp> apps = const []}) {
   return ParentLimitsData(
-    kids: const [LimitsKid(id: 'c1', name: 'Amir', color: Color(0xFF8100D1))],
+    kids: const [LimitsKid(id: 'c1', name: 'Amir', color: Color(0xFF1A5C4A))],
     selectedKidId: 'c1',
     kidName: 'Amir',
     apps: apps,

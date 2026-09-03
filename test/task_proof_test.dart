@@ -17,8 +17,8 @@ QuestModel _quest({String? proofMode}) {
     title: 'Make your bed',
     subtitle: '',
     icon: Icons.star,
-    iconColor: const Color(0xFF8100D1),
-    iconBackground: const Color(0xFFF3E8FB),
+    iconColor: const Color(0xFF2E6F8E),
+    iconBackground: const Color(0xFFDFEAF0),
     coins: 20,
     proofMode: proofMode,
   );

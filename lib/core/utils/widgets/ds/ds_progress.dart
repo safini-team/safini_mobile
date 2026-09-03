@@ -8,8 +8,8 @@ import 'package:safini/core/theme/app_radius.dart';
 /// The screen-time / quest ring. Starts at 12 o'clock, round cap, and the
 /// centre slot holds whatever the artboard puts there.
 ///
-/// Parent Today: 104px, r 44, stroke 11, track `#F0EDF5`, fill `#8100D1`.
-/// Kid Today: 88px, r 37, stroke 10, track `rgba(255,255,255,.16)`, fill `#C77BFF`.
+/// Parent Today: 104px, r 44, stroke 11, track `#EDE9E0`, fill `#1A5C4A`.
+/// Kid Today: 88px, r 37, stroke 10, track `rgba(255,255,255,.16)`, fill `#7FAF9C`.
 class DsProgressRing extends StatelessWidget {
   const DsProgressRing({
     super.key,
@@ -183,7 +183,7 @@ class DsProgressBar extends StatelessWidget {
 class DsDashedLine extends StatelessWidget {
   const DsDashedLine({
     super.key,
-    this.color = const Color(0x4D8100D1),
+    this.color = const Color(0x4D1A5C4A),
     this.dash = 3,
     this.gap = 4,
     this.thickness = 1,

@@ -1,81 +1,101 @@
 import 'package:flutter/material.dart';
 
-/// Colour tokens ported 1:1 from the Claude Design `Safini.dc.html` artboards.
+/// Colour tokens for the Pine & Sand identity.
 ///
-/// Hex values are the design's own - do not invent new ones. When a screen
-/// needs a shade that is not here, add it here first with the artboard it
-/// came from.
+/// Token *names* are stable - screens reference these, not hex values. When a
+/// screen needs a shade that is not here, add it here first. Never inline a
+/// `Color(0x…)` in a widget: the whole point of this file is that the next
+/// palette change is one edit.
+///
+/// Contrast is measured against `surface` (#FFFFFF) and `bgParent` (#F7F5F0);
+/// every pair used for text clears WCAG AA at 4.5:1.
 class AppColors {
-  // ── brand ──
-  static const Color primary = Color(0xFF8100D1);
-  static const Color primaryDeep = Color(0xFF2D005F);
-  static const Color primaryTint = Color(0xFFF3E9FD);
-  static const Color primaryBar = Color(0xFFC77BFF);
-  static const Color primaryPale = Color(0xFFC9A6E8);
+  // ── brand ── pine. primary means "earned / allowed / safe".
+  static const Color primary = Color(0xFF1A5C4A); // 7.9:1 on white
+  static const Color primaryDeep = Color(0xFF103B2F);
+  static const Color primaryTint = Color(0xFFDCEDE5);
+  static const Color primaryBar = Color(0xFF7FAF9C);
+  static const Color primaryPale = Color(0xFFA8C9BB);
 
   // ── text ──
-  static const Color ink = Color(0xFF17151C);
-  static const Color inkSoft = Color(0xFF3A3745);
-  static const Color textSecondary = Color(0xFF6C6A75);
-  static const Color textTertiary = Color(0xFFA09EAA);
-  static const Color textMuted = Color(0xFF8A8794);
+  static const Color ink = Color(0xFF0C231C); // 16.5:1 on white
+  static const Color inkSoft = Color(0xFF24403A);
+  static const Color textSecondary = Color(0xFF4A5A54); // 7.3:1
+  static const Color textTertiary = Color(0xFF64736D); // 5.0:1
+  static const Color textMuted = Color(0xFF6E7D76);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
-  static const Color chevron = Color(0xFFC9C6D2);
-  static const Color tabInactive = Color(0xFF8E8B99);
+  static const Color chevron = Color(0xFFB5C2BC);
+  static const Color tabInactive = Color(0xFF64736D);
 
-  // ── surfaces ──
+  // ── surfaces ── warm sand, green-biased neutrals
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color bgParent = Color(0xFFF5F4F8);
-  static const Color bgChild = Color(0xFFFBF8FF);
-  static const Color fill = Color(0xFFF2F0F6);
-  static const Color fillAlt = Color(0xFFF8F7FB);
-  static const Color fillPressed = Color(0xFFE4E1EC);
-  static const Color fillDeep = Color(0xFFEDEAF3);
-  static const Color fillDeeper = Color(0xFFE0DCE8);
-  static const Color track = Color(0xFFF0EDF5);
-  static const Color trackAlt = Color(0xFFE7E4EE);
-  static const Color strokeQuiet = Color(0xFFD9D5E2);
+  static const Color bgParent = Color(0xFFF7F5F0);
+  static const Color bgChild = Color(0xFFFBFAF6);
+  static const Color fill = Color(0xFFEFEBE3);
+  static const Color fillAlt = Color(0xFFF5F2EC);
+  static const Color fillPressed = Color(0xFFE4DFD4);
+  static const Color fillDeep = Color(0xFFEAE5DB);
+  static const Color fillDeeper = Color(0xFFDED8CC);
+  static const Color track = Color(0xFFEDE9E0);
+  static const Color trackAlt = Color(0xFFE1DCD2);
+  static const Color strokeQuiet = Color(0xFFD5CFC3);
 
-  // ── lines ──  rgba(23,21,28,.07) etc.
-  static const Color divider = Color(0x1217151C);
-  static const Color hairline = Color(0x1717151C);
-  static const Color chipRest = Color(0x0D17151C);
-  static const Color segmentTrack = Color(0x0F17151C);
-  static const Color scrim = Color(0x6B17151C);
+  // ── lines ──  alpha over ink
+  static const Color divider = Color(0x120C231C);
+  static const Color hairline = Color(0x170C231C);
+  static const Color chipRest = Color(0x0D0C231C);
+  static const Color segmentTrack = Color(0x0F0C231C);
+  static const Color scrim = Color(0x6B0C231C);
 
-  // ── coins ──
-  static const Color coin = Color(0xFFFFB300);
-  static const Color coinInk = Color(0xFF4A3000);
-  static const Color coinPillBg = Color(0xFFFFF6E0);
-  static const Color coinPillFg = Color(0xFF8A5A00);
+  // ── coins ── amber is reserved for Time Coins. Nothing else uses it.
+  static const Color coin = Color(0xFFE8A33D);
+  static const Color coinInk = Color(0xFF3A2A08);
+  static const Color coinPillBg = Color(0xFFFBF1DF);
+  static const Color coinPillFg = Color(0xFF9A6512); // 5.0:1
 
-  // ── status ──
-  static const Color success = Color(0xFF00C566);
-  static const Color successDeep = Color(0xFF00844A);
-  static const Color successBg = Color(0xFFE8F9F0);
-  static const Color danger = Color(0xFFFF3B30);
-  static const Color dangerDeep = Color(0xFFD92B20);
-  static const Color warnBg = Color(0xFFFFF0E4);
-  static const Color warnFg = Color(0xFFB45309);
-  static const Color info = Color(0xFF00A6C5);
+  // ── status ── a locked app is a state, not a punishment, so it is slate.
+  static const Color locked = Color(0xFF5B6A72);
+  static const Color success = Color(0xFF2E8B63); // fills and icons
+  static const Color successDeep = Color(0xFF14603F); // success as text
+  static const Color successBg = Color(0xFFE4F1EA);
+  static const Color danger = Color(0xFFC2452D); // 5.0:1
+  static const Color dangerDeep = Color(0xFFA6371F);
+  static const Color warnBg = Color(0xFFFBF1DF);
+  static const Color warnFg = Color(0xFF9A6512);
+  static const Color info = Color(0xFF2E6F8E);
 
-  /// Palette offered when a parent creates a child (Add a child artboard).
+  // ── task categories ── (icon, tint) pairs shared by quests, tasks and the
+  // reward store. None of these reuse primary, danger or coin: a category must
+  // never be mistaken for a state or for currency.
+  static const Color catFitness = Color(0xFF9C4F6B);
+  static const Color catFitnessBg = Color(0xFFF2E6EA);
+  static const Color catLogic = Color(0xFF6B7F3A);
+  static const Color catLogicBg = Color(0xFFEDF0E2);
+  static const Color catChore = Color(0xFF9A6512);
+  static const Color catChoreBg = Color(0xFFF5EBDA);
+  static const Color catLearn = Color(0xFF2E6F8E);
+  static const Color catLearnBg = Color(0xFFDFEAF0);
+
+  /// Palette offered when a parent creates a child. Muted and hue-separated so
+  /// two children never look alike on a 12px dot.
   static const List<Color> kidPalette = [
-    Color(0xFF8100D1),
-    Color(0xFFEE4FA2),
-    Color(0xFFF09A77),
-    Color(0xFF00A6C5),
-    Color(0xFF00C566),
+    Color(0xFF1A5C4A), // pine
+    Color(0xFF2E6F8E), // lagoon
+    Color(0xFF9A6512), // bronze
+    Color(0xFFC2452D), // terracotta
+    Color(0xFF9C4F6B), // mulberry
+    Color(0xFF6B7F3A), // olive
   ];
 
-  /// Palette behind the child avatar (Avatar artboard).
+  /// Palette behind the child avatar. Index 1 is the brand colour and is
+  /// referenced directly as the default - do not reorder without checking.
   static const List<Color> avatarPalette = [
-    Color(0xFF2D005F),
-    Color(0xFF8100D1),
-    Color(0xFFEE4FA2),
-    Color(0xFFF09A77),
-    Color(0xFF00A6C5),
-    Color(0xFF00844A),
+    Color(0xFF103B2F),
+    Color(0xFF1A5C4A),
+    Color(0xFF2E6F8E),
+    Color(0xFFE8A33D),
+    Color(0xFFC2452D),
+    Color(0xFF9C4F6B),
   ];
 
   // ── transitional aliases ──
@@ -87,12 +107,6 @@ class AppColors {
   static const Color error = danger;
   static const Color primaryLight = primaryTint;
   static const Color textPrimary = ink;
-
-  static const LinearGradient brandGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [primaryDeep, primary],
-  );
 
   /// Stable per-child colour so the same kid keeps the same dot everywhere.
   static Color kidColor(Object? seed) {

@@ -18,8 +18,8 @@ class SampleData {
   const SampleData._();
 
   static const List<TodayKid> kids = [
-    TodayKid(id: 'amir', name: 'Amir', color: Color(0xFF8100D1)),
-    TodayKid(id: 'layla', name: 'Layla', color: Color(0xFFEE4FA2)),
+    TodayKid(id: 'amir', name: 'Amir', color: Color(0xFF1A5C4A)),
+    TodayKid(id: 'layla', name: 'Layla', color: Color(0xFF2E6F8E)),
   ];
 
   static const List<TodayApp> apps = [
@@ -61,7 +61,7 @@ class SampleData {
         title: 'Made the bed',
         meta: 'Amir · 12 min ago',
         kidName: 'Amir',
-        color: Color(0xFF8100D1),
+        color: Color(0xFF1A5C4A),
         coins: 10,
       ),
       TodayReview(
@@ -69,7 +69,7 @@ class SampleData {
         title: 'Maths homework, p. 41-42',
         meta: 'Layla · 1 h ago',
         kidName: 'Layla',
-        color: Color(0xFFEE4FA2),
+        color: Color(0xFF2E6F8E),
         coins: 25,
       ),
     ],
@@ -82,12 +82,12 @@ class SampleData {
       const TaskScopeChip(
         key: 'amir',
         label: 'Amir',
-        color: Color(0xFF8100D1),
+        color: Color(0xFF1A5C4A),
       ),
       const TaskScopeChip(
         key: 'layla',
         label: 'Layla',
-        color: Color(0xFFEE4FA2),
+        color: Color(0xFF2E6F8E),
       ),
     ],
     selectedScope: 'all',
@@ -98,7 +98,7 @@ class SampleData {
     groups: [
       TaskGroupData(
         name: 'Amir',
-        color: const Color(0xFF8100D1),
+        color: const Color(0xFF1A5C4A),
         summary: s.taskGroupSummary(s.taskCount(2), s.coinCountShort(25)),
         rows: const [
           TaskRowData(
@@ -123,7 +123,7 @@ class SampleData {
       ),
       TaskGroupData(
         name: 'Layla',
-        color: const Color(0xFFEE4FA2),
+        color: const Color(0xFF2E6F8E),
         summary: s.taskGroupSummary(s.taskCount(2), s.coinCountShort(40)),
         rows: const [
           TaskRowData(
@@ -151,8 +151,8 @@ class SampleData {
 
   static const ParentLimitsData parentLimits = ParentLimitsData(
     kids: [
-      LimitsKid(id: 'amir', name: 'Amir', color: Color(0xFF8100D1)),
-      LimitsKid(id: 'layla', name: 'Layla', color: Color(0xFFEE4FA2)),
+      LimitsKid(id: 'amir', name: 'Amir', color: Color(0xFF1A5C4A)),
+      LimitsKid(id: 'layla', name: 'Layla', color: Color(0xFF2E6F8E)),
     ],
     selectedKidId: 'amir',
     kidName: 'Amir',
@@ -209,8 +209,8 @@ class SampleData {
   /// swaps the combined sum for the real budget and grows a stepper.
   static const ParentLimitsData parentLimitsWithCap = ParentLimitsData(
     kids: [
-      LimitsKid(id: 'amir', name: 'Amir', color: Color(0xFF8100D1)),
-      LimitsKid(id: 'layla', name: 'Layla', color: Color(0xFFEE4FA2)),
+      LimitsKid(id: 'amir', name: 'Amir', color: Color(0xFF1A5C4A)),
+      LimitsKid(id: 'layla', name: 'Layla', color: Color(0xFF2E6F8E)),
     ],
     selectedKidId: 'amir',
     kidName: 'Amir',
@@ -270,20 +270,20 @@ class SampleData {
         id: 'pa1',
         name: 'Aisha Karimova',
         subtitle: 'Owner · aisha@icloud.com',
-        color: Color(0xFF2D005F),
+        color: Color(0xFF0C231C),
         isYou: true,
       ),
       FamilyParentRow(
         id: 'pa2',
         name: 'Bekzod Karimov',
         subtitle: 'Parent · bekzod@gmail.com',
-        color: Color(0xFF00A6C5),
+        color: Color(0xFF2E6F8E),
       ),
       FamilyParentRow(
         id: 'pa3',
         name: 'Nilufar',
         subtitle: 'Invite sent 2 days ago',
-        color: Color(0xFFF09A77),
+        color: Color(0xFFE8A33D),
         isPending: true,
       ),
     ],
@@ -292,7 +292,7 @@ class SampleData {
         id: 'amir',
         name: 'Amir',
         age: 9,
-        color: Color(0xFF8100D1),
+        color: Color(0xFF1A5C4A),
         level: 4,
         coins: 240,
         paired: true,
@@ -301,7 +301,7 @@ class SampleData {
         id: 'layla',
         name: 'Layla',
         age: 12,
-        color: Color(0xFFEE4FA2),
+        color: Color(0xFF2E6F8E),
         level: 6,
         coins: 415,
         paired: false,
@@ -425,7 +425,7 @@ class SampleData {
   static ChildMeData kidMe(S s) => ChildMeData(
     name: 'Amir',
     faceEmoji: '🦊',
-    avatarColor: Color(0xFF8100D1),
+    avatarColor: Color(0xFF1A5C4A),
     accessoryEmoji: '🧢',
     levelLine: s.levelValue(4),
     xpProgress: 0.64,
