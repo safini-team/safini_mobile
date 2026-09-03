@@ -99,6 +99,12 @@ class ParentAppBlockingService {
         ApiConst.childInstalledApps(childId),
       );
       final data = response.data;
+      if (kDebugMode) {
+        debugPrint(
+          '[ParentAppBlockingService] GET installed-apps child=$childId '
+          '-> ${response.statusCode} $data',
+        );
+      }
       if (data == null) {
         return const Right(InstalledAppsSnapshot(apps: []));
       }

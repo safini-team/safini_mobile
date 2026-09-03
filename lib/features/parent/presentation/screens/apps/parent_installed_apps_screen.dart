@@ -42,14 +42,18 @@ class ParentInstalledAppsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<ParentInstalledAppsCubit>()..load(childId),
-      child: _ParentInstalledAppsView(childName: childName),
+      child: _ParentInstalledAppsView(childId: childId, childName: childName),
     );
   }
 }
 
 class _ParentInstalledAppsView extends StatelessWidget {
-  const _ParentInstalledAppsView({required this.childName});
+  const _ParentInstalledAppsView({
+    required this.childId,
+    required this.childName,
+  });
 
+  final String childId;
   final String childName;
 
   @override
@@ -67,35 +71,41 @@ class _ParentInstalledAppsView extends StatelessWidget {
           ),
           Expanded(
             child: DsScreenEntrance(
-              child:
-                  BlocBuilder<
-                    ParentInstalledAppsCubit,
-                    ParentInstalledAppsState
-                  >(
-                    builder: (context, state) {
-                      if (state is ParentInstalledAppsError) {
-                        return _ErrorState(message: state.message);
-                      }
-                      if (state is ParentInstalledAppsLoaded) {
-                        if (state.isEmpty) {
-                          return _EmptyState(
+              child: RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () =>
+                    context.read<ParentInstalledAppsCubit>().refresh(),
+                child:
+                    BlocBuilder<
+                      ParentInstalledAppsCubit,
+                      ParentInstalledAppsState
+                    >(
+                      builder: (context, state) {
+                        if (state is ParentInstalledAppsError) {
+                          return _ErrorState(message: state.message);
+                        }
+                        if (state is ParentInstalledAppsLoaded) {
+                          if (state.isEmpty) {
+                            return _EmptyState(
+                              childId: childId,
+                              childName: childName,
+                              endpointMissing: state.endpointMissing,
+                            );
+                          }
+                          return _AppsList(
+                            apps: state.apps,
                             childName: childName,
-                            endpointMissing: state.endpointMissing,
+                            updatedAt: state.updatedAt,
                           );
                         }
-                        return _AppsList(
-                          apps: state.apps,
-                          childName: childName,
-                          updatedAt: state.updatedAt,
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
                         );
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                        ),
-                      );
-                    },
-                  ),
+                      },
+                    ),
+              ),
             ),
           ),
         ],
@@ -328,8 +338,13 @@ class _InstalledAppRow extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.childName, this.endpointMissing = false});
+  const _EmptyState({
+    required this.childId,
+    required this.childName,
+    this.endpointMissing = false,
+  });
 
+  final String childId;
   final String childName;
   final bool endpointMissing;
 
@@ -341,17 +356,24 @@ class _EmptyState extends StatelessWidget {
       emoji: '📱',
       title: s.installedAppsEmptyTitle,
       body: s.installedAppsEmptyBody(childName),
+      action: DsPrimaryButton.secondary(
+        label: s.tryAgain,
+        onTap: () => context.read<ParentInstalledAppsCubit>().refresh(),
+      ),
       // Dev-only: the empty state looks identical whether the child has never
-      // synced or the GET 404'd. Say which, so "parent sees nothing" is quick
-      // to pin down.
+      // synced or the GET 404'd. Print which, plus the child_id we queried —
+      // "parent sees nothing" is almost always a child_id mismatch between the
+      // parent's selected child and the child device's own /me child_id.
       footnote: !kDebugMode
           ? null
           : endpointMissing
-          ? 'DEV: GET /installed-apps → 404 (endpoint not deployed, or wrong '
-                'child id).'
-          : 'DEV: GET ok, snapshot empty — the child device has not uploaded. '
-                'The auto-upload runs once on child-shell mount and never on '
-                'iOS; use the child DEV · Installed apps screen to force it.',
+          ? 'DEV: GET /children/$childId/installed-apps → 404 '
+                '(endpoint down, or this child_id does not exist).'
+          : 'DEV: GET ok for child_id=$childId, but the snapshot is empty. '
+                'Compare with the "child_id=" line on the child DEV · Installed '
+                'apps screen — if they differ, the parent has the wrong child '
+                'selected. The auto-upload also runs only once per child-app '
+                'session and never on iOS.',
     );
   }
 }
