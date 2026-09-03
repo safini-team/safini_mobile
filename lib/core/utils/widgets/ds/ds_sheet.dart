@@ -48,7 +48,7 @@ class DsSheet extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0x5917151C),
+            color: Color(0x590C231C),
             offset: Offset(0, -20),
             blurRadius: 50,
             spreadRadius: -20,
@@ -64,7 +64,7 @@ class DsSheet extends StatelessWidget {
             height: 5,
             margin: const EdgeInsets.only(bottom: 4),
             decoration: BoxDecoration(
-              color: const Color(0x2917151C),
+              color: const Color(0x290C231C),
               borderRadius: BorderRadius.circular(AppRadius.pill),
             ),
           ),

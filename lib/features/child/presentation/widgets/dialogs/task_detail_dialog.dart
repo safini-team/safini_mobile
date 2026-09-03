@@ -339,7 +339,7 @@ class _PhotoPanel extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.fill,
           borderRadius: BorderRadius.circular(AppRadius.card),
-          border: Border.all(color: const Color(0x2417151C)),
+          border: Border.all(color: const Color(0x240C231C)),
         ),
         child: Stack(
           fit: StackFit.expand,

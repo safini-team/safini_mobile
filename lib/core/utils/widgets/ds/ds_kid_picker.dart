@@ -112,12 +112,12 @@ class _DsKidPickerState extends State<DsKidPicker>
               borderRadius: BorderRadius.circular(AppRadius.pill),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x0D17151C),
+                  color: Color(0x0D0C231C),
                   offset: Offset(0, 1),
                   blurRadius: 2,
                 ),
                 BoxShadow(
-                  color: Color(0x5217151C),
+                  color: Color(0x520C231C),
                   offset: Offset(0, 10),
                   blurRadius: 22,
                   spreadRadius: -16,
@@ -258,12 +258,12 @@ class _Menu extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppRadius.panel),
                         boxShadow: const [
                           BoxShadow(
-                            color: Color(0x1217151C),
+                            color: Color(0x120C231C),
                             offset: Offset(0, 2),
                             blurRadius: 6,
                           ),
                           BoxShadow(
-                            color: Color(0x6B17151C),
+                            color: Color(0x6B0C231C),
                             offset: Offset(0, 22),
                             blurRadius: 44,
                             spreadRadius: -20,
@@ -312,7 +312,7 @@ class _Row extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFF8F5FC) : Colors.transparent,
+          color: selected ? const Color(0xFFF5F2EC) : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.action),
         ),
         child: Row(

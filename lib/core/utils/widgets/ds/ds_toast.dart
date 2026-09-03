@@ -96,7 +96,7 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
             constraints: const BoxConstraints(maxWidth: 320),
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
             decoration: const BoxDecoration(
-              color: Color(0xE617151C),
+              color: Color(0xE60C231C),
               boxShadow: [
                 BoxShadow(
                   color: Color(0x80000000),
@@ -156,7 +156,7 @@ class _TickPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final k = size.width / 16;
     final paint = Paint()
-      ..color = const Color(0xFF5BE59A)
+      ..color = const Color(0xFF6FCB9F)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.2 * k
       ..strokeCap = StrokeCap.round

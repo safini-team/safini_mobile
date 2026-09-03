@@ -143,18 +143,19 @@ void main() {
       // Add a colour here and the "Their colour" row on Add-a-child grows a
       // swatch - that is a design decision, not a refactor.
       expect(AppColors.kidPalette, const [
-        Color(0xFF8100D1),
-        Color(0xFFEE4FA2),
-        Color(0xFFF09A77),
-        Color(0xFF00A6C5),
-        Color(0xFF00C566),
+        Color(0xFF1A5C4A), // pine
+        Color(0xFF2E6F8E), // lagoon
+        Color(0xFF9A6512), // bronze
+        Color(0xFFC2452D), // terracotta
+        Color(0xFF9C4F6B), // mulberry
+        Color(0xFF6B7F3A), // olive
       ]);
       expect(AppColors.avatarPalette, hasLength(6));
       expect(AppColors.avatarPalette.first, AppColors.primaryDeep);
     });
 
     test('carry no duplicates', () {
-      expect(AppColors.kidPalette.toSet(), hasLength(5));
+      expect(AppColors.kidPalette.toSet(), hasLength(6));
       expect(AppColors.avatarPalette.toSet(), hasLength(6));
     });
   });

@@ -99,7 +99,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
               color: AppColors.fill,
               borderRadius: BorderRadius.circular(AppRadius.card),
               border: Border.all(
-                color: const Color(0x2417151C),
+                color: const Color(0x240C231C),
                 style: BorderStyle.solid,
               ),
             ),

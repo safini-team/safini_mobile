@@ -65,7 +65,7 @@ class DsPill extends StatelessWidget {
   }) : background = AppColors.warnBg,
        foreground = AppColors.warnFg;
 
-  /// Locked / inert - `#F2F0F6` / `#A09EAA`.
+  /// Locked / inert - `#EFEBE3` / `#A09EAA`.
   const DsPill.muted({
     super.key,
     required this.label,
@@ -119,7 +119,7 @@ class DsPill extends StatelessWidget {
   }
 }
 
-/// The amber coin token - `22px` circle, `#FFB300` with a `c` in `#4A3000`.
+/// The amber coin token - `22px` circle, `#E8A33D` with a `c` in `#3A2A08`.
 class DsCoinToken extends StatelessWidget {
   const DsCoinToken({super.key, this.size = 22});
 

@@ -19,7 +19,7 @@ class DsCard extends StatelessWidget {
   });
 
   /// The deep-purple panel used for the pairing code, the daily allowance and
-  /// the kid hero card: `background:#2D005F` with its own glow.
+  /// the kid hero card: `background:#103B2F` with its own glow.
   const DsCard.deep({
     super.key,
     required this.child,

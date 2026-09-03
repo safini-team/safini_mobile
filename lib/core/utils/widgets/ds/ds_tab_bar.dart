@@ -34,16 +34,16 @@ class DsTabBar extends StatelessWidget {
     required this.items,
     required this.currentIndex,
     required this.onTap,
-    this.background = const Color(0xC2FAF9FC),
+    this.background = const Color(0xC2F9F7F2),
   });
 
-  /// Child side sits on `#FBF8FF`, so its bar is tinted `rgba(252,250,255,.76)`.
+  /// Child side sits on `#FBFAF6`, so its bar is tinted `rgba(252,250,255,.76)`.
   const DsTabBar.child({
     super.key,
     required this.items,
     required this.currentIndex,
     required this.onTap,
-  }) : background = const Color(0xC2FCFAFF);
+  }) : background = const Color(0xC2FCFBF7);
 
   final List<DsTabItem> items;
   final int currentIndex;
@@ -71,7 +71,7 @@ class DsTabBar extends StatelessWidget {
     return DecoratedBox(
       decoration: const BoxDecoration(
         boxShadow: [
-          BoxShadow(color: Color(0x0F17151C), offset: Offset(0, -1)),
+          BoxShadow(color: Color(0x0F0C231C), offset: Offset(0, -1)),
         ],
       ),
       child: ClipRect(

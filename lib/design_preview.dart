@@ -277,7 +277,7 @@ class _Switcher extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadius.card),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x3317151C),
+                  color: Color(0x330C231C),
                   offset: Offset(0, 10),
                   blurRadius: 30,
                   spreadRadius: -10,

@@ -71,7 +71,7 @@ class DsInitialAvatar extends StatelessWidget {
 }
 
 /// The rounded emoji tile that leads a task or app row:
-/// `34-46px;border-radius:9-16px;background:#F2F0F6 | #F3E9FD`.
+/// `34-46px;border-radius:9-16px;background:#EFEBE3 | #DCEDE5`.
 class DsEmojiTile extends StatelessWidget {
   const DsEmojiTile({
     super.key,

@@ -12,7 +12,7 @@ ParentTodayData _data({
   List<TodayApp> apps = const [],
 }) {
   return ParentTodayData(
-    kids: const [TodayKid(id: 'c1', name: 'Amir', color: Color(0xFF8100D1))],
+    kids: const [TodayKid(id: 'c1', name: 'Amir', color: Color(0xFF1A5C4A))],
     selectedIndex: 0,
     kidName: 'Amir',
     usedMinutes: used,

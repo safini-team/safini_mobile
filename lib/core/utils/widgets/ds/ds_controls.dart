@@ -47,7 +47,7 @@ class DsSegmentedControl extends StatelessWidget {
                     boxShadow: i == selectedIndex
                         ? const [
                             BoxShadow(
-                              color: Color(0x1F17151C),
+                              color: Color(0x1F0C231C),
                               offset: Offset(0, 1),
                               blurRadius: 3,
                             ),
@@ -146,7 +146,7 @@ class DsStepper extends StatelessWidget {
     this.background = AppColors.fill,
     this.pressedBackground = AppColors.fillPressed,
     this.foreground = AppColors.ink,
-    this.dividerColor = const Color(0x1417151C),
+    this.dividerColor = const Color(0x140C231C),
     this.fontSize = 19,
   });
 
@@ -172,7 +172,7 @@ class DsStepper extends StatelessWidget {
        background = AppColors.fillDeep,
        pressedBackground = AppColors.fillDeeper,
        foreground = AppColors.ink,
-       dividerColor = const Color(0x1417151C),
+       dividerColor = const Color(0x140C231C),
        fontSize = 19;
 
   final VoidCallback? onLess;

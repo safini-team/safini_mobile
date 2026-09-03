@@ -1,3 +1,4 @@
+import 'package:safini/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
@@ -143,28 +144,28 @@ class QuestCubit extends Cubit<QuestState> {
     if (category.contains('fitness') || category.contains('health')) {
       return const _QuestVisualSpec(
         Icons.directions_walk_rounded,
-        Color(0xFFE89B4B),
-        Color(0xFFFDF1E1),
+        AppColors.catFitness,
+        AppColors.catFitnessBg,
       );
     }
     if (category.contains('logic') || category.contains('puzzle')) {
       return const _QuestVisualSpec(
         Icons.extension_rounded,
-        Color(0xFF7B6EF6),
-        Color(0xFFEEECFD),
+        AppColors.catLogic,
+        AppColors.catLogicBg,
       );
     }
     if (category.contains('chore') || category.contains('home')) {
       return const _QuestVisualSpec(
         Icons.cleaning_services_rounded,
-        Color(0xFFC8A97E),
-        Color(0xFFF7EFE4),
+        AppColors.catChore,
+        AppColors.catChoreBg,
       );
     }
     return const _QuestVisualSpec(
       Icons.menu_book_rounded,
-      Color(0xFF4A90D9),
-      Color(0xFFDEEEFB),
+      AppColors.catLearn,
+      AppColors.catLearnBg,
     );
   }
 
