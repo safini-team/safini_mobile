@@ -82,7 +82,10 @@ class _ParentInstalledAppsView extends StatelessWidget {
                     >(
                       builder: (context, state) {
                         if (state is ParentInstalledAppsError) {
-                          return _ErrorState(message: state.message);
+                          return _ErrorState(
+                            childId: childId,
+                            message: state.message,
+                          );
                         }
                         if (state is ParentInstalledAppsLoaded) {
                           if (state.isEmpty) {
@@ -379,8 +382,9 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message});
+  const _ErrorState({required this.childId, required this.message});
 
+  final String childId;
   final String message;
 
   @override
@@ -395,6 +399,10 @@ class _ErrorState extends StatelessWidget {
         label: s.tryAgain,
         onTap: () => context.read<ParentInstalledAppsCubit>().refresh(),
       ),
+      footnote: kDebugMode
+          ? 'DEV: GET /children/$childId/installed-apps failed. A 403 here '
+                'means the signed-in parent is not linked to this child.'
+          : null,
     );
   }
 }

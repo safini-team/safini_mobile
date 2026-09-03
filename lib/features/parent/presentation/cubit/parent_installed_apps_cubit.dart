@@ -18,10 +18,21 @@ class ParentInstalledAppsCubit extends Cubit<ParentInstalledAppsState> {
   ParentInstalledAppsCubit(this._service)
     : super(const ParentInstalledAppsLoading());
 
+  /// The child id this cubit last queried — the parent's currently-selected
+  /// kid (`child.id` from `/families/current`). Surfaced so the screen can show
+  /// it next to "no apps", since a mismatch with the child device's own
+  /// `/me` `child_id` is the usual cause of an empty list.
+  String? get queriedChildId => _childId;
+
   Future<void> load(String childId) async {
     _childId = childId;
     if (childId.isEmpty) {
-      emit(const ParentInstalledAppsLoaded([]));
+      // No kid selected on the Limits screen — a real error, not "empty".
+      emit(
+        const ParentInstalledAppsError(
+          'No child selected. Pick a kid on the Limits screen first.',
+        ),
+      );
       return;
     }
 
