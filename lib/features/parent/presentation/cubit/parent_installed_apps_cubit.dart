@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/data/services/parent_app_blocking_service.dart';
@@ -26,6 +27,7 @@ class ParentInstalledAppsCubit extends Cubit<ParentInstalledAppsState> {
 
   Future<void> load(String childId) async {
     _childId = childId;
+    debugPrint('[ParentInstalledAppsCubit] load childId="$childId"');
     if (childId.isEmpty) {
       // No kid selected on the Limits screen — a real error, not "empty".
       emit(
@@ -49,15 +51,15 @@ class ParentInstalledAppsCubit extends Cubit<ParentInstalledAppsState> {
         }
       },
       (snapshot) {
-        final sorted = [...snapshot.apps]..sort(
-          (a, b) =>
-              a.appName.toLowerCase().compareTo(b.appName.toLowerCase()),
-        );
+        final sorted = [...snapshot.apps]
+          ..sort(
+            (a, b) =>
+                a.appName.toLowerCase().compareTo(b.appName.toLowerCase()),
+          );
         emit(ParentInstalledAppsLoaded(sorted, updatedAt: snapshot.updatedAt));
       },
     );
   }
 
-  Future<void> refresh() =>
-      _childId == null ? Future.value() : load(_childId!);
+  Future<void> refresh() => _childId == null ? Future.value() : load(_childId!);
 }

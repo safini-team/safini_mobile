@@ -94,22 +94,23 @@ class ParentAppBlockingService {
   Future<Either<Failure, InstalledAppsSnapshot>> fetchInstalledApps(
     String childId,
   ) async {
+    final path = ApiConst.childInstalledApps(childId);
+    debugPrint('[ParentAppBlockingService] GET $path');
     try {
-      final response = await _dio.get<Map<String, dynamic>>(
-        ApiConst.childInstalledApps(childId),
-      );
+      final response = await _dio.get<Map<String, dynamic>>(path);
       final data = response.data;
-      if (kDebugMode) {
-        debugPrint(
-          '[ParentAppBlockingService] GET installed-apps child=$childId '
-          '-> ${response.statusCode} $data',
-        );
-      }
+      debugPrint(
+        '[ParentAppBlockingService] GET $path -> ${response.statusCode} $data',
+      );
       if (data == null) {
         return const Right(InstalledAppsSnapshot(apps: []));
       }
       return Right(InstalledAppsSnapshot.fromJson(data));
     } on DioException catch (e) {
+      debugPrint(
+        '[ParentAppBlockingService] GET $path -> DioException '
+        '${e.response?.statusCode} ${e.response?.data ?? e.message}',
+      );
       return Left(mapDioError(e, 'Unable to load the child\'s apps.'));
     } catch (e) {
       debugPrint('[ParentAppBlockingService] fetchInstalledApps error: $e');
