@@ -2,7 +2,7 @@ name: safini
 description: "Safini - kids earn their screen time with Time Coins."
 publish_to: 'none'
 
-version: 1.0.0+17
+version: 1.0.0+18
 
 environment:
   sdk: ^3.10.7
