@@ -142,7 +142,8 @@ class _SplashScreenState extends State<SplashScreen>
         _navigateIfReady();
       },
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        // Same ground as the iOS launch screen, so the handoff does not flash.
+        backgroundColor: AppColors.bgParent,
         body: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
