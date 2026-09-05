@@ -7,6 +7,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_view.dart';
@@ -35,6 +36,15 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   /// on most days.
   bool _laneChosenByUser = false;
 
+  @override
+  void initState() {
+    super.initState();
+    final selectedId = context.read<ParentFamilyCubit>().state.selectedChildId;
+    if (selectedId != null && selectedId.isNotEmpty) {
+      _scope = selectedId;
+    }
+  }
+
   Future<void> _reload() {
     final cubit = context.read<ParentTasksCubit>();
     return _scope == _allScope
@@ -44,6 +54,9 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
 
   void _selectScope(String scope) {
     if (scope == _scope) return;
+    if (scope != _allScope) {
+      context.read<ParentFamilyCubit>().selectChild(scope);
+    }
     setState(() => _scope = scope);
     unawaited(_reload());
   }
@@ -52,36 +65,48 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   Widget build(BuildContext context) {
     final s = S.of(context);
 
-    return BlocConsumer<ParentTasksCubit, ParentTasksState>(
-      listener: (context, state) => _onState(context, state, s),
-      builder: (context, state) {
-        if (state is ParentTasksLoading || state is ParentTasksInitial) {
-          return const ParentTasksSkeleton();
+    return BlocListener<ParentFamilyCubit, ParentFamilyState>(
+      listenWhen: (prev, curr) =>
+          curr.selectedChildId != null &&
+          curr.selectedChildId != prev.selectedChildId,
+      listener: (context, familyState) {
+        final selectedId = familyState.selectedChildId;
+        if (selectedId != null && selectedId != _scope) {
+          setState(() => _scope = selectedId);
+          unawaited(_reload());
         }
-
-        if (state is ParentTasksError) {
-          return ParentTasksErrorState(
-            message: state.message,
-            canRetry: state.canRetry,
-            onRetry: _reload,
-          );
-        }
-
-        final loaded = loadedTasksOf(state);
-        if (loaded == null) return const ParentTasksSkeleton();
-
-        return ParentTasksView(
-          data: _buildData(context, loaded),
-          onSelectScope: _selectScope,
-          onSelectLane: (lane) => setState(() {
-            _lane = lane;
-            _laneChosenByUser = true;
-          }),
-          onOpenTask: (row) => _openTask(context, loaded, row.id),
-          onNewTask: () => _openTask(context, loaded, null),
-          onRefresh: _reload,
-        );
       },
+      child: BlocConsumer<ParentTasksCubit, ParentTasksState>(
+        listener: (context, state) => _onState(context, state, s),
+        builder: (context, state) {
+          if (state is ParentTasksLoading || state is ParentTasksInitial) {
+            return const ParentTasksSkeleton();
+          }
+
+          if (state is ParentTasksError) {
+            return ParentTasksErrorState(
+              message: state.message,
+              canRetry: state.canRetry,
+              onRetry: _reload,
+            );
+          }
+
+          final loaded = loadedTasksOf(state);
+          if (loaded == null) return const ParentTasksSkeleton();
+
+          return ParentTasksView(
+            data: _buildData(context, loaded),
+            onSelectScope: _selectScope,
+            onSelectLane: (lane) => setState(() {
+              _lane = lane;
+              _laneChosenByUser = true;
+            }),
+            onOpenTask: (row) => _openTask(context, loaded, row.id),
+            onNewTask: () => _openTask(context, loaded, null),
+            onRefresh: _reload,
+          );
+        },
+      ),
     );
   }
 

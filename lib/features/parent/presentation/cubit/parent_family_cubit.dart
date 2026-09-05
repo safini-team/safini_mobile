@@ -13,6 +13,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_state.da
 class ParentFamilyCubit extends Cubit<ParentFamilyState> {
   static const _familyCacheKey = 'parent_family_cache';
   static const _familyStageKey = 'parent_family_stage';
+  static const _selectedChildKey = 'parent_selected_child_id';
 
   final FamilyController _controller;
   final SharedPreferences _prefs;
@@ -23,7 +24,12 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
   static ParentFamilyState _loadInitialState(SharedPreferences prefs) {
     final cachedFamily = _readCachedFamily(prefs);
     final stage = _stageFromString(prefs.getString(_familyStageKey));
-    return ParentFamilyState.initial(family: cachedFamily, stage: stage);
+    final selectedChildId = prefs.getString(_selectedChildKey);
+    return ParentFamilyState.initial(
+      family: cachedFamily,
+      stage: stage,
+      selectedChildId: selectedChildId,
+    );
   }
 
   static FamilyModel? _readCachedFamily(SharedPreferences prefs) {
@@ -116,7 +122,24 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
   Future<void> reset() async {
     await _prefs.remove(_familyCacheKey);
     await _prefs.remove(_familyStageKey);
+    await _prefs.remove(_selectedChildKey);
     emit(ParentFamilyState.initial());
+  }
+
+  Future<void> selectChild(String childId) async {
+    if (childId.trim().isEmpty) return;
+    if (state.selectedChildId == childId) return;
+    await _prefs.setString(_selectedChildKey, childId);
+    emit(state.copyWith(selectedChildId: childId));
+  }
+
+  Future<void> selectChildIndex(int index) async {
+    final children =
+        state.family?.children.where((c) => c.id.isNotEmpty).toList() ??
+        const [];
+    if (index >= 0 && index < children.length) {
+      await selectChild(children[index].id);
+    }
   }
 
   Future<void> createFamily({String? name}) async {
