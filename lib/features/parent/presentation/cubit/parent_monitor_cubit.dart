@@ -27,14 +27,23 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         emit(const ParentMonitorNoChild());
         return;
       }
+      final selectedId = familyState.selectedChildId;
+      final targetIndex = selectedId != null
+          ? _children.indexWhere((c) => c.id == selectedId)
+          : -1;
+      final newIndex = targetIndex != -1 ? targetIndex : 0;
+
       if (state is ParentMonitorLoaded) {
-        if (_selectedIndex >= _children.length) _selectedIndex = 0;
-        emit(
-          (state as ParentMonitorLoaded).copyWith(
-            children: _children,
-            selectedIndex: _selectedIndex,
-          ),
-        );
+        if (newIndex != _selectedIndex) {
+          selectChild(newIndex, syncFamily: false);
+        } else {
+          emit(
+            (state as ParentMonitorLoaded).copyWith(
+              children: _children,
+              selectedIndex: _selectedIndex,
+            ),
+          );
+        }
       }
     });
   }
@@ -58,20 +67,24 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     }
 
     _children = _childrenFromFamily(_familyCubit.state.family);
-    _selectedIndex = 0;
 
     if (_children.isEmpty) {
       emit(const ParentMonitorNoChild());
       return;
     }
 
+    final selectedId = _familyCubit.state.selectedChildId;
+    final targetIndex = selectedId != null
+        ? _children.indexWhere((c) => c.id == selectedId)
+        : -1;
+    _selectedIndex = targetIndex != -1 ? targetIndex : 0;
+
     _appUsage = const [];
     _screenTime = ScreenTimeModel.none;
-    final result = await _appUsageRepo.fetchAppUsage(_children.first.id);
+    final activeChildId = _children[_selectedIndex].id;
+    final result = await _appUsageRepo.fetchAppUsage(activeChildId);
     result.fold(_clearUsage, _takeUsage);
-    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
-      _children.first.id,
-    );
+    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(activeChildId);
 
     emit(
       ParentMonitorLoaded(
@@ -93,10 +106,16 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   }
 
   /// Called when the parent swipes the progress card to another child.
-  Future<void> selectChild(int index) async {
+  Future<void> selectChild(int index, {bool syncFamily = true}) async {
     final current = state;
     if (current is! ParentMonitorLoaded) return;
-    if (index < 0 || index >= _children.length || index == _selectedIndex) {
+    if (index < 0 || index >= _children.length) return;
+
+    if (syncFamily) {
+      _familyCubit.selectChildIndex(index);
+    }
+
+    if (index == _selectedIndex && current.children.isNotEmpty && current.faceEmoji != null) {
       return;
     }
 
@@ -106,6 +125,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     // Update the selection immediately; clear limits/face while the child loads.
     emit(
       current.copyWith(
+        children: _children,
         selectedIndex: index,
         appLimits: const [],
         screenTime: ScreenTimeModel.none,
@@ -113,15 +133,15 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
       ),
     );
 
-    final result = await _appUsageRepo.fetchAppUsage(_children[index].id);
+    final activeChildId = _children[index].id;
+    final result = await _appUsageRepo.fetchAppUsage(activeChildId);
     result.fold(_clearUsage, _takeUsage);
-    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
-      _children[index].id,
-    );
+    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(activeChildId);
 
     if (state is ParentMonitorLoaded && _selectedIndex == index) {
       emit(
         (state as ParentMonitorLoaded).copyWith(
+          children: _children,
           appLimits: _appUsage.map(_toLimitMap).toList(),
           screenTime: _screenTime,
           faceEmoji: faceEmoji,

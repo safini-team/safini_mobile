@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
@@ -11,13 +13,27 @@ import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 class ParentAppsCubit extends Cubit<ParentAppsState> {
   final ParentFamilyCubit _familyCubit;
   final IParentAppUsageRepository _appUsageRepo;
+  StreamSubscription? _familySub;
 
   String? _childId;
   List<ChildAppUsageModel> _appUsage = const [];
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
 
   ParentAppsCubit(this._familyCubit, this._appUsageRepo)
-    : super(const ParentAppsInitial());
+    : super(const ParentAppsInitial()) {
+    _familySub = _familyCubit.stream.listen((familyState) {
+      final selectedId = familyState.selectedChildId;
+      if (selectedId != null && selectedId.isNotEmpty && selectedId != _childId) {
+        selectChild(selectedId, syncFamily: false);
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _familySub?.cancel();
+    return super.close();
+  }
 
   /// Child the Limits screen is scoped to; the chip strip switches it.
   String? get childId => _childId;
@@ -32,10 +48,10 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     final children =
         _familyCubit.state.family?.children.where((c) => c.id.isNotEmpty) ??
         const [];
-    final child = childId != null
-        ? children.where((c) => c.id == childId).firstOrNull
-        : children.where((c) => c.id == _childId).firstOrNull ??
-              children.firstOrNull;
+    final selectedId = childId ?? _familyCubit.state.selectedChildId ?? _childId;
+    final child = selectedId != null
+        ? children.where((c) => c.id == selectedId).firstOrNull
+        : children.firstOrNull;
     _childId = child?.id;
 
     if (_childId == null) {
@@ -140,7 +156,10 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   }
 
   /// Switches which child's limits are shown.
-  Future<void> selectChild(String childId) {
+  Future<void> selectChild(String childId, {bool syncFamily = true}) {
+    if (syncFamily) {
+      _familyCubit.selectChild(childId);
+    }
     if (childId == _childId) return Future.value();
     _appUsage = const [];
     _screenTime = ScreenTimeModel.none;
