@@ -91,10 +91,11 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
             cost:
                 _intValue(map, ['redeem_coin_cost', 'coin_cost', 'cost']) ?? 0,
             // Absent/true → enabled; only an explicit false disables redemption.
-            isEnabled: map['is_enabled'] != false,
+            isEnabled: map['is_enabled'] != false && map['is_blocked'] != true,
             remainingMinutes:
                 _intValue(map, [
                   'remaining_minutes',
+                  'minutes_remaining',
                   'bonus_minutes_remaining',
                 ]) ??
                 0,

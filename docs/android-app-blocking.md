@@ -53,7 +53,7 @@ pairing, expire after 30 days without sync, and cannot access general family API
 
 ## Verification
 
-- Flutter: 256 tests and analyzer pass.
+- Flutter: 258 tests and analyzer pass.
 - Native JVM: seven policy tests; Android debug and test APK builds pass.
 - Emulator: Android 15/API 35; native persistence/reset and family-midnight tests; foreground budget
   exhaustion; visible block overlay; purchase deducts one price and unlocks;
