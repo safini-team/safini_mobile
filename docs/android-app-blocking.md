@@ -55,10 +55,11 @@ pairing, expire after 30 days without sync, and cannot access general family API
 
 - Flutter: 256 tests and analyzer pass.
 - Native JVM: seven policy tests; Android debug and test APK builds pass.
-- Emulator: Android 15/API 35; native persistence/reset test; foreground budget
+- Emulator: Android 15/API 35; native persistence/reset and family-midnight tests; foreground budget
   exhaustion; visible block overlay; purchase deducts one price and unlocks;
   automatic service recovery after a cold reboot; offline purchased-time
-  exhaustion and non-charging offline purchase failure.
+  exhaustion and non-charging offline purchase failure; revoked Usage Access
+  reaches the parent status endpoint as attention required.
 - API: full suite against migrated disposable Postgres, including pairing access,
   scope isolation, duplicate purchase retries, changed prices, manual blocking,
   historical reports and permission heartbeat transitions.
@@ -69,7 +70,7 @@ Run Flutter checks with `flutter analyze` and `flutter test`. Run native checks:
 android/gradlew -p android :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
 adb install -r build/app/outputs/apk/debug/app-debug.apk
 adb install -r build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-adb shell am instrument -w -e class com.safini.app.EnforcementDeviceTest#testPersistentBudgetAndReset com.safini.app.test/com.safini.app.FixtureRunner
+adb shell am instrument -w -e class com.safini.app.EnforcementDeviceTest com.safini.app.test/com.safini.app.FixtureRunner
 ```
 
 The device test replaces local enforcement state: run only on a disposable

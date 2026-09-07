@@ -11,7 +11,8 @@ public class EnforcementDeviceTest extends InstrumentationTestCase {
     private Context context() { return getInstrumentation().getTargetContext(); }
     public void testPersistentBudgetAndReset() throws Exception {
         EnforcementStore store = new EnforcementStore(context());
-        long now = System.currentTimeMillis();
+        store.clear();
+        long now = java.time.Instant.parse("2026-09-07T12:00:00Z").toEpochMilli();
         String pkg = "com.safini.app.test";
         JSONObject app = new JSONObject().put("app_slug", "roblox").put("package_name", pkg)
             .put("is_limited", true).put("daily_limit_minutes", 1).put("used_minutes", 0)
@@ -33,6 +34,23 @@ public class EnforcementDeviceTest extends InstrumentationTestCase {
         reopened.applySnapshot(data);
         assertEquals(Long.valueOf(0), reopened.remaining(pkg, now));
         reopened.clear();
+    }
+    public void testFamilyMidnightSplitsOfflineUsage() throws Exception {
+        EnforcementStore store = new EnforcementStore(context());
+        store.clear();
+        String pkg = "com.safini.app.test";
+        long before = java.time.Instant.parse("2026-09-07T18:59:30Z").toEpochMilli();
+        JSONObject app = new JSONObject().put("app_slug", "roblox").put("package_name", pkg)
+            .put("is_limited", true).put("daily_limit_minutes", 1).put("used_minutes", 0)
+            .put("bonus_minutes_remaining", 1);
+        store.applySnapshot(new JSONObject().put("usage_date", "2026-09-07")
+            .put("family_timezone", "Asia/Tashkent").put("apps", new JSONArray().put(app)));
+        store.record(pkg, before, before+60000);
+        assertEquals(30000L, store.used(pkg, "2026-09-07"));
+        assertEquals(30000L, store.used(pkg, "2026-09-08"));
+        // Yesterday's purchased minute expires, but the base allowance renews.
+        assertEquals(Long.valueOf(30000L), store.remaining(pkg, before+60000));
+        store.clear();
     }
     public void testConfigureLocalFixture() throws Exception {
         // Explicitly opt in to the disposable API configured by the test operator.
