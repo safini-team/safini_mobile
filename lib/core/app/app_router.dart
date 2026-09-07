@@ -97,14 +97,23 @@ class AppRouter {
     return _router.config(deepLinkBuilder: _deepLink);
   }
 
+  DeepLink _deepLink(PlatformDeepLink deepLink) {
+    final path = protectionRouteFor(deepLink.uri);
+    return path == null ? deepLink : DeepLink.path(path);
+  }
+
   /// `safini://children/<id>/protection` always enters through the splash
   /// screen, which is the only place that knows whether this device is signed
   /// in, and as whom. The child id is parked for the Apps tab to pick up.
-  DeepLink _deepLink(PlatformDeepLink deepLink) {
-    final childId = PushDeepLinks.parseChildId(deepLink.uri);
-    if (childId == null) return deepLink;
+  ///
+  /// Returns null for every other link, including the OAuth callbacks Supabase
+  /// and Google Sign-In rely on, which must reach their own handlers untouched.
+  @visibleForTesting
+  static String? protectionRouteFor(Uri uri) {
+    final childId = PushDeepLinks.parseChildId(uri);
+    if (childId == null) return null;
     getIt<PushDeepLinks>().open(childId);
-    return DeepLink.path('/');
+    return '/';
   }
 
   void navigateToSplash() => _router.navigatePath('/');

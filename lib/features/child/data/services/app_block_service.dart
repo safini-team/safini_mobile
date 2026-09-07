@@ -6,9 +6,15 @@ import 'package:safini/features/models/domain/models/installed_app.dart';
 
 /// Android native enforcement owns accounting, offline rules and background sync.
 class AppBlockService {
-  const AppBlockService();
+  /// [supported] exists so the channel contract can be exercised on the test
+  /// host, where `Platform.isAndroid` is false and every call would otherwise
+  /// short-circuit. Production always uses the real check.
+  const AppBlockService({bool? supported}) : _supported = supported;
+
+  final bool? _supported;
+
   static const channel = MethodChannel('com.safini.app/app_block');
-  bool get isSupported => !kIsWeb && Platform.isAndroid;
+  bool get isSupported => _supported ?? (!kIsWeb && Platform.isAndroid);
   Future<bool> _bool(String method, [Map<String, dynamic>? args]) async =>
       !isSupported || (await channel.invokeMethod<bool>(method, args) ?? false);
   Future<void> _call(String method, [Map<String, dynamic>? args]) async {
