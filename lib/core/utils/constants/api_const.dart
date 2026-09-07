@@ -1,10 +1,10 @@
+import 'package:safini/core/config/supabase_config.dart';
+
 class ApiConst {
-  /// Overridable so a debug build can be pointed at a local API:
-  /// `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000`.
-  static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'https://api.safini.fun',
-  );
+  /// Resolved in one place, see [SupabaseConfig.apiBaseUrl]. Override a debug
+  /// build with `--dart-define=API_BASE_URL=http://10.0.2.2:8000` or with
+  /// `assets/env/app.env`; both move every call, not just the Dio ones.
+  static String get baseUrl => SupabaseConfig.apiBaseUrl;
   static const String me = '/v1/me';
 
   /// PUT/DELETE/GET - this parent handset's push token, so protection alerts
