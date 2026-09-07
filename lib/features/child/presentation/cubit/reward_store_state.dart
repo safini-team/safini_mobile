@@ -11,6 +11,10 @@ class RewardStoreState {
   /// Real server-side error message for a failed purchase (not a coins issue).
   final String? purchaseError;
 
+  /// Item ids with a purchase in flight. A second tap on one of these is
+  /// ignored, and its tile renders as busy rather than tappable (SAF-132).
+  final Set<String> pendingPurchases;
+
   const RewardStoreState({
     required this.appTimeItems,
     required this.avatarItems,
@@ -19,6 +23,7 @@ class RewardStoreState {
     this.hasLoadError = false,
     this.missingCoins,
     this.purchaseError,
+    this.pendingPurchases = const {},
   });
 
   const RewardStoreState.initial()
@@ -28,7 +33,8 @@ class RewardStoreState {
       isLoading = true,
       hasLoadError = false,
       missingCoins = null,
-      purchaseError = null;
+      purchaseError = null,
+      pendingPurchases = const {};
 
   RewardStoreState copyWith({
     List<AppTimeItem>? appTimeItems,
@@ -40,6 +46,7 @@ class RewardStoreState {
     bool clearMissingCoins = false,
     String? purchaseError,
     bool clearPurchaseError = false,
+    Set<String>? pendingPurchases,
   }) {
     return RewardStoreState(
       appTimeItems: appTimeItems ?? this.appTimeItems,
@@ -53,6 +60,7 @@ class RewardStoreState {
       purchaseError: clearPurchaseError
           ? null
           : (purchaseError ?? this.purchaseError),
+      pendingPurchases: pendingPurchases ?? this.pendingPurchases,
     );
   }
 }

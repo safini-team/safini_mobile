@@ -73,6 +73,7 @@ class _ChildStoreScreen extends StatelessWidget {
                     badge: item.remainingMinutes > 0
                         ? s.minutesLeftShort(item.remainingMinutes)
                         : null,
+                    pending: state.pendingPurchases.contains(item.id),
                   ),
               ]
             : [
@@ -91,6 +92,7 @@ class _ChildStoreScreen extends StatelessWidget {
                     badge: item.isEquipped
                         ? s.wornLabel
                         : (item.isLocked ? item.lockLabel : null),
+                    pending: state.pendingPurchases.contains(item.id),
                   ),
               ];
 
@@ -121,6 +123,7 @@ class _ChildStoreScreen extends StatelessWidget {
     S s,
   ) async {
     final cubit = context.read<RewardStoreCubit>();
+    if (state.pendingPurchases.contains(card.id)) return;
     final onAppTime = state.selectedTab == StoreTab.appTime;
 
     final blurb = onAppTime ? s.rewardBlurbAppTime : s.rewardBlurbAvatar;

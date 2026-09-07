@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
+import 'package:safini/core/utils/request_id.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
@@ -156,14 +157,34 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
 
   void selectTab(StoreTab tab) => emit(state.copyWith(selectedTab: tab));
 
+  /// Marks an item busy. Returns false when a purchase for it is already in
+  /// flight, which is the whole guard: the sheet can be reopened and confirmed
+  /// again while the first request is still out (SAF-132).
+  bool _beginPurchase(String id) {
+    if (state.pendingPurchases.contains(id)) return false;
+    emit(state.copyWith(pendingPurchases: {...state.pendingPurchases, id}));
+    return true;
+  }
+
+  void _endPurchase(String id) {
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        pendingPurchases: {...state.pendingPurchases}..remove(id),
+      ),
+    );
+  }
+
   Future<void> purchaseAppTimeItem(String id) async {
     final item = state.appTimeItems.firstWhere((i) => i.id == id);
     if (_coins.state < item.cost) {
       emit(state.copyWith(missingCoins: item.cost - _coins.state));
       return;
     }
+    if (!_beginPurchase(id)) return;
     final childId = await _resolveChildId();
     if (childId == null) {
+      _endPurchase(id);
       return;
     }
 
@@ -183,7 +204,9 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
       } else {
         final response = await _dio.post(
           ApiConst.redeemAppTime(childId),
-          data: {'app_slug': id},
+          // One key per attempt: if this request is retried the server replays
+          // the original grant instead of charging a second time.
+          data: {'app_slug': id, 'client_request_id': newRequestId()},
         );
         _applyBalanceAfter(response.data, fallbackCost: item.cost);
         remaining = _grantRemainingMinutes(response.data);
@@ -198,6 +221,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
       emit(state.copyWith(appTimeItems: updated));
     } catch (e) {
       emit(state.copyWith(purchaseError: _purchaseErrorMessage(e)));
+    } finally {
+      _endPurchase(id);
     }
   }
 
@@ -217,8 +242,10 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
       emit(state.copyWith(missingCoins: cost - _coins.state));
       return;
     }
+    if (!_beginPurchase(id)) return;
     final childId = await _resolveChildId();
     if (childId == null) {
+      _endPurchase(id);
       return;
     }
 
@@ -234,6 +261,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
       emit(state.copyWith(avatarItems: updated));
     } catch (e) {
       emit(state.copyWith(purchaseError: _purchaseErrorMessage(e)));
+    } finally {
+      _endPurchase(id);
     }
   }
 
