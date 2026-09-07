@@ -289,6 +289,117 @@
         ]
       }
     },
+    "/v1/me/push-devices": {
+      "get": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Listing",
+        "description": "Auth: parent's Supabase bearer token. Business requirement: let a parent see which of their devices can receive alerts. Frontend note: tokens are never returned, only platform, locale and timestamps.",
+        "operationId": "listing_v1_me_push_devices_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Register",
+        "description": "Auth: parent's Supabase bearer token. Business requirement: deliver protection alerts when the parent app is closed. Frontend note: send the current FCM token on every launch and on token refresh; iOS uses the same FCM token, not a raw APNs token. Registering a token that another account used moves it to this account.",
+        "operationId": "register_v1_me_push_devices_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushDeviceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Revoke",
+        "description": "Auth: parent's Supabase bearer token. Business requirement: stop alerts on sign-out or when notifications are turned off. Frontend note: send the token in the request body; a token registered to another account is left alone and `revoked` comes back false.",
+        "operationId": "revoke_v1_me_push_devices_delete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushDeviceRevokeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/system/info": {
       "get": {
         "tags": [
@@ -5580,6 +5691,50 @@
           "expected_reward_minutes"
         ],
         "title": "PurchaseRequest"
+      },
+      "PushDeviceRequest": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 4096,
+            "minLength": 8,
+            "title": "Token"
+          },
+          "platform": {
+            "type": "string",
+            "pattern": "^(android|ios)$",
+            "title": "Platform"
+          },
+          "locale": {
+            "type": "string",
+            "maxLength": 16,
+            "title": "Locale",
+            "default": "en"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "token",
+          "platform"
+        ],
+        "title": "PushDeviceRequest"
+      },
+      "PushDeviceRevokeRequest": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 4096,
+            "minLength": 8,
+            "title": "Token"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "title": "PushDeviceRevokeRequest"
       },
       "StepsReportRequest": {
         "properties": {
