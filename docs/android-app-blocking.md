@@ -29,7 +29,9 @@ yesterday's purchased minutes expire. Usage reports use whole minutes and retain
 seven local dates for offline retries.
 
 Non-secret rules and usage use device-protected storage. Boot/package replacement
-restarts the foreground service when previously enabled. Before the first unlock,
+restarts the foreground service when previously enabled. Boot clears the last
+foreground observation while preserving saved usage, so an abrupt power loss
+cannot charge the powered-off interval. Before the first unlock,
 Android cannot supply UsageStats; enforcement resumes after unlock. The native
 credential is encrypted with an Android Keystore key in credential-protected
 storage. No Supabase refresh token is shared with the native network worker.
@@ -55,7 +57,7 @@ pairing, expire after 30 days without sync, and cannot access general family API
 
 - Flutter: 258 tests and analyzer pass.
 - Native JVM: seven policy tests; Android debug and test APK builds pass.
-- Emulator: Android 15/API 35; native persistence/reset and family-midnight tests; foreground budget
+- Emulator: Android 15/API 35; native persistence/reset, boot-observation and family-midnight tests; foreground budget
   exhaustion; visible block overlay; purchase deducts one price and unlocks;
   automatic service recovery after a cold reboot; offline purchased-time
   exhaustion and non-charging offline purchase failure; revoked Usage Access

@@ -52,6 +52,32 @@ public class EnforcementDeviceTest extends InstrumentationTestCase {
         assertEquals(Long.valueOf(30000L), store.remaining(pkg, before+60000));
         store.clear();
     }
+    public void testBootKeepsBudgetWithoutChargingPoweredOffTime() throws Exception {
+        EnforcementStore store = new EnforcementStore(context());
+        store.clear();
+        long now = System.currentTimeMillis();
+        String pkg = "com.safini.app.test";
+        long usageStart = java.time.Instant.parse("2026-09-07T12:00:00Z").toEpochMilli();
+        store.record(pkg, usageStart, usageStart+30000);
+        store.setForeground(pkg);
+        store.setCursor(now-3600000);
+        store.setEnabled(true);
+        store.persist();
+        final boolean[] started = {false};
+        Context bootContext = new android.content.ContextWrapper(context()) {
+            @Override public android.content.ComponentName startForegroundService(Intent intent) {
+                started[0] = true;
+                return intent.getComponent();
+            }
+        };
+        new BootReceiver().onReceive(bootContext, new Intent(Intent.ACTION_BOOT_COMPLETED));
+        EnforcementStore reopened = new EnforcementStore(context());
+        assertTrue(started[0]);
+        assertNull(reopened.getForeground());
+        assertTrue(reopened.getCursor() >= now);
+        assertEquals(30000L, reopened.used(pkg, "2026-09-07"));
+        reopened.clear();
+    }
     public void testConfigureLocalFixture() throws Exception {
         // Explicitly opt in to the disposable API configured by the test operator.
         android.os.Bundle args = FixtureRunner.arguments;
