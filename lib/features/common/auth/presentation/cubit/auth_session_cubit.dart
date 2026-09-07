@@ -1,3 +1,4 @@
+import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,6 +215,9 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
   // ── Sign out ───────────────────────────────────────────────────────────
 
   Future<void> signOut() async {
+    if (getIt.isRegistered<AppBlockService>()) {
+      await getIt<AppBlockService>().stopService();
+    }
     await _clearFamilyState();
     await _clearAuthState();
     emit(

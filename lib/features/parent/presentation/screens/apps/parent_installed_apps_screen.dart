@@ -250,7 +250,8 @@ class _AppsList extends StatelessWidget {
       dailyLimitMinutes: 60,
       redeemCoinCost: 100,
       redeemRewardMinutes: 30,
-      isLimited: !block,
+      isBlocked: block,
+      isLimited: true,
       canRedeem: !block,
     );
     if (!context.mounted) return;
@@ -284,6 +285,7 @@ class _AppsList extends StatelessWidget {
       emoji: AppData.getEmojiForApp(name),
       usedMinutes: rule.usedMinutes,
       limitMinutes: rule.dailyLimitMinutes,
+      isBlocked: rule.isBlocked,
       isLimited: rule.isLimited,
       canRedeem: rule.canRedeem,
       redeemCoinCost: rule.redeemCoinCost,

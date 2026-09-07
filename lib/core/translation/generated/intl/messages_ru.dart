@@ -230,6 +230,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "badgeCoins": m5,
     "badgeTasksDone": m6,
     "badges": MessageLookupByLibrary.simpleMessage("Значки"),
+    "blockCompletely": MessageLookupByLibrary.simpleMessage(
+      "Заблокировать полностью",
+    ),
     "bothParentsSee": MessageLookupByLibrary.simpleMessage(
       "Оба родителя видят одни и те же задания и могут их одобрять.",
     ),
@@ -442,6 +445,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "emptyReviewBody": MessageLookupByLibrary.simpleMessage(
       "Новые заявки появятся здесь.",
     ),
+    "enforcementActive": MessageLookupByLibrary.simpleMessage(
+      "Лимиты приложений работают",
+    ),
+    "enforcementAttention": MessageLookupByLibrary.simpleMessage(
+      "Лимиты требуют внимания на телефоне ребёнка.",
+    ),
+    "enforcementNotConfigured": MessageLookupByLibrary.simpleMessage(
+      "Настройте лимиты на Android-телефоне ребёнка.",
+    ),
+    "enforcementOffline": MessageLookupByLibrary.simpleMessage(
+      "Устройство ребёнка не в сети или перестало отправлять данные. Проверьте телефон.",
+    ),
+    "enforcementUnknown": MessageLookupByLibrary.simpleMessage(
+      "Не удалось проверить защиту. Нажмите, чтобы повторить.",
+    ),
     "english": MessageLookupByLibrary.simpleMessage("Английский"),
     "equipped": MessageLookupByLibrary.simpleMessage("НАДЕТО"),
     "everyAppSetUp": MessageLookupByLibrary.simpleMessage(
@@ -566,13 +584,35 @@ class MessageLookup extends MessageLookupByLibrary {
     "limitThisApp": MessageLookupByLibrary.simpleMessage(
       "Ограничить приложение",
     ),
+    "limitsBattery": MessageLookupByLibrary.simpleMessage("Настройки батареи"),
+    "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
+      "На Samsung разрешите работу без ограничений батареи. На Xiaomi также включите автозапуск. Исключите Safini из спящих приложений.",
+    ),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
       "Когда дневной лимит закончится, приложение перестанет открываться и покажет экран Safini.",
     ),
     "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
-      "Лимиты считаются, но пока не применяются. Завершите настройку на телефоне ребёнка.",
+      "Для блокировки нужна настройка на Android-телефоне ребёнка. Блокировка на iOS пока недоступна.",
+    ),
+    "limitsOverlayAccess": MessageLookupByLibrary.simpleMessage(
+      "Поверх других приложений",
+    ),
+    "limitsRetry": MessageLookupByLibrary.simpleMessage(
+      "Проверить и подключить",
+    ),
+    "limitsSetupError": MessageLookupByLibrary.simpleMessage(
+      "Не удалось подключить лимиты. Проверьте интернет и повторите.",
+    ),
+    "limitsSetupHint": MessageLookupByLibrary.simpleMessage(
+      "Разрешите доступ к статистике использования и показ поверх других приложений в настройках Android.",
+    ),
+    "limitsSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "Включите лимиты приложений",
     ),
     "limitsSubtitle": m30,
+    "limitsUsageAccess": MessageLookupByLibrary.simpleMessage(
+      "Доступ к статистике",
+    ),
     "lockedLabel": MessageLookupByLibrary.simpleMessage("Закрыто"),
     "loginBack": MessageLookupByLibrary.simpleMessage("Назад"),
     "loginSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -592,6 +632,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Выйти?"),
     "lookCloser": MessageLookupByLibrary.simpleMessage("Посмотреть"),
     "manageAll": MessageLookupByLibrary.simpleMessage("Управлять всем"),
+    "manualBlockHint": MessageLookupByLibrary.simpleMessage(
+      "Приостановить приложение, включая купленное время.",
+    ),
     "markItDone": MessageLookupByLibrary.simpleMessage("Отметить выполненным"),
     "minuteCount": m31,
     "minutes": MessageLookupByLibrary.simpleMessage("Минуты"),

@@ -1,3 +1,5 @@
+> Android implementation status and the current native/API contract are in [SAF-163 delivery notes](../docs/android-app-blocking.md). The notes below describe the earlier implementation.
+
 # App Blocking — Implementation Guide for Safini
 
 > Step-by-step plan to bring the **time-limit / manual app blocking** proven in the

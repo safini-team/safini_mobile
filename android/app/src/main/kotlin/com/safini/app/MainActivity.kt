@@ -1,213 +1,92 @@
 package com.safini.app
 
-import android.app.AppOpsManager
-import android.app.usage.UsageEvents
-import android.app.usage.UsageStatsManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Process
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import java.util.Calendar
-import kotlin.math.max
 
 class MainActivity : FlutterActivity() {
-
-    private companion object {
-        const val CHANNEL = "com.safini.app/app_block"
-    }
-
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.safini.app/app_block")
             .setMethodCallHandler { call, result ->
-                when (call.method) {
-                    "hasUsageAccess" -> result.success(hasUsageAccess())
-                    "hasOverlayPermission" -> result.success(Settings.canDrawOverlays(this))
-
-                    "requestUsageAccess" -> {
-                        startActivity(
-                            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                        )
-                        result.success(null)
-                    }
-
-                    "requestOverlayPermission" -> {
-                        startActivity(
-                            Intent(
-                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:$packageName"),
-                            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                        )
-                        result.success(null)
-                    }
-
-                    "startService" -> {
-                        val intent = Intent(this, AppBlockForegroundService::class.java)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(intent)
-                        } else {
-                            startService(intent)
+                try {
+                    val client = EnforcementClient(this)
+                    when (call.method) {
+                        "hasUsageAccess" -> result.success(usageAccess(this))
+                        "hasOverlayPermission" -> result.success(Settings.canDrawOverlays(this))
+                        "requestUsageAccess" -> {
+                            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)); result.success(null)
                         }
-                        result.success(null)
-                    }
-
-                    "stopService" -> {
-                        AppBlockStore.setEnforcing(this, false)
-                        stopService(Intent(this, AppBlockForegroundService::class.java))
-                        result.success(null)
-                    }
-
-                    "setAppLimit" -> {
-                        val pkg = call.argument<String>("packageName")
-                        val limitMs = (call.argument<Number>("limitMs"))?.toLong()
-                        if (pkg == null || limitMs == null) {
-                            result.error("bad_args", "packageName and limitMs required", null)
-                        } else {
-                            AppBlockStore.setLimit(this, pkg, limitMs)
+                        "requestOverlayPermission" -> {
+                            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
                             result.success(null)
                         }
-                    }
-
-                    "removeAppLimit" -> {
-                        val pkg = call.argument<String>("packageName")
-                        if (pkg == null) {
-                            result.error("bad_args", "packageName required", null)
-                        } else {
-                            AppBlockStore.removeLimit(this, pkg)
+                        "requestBatterySettings" -> {
+                            startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)); result.success(null)
+                        }
+                        "isConfigured" -> result.success(client.configured(call.argument<String>("childId")!!))
+                        "configure" -> {
+                            val childId = call.argument<String>("childId")!!
+                            if (client.childId() != childId) {
+                                AppBlockForegroundService.instance?.shutdown()
+                                EnforcementStore(this).clear()
+                            }
+                            client.configure(call.argument<String>("baseUrl")!!, childId,
+                                call.argument<String>("token")!!, call.argument<String>("expiresAt")!!)
+                            call.argument<String>("language")?.let { EnforcementStore(this).language = it }
                             result.success(null)
                         }
-                    }
-
-                    "setManualBlock" -> {
-                        val pkg = call.argument<String>("packageName")
-                        val blocked = call.argument<Boolean>("blocked") ?: false
-                        if (pkg == null) {
-                            result.error("bad_args", "packageName required", null)
-                        } else {
-                            AppBlockStore.setManualBlock(this, pkg, blocked)
-                            result.success(null)
+                        "syncNow", "startService" -> {
+                            if (!usageAccess(this) || !Settings.canDrawOverlays(this)) {
+                                result.error("permissions", "Grant both app-limit permissions.", null)
+                            } else {
+                                if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                                    requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 4711)
+                                }
+                                startForegroundService(Intent(this, AppBlockForegroundService::class.java))
+                                syncWhenStarted(result, 0)
+                            }
                         }
+                        "purchaseTime" -> {
+                            val service = AppBlockForegroundService.instance
+                            if (service == null) result.error("service", "Connect app limits first.", null)
+                            else service.purchaseTime(call.argument<String>("slug")!!,
+                                call.argument<Int>("cost")!!, call.argument<Int>("minutes")!!) { snapshot, error ->
+                                if (error == null) result.success(snapshot.toString()) else result.error("purchase", error, null)
+                            }
+                        }
+                        "isRunning" -> result.success(AppBlockForegroundService.instance != null)
+                        "hasSnapshot" -> result.success(EnforcementStore(this).snapshot.has("usage_date"))
+                        "setLanguage" -> { EnforcementStore(this).language = call.argument<String>("language") ?: "en"; result.success(null) }
+                        "stopService" -> {
+                            AppBlockForegroundService.instance?.shutdown()
+                            EnforcementStore(this).clear()
+                            // Best effort remote revocation; local cleanup must also work offline.
+                            Thread {
+                                runCatching { client.request("/session", null, "DELETE") }
+                                client.clear()
+                                runOnUiThread { result.success(null) }
+                            }.start()
+                        }
+                        "installedApps" -> result.success(installedLaunchableApps())
+                        else -> result.notImplemented()
                     }
-
-                    "syncRules" -> {
-                        @Suppress("UNCHECKED_CAST")
-                        val rules = call.argument<List<Map<String, Any?>>>("rules") ?: emptyList()
-                        AppBlockStore.syncRules(this, rules)
-                        result.success(null)
-                    }
-
-                    "measuredUsageMs" -> result.success(measuredUsageMs())
-
-                    "usageSinceMidnight" -> {
-                        val packages = call.argument<List<String>>("packages") ?: emptyList()
-                        result.success(usageSinceMidnight(packages))
-                    }
-
-                    "installedApps" -> result.success(installedLaunchableApps())
-
-                    else -> result.notImplemented()
-                }
+                } catch (e: Exception) { result.error("enforcement", e.message, null) }
             }
     }
-
-    // ── Permissions ─────────────────────────────────────────────────────────────
-
-    private fun hasUsageAccess(): Boolean {
-        val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOps.unsafeCheckOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                packageName,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            appOps.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                packageName,
-            )
-        }
-        return mode == AppOpsManager.MODE_ALLOWED
+    private fun syncWhenStarted(result: MethodChannel.Result, attempt: Int) {
+        val service = AppBlockForegroundService.instance
+        if (service != null) service.syncNow { error ->
+            if (error == null) result.success(null) else result.error("sync", error, null)
+        } else if (attempt < 30) Handler(Looper.getMainLooper()).postDelayed({ syncWhenStarted(result, attempt+1) },100)
+        else result.error("service", "Unable to start app limits.", null)
     }
-
-    // ── Usage measurement (mirrors the service's window) ──────────────────────────
-
-    private fun measuredUsageMs(): Map<String, Long> {
-        val limits = AppBlockStore.readLimits(this)
-        if (limits.isEmpty()) return emptyMap()
-        val starts = AppBlockStore.readLimitStarts(this)
-        val usm = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val now = System.currentTimeMillis()
-        val out = HashMap<String, Long>()
-        for (pkg in limits.keys) {
-            val from = max(startOfDay(), starts[pkg] ?: startOfDay())
-            out[pkg] = computeUsageMs(usm, pkg, from, now)
-        }
-        return out
-    }
-
-    /**
-     * Usage per package measured from midnight to now — the day total the
-     * backend expects for `used_minutes` (independent of any limit window).
-     */
-    private fun usageSinceMidnight(packages: List<String>): Map<String, Long> {
-        if (packages.isEmpty()) return emptyMap()
-        val usm = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val now = System.currentTimeMillis()
-        val from = startOfDay()
-        val out = HashMap<String, Long>()
-        for (pkg in packages) {
-            out[pkg] = computeUsageMs(usm, pkg, from, now)
-        }
-        return out
-    }
-
-    private fun computeUsageMs(
-        usm: UsageStatsManager,
-        packageName: String,
-        from: Long,
-        to: Long,
-    ): Long {
-        if (to <= from) return 0L
-        val events = usm.queryEvents(from, to)
-        val event = UsageEvents.Event()
-        var total = 0L
-        var lastForeground = -1L
-        while (events.hasNextEvent()) {
-            events.getNextEvent(event)
-            if (event.packageName != packageName) continue
-            when (event.eventType) {
-                UsageEvents.Event.MOVE_TO_FOREGROUND -> lastForeground = event.timeStamp
-                UsageEvents.Event.MOVE_TO_BACKGROUND -> {
-                    if (lastForeground >= 0) {
-                        total += event.timeStamp - lastForeground
-                        lastForeground = -1
-                    }
-                }
-            }
-        }
-        if (lastForeground >= 0) total += to - lastForeground
-        return total
-    }
-
-    private fun startOfDay(): Long {
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
-        cal.set(Calendar.MILLISECOND, 0)
-        return cal.timeInMillis
-    }
-
-    // ── Installed apps (optional picker support) ──────────────────────────────────
 
     private fun installedLaunchableApps(): List<Map<String, String>> {
         val pm = packageManager

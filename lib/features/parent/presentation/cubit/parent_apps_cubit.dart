@@ -111,6 +111,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     required int dailyLimitMinutes,
     required int redeemCoinCost,
     required int redeemRewardMinutes,
+    bool isBlocked = false,
     bool isLimited = true,
     bool canRedeem = true,
   }) async {
@@ -120,6 +121,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     final rule = ChildAppUsageModel(
       appSlug: slug,
       displayName: name.trim(),
+      isBlocked: isBlocked,
       isLimited: isLimited,
       canRedeem: canRedeem,
       dailyLimitMinutes: dailyLimitMinutes,
@@ -130,13 +132,10 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     );
 
     final result = await _appUsageRepo.updateAppRule(_childId!, rule);
-    return result.fold(
-      (failure) async => failure.message,
-      (_) async {
-        await loadAppLimits();
-        return null;
-      },
-    );
+    return result.fold((failure) async => failure.message, (_) async {
+      await loadAppLimits();
+      return null;
+    });
   }
 
   /// Switches which child's limits are shown.
@@ -164,6 +163,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       'used': app.usedMinutes,
       'limit': app.dailyLimitMinutes,
       'icon': null,
+      'isBlocked': app.isBlocked,
       'isLimited': app.isLimited,
       'canRedeem': app.canRedeem,
       'cost': app.redeemCoinCost,
@@ -179,18 +179,20 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   /// Persists the whole rule: both flags and the coin price, which the parent
   /// could not reach at all before - the steppers only existed in the add
   /// sheet, and the add sheet was never reachable.
-  Future<void> updateRule(
+  Future<String?> updateRule(
     String appSlug, {
     int? dailyLimitMinutes,
+    bool? isBlocked,
     bool? isLimited,
     bool? canRedeem,
     int? redeemCoinCost,
     int? redeemRewardMinutes,
   }) async {
-    await _persist(
+    return _persist(
       appSlug,
       (app) => app.copyWith(
         dailyLimitMinutes: dailyLimitMinutes,
+        isBlocked: isBlocked,
         isLimited: isLimited,
         canRedeem: canRedeem,
         redeemCoinCost: redeemCoinCost,
@@ -199,26 +201,27 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     );
   }
 
-  Future<void> _persist(
+  Future<String?> _persist(
     String appSlug,
     ChildAppUsageModel Function(ChildAppUsageModel) update,
   ) async {
-    if (_childId == null) return;
+    if (_childId == null) return 'No child selected.';
     final index = _appUsage.indexWhere((a) => a.appSlug == appSlug);
-    if (index == -1) return;
+    if (index == -1) return 'App rule not found.';
 
     final previous = _appUsage;
     _appUsage = List.of(_appUsage)..[index] = update(_appUsage[index]);
     _emitLoaded();
 
-    final result = await _appUsageRepo.updateAppRule(_childId!, _appUsage[index]);
-    result.fold(
-      (_) {
-        // Revert on failure.
-        _appUsage = previous;
-        _emitLoaded();
-      },
-      (_) {},
+    final result = await _appUsageRepo.updateAppRule(
+      _childId!,
+      _appUsage[index],
     );
+    return result.fold((failure) {
+      // Revert on failure.
+      _appUsage = previous;
+      _emitLoaded();
+      return failure.message;
+    }, (_) => null);
   }
 }

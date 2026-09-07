@@ -49,7 +49,8 @@ class _AppLimitSheet extends StatefulWidget {
 }
 
 class _AppLimitSheetState extends State<_AppLimitSheet> {
-  late int _limit = widget.app.limitMinutes <= 0 ? 60 : widget.app.limitMinutes;
+  late int _limit = widget.app.limitMinutes;
+  late bool _isBlocked = widget.app.isBlocked;
   late bool _isLimited = widget.app.isLimited;
   late bool _canRedeem = widget.app.canRedeem;
   late int _cost = widget.app.redeemCoinCost;
@@ -68,6 +69,7 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
     final messengerContext = context;
 
     final unchanged =
+        _isBlocked == widget.app.isBlocked &&
         _isLimited == widget.app.isLimited &&
         _canRedeem == widget.app.canRedeem &&
         _limit == widget.app.limitMinutes &&
@@ -76,14 +78,19 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
     if (!unchanged) {
       // One PUT for the whole rule rather than one per field: the endpoint
       // replaces it wholesale anyway, and two calls could half-apply.
-      await widget.cubit.updateRule(
+      final error = await widget.cubit.updateRule(
         widget.app.slug,
         dailyLimitMinutes: _limit,
+        isBlocked: _isBlocked,
         isLimited: _isLimited,
         canRedeem: _canRedeem,
         redeemCoinCost: _cost,
         redeemRewardMinutes: _reward,
       );
+      if (error != null) {
+        if (mounted) AppSnackBar.error(context, error);
+        return;
+      }
     }
     navigator.pop();
 
@@ -256,6 +263,13 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
           child: Column(
             children: [
               _ToggleRow(
+                title: s.blockCompletely,
+                hint: s.manualBlockHint,
+                value: _isBlocked,
+                onChanged: (value) => setState(() => _isBlocked = value),
+              ),
+              const DsDivider(),
+              _ToggleRow(
                 title: s.dailyLimitToggle,
                 hint: s.dailyLimitToggleHint,
                 value: _isLimited,
@@ -282,7 +296,6 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
     );
   }
 }
-
 
 class _ToggleRow extends StatelessWidget {
   const _ToggleRow({

@@ -232,6 +232,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "badgeCoins": m5,
     "badgeTasksDone": m6,
     "badges": MessageLookupByLibrary.simpleMessage("Nishonlar"),
+    "blockCompletely": MessageLookupByLibrary.simpleMessage("To‘liq bloklash"),
     "bothParentsSee": MessageLookupByLibrary.simpleMessage(
       "Ikkala ota-ona bir xil vazifalarni koʻradi va tasdiqlay oladi.",
     ),
@@ -454,6 +455,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "emptyReviewBody": MessageLookupByLibrary.simpleMessage(
       "Yangi topshiriqlar shu yerda chiqadi.",
     ),
+    "enforcementActive": MessageLookupByLibrary.simpleMessage(
+      "Ilova limitlari ishlayapti",
+    ),
+    "enforcementAttention": MessageLookupByLibrary.simpleMessage(
+      "Bola telefonida ilova limitlarini tekshirish kerak.",
+    ),
+    "enforcementNotConfigured": MessageLookupByLibrary.simpleMessage(
+      "Bolaning Android telefonida ilova limitlarini sozlang.",
+    ),
+    "enforcementOffline": MessageLookupByLibrary.simpleMessage(
+      "Bola qurilmasi internetsiz yoki ma’lumot yubormayapti. Telefonni tekshiring.",
+    ),
+    "enforcementUnknown": MessageLookupByLibrary.simpleMessage(
+      "Himoyani tekshirib bo‘lmadi. Qayta urinish uchun bosing.",
+    ),
     "english": MessageLookupByLibrary.simpleMessage("Ingliz"),
     "equipped": MessageLookupByLibrary.simpleMessage("KIYILGAN"),
     "everyAppSetUp": MessageLookupByLibrary.simpleMessage(
@@ -578,13 +594,37 @@ class MessageLookup extends MessageLookupByLibrary {
     "levelShort": MessageLookupByLibrary.simpleMessage("Daraja"),
     "levelValue": m29,
     "limitThisApp": MessageLookupByLibrary.simpleMessage("Ilovani cheklash"),
+    "limitsBattery": MessageLookupByLibrary.simpleMessage(
+      "Batareya sozlamalari",
+    ),
+    "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
+      "Samsung’da batareya cheklovlarini o‘chiring. Xiaomi’da avtomatik ishga tushirishni ham yoqing. Safini’ni uyqudagi ilovalardan chiqaring.",
+    ),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
       "Kunlik limit tugagach, ilova ochilmay qoladi va Safini ekranini koʻrsatadi.",
     ),
     "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
-      "Limitlar hisoblanadi, lekin hali qoʻllanilmaydi. Farzandingiz telefonida sozlashni yakunlang.",
+      "Bloklash uchun bolaning Android telefonida sozlash kerak. iOS bloklashi hozircha mavjud emas.",
+    ),
+    "limitsOverlayAccess": MessageLookupByLibrary.simpleMessage(
+      "Boshqa ilovalar ustida",
+    ),
+    "limitsRetry": MessageLookupByLibrary.simpleMessage(
+      "Tekshirish va ulanish",
+    ),
+    "limitsSetupError": MessageLookupByLibrary.simpleMessage(
+      "Limitlarga ulanib bo‘lmadi. Internetni tekshirib, qayta urining.",
+    ),
+    "limitsSetupHint": MessageLookupByLibrary.simpleMessage(
+      "Android sozlamalarida foydalanish statistikasiga va boshqa ilovalar ustida ko‘rsatishga ruxsat bering.",
+    ),
+    "limitsSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "Ilova limitlarini yoqing",
     ),
     "limitsSubtitle": m30,
+    "limitsUsageAccess": MessageLookupByLibrary.simpleMessage(
+      "Foydalanish statistikasi",
+    ),
     "lockedLabel": MessageLookupByLibrary.simpleMessage("Yopiq"),
     "loginBack": MessageLookupByLibrary.simpleMessage("Orqaga"),
     "loginSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -604,6 +644,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Chiqilsinmi?"),
     "lookCloser": MessageLookupByLibrary.simpleMessage("Batafsil"),
     "manageAll": MessageLookupByLibrary.simpleMessage("Barchasini boshqarish"),
+    "manualBlockHint": MessageLookupByLibrary.simpleMessage(
+      "Ilovani, jumladan sotib olingan vaqtni to‘xtatish.",
+    ),
     "markItDone": MessageLookupByLibrary.simpleMessage(
       "Bajarildi deb belgilash",
     ),
