@@ -1,5 +1,7 @@
 package com.safini.app
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -13,6 +15,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        createProtectionChannel()
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.safini.app/app_block")
             .setMethodCallHandler { call, result ->
                 try {
@@ -86,6 +89,20 @@ class MainActivity : FlutterActivity() {
             if (error == null) result.success(null) else result.error("sync", error, null)
         } else if (attempt < 30) Handler(Looper.getMainLooper()).postDelayed({ syncWhenStarted(result, attempt+1) },100)
         else result.error("service", "Unable to start app limits.", null)
+    }
+
+    /// Protection alerts are posted here. Importance is HIGH because a parent
+    /// losing app limits is the one thing this app must not deliver silently.
+    private fun createProtectionChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        val manager = getSystemService(NotificationManager::class.java) ?: return
+        manager.createNotificationChannel(
+            NotificationChannel(
+                "safini_protection",
+                getString(R.string.protection_channel_name),
+                NotificationManager.IMPORTANCE_HIGH,
+            )
+        )
     }
 
     private fun installedLaunchableApps(): List<Map<String, String>> {

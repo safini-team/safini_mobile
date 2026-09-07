@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
@@ -8,6 +10,8 @@ import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/parent_push_service.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
@@ -19,7 +23,11 @@ import 'package:safini/features/parent/presentation/screens/apps/parent_apps_scr
 import 'package:safini/features/parent/presentation/screens/family/parent_family_screen.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
-class ParentMainScreen extends StatelessWidget {
+/// Index of [ParentAppsScreen] in [ParentMainScreen._screens]; a protection
+/// alert opens straight to it.
+const int _appsTabIndex = 2;
+
+class ParentMainScreen extends StatefulWidget {
   const ParentMainScreen({super.key});
 
   static const List<Widget> _screens = [
@@ -30,10 +38,40 @@ class ParentMainScreen extends StatelessWidget {
   ];
 
   @override
+  State<ParentMainScreen> createState() => _ParentMainScreenState();
+}
+
+class _ParentMainScreenState extends State<ParentMainScreen> {
+  late final ParentHomeCubit _home = ParentHomeCubit(
+    initialIndex: getIt<PushDeepLinks>().hasPending ? _appsTabIndex : 0,
+  );
+  StreamSubscription<String>? _deepLinks;
+
+  @override
+  void initState() {
+    super.initState();
+    // The parent surface is what registers for alerts. The child app never
+    // asks for notification permission it has no use for.
+    if (getIt.isRegistered<ParentPushService>()) {
+      unawaited(getIt<ParentPushService>().start());
+    }
+    _deepLinks = getIt<PushDeepLinks>().stream.listen((_) {
+      _home.selectTab(_appsTabIndex);
+    });
+  }
+
+  @override
+  void dispose() {
+    _deepLinks?.cancel();
+    _home.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => ParentHomeCubit()),
+        BlocProvider.value(value: _home),
         BlocProvider(create: (_) => getIt<ParentCubit>()..loadProfile()),
         // Hoisted so the Tasks tab and its badge read the same list.
         BlocProvider(create: (_) => getIt<ParentTasksCubit>()..loadAllTasks()),

@@ -32,6 +32,16 @@
 				<string>com.googleusercontent.apps.82130591868-33vccthbac202r7n1cthp64cj5kn9an8</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.safini.app.deeplink</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>safini</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>

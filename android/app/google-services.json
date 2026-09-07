@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "82130591868",
+    "project_id": "safini-app",
+    "storage_bucket": "safini-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82130591868:android:5505dc28eb8739ddfd69f9",
+        "android_client_info": {
+          "package_name": "com.safini.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82130591868-dd7bfm7n1a2tn67jpkv3uutt5fbj07ii.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF9aA3yb2kiHRORWZE8zMgszq06-z3f-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82130591868-dd7bfm7n1a2tn67jpkv3uutt5fbj07ii.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "82130591868-33vccthbac202r7n1cthp64cj5kn9an8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.safini.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

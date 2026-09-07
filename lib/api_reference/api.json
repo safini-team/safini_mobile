@@ -2795,6 +2795,274 @@
         }
       }
     },
+    "/v1/children/{child_id}/enforcement/session": {
+      "post": {
+        "tags": [
+          "enforcement"
+        ],
+        "summary": "Pair",
+        "description": "Auth: child's Supabase bearer token. Business requirement: pair one Android enforcement device. Frontend note: replaces the previous credential; store with Android Keystore, never logs. Expires after 30 days; renew from the signed-in child app.",
+        "operationId": "pair_v1_children__child_id__enforcement_session_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "enforcement"
+        ],
+        "summary": "Unpair",
+        "description": "Auth: X-Safini-Device-Token. Business requirement: revoke this device on explicit sign-out.",
+        "operationId": "unpair_v1_children__child_id__enforcement_session_delete",
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "x-safini-device-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Safini-Device-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/enforcement/sync": {
+      "post": {
+        "tags": [
+          "enforcement"
+        ],
+        "summary": "Sync",
+        "description": "Auth: X-Safini-Device-Token from child pairing. Business requirement: native background usage, rule synchronization and heartbeat. Frontend note: cumulative whole-minute totals keyed by family-local usage_date, retried safely; do not send deltas. Missing heartbeat means offline/unknown, not confirmed tampering.",
+        "operationId": "sync_v1_children__child_id__enforcement_sync_post",
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "x-safini-device-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Safini-Device-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/enforcement/redeem": {
+      "post": {
+        "tags": [
+          "enforcement"
+        ],
+        "summary": "Redeem",
+        "description": "Auth: X-Safini-Device-Token. Business requirement: purchase from the native block screen. Frontend note: reuse request_id after timeout; one outstanding purchase per device. Response includes fresh rules and wallet. Offline purchases are unavailable.",
+        "operationId": "redeem_v1_children__child_id__enforcement_redeem_post",
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "x-safini-device-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Safini-Device-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/enforcement/status": {
+      "get": {
+        "tags": [
+          "enforcement"
+        ],
+        "summary": "Status",
+        "description": "Auth: parent or claimed child's Supabase bearer token. Business requirement: surface protection failures. Frontend note: poll every minute; offline after three missed heartbeats means unknown connectivity or stopped service, never proof of tampering.",
+        "operationId": "status_v1_children__child_id__enforcement_status_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/apps": {
       "get": {
         "tags": [
@@ -4511,6 +4779,18 @@
       },
       "AppRuleUpdateRequest": {
         "properties": {
+          "is_blocked": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Blocked",
+            "description": "Manual block. Overrides allowance and purchased minutes. Omit to preserve an existing block."
+          },
           "is_limited": {
             "anyOf": [
               {
@@ -5265,6 +5545,42 @@
           "task_id": "9f1c5b4e-6a2b-4a4f-9a0e-2a9d1e7a3b11"
         }
       },
+      "PurchaseRequest": {
+        "properties": {
+          "app_slug": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "App Slug"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Request Id"
+          },
+          "expected_coin_cost": {
+            "type": "integer",
+            "maximum": 100000.0,
+            "minimum": 0.0,
+            "title": "Expected Coin Cost"
+          },
+          "expected_reward_minutes": {
+            "type": "integer",
+            "maximum": 1440.0,
+            "minimum": 1.0,
+            "title": "Expected Reward Minutes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "app_slug",
+          "request_id",
+          "expected_coin_cost",
+          "expected_reward_minutes"
+        ],
+        "title": "PurchaseRequest"
+      },
       "StepsReportRequest": {
         "properties": {
           "steps_count": {
@@ -5299,6 +5615,44 @@
           "source": "healthkit",
           "steps_count": 5200
         }
+      },
+      "SyncRequest": {
+        "properties": {
+          "usage": {
+            "items": {
+              "$ref": "#/components/schemas/AppUsageReportRequest"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Usage"
+          },
+          "usage_access": {
+            "type": "boolean",
+            "title": "Usage Access"
+          },
+          "overlay_permission": {
+            "type": "boolean",
+            "title": "Overlay Permission"
+          },
+          "service_running": {
+            "type": "boolean",
+            "title": "Service Running"
+          },
+          "manufacturer": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Manufacturer",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "usage_access",
+          "overlay_permission",
+          "service_running"
+        ],
+        "title": "SyncRequest"
       },
       "TaskCreateRequest": {
         "properties": {
