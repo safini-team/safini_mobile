@@ -1,7 +1,10 @@
 import 'package:safini/features/parent/presentation/widgets/apps/enforcement_status_card.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
@@ -14,15 +17,40 @@ import 'package:safini/features/parent/presentation/screens/apps/parent_limits_v
 import 'package:safini/features/parent/presentation/widgets/apps/add_app_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet.dart';
 
-class ParentAppsScreen extends StatelessWidget {
+class ParentAppsScreen extends StatefulWidget {
   const ParentAppsScreen({super.key});
 
   @override
+  State<ParentAppsScreen> createState() => _ParentAppsScreenState();
+}
+
+class _ParentAppsScreenState extends State<ParentAppsScreen> {
+  late final ParentAppsCubit _cubit = getIt<ParentAppsCubit>()
+    // A protection alert names the child it is about, so open on that child
+    // rather than whoever was selected last.
+    ..loadAppLimits(childId: getIt<PushDeepLinks>().takeChildId());
+  StreamSubscription<String>? _deepLinks;
+
+  @override
+  void initState() {
+    super.initState();
+    // Covers an alert tapped while this tab is already built.
+    _deepLinks = getIt<PushDeepLinks>().stream.listen((childId) {
+      getIt<PushDeepLinks>().takeChildId();
+      _cubit.selectChild(childId);
+    });
+  }
+
+  @override
+  void dispose() {
+    _deepLinks?.cancel();
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<ParentAppsCubit>()..loadAppLimits(),
-      child: const _ParentLimitsView(),
-    );
+    return BlocProvider.value(value: _cubit, child: const _ParentLimitsView());
   }
 }
 

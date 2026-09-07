@@ -33,6 +33,8 @@ dependencies:
   gotrue: ^2.19.0
   image_picker: ^1.1.2
   url_launcher: ^6.3.2
+  firebase_core: ^4.1.1
+  firebase_messaging: ^16.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

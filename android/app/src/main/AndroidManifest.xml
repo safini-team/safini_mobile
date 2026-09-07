@@ -42,7 +42,24 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Tapping a protection alert opens safini://children/<id>/protection.
+                 singleTop above means a running app gets it through onNewIntent
+                 rather than a second task. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="safini" android:host="children"/>
+            </intent-filter>
         </activity>
+
+        <!-- Channel the protection alerts are posted to. Created in
+             MainActivity so it exists before the first notification arrives;
+             this meta-data is the fallback for messages that arrive while the
+             app has never been opened. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="safini_protection"/>
 
         <!-- Foreground service that polls the foreground app and draws the block
              overlay when a limit/manual block applies. -->

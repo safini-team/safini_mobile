@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/create_family_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/enter_invite_code_page.dart';
@@ -92,7 +94,17 @@ class AppRouter {
   );
 
   RouterConfig<Object> config() {
-    return _router.config();
+    return _router.config(deepLinkBuilder: _deepLink);
+  }
+
+  /// `safini://children/<id>/protection` always enters through the splash
+  /// screen, which is the only place that knows whether this device is signed
+  /// in, and as whom. The child id is parked for the Apps tab to pick up.
+  DeepLink _deepLink(PlatformDeepLink deepLink) {
+    final childId = PushDeepLinks.parseChildId(deepLink.uri);
+    if (childId == null) return deepLink;
+    getIt<PushDeepLinks>().open(childId);
+    return DeepLink.path('/');
   }
 
   void navigateToSplash() => _router.navigatePath('/');

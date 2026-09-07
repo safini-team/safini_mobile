@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/app/app_router.dart';
 import 'package:safini/core/network/dio_network.dart';
+import 'package:safini/core/notifications/parent_push_service.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/child/child_injection.dart';
 import 'package:safini/features/common/common_injection.dart';
@@ -19,7 +22,7 @@ bool get isSharedPreferencesPluginAvailable =>
     _sharedPreferencesPluginAvailable;
 
 /// Awaits [SharedPreferences.getInstance], registers it when available, then registers all dependencies.
-Future<void> configureDependencies() async {
+Future<void> configureDependencies({bool firebaseReady = false}) async {
   try {
     final preferences = await SharedPreferences.getInstance();
     _sharedPreferencesPluginAvailable = true;
@@ -48,6 +51,23 @@ Future<void> configureDependencies() async {
   if (!getIt.isRegistered<Dio>()) {
     DioNetwork.initDio();
     getIt.registerLazySingleton<Dio>(() => DioNetwork.appAPI);
+  }
+
+  if (!getIt.isRegistered<PushDeepLinks>()) {
+    getIt.registerLazySingleton<PushDeepLinks>(PushDeepLinks.new);
+  }
+
+  // Only registered when Firebase actually came up. Everything that uses it
+  // checks isRegistered first, so a build without the config files behaves
+  // exactly as it did before push existed.
+  if (firebaseReady && !getIt.isRegistered<ParentPushService>()) {
+    getIt.registerLazySingleton<ParentPushService>(
+      () => ParentPushService(
+        getIt<Dio>(),
+        FirebaseMessaging.instance,
+        getIt<PushDeepLinks>(),
+      ),
+    );
   }
 
   registerCommonDependencies(getIt);
