@@ -67,7 +67,8 @@ pairing, expire after 30 days without sync, and cannot access general family API
 Run Flutter checks with `flutter analyze` and `flutter test`. Run native checks:
 
 ```sh
-android/gradlew -p android :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+flutter build apk --debug
+android/gradlew -p android :app:testDebugUnitTest :app:assembleDebugAndroidTest
 adb install -r build/app/outputs/apk/debug/app-debug.apk
 adb install -r build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w -e class com.safini.app.EnforcementDeviceTest com.safini.app.test/com.safini.app.FixtureRunner

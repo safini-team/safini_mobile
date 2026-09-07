@@ -78,7 +78,10 @@ jobs:
           java-version: '17'
 
       - name: Android build and native policy tests
-        run: android/gradlew -p android :app:assembleDebug :app:testDebugUnitTest :app:assembleDebugAndroidTest
+        run: |
+          # Flutter creates the ignored Gradle wrapper/local SDK configuration.
+          flutter build apk --debug
+          android/gradlew -p android :app:testDebugUnitTest :app:assembleDebugAndroidTest
 
   openapi-drift:
     name: Vendored OpenAPI matches production
