@@ -17,6 +17,7 @@ class StoreCardData {
     this.toGo,
     this.badge,
     this.owned = false,
+    this.pending = false,
   });
 
   final String id;
@@ -31,6 +32,9 @@ class StoreCardData {
   /// Overrides the price pill, e.g. "12 m left" on an active unlock.
   final String? badge;
   final bool owned;
+
+  /// A purchase for this card is in flight: not tappable, and it says so.
+  final bool pending;
 }
 
 class ChildStoreData {
@@ -118,7 +122,9 @@ class ChildStoreView extends StatelessWidget {
             delegate: SliverChildBuilderDelegate(
               (context, index) => _StoreTile(
                 card: data.cards[index],
-                onTap: () => onOpenCard(data.cards[index]),
+                onTap: data.cards[index].pending
+                    ? null
+                    : () => onOpenCard(data.cards[index]),
               ),
               childCount: data.cards.length,
             ),
@@ -139,7 +145,7 @@ class _StoreTile extends StatelessWidget {
   const _StoreTile({required this.card, required this.onTap});
 
   final StoreCardData card;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +170,11 @@ class _StoreTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Opacity(
-            opacity: card.affordable || card.owned ? 1 : 0.4,
+            opacity: card.pending
+                ? 0.5
+                : card.affordable || card.owned
+                ? 1
+                : 0.4,
             child: Text(card.emoji, style: const TextStyle(fontSize: 32)),
           ),
           const SizedBox(height: 12),
@@ -180,7 +190,16 @@ class _StoreTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          if (card.owned)
+          if (card.pending)
+            const SizedBox(
+              height: 26,
+              width: 26,
+              child: Padding(
+                padding: EdgeInsets.all(4),
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            )
+          else if (card.owned)
             DsPill.paid(
               label: S.of(context).yoursLabel,
               height: 26,
