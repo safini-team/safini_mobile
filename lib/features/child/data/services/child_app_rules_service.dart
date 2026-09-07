@@ -25,6 +25,13 @@ class ChildAppRulesService {
 
   ChildAppRulesService(this._dio);
 
+  Future<Map<String, dynamic>> pairDevice(String childId) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/v1/children/$childId/enforcement/session',
+    );
+    return response.data!;
+  }
+
   /// Loads the controlled-app rules + today's usage the device must enforce.
   Future<Either<Failure, List<ChildAppUsageModel>>> fetchAppRules(
     String childId,

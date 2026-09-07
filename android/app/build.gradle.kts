@@ -42,6 +42,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.safini.app"
+        testInstrumentationRunner = "com.safini.app.FixtureRunner"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // Android 8.0. The Flutter default is 24 (Android 7.0), which is
@@ -83,4 +84,13 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    testImplementation("junit:junit:4.13.2")
+    // Legacy instrumentation APIs belong only to the synthetic test APK.
+    androidTestCompileOnly(files(
+        "${android.sdkDirectory}/platforms/android-${android.compileSdk}/optional/android.test.runner.jar",
+        "${android.sdkDirectory}/platforms/android-${android.compileSdk}/optional/android.test.base.jar",
+    ))
 }

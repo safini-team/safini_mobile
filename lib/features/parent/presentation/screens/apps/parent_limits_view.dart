@@ -5,7 +5,6 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/screen_time_cap.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
@@ -26,6 +25,7 @@ class LimitsApp {
     required this.emoji,
     required this.usedMinutes,
     required this.limitMinutes,
+    this.isBlocked = false,
     required this.isLimited,
     required this.canRedeem,
     this.redeemCoinCost = 100,
@@ -39,6 +39,7 @@ class LimitsApp {
   final int limitMinutes;
 
   /// Does the daily cap apply at all. This is the real "no limit".
+  final bool isBlocked;
   final bool isLimited;
 
   /// May the child buy extra minutes. Independent of [isLimited]: a parent may
@@ -48,7 +49,8 @@ class LimitsApp {
   final int redeemCoinCost;
   final int redeemRewardMinutes;
 
-  bool get isOver => isLimited && limitMinutes > 0 && usedMinutes > limitMinutes;
+  bool get isOver =>
+      isLimited && limitMinutes > 0 && usedMinutes > limitMinutes;
 
   /// "1 h of 45 m · over", "21 m · no limit", "21 m · no free time".
   ///
@@ -57,6 +59,7 @@ class LimitsApp {
   /// and the child has no free time at all.
   String subtitle(S s) {
     final used = formatHm(s, usedMinutes);
+    if (isBlocked) return s.blockCompletely;
     if (!isLimited) return s.usedNoLimit(used);
     if (limitMinutes <= 0) return '$used · ${s.noFreeTime}';
     final limit = formatHm(s, limitMinutes);
@@ -218,8 +221,7 @@ class ParentLimitsView extends StatelessWidget {
                   ],
                 ),
                 DsFootnote(s.limitsFootnote),
-                if (!AppConstants.enforcementShipped)
-                  DsFootnote(s.limitsNotYetEnforced),
+                DsFootnote(s.limitsNotYetEnforced),
               ],
             ),
           ),
@@ -309,11 +311,13 @@ class _AllowancePanel extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             _headline(s),
-            style: AppText.title2.copyWith(
-              letterSpacing: -0.64,
-              color: AppColors.textOnPrimary,
-              fontSize: 32,
-            ).nums,
+            style: AppText.title2
+                .copyWith(
+                  letterSpacing: -0.64,
+                  color: AppColors.textOnPrimary,
+                  fontSize: 32,
+                )
+                .nums,
           ),
           const SizedBox(height: 18),
           DsProgressBar(

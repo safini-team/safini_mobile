@@ -2492,10 +2492,10 @@ class S {
     );
   }
 
-  /// `Limits are counted, not yet enforced. Finish setup on your child's phone.`
+  /// `App blocking requires setup on the child’s Android phone. iOS blocking is not available yet.`
   String get limitsNotYetEnforced {
     return Intl.message(
-      'Limits are counted, not yet enforced. Finish setup on your child\'s phone.',
+      'App blocking requires setup on the child’s Android phone. iOS blocking is not available yet.',
       name: 'limitsNotYetEnforced',
       desc: '',
       args: [],
@@ -4151,6 +4151,156 @@ class S {
       name: 'priceAndGap',
       desc: '',
       args: [cost, gap],
+    );
+  }
+
+  /// `Pause this app, including purchased time.`
+  String get manualBlockHint {
+    return Intl.message(
+      'Pause this app, including purchased time.',
+      name: 'manualBlockHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App limits are running`
+  String get enforcementActive {
+    return Intl.message(
+      'App limits are running',
+      name: 'enforcementActive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not check protection. Tap to retry.`
+  String get enforcementUnknown {
+    return Intl.message(
+      'Could not check protection. Tap to retry.',
+      name: 'enforcementUnknown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Child device is offline or has stopped reporting. Check the phone.`
+  String get enforcementOffline {
+    return Intl.message(
+      'Child device is offline or has stopped reporting. Check the phone.',
+      name: 'enforcementOffline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App limits need attention on the child’s phone.`
+  String get enforcementAttention {
+    return Intl.message(
+      'App limits need attention on the child’s phone.',
+      name: 'enforcementAttention',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set up app limits on the child’s Android phone.`
+  String get enforcementNotConfigured {
+    return Intl.message(
+      'Set up app limits on the child’s Android phone.',
+      name: 'enforcementNotConfigured',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn on app limits`
+  String get limitsSetupTitle {
+    return Intl.message(
+      'Turn on app limits',
+      name: 'limitsSetupTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grant Usage Access and Display over other apps in Android Settings.`
+  String get limitsSetupHint {
+    return Intl.message(
+      'Grant Usage Access and Display over other apps in Android Settings.',
+      name: 'limitsSetupHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Usage Access`
+  String get limitsUsageAccess {
+    return Intl.message(
+      'Usage Access',
+      name: 'limitsUsageAccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Display over other apps`
+  String get limitsOverlayAccess {
+    return Intl.message(
+      'Display over other apps',
+      name: 'limitsOverlayAccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Battery settings`
+  String get limitsBattery {
+    return Intl.message(
+      'Battery settings',
+      name: 'limitsBattery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On Samsung, allow unrestricted battery use. On Xiaomi, also enable autostart. Keep Safini out of sleeping-app lists.`
+  String get limitsBatteryHint {
+    return Intl.message(
+      'On Samsung, allow unrestricted battery use. On Xiaomi, also enable autostart. Keep Safini out of sleeping-app lists.',
+      name: 'limitsBatteryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check and connect`
+  String get limitsRetry {
+    return Intl.message(
+      'Check and connect',
+      name: 'limitsRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not connect app limits. Check the connection and try again.`
+  String get limitsSetupError {
+    return Intl.message(
+      'Could not connect app limits. Check the connection and try again.',
+      name: 'limitsSetupError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block completely`
+  String get blockCompletely {
+    return Intl.message(
+      'Block completely',
+      name: 'blockCompletely',
+      desc: '',
+      args: [],
     );
   }
 }

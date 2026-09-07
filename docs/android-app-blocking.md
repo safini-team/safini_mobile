@@ -1,0 +1,94 @@
+# Android App Blocking — SAF-163
+
+## Scope and rollout
+
+Android catalog apps: YouTube Kids, Roblox, Brawl Stars and Minecraft.
+One paired enforcement device per child. iOS enforcement and arbitrary installed
+packages (SAF-157) are outside this implementation.
+
+Deploy the companion API and migration `20260907_0022` first, then distribute this
+mobile build. The first signed-in child session pairs the native service and asks
+for Usage Access and Display Over Other Apps. Until both are granted and the first
+snapshot is received, setup remains visible. Explicit sign-out stops enforcement,
+clears cached data and attempts credential revocation even if offline.
+
+The parent can independently choose unlimited, daily allowance, manual block and
+whether coins may purchase time. Manual block overrides purchases and unlimited;
+the overall screen-time cap also applies. Parent changes reach an online child
+on the next minute sync. Offline devices keep their last known rules.
+
+## Runtime and contract
+
+`AppBlockForegroundService` owns enforcement independently of Flutter. Every
+500 ms it reads new UsageStats events, accounts foreground time, and shows a native
+localized overlay at exhaustion. Background and covered time do not spend credit.
+It checkpoints elapsed usage every five seconds and reconciles cumulative server
+usage without resetting local counters. A process crash can lose up to five
+seconds of the most recent checkpoint. Budgets reset at family-local midnight;
+yesterday's purchased minutes expire. Usage reports use whole minutes and retain
+seven local dates for offline retries.
+
+Non-secret rules and usage use device-protected storage. Boot/package replacement
+restarts the foreground service when previously enabled. Before the first unlock,
+Android cannot supply UsageStats; enforcement resumes after unlock. The native
+credential is encrypted with an Android Keystore key in credential-protected
+storage. No Supabase refresh token is shared with the native network worker.
+
+All paths below are under `/v1/children/{child_id}/enforcement`:
+
+| Method/path | Authentication | Purpose |
+| --- | --- | --- |
+| POST `/session` | Claimed child's Supabase bearer | Pair/rotate a scoped device credential |
+| POST `/sync` | `X-Safini-Device-Token` | Cumulative usage, permission heartbeat, fresh rules/wallet |
+| POST `/redeem` | Device credential | Idempotent purchase; UUID plus displayed price/minutes |
+| DELETE `/session` | Device credential | Revoke on sign-out |
+| GET `/status` | Authorized parent/child bearer | Active, attention required, offline or not configured |
+
+The native block screen and Flutter shop use the same purchase path. A purchase
+first syncs usage, submits a durable request UUID, checks the displayed price on
+the server and applies the returned snapshot immediately. A lost response can be
+retried without a second charge. Purchases require connectivity; spending already
+cached minutes does not. Device credentials are hashed server-side, rotate on
+pairing, expire after 30 days without sync, and cannot access general family APIs.
+
+## Verification
+
+- Flutter: 256 tests and analyzer pass.
+- Native JVM: seven policy tests; Android debug and test APK builds pass.
+- Emulator: Android 15/API 35; native persistence/reset test; foreground budget
+  exhaustion; visible block overlay; purchase deducts one price and unlocks;
+  automatic service recovery after a cold reboot; offline purchased-time
+  exhaustion and non-charging offline purchase failure.
+- API: full suite against migrated disposable Postgres, including pairing access,
+  scope isolation, duplicate purchase retries, changed prices, manual blocking,
+  historical reports and permission heartbeat transitions.
+
+Run Flutter checks with `flutter analyze` and `flutter test`. Run native checks:
+
+```sh
+android/gradlew -p android :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+adb install -r build/app/outputs/apk/debug/app-debug.apk
+adb install -r build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+adb shell am instrument -w -e class com.safini.app.EnforcementDeviceTest#testPersistentBudgetAndReset com.safini.app.test/com.safini.app.FixtureRunner
+```
+
+The device test replaces local enforcement state: run only on a disposable
+emulator/test installation. `FixtureActivity` is a separate launchable test app;
+map its package only in a disposable API database, never in the production catalog.
+
+## Release gates and limits
+
+- SAF-164: parent push delivery while the parent app is closed. This build shows
+  status while the parent app is open and refreshes every minute. A heartbeat
+  older than three minutes means offline/unknown, not confirmed tampering.
+- SAF-139: Samsung, Xiaomi and budget-device overnight survival, battery use and
+  physical-device permission/reboot checks. Emulator success does not prove these.
+- Google Play review of the `specialUse` foreground service declaration, overlay
+  use and the parental-control disclosures is still required.
+- Force-stop, removing permissions, uninstalling, safe mode, system time changes,
+  split-screen and apps that hide third-party overlays can defeat or weaken this
+  consumer enforcement model. It is not device-owner lockdown. Multi-window and
+  overlay-hiding apps require explicit device QA before expanding the catalog.
+
+Android references: [foreground service types](https://developer.android.com/develop/background-work/services/fgs/service-types),
+[UsageStatsManager unlock behavior](https://developer.android.com/reference/android/app/usage/UsageStatsManager).

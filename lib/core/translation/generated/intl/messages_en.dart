@@ -231,6 +231,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "badgeCoins": m5,
     "badgeTasksDone": m6,
     "badges": MessageLookupByLibrary.simpleMessage("Badges"),
+    "blockCompletely": MessageLookupByLibrary.simpleMessage("Block completely"),
     "bothParentsSee": MessageLookupByLibrary.simpleMessage(
       "Both parents see the same tasks and can approve them.",
     ),
@@ -431,6 +432,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "emptyReviewBody": MessageLookupByLibrary.simpleMessage(
       "New submissions land here.",
     ),
+    "enforcementActive": MessageLookupByLibrary.simpleMessage(
+      "App limits are running",
+    ),
+    "enforcementAttention": MessageLookupByLibrary.simpleMessage(
+      "App limits need attention on the child’s phone.",
+    ),
+    "enforcementNotConfigured": MessageLookupByLibrary.simpleMessage(
+      "Set up app limits on the child’s Android phone.",
+    ),
+    "enforcementOffline": MessageLookupByLibrary.simpleMessage(
+      "Child device is offline or has stopped reporting. Check the phone.",
+    ),
+    "enforcementUnknown": MessageLookupByLibrary.simpleMessage(
+      "Could not check protection. Tap to retry.",
+    ),
     "english": MessageLookupByLibrary.simpleMessage("English"),
     "equipped": MessageLookupByLibrary.simpleMessage("EQUIPPED"),
     "everyAppSetUp": MessageLookupByLibrary.simpleMessage(
@@ -555,13 +571,31 @@ class MessageLookup extends MessageLookupByLibrary {
     "levelShort": MessageLookupByLibrary.simpleMessage("Level"),
     "levelValue": m29,
     "limitThisApp": MessageLookupByLibrary.simpleMessage("Limit this app"),
+    "limitsBattery": MessageLookupByLibrary.simpleMessage("Battery settings"),
+    "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
+      "On Samsung, allow unrestricted battery use. On Xiaomi, also enable autostart. Keep Safini out of sleeping-app lists.",
+    ),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
       "When the daily limit runs out, the app stops opening and shows the Safini screen instead.",
     ),
     "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
-      "Limits are counted, not yet enforced. Finish setup on your child\'s phone.",
+      "App blocking requires setup on the child’s Android phone. iOS blocking is not available yet.",
+    ),
+    "limitsOverlayAccess": MessageLookupByLibrary.simpleMessage(
+      "Display over other apps",
+    ),
+    "limitsRetry": MessageLookupByLibrary.simpleMessage("Check and connect"),
+    "limitsSetupError": MessageLookupByLibrary.simpleMessage(
+      "Could not connect app limits. Check the connection and try again.",
+    ),
+    "limitsSetupHint": MessageLookupByLibrary.simpleMessage(
+      "Grant Usage Access and Display over other apps in Android Settings.",
+    ),
+    "limitsSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "Turn on app limits",
     ),
     "limitsSubtitle": m30,
+    "limitsUsageAccess": MessageLookupByLibrary.simpleMessage("Usage Access"),
     "lockedLabel": MessageLookupByLibrary.simpleMessage("Locked"),
     "loginBack": MessageLookupByLibrary.simpleMessage("Back"),
     "loginSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -581,6 +615,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirmTitle": MessageLookupByLibrary.simpleMessage("Log out?"),
     "lookCloser": MessageLookupByLibrary.simpleMessage("Look closer"),
     "manageAll": MessageLookupByLibrary.simpleMessage("Manage All"),
+    "manualBlockHint": MessageLookupByLibrary.simpleMessage(
+      "Pause this app, including purchased time.",
+    ),
     "markItDone": MessageLookupByLibrary.simpleMessage("Mark it done"),
     "minuteCount": m31,
     "minutes": MessageLookupByLibrary.simpleMessage("Minutes"),

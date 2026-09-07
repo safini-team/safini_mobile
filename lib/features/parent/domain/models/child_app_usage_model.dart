@@ -31,6 +31,7 @@ class ChildAppUsageModel {
 
   /// Does `dailyLimitMinutes` apply at all. False means the app is never
   /// capped, which is what a parent means by "no limit".
+  final bool isBlocked;
   final bool isLimited;
 
   /// May the child spend coins on extra minutes for this app.
@@ -48,6 +49,7 @@ class ChildAppUsageModel {
   const ChildAppUsageModel({
     required this.appSlug,
     required this.displayName,
+    this.isBlocked = false,
     required this.isLimited,
     required this.canRedeem,
     required this.dailyLimitMinutes,
@@ -65,6 +67,7 @@ class ChildAppUsageModel {
       displayName: (json['display_name'] ?? '').toString(),
       // `is_limited` is the newer field; fall back to the deprecated
       // `is_enabled` alias so a build talking to an older API still reads.
+      isBlocked: json['is_blocked'] == true,
       isLimited: json['is_limited'] as bool? ?? true,
       canRedeem: (json['can_redeem'] ?? json['is_enabled']) == true,
       dailyLimitMinutes: asInt(json['daily_limit_minutes']),
@@ -81,6 +84,7 @@ class ChildAppUsageModel {
     return {
       // `is_enabled` used to carry both meanings at once. The server split it
       // into these two and keeps the old key as an alias for one release.
+      'is_blocked': isBlocked,
       'is_limited': isLimited,
       'can_redeem': canRedeem,
       'daily_limit_minutes': dailyLimitMinutes,
@@ -90,6 +94,7 @@ class ChildAppUsageModel {
   }
 
   ChildAppUsageModel copyWith({
+    bool? isBlocked,
     bool? isLimited,
     bool? canRedeem,
     int? dailyLimitMinutes,
@@ -99,6 +104,7 @@ class ChildAppUsageModel {
     return ChildAppUsageModel(
       appSlug: appSlug,
       displayName: displayName,
+      isBlocked: isBlocked ?? this.isBlocked,
       isLimited: isLimited ?? this.isLimited,
       canRedeem: canRedeem ?? this.canRedeem,
       dailyLimitMinutes: dailyLimitMinutes ?? this.dailyLimitMinutes,

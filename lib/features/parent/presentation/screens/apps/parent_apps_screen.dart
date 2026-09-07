@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/apps/enforcement_status_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
@@ -90,6 +91,7 @@ class _ParentLimitsView extends StatelessWidget {
             emoji: AppData.getEmojiForApp(name),
             usedMinutes: (limit['used'] as int?) ?? 0,
             limitMinutes: (limit['limit'] as int?) ?? 0,
+            isBlocked: limit['isBlocked'] == true,
             isLimited: limit['isLimited'] as bool? ?? true,
             canRedeem: limit['canRedeem'] as bool? ?? true,
             redeemCoinCost: (limit['cost'] as int?) ?? 100,
@@ -97,32 +99,43 @@ class _ParentLimitsView extends StatelessWidget {
           );
         }).toList();
 
-        return ParentLimitsView(
-          data: ParentLimitsData(
-            kids: [
-              for (final child in children)
-                LimitsKid(
-                  id: child.id,
-                  name: child.nickname,
-                  color: AppColors.kidColor(child.id),
+        return Column(
+          children: [
+            if (selectedId != null)
+              EnforcementStatusCard(
+                key: ValueKey(selectedId),
+                childId: selectedId,
+              ),
+            Expanded(
+              child: ParentLimitsView(
+                data: ParentLimitsData(
+                  kids: [
+                    for (final child in children)
+                      LimitsKid(
+                        id: child.id,
+                        name: child.nickname,
+                        color: AppColors.kidColor(child.id),
+                      ),
+                  ],
+                  selectedKidId: selectedId,
+                  kidName: selected?.nickname ?? '',
+                  apps: apps,
+                  capMinutes: state.screenTime.limitMinutes,
                 ),
-            ],
-            selectedKidId: selectedId,
-            kidName: selected?.nickname ?? '',
-            apps: apps,
-            capMinutes: state.screenTime.limitMinutes,
-          ),
-          onSelectKid: cubit.selectChild,
-          onSetCap: (minutes) => _setCap(context, cubit, minutes),
-          onOpenApp: (app) => showAppLimitSheet(
-            context,
-            cubit: cubit,
-            app: app,
-            childName: selected?.nickname ?? '',
-          ),
-          onAddApp: () => showAddAppSheet(context, cubit: cubit),
-          onRefresh: () => cubit.loadAppLimits(),
-          onSeeAllApps: onSeeAllApps,
+                onSelectKid: cubit.selectChild,
+                onSetCap: (minutes) => _setCap(context, cubit, minutes),
+                onOpenApp: (app) => showAppLimitSheet(
+                  context,
+                  cubit: cubit,
+                  app: app,
+                  childName: selected?.nickname ?? '',
+                ),
+                onAddApp: () => showAddAppSheet(context, cubit: cubit),
+                onRefresh: () => cubit.loadAppLimits(),
+                onSeeAllApps: onSeeAllApps,
+              ),
+            ),
+          ],
         );
       },
     );

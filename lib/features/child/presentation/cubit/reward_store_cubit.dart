@@ -1,3 +1,5 @@
+import 'package:safini/core/di/injection.dart';
+import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -165,12 +167,26 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
     }
 
     try {
-      final response = await _dio.post(
-        ApiConst.redeemAppTime(childId),
-        data: {'app_slug': id},
-      );
-      _applyBalanceAfter(response.data, fallbackCost: item.cost);
-      final remaining = _grantRemainingMinutes(response.data);
+      final native = getIt.isRegistered<AppBlockService>()
+          ? getIt<AppBlockService>()
+          : null;
+      int? remaining;
+      if (native?.isSupported == true) {
+        final result = await native!.purchaseTime(id, item.cost, item.minutes);
+        _applyBalanceAfter({
+          'balance_after': result['balance'],
+        }, fallbackCost: item.cost);
+        final apps = (result['apps'] as List).whereType<Map>();
+        final app = apps.where((a) => a['app_slug'] == id).firstOrNull;
+        remaining = (app?['remaining_minutes_today'] as num?)?.toInt();
+      } else {
+        final response = await _dio.post(
+          ApiConst.redeemAppTime(childId),
+          data: {'app_slug': id},
+        );
+        _applyBalanceAfter(response.data, fallbackCost: item.cost);
+        remaining = _grantRemainingMinutes(response.data);
+      }
       final updated = state.appTimeItems
           .map(
             (i) => i.id == id
