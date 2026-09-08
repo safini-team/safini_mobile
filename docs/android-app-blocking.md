@@ -2,11 +2,15 @@
 
 ## Scope and rollout
 
-Android catalog apps: YouTube Kids, Roblox, Brawl Stars and Minecraft.
+Android catalog apps: YouTube Kids, Roblox, Brawl Stars, Minecraft, YouTube,
+TikTok, Instagram and Telegram. SAF-165 adds the four missing package mappings
+in API migration `20260908_0026` and the mobile installed-app picker. These map
+the standard Google Play packages; Lite/regional variants and cloned apps need
+separate mappings and testing.
 One paired enforcement device per child. iOS enforcement and arbitrary installed
 packages (SAF-157) are outside this implementation.
 
-Deploy the companion API and migrations through `20260908_0025` first, then distribute this
+Deploy the companion API and migrations through `20260908_0026` first, then distribute this
 mobile build. The first signed-in child session pairs the native service and asks
 for Usage Access and Display Over Other Apps. Until both are granted and the first
 snapshot is received, setup remains visible. Explicit sign-out stops enforcement,
@@ -62,6 +66,11 @@ pairing, expire after 30 days without sync, and cannot access general family API
   automatic service recovery after a cold reboot; offline purchased-time
   exhaustion and non-charging offline purchase failure; revoked Usage Access
   reaches the parent status endpoint as attention required.
+- September 8 installed app audit: signed-in child pairing and native startup;
+  one-minute budget exhaustion; 100-coin purchase unlocks with one ledger charge;
+  purchased time exhausts offline; offline purchase reports failure without charging.
+  Real FCM delivery and signed-in parent navigation are recorded in
+  [parent push verification](parent-push-alerts.md).
 - API: full suite against migrated disposable Postgres, including pairing access,
   scope isolation, duplicate purchase retries, changed prices, manual blocking,
   historical reports and permission heartbeat transitions.
