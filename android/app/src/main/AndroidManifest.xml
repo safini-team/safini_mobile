@@ -113,5 +113,9 @@
         <package android:name="com.roblox.client" />
         <package android:name="com.supercell.brawlstars" />
         <package android:name="com.mojang.minecraftpe" />
+        <package android:name="com.google.android.youtube" />
+        <package android:name="com.zhiliaoapp.musically" />
+        <package android:name="com.instagram.android" />
+        <package android:name="org.telegram.messenger" />
     </queries>
 </manifest>

@@ -15,11 +15,15 @@ void main() {
   test('a package that is not a controlled app resolves to null', () {
     expect(ControlledApps.slugFor('com.whatsapp'), isNull);
     expect(ControlledApps.slugFor(''), isNull);
-    expect(ControlledApps.packageFor('tiktok'), isNull);
+    expect(ControlledApps.packageFor('unlisted-app'), isNull);
   });
 
   test('known mappings are stable', () {
     expect(ControlledApps.slugFor('com.roblox.client'), 'roblox');
+    expect(ControlledApps.slugFor('com.google.android.youtube'), 'youtube');
+    expect(ControlledApps.slugFor('com.zhiliaoapp.musically'), 'tiktok');
+    expect(ControlledApps.slugFor('com.instagram.android'), 'instagram');
+    expect(ControlledApps.slugFor('org.telegram.messenger'), 'telegram');
     expect(
       ControlledApps.packageFor('youtube-kids'),
       'com.google.android.apps.youtube.kids',

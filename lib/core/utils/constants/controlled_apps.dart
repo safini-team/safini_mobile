@@ -16,6 +16,10 @@ class ControlledApps {
     'roblox': 'com.roblox.client',
     'brawl-stars': 'com.supercell.brawlstars',
     'minecraft': 'com.mojang.minecraftpe',
+    'youtube': 'com.google.android.youtube',
+    'tiktok': 'com.zhiliaoapp.musically',
+    'instagram': 'com.instagram.android',
+    'telegram': 'org.telegram.messenger',
   };
 
   /// The Android package for a backend [slug], or `null` when unknown/unmapped.

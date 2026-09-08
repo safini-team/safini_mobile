@@ -11,13 +11,19 @@ closed. The API side and the alert wording live in
   `ParentPushService` in `initState`, so the child app never asks for
   notification permission it has no use for.
 - `PUT /v1/me/push-devices` on start and again on every `onTokenRefresh`.
+  Failed setup retries each minute and on resume. Registration uses the selected
+  app locale. Successful startup remains idempotent.
+- Sign-out cancels retries and token listeners, waits for in-flight registration,
+  and then revokes. Signing in again in the same process registers the new parent.
+  Registration failures never escape the refresh stream as unhandled errors.
 - `DELETE /v1/me/push-devices` during sign-out, before the session is cleared,
   because revoking needs a usable bearer token. The next parent to sign in on a
   shared handset does not inherit the previous one's alerts.
 - A tapped alert carries `deep_link=safini://children/<child id>/protection`.
   `PushDeepLinks` parks the child id, `AppRouter` sends the launch through the
   splash screen (the only place that knows whether this device is signed in),
-  and the Apps tab opens on the child the alert names.
+  and the Apps tab opens on the child the alert names. If that child is missing
+  from cached family membership, refresh the family first (SAF-165).
 - Anything that is not `type=protection_alert`, and any link that is not exactly
   the shape above, is ignored.
 
@@ -45,8 +51,17 @@ Pixel 10a, Android 17, Google Play services, debug build:
 - `flutter test` covers registration, refresh, revocation and message parsing
   against a recording Dio adapter; nothing there needs a network.
 
-Not proven on device: the Apps tab landing on the right child, which needs a
-signed-in parent account, and everything on iOS.
+The September 8 SAF-165 audit additionally used Android 15/API 35, a real local
+API with migrated Postgres and synthetic family accounts. Only the Supabase
+session issuer was replaced by a local harness; Firebase delivery was real.
+The production server's sender delivered only to this emulator's test token.
+
+- A background notification for a child added after app launch arrived, then
+  tapping it refreshed family membership and opened that child's Limits screen
+  with the protection warning. This reproduced the empty-screen bug before the fix.
+- Signing out removed the server registration; signing in again in the same
+  process registered the device again (device count 1 → 0 → 1).
+- 290 Flutter tests and analysis passed. iOS device delivery remains unverified.
 
 ## Left for iOS
 

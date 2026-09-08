@@ -2,11 +2,15 @@
 
 ## Scope and rollout
 
-Android catalog apps: YouTube Kids, Roblox, Brawl Stars and Minecraft.
+Android catalog apps: YouTube Kids, Roblox, Brawl Stars, Minecraft, YouTube,
+TikTok, Instagram and Telegram. SAF-165 adds the four missing package mappings
+in API migration `20260908_0026` and the mobile installed-app picker. These map
+the standard Google Play packages; Lite/regional variants and cloned apps need
+separate mappings and testing.
 One paired enforcement device per child. iOS enforcement and arbitrary installed
 packages (SAF-157) are outside this implementation.
 
-Deploy the companion API and migration `20260907_0022` first, then distribute this
+Deploy the companion API and migrations through `20260908_0026` first, then distribute this
 mobile build. The first signed-in child session pairs the native service and asks
 for Usage Access and Display Over Other Apps. Until both are granted and the first
 snapshot is received, setup remains visible. Explicit sign-out stops enforcement,
@@ -55,13 +59,18 @@ pairing, expire after 30 days without sync, and cannot access general family API
 
 ## Verification
 
-- Flutter: 258 tests and analyzer pass.
+- September 8 audit: 290 Flutter tests and analyzer pass (one existing skipped test).
 - Native JVM: seven policy tests; Android debug and test APK builds pass.
 - Emulator: Android 15/API 35; native persistence/reset, boot-observation and family-midnight tests; foreground budget
   exhaustion; visible block overlay; purchase deducts one price and unlocks;
   automatic service recovery after a cold reboot; offline purchased-time
   exhaustion and non-charging offline purchase failure; revoked Usage Access
   reaches the parent status endpoint as attention required.
+- September 8 installed app audit: signed-in child pairing and native startup;
+  one-minute budget exhaustion; 100-coin purchase unlocks with one ledger charge;
+  purchased time exhausts offline; offline purchase reports failure without charging.
+  Real FCM delivery and signed-in parent navigation are recorded in
+  [parent push verification](parent-push-alerts.md).
 - API: full suite against migrated disposable Postgres, including pairing access,
   scope isolation, duplicate purchase retries, changed prices, manual blocking,
   historical reports and permission heartbeat transitions.
@@ -82,9 +91,13 @@ map its package only in a disposable API database, never in the production catal
 
 ## Release gates and limits
 
-- SAF-164: parent push delivery while the parent app is closed. This build shows
-  status while the parent app is open and refreshes every minute. A heartbeat
-  older than three minutes means offline/unknown, not confirmed tampering.
+- SAF-164 parent push is implemented. SAF-165 fixes registration after sign-out,
+  offline registration retries, and backend delivery per recipient. Firebase
+  credentials are configured on the API server. A heartbeat older than three
+  minutes means offline/unknown; the API defaults to another two minutes grace
+  before alerting. Check any deployment override when upgrading the backend.
+- Roll out the audited API and mobile changes together; the September 8 server
+  audit found no paired child devices, so it does not establish live family use.
 - SAF-139: Samsung, Xiaomi and budget-device overnight survival, battery use and
   physical-device permission/reboot checks. Emulator success does not prove these.
 - Google Play review of the `specialUse` foreground service declaration, overlay
