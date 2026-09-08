@@ -25,7 +25,12 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   Future<void> loadAppLimits({String? childId}) async {
     emit(const ParentAppsLoading());
 
-    if (_familyCubit.state.family == null) {
+    final cached = _familyCubit.state.family;
+    // An alert can name a child another parent added after this app opened.
+    // Refresh membership before resolving it, and never substitute another child.
+    if (cached == null ||
+        (childId != null &&
+            !cached.children.any((child) => child.id == childId))) {
       await _familyCubit.loadCurrentFamily(refresh: true);
     }
 

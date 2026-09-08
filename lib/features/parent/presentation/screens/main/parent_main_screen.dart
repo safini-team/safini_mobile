@@ -41,7 +41,8 @@ class ParentMainScreen extends StatefulWidget {
   State<ParentMainScreen> createState() => _ParentMainScreenState();
 }
 
-class _ParentMainScreenState extends State<ParentMainScreen> {
+class _ParentMainScreenState extends State<ParentMainScreen>
+    with WidgetsBindingObserver {
   late final ParentHomeCubit _home = ParentHomeCubit(
     initialIndex: getIt<PushDeepLinks>().hasPending ? _appsTabIndex : 0,
   );
@@ -50,6 +51,7 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // The parent surface is what registers for alerts. The child app never
     // asks for notification permission it has no use for.
     if (getIt.isRegistered<ParentPushService>()) {
@@ -61,7 +63,16 @@ class _ParentMainScreenState extends State<ParentMainScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed &&
+        getIt.isRegistered<ParentPushService>()) {
+      unawaited(getIt<ParentPushService>().start());
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _deepLinks?.cancel();
     _home.close();
     super.dispose();

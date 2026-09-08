@@ -11,6 +11,8 @@ import 'package:safini/core/notifications/push_deep_links.dart';
 /// Records what the app actually put on the wire, without a network.
 class _RecordingAdapter implements HttpClientAdapter {
   final List<RequestOptions> requests = [];
+  int failures = 0;
+  Completer<void>? holdPut;
 
   @override
   Future<ResponseBody> fetch(
@@ -19,6 +21,11 @@ class _RecordingAdapter implements HttpClientAdapter {
     Future<void>? cancelFuture,
   ) async {
     requests.add(options);
+    if (options.method == 'PUT' && holdPut != null) await holdPut!.future;
+    if (failures > 0) {
+      failures--;
+      throw DioException(requestOptions: options);
+    }
     return ResponseBody.fromString(
       jsonEncode({'registered': true}),
       200,
@@ -38,7 +45,8 @@ class _FakeMessaging implements FirebaseMessaging {
   String? token;
   bool deleted = false;
   int permissionRequests = 0;
-  final StreamController<String> refreshes = StreamController<String>.broadcast();
+  final StreamController<String> refreshes =
+      StreamController<String>.broadcast();
 
   @override
   Future<String?> getToken({
@@ -87,8 +95,7 @@ class _FakeMessaging implements FirebaseMessaging {
   }
 
   @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The refresh listener awaits a full request, so one microtask is not enough.
@@ -111,7 +118,9 @@ void main() {
   group('deep link parsing', () {
     test('accepts only the protection link shape', () {
       expect(
-        PushDeepLinks.parseChildId(Uri.parse('safini://children/abc/protection')),
+        PushDeepLinks.parseChildId(
+          Uri.parse('safini://children/abc/protection'),
+        ),
         'abc',
       );
       for (final bad in [
@@ -121,11 +130,7 @@ void main() {
         'https://children/abc/protection',
         'safini://children//protection',
       ]) {
-        expect(
-          PushDeepLinks.parseChildId(Uri.parse(bad)),
-          isNull,
-          reason: bad,
-        );
+        expect(PushDeepLinks.parseChildId(Uri.parse(bad)), isNull, reason: bad);
       }
     });
 
@@ -202,25 +207,88 @@ void main() {
       await service.dispose();
     });
 
-    test('sign-out revokes the token on the server and on the device', () async {
-      final messaging = _FakeMessaging('token-1');
+    test(
+      'sign-out revokes the token on the server and on the device',
+      () async {
+        final messaging = _FakeMessaging('token-1');
+        final service = ParentPushService(
+          dio,
+          messaging,
+          links,
+          openedMessages: const Stream<RemoteMessage>.empty(),
+        );
+        await service.start();
+        await service.revoke();
+
+        final delete = adapter.requests.last;
+        expect(delete.method, 'DELETE');
+        expect(delete.path, '/v1/me/push-devices');
+        expect((delete.data as Map<String, dynamic>)['token'], 'token-1');
+        expect(messaging.deleted, isTrue);
+        expect(service.registeredToken, isNull);
+        await service.dispose();
+      },
+    );
+
+    test('registration can retry after an offline first launch', () async {
+      adapter.failures = 1;
       final service = ParentPushService(
         dio,
-        messaging,
+        _FakeMessaging('token-1'),
         links,
         openedMessages: const Stream<RemoteMessage>.empty(),
       );
       await service.start();
-      await service.revoke();
-
-      final delete = adapter.requests.last;
-      expect(delete.method, 'DELETE');
-      expect(delete.path, '/v1/me/push-devices');
-      expect((delete.data as Map<String, dynamic>)['token'], 'token-1');
-      expect(messaging.deleted, isTrue);
-      expect(service.registeredToken, isNull);
+      await service.start();
+      expect(service.registeredToken, 'token-1');
       await service.dispose();
     });
+
+    test(
+      'a new parent can register after sign-out in the same process',
+      () async {
+        final messaging = _FakeMessaging('old-parent');
+        final service = ParentPushService(
+          dio,
+          messaging,
+          links,
+          openedMessages: const Stream<RemoteMessage>.empty(),
+        );
+        await service.start();
+        await service.revoke();
+        messaging.token = 'new-parent';
+        await service.start();
+        expect(service.registeredToken, 'new-parent');
+        expect((adapter.requests.last.data as Map)['token'], 'new-parent');
+        await service.dispose();
+      },
+    );
+
+    test(
+      'sign-out waits for registration and removes refresh listeners',
+      () async {
+        adapter.holdPut = Completer<void>();
+        final messaging = _FakeMessaging('token-1');
+        final service = ParentPushService(
+          dio,
+          messaging,
+          links,
+          openedMessages: const Stream<RemoteMessage>.empty(),
+        );
+        final starting = service.start();
+        await _settle(() => adapter.requests.isNotEmpty);
+        final stopping = service.revoke();
+        adapter.holdPut!.complete();
+        await Future.wait([starting, stopping]);
+        final count = adapter.requests.length;
+        messaging.refreshes.add('after-signout');
+        await Future<void>.delayed(const Duration(milliseconds: 30));
+        expect(service.registeredToken, isNull);
+        expect(adapter.requests.last.method, 'DELETE');
+        expect(adapter.requests.length, count);
+        await service.dispose();
+      },
+    );
 
     test('a tapped alert routes to the child it names', () {
       final service = ParentPushService(

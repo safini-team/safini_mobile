@@ -11,13 +11,19 @@ closed. The API side and the alert wording live in
   `ParentPushService` in `initState`, so the child app never asks for
   notification permission it has no use for.
 - `PUT /v1/me/push-devices` on start and again on every `onTokenRefresh`.
+  Failed setup retries each minute and on resume. Registration uses the selected
+  app locale. Successful startup remains idempotent.
+- Sign-out cancels retries and token listeners, waits for in-flight registration,
+  and then revokes. Signing in again in the same process registers the new parent.
+  Registration failures never escape the refresh stream as unhandled errors.
 - `DELETE /v1/me/push-devices` during sign-out, before the session is cleared,
   because revoking needs a usable bearer token. The next parent to sign in on a
   shared handset does not inherit the previous one's alerts.
 - A tapped alert carries `deep_link=safini://children/<child id>/protection`.
   `PushDeepLinks` parks the child id, `AppRouter` sends the launch through the
   splash screen (the only place that knows whether this device is signed in),
-  and the Apps tab opens on the child the alert names.
+  and the Apps tab opens on the child the alert names. If that child is missing
+  from cached family membership, refresh the family first (SAF-165).
 - Anything that is not `type=protection_alert`, and any link that is not exactly
   the shape above, is ignored.
 
