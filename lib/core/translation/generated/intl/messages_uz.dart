@@ -631,6 +631,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Google hisobingiz bilan davom eting",
     ),
     "loginTitle": MessageLookupByLibrary.simpleMessage("Kirish"),
+    "loginWithApple": MessageLookupByLibrary.simpleMessage(
+      "Apple bilan davom etish",
+    ),
     "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
       "Email orqali kirish (test)",
     ),

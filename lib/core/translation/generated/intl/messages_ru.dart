@@ -619,6 +619,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Продолжите с аккаунтом Google",
     ),
     "loginTitle": MessageLookupByLibrary.simpleMessage("Вход"),
+    "loginWithApple": MessageLookupByLibrary.simpleMessage(
+      "Продолжить с Apple",
+    ),
     "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
       "Войти по email (тест)",
     ),

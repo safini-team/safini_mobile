@@ -5,6 +5,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/network/auth_token_provider.dart';
 import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/features/common/auth/data/auth_apple_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/me_response.dart';
@@ -20,6 +21,8 @@ class _FakeGoogleAuth extends AuthGoogleSignInService {
     signOutCalled = true;
   }
 }
+
+class _FakeAppleAuth extends AuthAppleSignInService {}
 
 class _FakeEmailAuth extends AuthEmailSignInService {
   String? receivedEmail;
@@ -82,6 +85,7 @@ void main() {
     final tokens = _FakeTokens();
     final cubit = AuthSessionCubit(
       googleAuth,
+      _FakeAppleAuth(),
       _FakeEmailAuth(),
       _meService(tokens),
       tokens,
@@ -100,6 +104,7 @@ void main() {
     final tokens = _FakeTokens();
     final cubit = AuthSessionCubit(
       _FakeGoogleAuth(),
+      _FakeAppleAuth(),
       emailAuth,
       _meService(tokens),
       tokens,
@@ -124,6 +129,7 @@ void main() {
       ..currentAccessToken = 'persisted-session-token';
     final cubit = AuthSessionCubit(
       googleAuth,
+      _FakeAppleAuth(),
       _FakeEmailAuth(),
       _UnauthorizedMeService(tokens),
       tokens,

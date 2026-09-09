@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -69,9 +71,15 @@ class _LoginView extends StatelessWidget {
         final loading =
             state.status == AuthSessionStatus.signingIn ||
             state.status == AuthSessionStatus.fetchingProfile;
+        final googleLoading = loading && state.pendingMethod == AuthMethod.google;
+        final appleLoading = loading && state.pendingMethod == AuthMethod.apple;
         final supabaseBlocked = !SupabaseConfig.isSupabaseConfigured;
         final googleBlocked =
             supabaseBlocked || !SupabaseConfig.isGoogleConfigured;
+        final showApple =
+            !kIsWeb &&
+            (defaultTargetPlatform == TargetPlatform.iOS ||
+                defaultTargetPlatform == TargetPlatform.macOS);
 
         return Scaffold(
           backgroundColor: AppColors.surface,
@@ -153,12 +161,31 @@ class _LoginView extends StatelessWidget {
                     if (!(state.status == AuthSessionStatus.profileError &&
                         state.isUnauthorized)) ...[
                       DsPrimaryButton(
-                        label: loading ? s.signingIn : s.loginWithGoogle,
-                        enabled: !googleBlocked,
-                        busy: loading,
+                        label: googleLoading ? s.signingIn : s.loginWithGoogle,
+                        enabled: !googleBlocked && (!loading || googleLoading),
+                        busy: googleLoading,
                         onTap: () =>
                             context.read<AuthSessionCubit>().signInWithGoogle(),
                       ),
+                      if (showApple) ...[
+                        const SizedBox(height: 10),
+                        DsPrimaryButton(
+                          label: appleLoading ? s.signingIn : s.loginWithApple,
+                          enabled: !supabaseBlocked && (!loading || appleLoading),
+                          busy: appleLoading,
+                          background: Colors.black,
+                          foreground: Colors.white,
+                          shadow: const [],
+                          icon: const Icon(
+                            Icons.apple,
+                            size: 22,
+                            color: Colors.white,
+                          ),
+                          onTap: () => context
+                              .read<AuthSessionCubit>()
+                              .signInWithApple(),
+                        ),
+                      ],
                       if (SupabaseConfig.isEmailSignInEnabled) ...[
                         const SizedBox(height: 10),
                         DsPrimaryButton.secondary(
