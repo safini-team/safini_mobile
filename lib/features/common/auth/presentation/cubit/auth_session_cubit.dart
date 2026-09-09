@@ -8,6 +8,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/network/auth_token_provider.dart';
 import 'package:safini/core/notifications/parent_push_service.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/features/common/auth/data/auth_apple_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/user_me_service.dart';
@@ -27,12 +28,14 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 class AuthSessionCubit extends Cubit<AuthSessionState> {
   AuthSessionCubit(
     this._googleAuth,
+    this._appleAuth,
     this._emailAuth,
     this._meService,
     this._tokens,
   ) : super(const AuthSessionState.initial());
 
   final AuthGoogleSignInService _googleAuth;
+  final AuthAppleSignInService _appleAuth;
   final AuthEmailSignInService _emailAuth;
   final UserMeService _meService;
   final AuthTokenProvider _tokens;
@@ -61,7 +64,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
   // ── Sign-in path ───────────────────────────────────────────────────────
 
   Future<void> signInWithGoogle() async {
-    _emitSigningIn();
+    _emitSigningIn(AuthMethod.google);
 
     try {
       final authResponse = await _googleAuth.signInWithGoogle();
@@ -75,11 +78,26 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
     }
   }
 
+  Future<void> signInWithApple() async {
+    _emitSigningIn(AuthMethod.apple);
+
+    try {
+      final authResponse = await _appleAuth.signInWithApple();
+      await _finishSignIn(
+        authResponse,
+        missingSessionMessage:
+            'Supabase did not return a session after Apple login.',
+      );
+    } catch (e) {
+      _emitSignInError(e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
   Future<void> signInWithEmail({
     required String email,
     required String password,
   }) async {
-    _emitSigningIn();
+    _emitSigningIn(AuthMethod.email);
 
     try {
       final authResponse = await _emailAuth.signIn(
@@ -96,13 +114,14 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
     }
   }
 
-  void _emitSigningIn() {
+  void _emitSigningIn(AuthMethod method) {
     emit(
       state.copyWith(
         status: AuthSessionStatus.signingIn,
         errorMessage: null,
         canRetry: false,
         isUnauthorized: false,
+        pendingMethod: method,
       ),
     );
   }
@@ -139,6 +158,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
         errorMessage: null,
         canRetry: false,
         isUnauthorized: false,
+        pendingMethod: state.pendingMethod,
       ),
     );
 

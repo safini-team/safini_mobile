@@ -1161,6 +1161,16 @@ class S {
     );
   }
 
+  /// `Continue with Apple`
+  String get loginWithApple {
+    return Intl.message(
+      'Continue with Apple',
+      name: 'loginWithApple',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Sign in with email (Test)`
   String get loginWithEmailTest {
     return Intl.message(

@@ -28,6 +28,10 @@ enum AuthSessionStatus {
   profileError,
 }
 
+/// Which sign-in action is currently running. Lets the login page show the
+/// busy state on only the button the user tapped.
+enum AuthMethod { google, apple, email }
+
 class AuthSessionState {
   final AuthSessionStatus status;
 
@@ -44,6 +48,11 @@ class AuthSessionState {
   /// True when the profile fetch returned 401 (token invalid).
   final bool isUnauthorized;
 
+  /// Set while [status] is [signingIn] or [fetchingProfile]; identifies the
+  /// tapped button so only that one shows a spinner. Cleared on every terminal
+  /// state, like [errorMessage].
+  final AuthMethod? pendingMethod;
+
   const AuthSessionState({
     required this.status,
     this.userId,
@@ -51,6 +60,7 @@ class AuthSessionState {
     this.errorMessage,
     this.canRetry = false,
     this.isUnauthorized = false,
+    this.pendingMethod,
   });
 
   const AuthSessionState.initial()
@@ -59,7 +69,8 @@ class AuthSessionState {
       accountType = null,
       errorMessage = null,
       canRetry = false,
-      isUnauthorized = false;
+      isUnauthorized = false,
+      pendingMethod = null;
 
   AuthSessionState copyWith({
     AuthSessionStatus? status,
@@ -68,6 +79,7 @@ class AuthSessionState {
     String? errorMessage,
     bool? canRetry,
     bool? isUnauthorized,
+    AuthMethod? pendingMethod,
   }) {
     return AuthSessionState(
       status: status ?? this.status,
@@ -76,6 +88,7 @@ class AuthSessionState {
       errorMessage: errorMessage,
       canRetry: canRetry ?? this.canRetry,
       isUnauthorized: isUnauthorized ?? this.isUnauthorized,
+      pendingMethod: pendingMethod,
     );
   }
 

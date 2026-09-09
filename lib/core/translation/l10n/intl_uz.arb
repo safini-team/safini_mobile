@@ -144,6 +144,7 @@
   "loginTitle": "Kirish",
   "loginSubtitle": "Google hisobingiz bilan davom eting",
   "loginWithGoogle": "Google bilan davom etish",
+  "loginWithApple": "Apple bilan davom etish",
   "loginWithEmailTest": "Email orqali kirish (test)",
   "emailSignInTitle": "Test hisobiga kirish",
   "emailSignInDescription": "Faqat test va App Review tekshiruvi uchun.",

@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/network/auth_token_provider.dart';
 import 'package:safini/core/network/authenticated_http_client.dart';
+import 'package:safini/features/common/auth/data/auth_apple_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/account_deletion_service.dart';
@@ -44,6 +45,7 @@ void registerCommonDependencies(GetIt sl) {
   sl.registerLazySingleton<AuthGoogleSignInService>(
     AuthGoogleSignInService.new,
   );
+  sl.registerLazySingleton<AuthAppleSignInService>(AuthAppleSignInService.new);
   sl.registerLazySingleton<AuthEmailSignInService>(AuthEmailSignInService.new);
   sl.registerLazySingleton<UserMeService>(
     () => UserMeService(sl<AuthenticatedHttpClient>()),
@@ -51,6 +53,7 @@ void registerCommonDependencies(GetIt sl) {
   sl.registerLazySingleton<AuthSessionCubit>(
     () => AuthSessionCubit(
       sl<AuthGoogleSignInService>(),
+      sl<AuthAppleSignInService>(),
       sl<AuthEmailSignInService>(),
       sl<UserMeService>(),
       sl<AuthTokenProvider>(),

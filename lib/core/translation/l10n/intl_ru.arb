@@ -227,6 +227,7 @@
   "loginTitle": "Вход",
   "loginSubtitle": "Продолжите с аккаунтом Google",
   "loginWithGoogle": "Продолжить с Google",
+  "loginWithApple": "Продолжить с Apple",
   "loginWithEmailTest": "Войти по email (тест)",
   "emailSignInTitle": "Вход в тестовый аккаунт",
   "emailSignInDescription": "Только для отладки и проверки App Review.",

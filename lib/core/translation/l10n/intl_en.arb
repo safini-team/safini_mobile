@@ -227,6 +227,7 @@
   "loginTitle": "Sign in",
   "loginSubtitle": "Continue with your Google account",
   "loginWithGoogle": "Continue with Google",
+  "loginWithApple": "Continue with Apple",
   "loginWithEmailTest": "Sign in with email (Test)",
   "emailSignInTitle": "Test account sign-in",
   "emailSignInDescription": "For debug and App Review accounts only.",
