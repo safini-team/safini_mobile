@@ -61,7 +61,7 @@ class MainActivity : FlutterActivity() {
                             if (service == null) result.error("service", "Connect app limits first.", null)
                             else service.purchaseTime(call.argument<String>("slug")!!,
                                 call.argument<Int>("cost")!!, call.argument<Int>("minutes")!!) { snapshot, error ->
-                                if (error == null) result.success(snapshot.toString()) else result.error("purchase", error, null)
+                                if (error == null) result.success(snapshot.toString()) else result.error("purchase", error.message, null)
                             }
                         }
                         "isRunning" -> result.success(AppBlockForegroundService.instance != null)
@@ -86,7 +86,7 @@ class MainActivity : FlutterActivity() {
     private fun syncWhenStarted(result: MethodChannel.Result, attempt: Int) {
         val service = AppBlockForegroundService.instance
         if (service != null) service.syncNow { error ->
-            if (error == null) result.success(null) else result.error("sync", error, null)
+            if (error == null) result.success(null) else result.error("sync", error.message, null)
         } else if (attempt < 30) Handler(Looper.getMainLooper()).postDelayed({ syncWhenStarted(result, attempt+1) },100)
         else result.error("service", "Unable to start app limits.", null)
     }

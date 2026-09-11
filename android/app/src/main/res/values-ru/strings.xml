@@ -1,4 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="protection_channel_name">Оповещения защиты</string>
+
+    <string name="block_resting_title">%1$s отдыхает</string>
+    <string name="block_resting_body">Время на сегодня закончилось. Завтра приложение снова проснётся.</string>
+    <string name="block_coins_only_body">Бесплатного времени сегодня нет. Открой немного за монеты.</string>
+    <string name="block_unavailable_body">Сегодня приложение закрыто.</string>
+    <string name="block_today">Сегодня</string>
+    <string name="block_minutes_of">%1$d / %2$d мин</string>
+    <string name="block_back_in">Вернётся через %1$s</string>
+    <string name="block_hours_minutes">%1$d ч %2$d мин</string>
+    <string name="block_hours">%1$d ч</string>
+    <string name="block_minutes">%1$d мин</string>
+    <string name="block_unlock">Открыть на %1$d мин</string>
+    <string name="block_earn_title">Или заработай ещё монет</string>
+    <string name="block_earn_subtitle">Выполни задание в Safini</string>
+    <string name="block_open_safini">Открыть Safini</string>
+    <string name="block_close_app">Закрыть %1$s</string>
+    <plurals name="block_confirm_title">
+        <item quantity="one">Потратить %d монету?</item>
+        <item quantity="few">Потратить %d монеты?</item>
+        <item quantity="many">Потратить %d монет?</item>
+        <item quantity="other">Потратить %d монеты?</item>
+    </plurals>
+    <plurals name="block_confirm_body">
+        <item quantity="one">Это ещё %1$d минута в %2$s. Используй её сегодня: в полночь она сгорит.</item>
+        <item quantity="few">Это ещё %1$d минуты в %2$s. Используй их сегодня: в полночь они сгорят.</item>
+        <item quantity="many">Это ещё %1$d минут в %2$s. Используй их сегодня: в полночь они сгорят.</item>
+        <item quantity="other">Это ещё %1$d минуты в %2$s. Используй их сегодня: в полночь они сгорят.</item>
+    </plurals>
+    <string name="block_now">Сейчас</string>
+    <string name="block_after">После</string>
+    <string name="block_confirm_yes">Да, открыть</string>
+    <string name="block_confirm_no">Пока нет</string>
+    <string name="block_unlocking">Открываем…</string>
+    <plurals name="block_need_title">
+        <item quantity="one">Ещё %d монета</item>
+        <item quantity="few">Ещё %d монеты</item>
+        <item quantity="many">Ещё %d монет</item>
+        <item quantity="other">Ещё %d монеты</item>
+    </plurals>
+    <string name="block_need_body">Выполни задание в Safini, чтобы их заработать.</string>
+    <string name="block_towards">Копим на %1$d мин</string>
+    <string name="block_earn_coins">Заработать монеты в Safini</string>
+    <string name="block_paused_title">%1$s на паузе</string>
+    <string name="block_paused_body">Родитель поставил приложение на паузу, монетами его не открыть. Попроси включить его снова.</string>
+    <string name="block_day_title">На сегодня всё</string>
+    <string name="block_day_body">Экранное время на сегодня закончилось. Завтра всё снова проснётся.</string>
+    <plurals name="block_unlocked_title">
+        <item quantity="one">Открыта %d минута</item>
+        <item quantity="few">Открыто %d минуты</item>
+        <item quantity="many">Открыто %d минут</item>
+        <item quantity="other">Открыто %d минуты</item>
+    </plurals>
+    <plurals name="block_unlocked_body">
+        <item quantity="one">Потрачена %d монета. Развлекайся!</item>
+        <item quantity="few">Потрачено %d монеты. Развлекайся!</item>
+        <item quantity="many">Потрачено %d монет. Развлекайся!</item>
+        <item quantity="other">Потрачено %d монеты. Развлекайся!</item>
+    </plurals>
+    <string name="block_left">осталось</string>
+    <string name="block_back_to_app">Вернуться в %1$s</string>
+    <string name="block_offline_title">Нет связи с Safini</string>
+    <string name="block_offline_body">Монеты в безопасности. Подключись к интернету и попробуй ещё раз.</string>
+    <string name="block_failed_title">Не удалось открыть %1$s</string>
+    <string name="block_failed_body">Монеты не списаны. Открой Safini и проверь баланс и лимиты.</string>
+    <plurals name="block_still_coins">
+        <item quantity="one">По-прежнему %d монета</item>
+        <item quantity="few">По-прежнему %d монеты</item>
+        <item quantity="many">По-прежнему %d монет</item>
+        <item quantity="other">По-прежнему %d монеты</item>
+    </plurals>
+    <string name="block_try_again">Попробовать ещё раз</string>
+    <string name="block_failed_hint">Проверь интернет, баланс и лимиты от родителей.</string>
+    <plurals name="block_coins">
+        <item quantity="one">%d монета</item>
+        <item quantity="few">%d монеты</item>
+        <item quantity="many">%d монет</item>
+        <item quantity="other">%d монеты</item>
+    </plurals>
 </resources>
