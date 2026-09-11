@@ -74,9 +74,12 @@ sheet with the actions. Colours and curves mirror `lib/core/theme`; copy lives i
 | Unlocked | purchase went through; stays up until the child leaves it | superhero |
 | Couldn't reach / unlock | purchase failed; a changed price is confirmed again instead | unimpressed |
 
-The design's task suggestions, parent name and bedtime frame need data the enforcement
-snapshot does not carry yet, so the sheet links to Safini's tasks instead. iOS shields are
-SAF-155. `testConfigureLocalFixture` takes `-e language ru|uz` to review a translation.
+The sheet suggests up to three of today's open tasks from the snapshot's `tasks`
+(safini-api#45), best paid first: one as "Or earn it" beside the unlock, "Meanwhile" when
+paused, and the fewest that cover the gap ("2 tasks, 40 coins") when short of coins. With
+none it links to Safini's task list. The parent's name and the bedtime frame need data the
+snapshot does not carry. iOS shields are SAF-155. `testConfigureLocalFixture` takes
+`-e language ru|uz` to review a translation.
 
 ## Verification
 

@@ -91,6 +91,9 @@ class EnforcementStore(context: Context) {
             allowanceMinutes = allowance/60000,
             resetInMinutes = (reset-now+59_999)/60_000,
             remainingSeconds = BlockingPolicy.remaining(rule, used(pkg, date), sameDay, global)?.let { it/1000 },
+            tasks = snapshot.optJSONArray("tasks")?.let { list -> (0 until list.length()).map { list.getJSONObject(it) } }.orEmpty()
+                .map { BlockTask(it.optString("title"), it.optString("category"), it.optInt("coin_reward")) }
+                .filter { it.title.isNotBlank() }.sortedByDescending { it.coins },
         )
     }
 

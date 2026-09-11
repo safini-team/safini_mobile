@@ -12,6 +12,7 @@ import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
@@ -57,6 +58,8 @@ data class BlockFacts(
     val resetInMinutes: Long,
     /** Time left on the app, or null when nothing caps it. */
     val remainingSeconds: Long?,
+    /** Today's tasks the child can still do, best paid first. */
+    val tasks: List<BlockTask> = emptyList(),
 ) {
     val screen: BlockScreen get() = when {
         paused -> BlockScreen.PAUSED
@@ -64,7 +67,19 @@ data class BlockFacts(
         canUnlock && balance < cost -> BlockScreen.NEED_COINS
         else -> BlockScreen.OUT_OF_TIME
     }
+
+    /** How many of the best-paid tasks cover the coins still missing, or null when all of them fall short. */
+    val tasksToGo: Int? get() {
+        var earned = 0
+        tasks.forEachIndexed { i, task ->
+            earned += task.coins
+            if (earned >= cost-balance) return i+1
+        }
+        return null
+    }
 }
+
+data class BlockTask(val title: String, val category: String, val coins: Int)
 
 /** The base takeovers. Confirming, unlocking and a failed purchase are steps on top of OUT_OF_TIME. */
 enum class BlockScreen { PAUSED, DAY_CAP, OUT_OF_TIME, NEED_COINS }
@@ -82,6 +97,8 @@ private val TEXT_SECONDARY = 0xFF4A5A54.toInt()
 private val TEXT_TERTIARY = 0xFF64736D.toInt()
 private val COIN = 0xFFE8A33D.toInt()
 private val COIN_INK = 0xFF3A2A08.toInt()
+private val COIN_PILL_BG = 0xFFFBF1DF.toInt()
+private val COIN_PILL_FG = 0xFF9A6512.toInt()
 private val SCRIM = Color.argb(107, 12, 35, 28)
 private val DANGER_TINT = Color.argb(56, 194, 69, 45)
 
@@ -89,6 +106,18 @@ private val DANGER_TINT = Color.argb(56, 194, 69, 45)
 private val SPRING = PathInterpolator(0.23f, 1f, 0.32f, 1f)
 private val SHEET_IN = PathInterpolator(0.32f, 0.72f, 0f, 1f)
 private val EASE = PathInterpolator(0.25f, 0.1f, 0.25f, 1f)
+
+// lib/core/utils/task_category.dart: the same emoji per category; `real_world` was folded into home.
+private fun emoji(category: String) = when (category.lowercase()) {
+    "home", "real_world" -> "🏠"
+    "school" -> "🎓"
+    "health" -> "🦷"
+    "outdoor" -> "⚽"
+    "learn" -> "📚"
+    "fitness" -> "🏃"
+    "logic" -> "🧩"
+    else -> "⭐"
+}
 
 /** Marks hero rows that span the column, like the meter. */
 private val WIDE = Any()
@@ -420,14 +449,30 @@ class BlockOverlay(private val context: Context, private val host: Host) {
             f.screen == BlockScreen.DAY_CAP -> nightFooter(f)
             f.screen == BlockScreen.OUT_OF_TIME && f.canUnlock -> sheet(
                 unlockButton(f) to 0,
-                earnRow() to 10,
+                (f.tasks.firstOrNull()?.let { taskRow(it, res.getString(R.string.block_task_instead)) } ?: earnRow()) to 10,
                 LinearLayout(context).apply {
                     orientation = LinearLayout.HORIZONTAL
                     addView(textButton(res.getString(R.string.block_open_safini), PINE) { leave(safini()) }, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
                     addView(close(), LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f).apply { marginStart = px(10) })
                 } to 16)
+            f.screen == BlockScreen.NEED_COINS && f.tasks.isNotEmpty() -> {
+                // "Two tasks, 40 coins" when the best ones cover the gap, otherwise just today's list.
+                val enough = f.tasksToGo?.takeIf { it <= 2 }
+                val shown = f.tasks.take(enough ?: 2)
+                val coins = shown.sumOf { it.coins }
+                val title = if (enough == null) res.getString(R.string.block_tasks_today)
+                    else res.getQuantityString(R.plurals.block_task_count, enough, enough)+", "+res.getQuantityString(R.plurals.block_coins, coins, coins)
+                sheet(caption(title, TEXT_TERTIARY).apply { setPadding(px(4), 0, px(4), 0) } to 0,
+                    *shown.map { taskRow(it, null) to 8 }.toTypedArray(),
+                    primary(res.getString(R.string.block_open_safini)) { leave(safini()) } to 14,
+                    close() to 10)
+            }
             f.screen == BlockScreen.NEED_COINS -> sheet(
                 primary(res.getString(R.string.block_earn_coins)) { leave(safini()) } to 0,
+                close() to 10)
+            f.screen == BlockScreen.PAUSED && f.tasks.isNotEmpty() -> sheet(
+                taskRow(f.tasks.first(), res.getString(R.string.block_task_meanwhile)) to 0,
+                primary(res.getString(R.string.block_open_safini)) { leave(safini()) } to 14,
                 close() to 10)
             else -> sheet(primary(res.getString(R.string.block_open_safini)) { leave(safini()) } to 0, close() to 10)
         }
@@ -709,7 +754,32 @@ class BlockOverlay(private val context: Context, private val host: Host) {
         contentDescription = res.getString(R.string.block_unlock, f.minutes)+", "+res.getQuantityString(R.plurals.block_coins, f.cost, f.cost)
     }.tap { openConfirm() }
 
-    /** Where the design suggests one of today's tasks: the snapshot carries none yet, so it points at all of them. */
+    /** One of today's tasks, the design's "Or earn it" row: category, title and what it pays. Opens Safini. */
+    private fun taskRow(task: BlockTask, note: String?) = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        background = round(FILL, dp(18))
+        setPadding(px(14), px(13), px(14), px(13))
+        addView(label(emoji(task.category), 19f, INK).apply {
+            background = round(SHEET, dp(12))
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(px(38), px(38)))
+        addView(LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(label(task.title, 15.5f, INK, medium, -.008f, Gravity.START).apply {
+                maxLines = 2
+                ellipsize = TextUtils.TruncateAt.END
+            }, row())
+            if (note != null) addView(label(note, 13f, TEXT_SECONDARY, align = Gravity.START), row().apply { topMargin = px(2) })
+        }, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f).apply { marginStart = px(12); marginEnd = px(8) })
+        addView(label("+${task.coins}", 14f, COIN_PILL_FG, bold).tabular().apply {
+            background = round(COIN_PILL_BG, dp(100))
+            setPadding(px(11), 0, px(11), 0)
+        }, row(WRAP_CONTENT, px(26)))
+        contentDescription = listOfNotNull(task.title, note, res.getQuantityString(R.plurals.block_coins, task.coins, task.coins)).joinToString(", ")
+    }.tap { leave(safini()) }
+
+    /** When the snapshot has no open tasks for today, the row points at Safini's task list instead. */
     private fun earnRow() = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL

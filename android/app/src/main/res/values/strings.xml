@@ -62,6 +62,13 @@
     </plurals>
     <string name="block_try_again">Try again</string>
     <string name="block_failed_hint">Check the connection, your balance and your parent’s limits.</string>
+    <string name="block_task_instead">Or earn it instead</string>
+    <string name="block_task_meanwhile">Meanwhile, earn coins</string>
+    <string name="block_tasks_today">Today’s tasks</string>
+    <plurals name="block_task_count">
+        <item quantity="one">%d task</item>
+        <item quantity="other">%d tasks</item>
+    </plurals>
     <plurals name="block_coins">
         <item quantity="one">%d coin</item>
         <item quantity="other">%d coins</item>
