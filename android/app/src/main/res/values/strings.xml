@@ -1,4 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="protection_channel_name">Protection alerts</string>
+
+    <!-- Block takeover drawn by AppBlockForegroundService. %1$s is the blocked app's name. -->
+    <string name="block_resting_title">%1$s is resting</string>
+    <string name="block_resting_body">That’s all your time for today. It wakes up again tomorrow.</string>
+    <string name="block_coins_only_body">There’s no free time for it today. Unlock some with your coins.</string>
+    <string name="block_unavailable_body">It isn’t open today.</string>
+    <string name="block_today">Today</string>
+    <string name="block_minutes_of">%1$d / %2$d min</string>
+    <string name="block_back_in">Back in %1$s</string>
+    <string name="block_hours_minutes">%1$dh %2$dm</string>
+    <string name="block_hours">%1$dh</string>
+    <string name="block_minutes">%1$dm</string>
+    <string name="block_unlock">Unlock %1$d min</string>
+    <string name="block_earn_title">Or earn more coins</string>
+    <string name="block_earn_subtitle">Finish a task in Safini</string>
+    <string name="block_open_safini">Open Safini</string>
+    <string name="block_close_app">Close %1$s</string>
+    <plurals name="block_confirm_title">
+        <item quantity="one">Spend %d coin?</item>
+        <item quantity="other">Spend %d coins?</item>
+    </plurals>
+    <plurals name="block_confirm_body">
+        <item quantity="one">That buys %1$d more minute of %2$s. Use it today, it expires at midnight.</item>
+        <item quantity="other">That buys %1$d more minutes of %2$s. Use them today, they expire at midnight.</item>
+    </plurals>
+    <string name="block_now">Now</string>
+    <string name="block_after">After</string>
+    <string name="block_confirm_yes">Yes, unlock it</string>
+    <string name="block_confirm_no">Not yet</string>
+    <string name="block_unlocking">Unlocking…</string>
+    <plurals name="block_need_title">
+        <item quantity="one">%d more coin</item>
+        <item quantity="other">%d more coins</item>
+    </plurals>
+    <string name="block_need_body">Finish a task in Safini to earn them.</string>
+    <string name="block_towards">Towards %1$d min</string>
+    <string name="block_earn_coins">Earn coins in Safini</string>
+    <string name="block_paused_title">%1$s is paused</string>
+    <string name="block_paused_body">A parent paused this app, so coins can’t open it. Ask them to switch it back on.</string>
+    <string name="block_day_title">That’s all for today</string>
+    <string name="block_day_body">You’ve used all your screen time. Everything wakes up again tomorrow.</string>
+    <plurals name="block_unlocked_title">
+        <item quantity="one">%d minute, unlocked</item>
+        <item quantity="other">%d minutes, unlocked</item>
+    </plurals>
+    <plurals name="block_unlocked_body">
+        <item quantity="one">Spent %d coin. Go have fun!</item>
+        <item quantity="other">Spent %d coins. Go have fun!</item>
+    </plurals>
+    <string name="block_left">left</string>
+    <string name="block_back_to_app">Back to %1$s</string>
+    <string name="block_offline_title">Couldn’t reach Safini</string>
+    <string name="block_offline_body">Your coins are safe. Get back online and try again.</string>
+    <string name="block_failed_title">Couldn’t unlock %1$s</string>
+    <string name="block_failed_body">Nothing was spent. Open Safini to check your coins and limits.</string>
+    <plurals name="block_still_coins">
+        <item quantity="one">Still %d coin</item>
+        <item quantity="other">Still %d coins</item>
+    </plurals>
+    <string name="block_try_again">Try again</string>
+    <string name="block_failed_hint">Check the connection, your balance and your parent’s limits.</string>
+    <plurals name="block_coins">
+        <item quantity="one">%d coin</item>
+        <item quantity="other">%d coins</item>
+    </plurals>
 </resources>

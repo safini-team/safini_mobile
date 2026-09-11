@@ -1,4 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="protection_channel_name">Himoya ogohlantirishlari</string>
+
+    <string name="block_resting_title">%1$s dam olyapti</string>
+    <string name="block_resting_body">Bugungi vaqting tugadi. Ilova ertaga yana uygʻonadi.</string>
+    <string name="block_coins_only_body">Bugun bepul vaqt yoʻq. Tangalaring evaziga biroz vaqt och.</string>
+    <string name="block_unavailable_body">Bugun ilova yopiq.</string>
+    <string name="block_today">Bugun</string>
+    <string name="block_minutes_of">%1$d / %2$d daqiqa</string>
+    <string name="block_back_in">%1$sdan keyin qaytadi</string>
+    <string name="block_hours_minutes">%1$d soat %2$d daqiqa</string>
+    <string name="block_hours">%1$d soat</string>
+    <string name="block_minutes">%1$d daqiqa</string>
+    <string name="block_unlock">%1$d daqiqaga ochish</string>
+    <string name="block_earn_title">Yoki koʻproq tanga ishlab top</string>
+    <string name="block_earn_subtitle">Safini’da vazifa bajar</string>
+    <string name="block_open_safini">Safini’ni ochish</string>
+    <string name="block_close_app">%1$s’ni yopish</string>
+    <plurals name="block_confirm_title">
+        <item quantity="one">%d tanga sarflaysanmi?</item>
+        <item quantity="other">%d tanga sarflaysanmi?</item>
+    </plurals>
+    <plurals name="block_confirm_body">
+        <item quantity="one">Bu %2$s uchun yana %1$d daqiqa beradi. Bugun ishlat: yarim tunda tugaydi.</item>
+        <item quantity="other">Bu %2$s uchun yana %1$d daqiqa beradi. Bugun ishlat: yarim tunda tugaydi.</item>
+    </plurals>
+    <string name="block_now">Hozir</string>
+    <string name="block_after">Keyin</string>
+    <string name="block_confirm_yes">Ha, ochish</string>
+    <string name="block_confirm_no">Hozircha yoʻq</string>
+    <string name="block_unlocking">Ochilmoqda…</string>
+    <plurals name="block_need_title">
+        <item quantity="one">Yana %d tanga kerak</item>
+        <item quantity="other">Yana %d tanga kerak</item>
+    </plurals>
+    <string name="block_need_body">Ularni Safini’da vazifa bajarib ishlab top.</string>
+    <string name="block_towards">%1$d daqiqa uchun</string>
+    <string name="block_earn_coins">Safini’da tanga ishlab topish</string>
+    <string name="block_paused_title">%1$s toʻxtatilgan</string>
+    <string name="block_paused_body">Ota-onang bu ilovani toʻxtatgan, uni tanga bilan ochib boʻlmaydi. Qayta yoqishni soʻra.</string>
+    <string name="block_day_title">Bugunga yetarli</string>
+    <string name="block_day_body">Bugungi ekran vaqting tugadi. Ertaga hammasi yana uygʻonadi.</string>
+    <plurals name="block_unlocked_title">
+        <item quantity="one">%d daqiqa ochildi</item>
+        <item quantity="other">%d daqiqa ochildi</item>
+    </plurals>
+    <plurals name="block_unlocked_body">
+        <item quantity="one">%d tanga sarflandi. Maroqli vaqt oʻtkaz!</item>
+        <item quantity="other">%d tanga sarflandi. Maroqli vaqt oʻtkaz!</item>
+    </plurals>
+    <string name="block_left">qoldi</string>
+    <string name="block_back_to_app">%1$s’ga qaytish</string>
+    <string name="block_offline_title">Safini bilan aloqa yoʻq</string>
+    <string name="block_offline_body">Tangalaring joyida. Internetga ulanib, qayta urinib koʻr.</string>
+    <string name="block_failed_title">%1$s ochilmadi</string>
+    <string name="block_failed_body">Hech narsa sarflanmadi. Balans va cheklovlarni Safini’da tekshir.</string>
+    <plurals name="block_still_coins">
+        <item quantity="one">Hali ham %d tanga</item>
+        <item quantity="other">Hali ham %d tanga</item>
+    </plurals>
+    <string name="block_try_again">Qayta urinish</string>
+    <string name="block_failed_hint">Internet, balans va ota-ona cheklovlarini tekshir.</string>
+    <plurals name="block_coins">
+        <item quantity="one">%d tanga</item>
+        <item quantity="other">%d tanga</item>
+    </plurals>
 </resources>

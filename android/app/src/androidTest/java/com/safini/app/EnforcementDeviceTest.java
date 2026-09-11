@@ -52,6 +52,30 @@ public class EnforcementDeviceTest extends InstrumentationTestCase {
         assertEquals(Long.valueOf(30000L), store.remaining(pkg, before+60000));
         store.clear();
     }
+    public void testBlockFactsExplainTheBlock() throws Exception {
+        EnforcementStore store = new EnforcementStore(context());
+        store.clear();
+        String pkg = "com.safini.app.test";
+        long now = java.time.Instant.parse("2026-09-07T12:00:00Z").toEpochMilli();
+        JSONObject app = new JSONObject().put("app_slug", "roblox").put("display_name", "Roblox").put("package_name", pkg)
+            .put("is_limited", true).put("daily_limit_minutes", 60).put("used_minutes", 60).put("can_redeem", true)
+            .put("redeem_coin_cost", 60).put("redeem_reward_minutes", 30);
+        JSONObject data = new JSONObject().put("usage_date", "2026-09-07").put("family_timezone", "Asia/Tashkent")
+            .put("balance", 20).put("apps", new JSONArray().put(app));
+        store.applySnapshot(data);
+        BlockFacts facts = store.blockFacts(pkg, now);
+        assertEquals(BlockScreen.NEED_COINS, facts.getScreen());
+        assertEquals(60L, facts.getAllowanceMinutes());
+        // 12:00Z is 17:00 in Tashkent, seven hours before the family's midnight.
+        assertEquals(420L, facts.getResetInMinutes());
+        data.put("screen_time", new JSONObject().put("global_limit_minutes", 60).put("global_used_minutes", 60));
+        store.applySnapshot(data);
+        assertEquals(BlockScreen.DAY_CAP, store.blockFacts(pkg, now).getScreen());
+        app.put("is_blocked", true);
+        store.applySnapshot(data);
+        assertEquals(BlockScreen.PAUSED, store.blockFacts(pkg, now).getScreen());
+        store.clear();
+    }
     public void testBootKeepsBudgetWithoutChargingPoweredOffTime() throws Exception {
         EnforcementStore store = new EnforcementStore(context());
         store.clear();
@@ -87,9 +111,15 @@ public class EnforcementDeviceTest extends InstrumentationTestCase {
         client.configure("http://10.0.2.2:8765", args.getString("childId"), token, java.time.Instant.now().plusSeconds(30L*86400).toString());
         EnforcementStore store = new EnforcementStore(context());
         store.clear();
+        // Optional `-e language ru|uz` renders the block screen in the child's app language.
+        if (args.getString("language") != null) store.setLanguage(args.getString("language"));
         JSONObject body = new JSONObject().put("usage", new JSONArray()).put("usage_access", true)
             .put("overlay_permission", true).put("service_running", true);
         store.applySnapshot(client.request("/sync", body, "POST"));
         context().startForegroundService(new Intent(context(), AppBlockForegroundService.class));
+        // Instrumentation ends by killing this process; wait until the service has persisted `enabled`,
+        // so a package replace or reboot restarts it against the fixture.
+        for (int i = 0; i < 50 && !store.getEnabled(); i++) Thread.sleep(100);
+        assertTrue(store.getEnabled());
     }
 }

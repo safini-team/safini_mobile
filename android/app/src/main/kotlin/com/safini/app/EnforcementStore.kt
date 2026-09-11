@@ -43,21 +43,55 @@ class EnforcementStore(context: Context) {
         }
     }
 
+    private fun rule(app: JSONObject) = BlockingRule(app.optBoolean("is_blocked"), app.optBoolean("is_limited", true),
+        app.optLong("daily_limit_minutes")*60000, app.optLong("used_minutes")*60000,
+        app.optLong("bonus_minutes_remaining")*60000)
+
+    /** The overall daily cap left in ms, or null when the parent has not set one. */
+    private fun globalRemaining(date: String, sameDay: Boolean): Long? {
+        val cap = snapshot.optJSONObject("screen_time")
+        if (cap == null || cap.isNull("global_limit_minutes")) return null
+        val localTotal = apps().sumOf { used(it.optString("package_name"), date) }
+        val knownServer = apps().filter { it.optString("package_name").isNotEmpty() && it.optString("package_name") != "null" }.sumOf { it.optLong("used_minutes")*60000 }
+        val other = if (sameDay) (cap.optLong("global_used_minutes")*60000-knownServer).coerceAtLeast(0) else 0
+        return cap.optLong("global_limit_minutes")*60000-localTotal-other
+    }
+
     fun remaining(pkg: String, now: Long): Long? {
         val app = app(pkg) ?: return null
         val date = day(now)
         val sameDay = date == snapshot.optString("usage_date")
-        val policy = BlockingRule(app.optBoolean("is_blocked"), app.optBoolean("is_limited", true),
-            app.optLong("daily_limit_minutes")*60000, app.optLong("used_minutes")*60000,
-            app.optLong("bonus_minutes_remaining")*60000)
-        val cap = snapshot.optJSONObject("screen_time")
-        val globalRemaining = if (cap == null || cap.isNull("global_limit_minutes")) null else {
-            val localTotal = apps().sumOf { used(it.optString("package_name"), date) }
-            val knownServer = apps().filter { it.optString("package_name").isNotEmpty() && it.optString("package_name") != "null" }.sumOf { it.optLong("used_minutes")*60000 }
-            val other = if (sameDay) (cap.optLong("global_used_minutes")*60000-knownServer).coerceAtLeast(0) else 0
-            cap.optLong("global_limit_minutes")*60000-localTotal-other
+        return BlockingPolicy.remaining(rule(app), used(pkg, date), sameDay, globalRemaining(date, sameDay))
+    }
+
+    /** What the block screen tells the child about [pkg]: why it is closed and what coins can still do. */
+    fun blockFacts(pkg: String, now: Long): BlockFacts? {
+        val app = app(pkg) ?: return null
+        val date = day(now)
+        val sameDay = date == snapshot.optString("usage_date")
+        val rule = rule(app)
+        val global = globalRemaining(date, sameDay)
+        // The server refuses purchases once the overall cap is spent, so that reason wins over the app's own.
+        val dayCap = !rule.blocked && global != null && global <= 0
+        val allowance = when {
+            dayCap -> snapshot.getJSONObject("screen_time").optLong("global_limit_minutes")*60000
+            sameDay -> maxOf(rule.dailyMs, rule.serverUsedMs)+rule.bonusRemainingMs
+            else -> rule.dailyMs
         }
-        return BlockingPolicy.remaining(policy, used(pkg, date), sameDay, globalRemaining)
+        val reset = Instant.ofEpochMilli(now).atZone(zone()).toLocalDate().plusDays(1).atStartOfDay(zone()).toInstant().toEpochMilli()
+        return BlockFacts(
+            slug = app.optString("app_slug"),
+            appName = app.optString("display_name").ifBlank { app.optString("app_slug") },
+            paused = rule.blocked,
+            dayCap = dayCap,
+            canUnlock = app.optBoolean("can_redeem") && app.optInt("redeem_reward_minutes") > 0,
+            cost = app.optInt("redeem_coin_cost"),
+            minutes = app.optInt("redeem_reward_minutes"),
+            balance = snapshot.optInt("balance"),
+            allowanceMinutes = allowance/60000,
+            resetInMinutes = (reset-now+59_999)/60_000,
+            remainingSeconds = BlockingPolicy.remaining(rule, used(pkg, date), sameDay, global)?.let { it/1000 },
+        )
     }
 
     fun applySnapshot(data: JSONObject) {

@@ -57,6 +57,27 @@ retried without a second charge. Purchases require connectivity; spending alread
 cached minutes does not. Device credentials are hashed server-side, rotate on
 pairing, expire after 30 days without sync, and cannot access general family APIs.
 
+## Block screen
+
+`BlockOverlay` draws the SAF-166 "Takeover" design (Claude Design project "App blocked
+screen redesign", direction 1a): full-bleed pine, one mascot mood per state, and a sand
+sheet with the actions. Colours and curves mirror `lib/core/theme`; copy lives in
+`res/values{,-ru,-uz}/strings.xml` and follows the child's app language, not the system's.
+
+| State | When | Mascot |
+| --- | --- | --- |
+| Resting | app budget spent; unlock offered when coins may buy time | firm |
+| Short of coins | coin unlock allowed, balance below the price | encouraging |
+| Paused | parent's manual block | stop |
+| That's all for today | overall screen-time cap spent; purchases are refused | relaxed |
+| Confirm | sheet over Resting before any spend | (Resting's) |
+| Unlocked | purchase went through; stays up until the child leaves it | superhero |
+| Couldn't reach / unlock | purchase failed; a changed price is confirmed again instead | unimpressed |
+
+The design's task suggestions, parent name and bedtime frame need data the enforcement
+snapshot does not carry yet, so the sheet links to Safini's tasks instead. iOS shields are
+SAF-155. `testConfigureLocalFixture` takes `-e language ru|uz` to review a translation.
+
 ## Verification
 
 - September 8 audit: 290 Flutter tests and analyzer pass (one existing skipped test).

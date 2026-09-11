@@ -5,20 +5,13 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.*
 import android.content.pm.ServiceInfo
-import android.graphics.Color
-import android.graphics.PixelFormat
-import android.graphics.drawable.GradientDrawable
-import android.view.View
 import android.os.*
 import android.provider.Settings
-import android.view.Gravity
-import android.view.WindowManager
-import android.widget.*
 import org.json.JSONObject
 import java.util.concurrent.Executors
 
 /** Native enforcement and sync continue even when Flutter is suspended. */
-class AppBlockForegroundService : Service() {
+class AppBlockForegroundService : Service(), BlockOverlay.Host {
     companion object {
         const val ACTION_SYNC = "com.safini.app.ENFORCEMENT_SYNC"
         var instance: AppBlockForegroundService? = null
@@ -28,22 +21,20 @@ class AppBlockForegroundService : Service() {
     private val network = Executors.newSingleThreadExecutor()
     private lateinit var store: EnforcementStore
     private lateinit var client: EnforcementClient
-    private lateinit var windows: WindowManager
-    private var overlay: View? = null
-    private var overlayPackage: String? = null
+    private lateinit var overlay: BlockOverlay
     private var syncing = false
     private var stopped = false
     private var nextSync = 0L
     private var nextPersist = 0L
     private var purchase = false
-    private val waiters = mutableListOf<(String?) -> Unit>()
+    private val waiters = mutableListOf<(Throwable?) -> Unit>()
 
     override fun onCreate() {
         super.onCreate()
         instance = this
         store = EnforcementStore(this)
         client = EnforcementClient(this)
-        windows = getSystemService(WindowManager::class.java)
+        overlay = BlockOverlay(this, this)
         notification()
         handler.post(tick)
     }
@@ -67,7 +58,7 @@ class AppBlockForegroundService : Service() {
         handler.removeCallbacks(tick)
         removeOverlay()
         network.shutdownNow()
-        waiters.toList().forEach { it("App limits stopped.") }
+        waiters.toList().forEach { it(IllegalStateException("App limits stopped.")) }
         waiters.clear()
         if (instance === this) instance = null
         super.onDestroy()
@@ -85,8 +76,9 @@ class AppBlockForegroundService : Service() {
                         !getSystemService(KeyguardManager::class.java).isKeyguardLocked
                     val pkg = store.foreground
                     if (interactive && Settings.canDrawOverlays(this@AppBlockForegroundService) &&
-                        pkg != null && pkg != packageName && store.remaining(pkg, now) == 0L) showOverlay(pkg)
-                    else removeOverlay()
+                        pkg != null && pkg != packageName && store.remaining(pkg, now) == 0L) showOverlay(pkg, now)
+                    // The success screen stays over the reopened app until the child leaves it.
+                    else if (!interactive || pkg == null || !overlay.holds(pkg)) removeOverlay()
                     if (SystemClock.elapsedRealtime() >= nextSync && !syncing) syncNow()
                 }
                 if (SystemClock.elapsedRealtime() >= nextPersist) { store.persist(); nextPersist = SystemClock.elapsedRealtime()+5000 }
@@ -131,7 +123,7 @@ class AppBlockForegroundService : Service() {
         store.cursor = now
     }
 
-    fun syncNow(done: ((String?) -> Unit)? = null) {
+    fun syncNow(done: ((Throwable?) -> Unit)? = null) {
         done?.let { waiters.add(it) }
         if (syncing || stopped) return
         if (!getSystemService(UserManager::class.java).isUserUnlocked) return
@@ -146,16 +138,17 @@ class AppBlockForegroundService : Service() {
             val response = runCatching { client.request("/sync", body) }
             handler.post {
                 if (stopped) return@post
-                response.onSuccess { store.applySnapshot(it); if (!purchase) removeOverlay() }
+                response.onSuccess { store.applySnapshot(it); if (!purchase) refreshOverlay() }
                 syncing = false
                 val callbacks = waiters.toList(); waiters.clear()
-                callbacks.forEach { it(response.exceptionOrNull()?.message) }
+                callbacks.forEach { it(response.exceptionOrNull()) }
             }
         }
     }
 
-    fun purchaseTime(slug: String, cost: Int, minutes: Int, done: (JSONObject?, String?) -> Unit) {
-        if (purchase || syncing) { done(null, "Please wait for the current operation."); return }
+    fun purchaseTime(slug: String, cost: Int, minutes: Int, done: (JSONObject?, Throwable?) -> Unit) {
+        // A sync already in flight is joined below, so only a second purchase has to wait.
+        if (purchase) { done(null, IllegalStateException("Please wait for the current operation.")); return }
         purchase = true
         syncNow { syncError ->
             if (syncError != null) { purchase = false; done(null, syncError) }
@@ -167,11 +160,12 @@ class AppBlockForegroundService : Service() {
                 }
                 handler.post {
                     purchase = false
-                    if (stopped) { done(null, "App limits stopped."); return@post }
-                    result.onSuccess { client.purchased(); store.applySnapshot(it); removeOverlay(); done(it, null) }
+                    if (stopped) { done(null, IllegalStateException("App limits stopped.")); return@post }
+                    // The block screen switches to its success state itself; the tick drops it once the child leaves.
+                    result.onSuccess { client.purchased(); store.applySnapshot(it); done(it, null) }
                         .onFailure { error ->
                             if (error is EnforcementHttpException && error.status in 400..499 && error.status != 408 && error.status != 429) client.purchased()
-                            done(null, error.message)
+                            done(null, error)
                         }
                 }
             }
@@ -179,72 +173,27 @@ class AppBlockForegroundService : Service() {
     }
 
     private fun text(en: String, ru: String, uz: String): String = when (store.language) { "ru" -> ru; "uz" -> uz; else -> en }
-    private fun showOverlay(pkg: String) {
-        if (overlayPackage == pkg && overlay != null) return
-        removeOverlay()
-        val app = store.app(pkg) ?: return
-        val box = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER
-            setPadding(48, 64, 48, 64)
-            setBackgroundColor(Color.rgb(247,245,240))
-        }
-        fun label(value: String, size: Float) = TextView(this).apply {
-            text = value; textSize = size; gravity = Gravity.CENTER
-            setTextColor(Color.rgb(31,65,49)); setPadding(0,16,0,16)
-            box.addView(this, LinearLayout.LayoutParams(-1,-2))
-        }
-        label("Safini", 32f)
-        label(text("Time for a break", "Время для перерыва", "Tanaffus vaqti"), 25f)
-        label(app.optString("display_name"), 20f)
-        label(text("Time Coins", "Монеты времени", "Vaqt tangalari")+": "+store.snapshot.optInt("balance"), 18f)
-        val blocked = app.optBoolean("is_blocked")
-        val cost = app.optInt("redeem_coin_cost")
-        val minutes = app.optInt("redeem_reward_minutes")
-        val message = label(if (blocked) text("Your parent has paused this app.", "Родитель приостановил это приложение.", "Ota-onangiz bu ilovani to‘xtatgan.") else
-            text("Earn coins with tasks, or use your coins for more time.", "Выполняй задания или обменяй монеты на время.", "Topshiriqlar bilan tanga to‘pla yoki vaqt sotib ol."), 17f)
-        if (!blocked && app.optBoolean("can_redeem") && minutes > 0) {
-            val buy = Button(this).apply {
-                text = "$cost "+this@AppBlockForegroundService.text("coins", "монет", "tanga")+" → $minutes "+this@AppBlockForegroundService.text("min", "мин", "daq")
-                isAllCaps = false
-                setTextColor(Color.WHITE)
-                background = GradientDrawable().apply { setColor(Color.rgb(31,65,49)); cornerRadius = 24f }
-                isEnabled = !purchase && !syncing && store.snapshot.optInt("balance") >= cost
-            }
-            box.addView(buy, LinearLayout.LayoutParams(-1,-2))
-            buy.setOnClickListener {
-                buy.isEnabled = false
-                purchaseTime(app.getString("app_slug"), cost, minutes) { _, error ->
-                    if (error != null) {
-                        message.text = text("Unable to buy time. Check your connection, balance and parent limits in Safini.",
-                            "Не удалось купить время. Проверь интернет, баланс и лимиты в Safini.",
-                            "Vaqt sotib olinmadi. Internet, balans va limitlarni Safini’da tekshiring.")
-                        buy.isEnabled = true
-                    }
-                }
-            }
-        }
-        box.addView(Button(this).apply {
-            text = this@AppBlockForegroundService.text("Open Safini", "Открыть Safini", "Safini’ni ochish")
-            setOnClickListener {
-                startActivity(packageManager.getLaunchIntentForPackage(packageName)!!.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                removeOverlay()
-            }
-        }, LinearLayout.LayoutParams(-1,-2))
-        val scroll = ScrollView(this).apply {
-            isFillViewport = true
-            setBackgroundColor(Color.rgb(247,245,240))
-            addView(box, FrameLayout.LayoutParams(-1,-2))
-        }
-        windows.addView(scroll, WindowManager.LayoutParams(-1,-1,WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, PixelFormat.OPAQUE))
-        overlay = scroll; overlayPackage = pkg; store.covered = true
+    private fun showOverlay(pkg: String, now: Long) {
+        overlay.show(pkg, store.blockFacts(pkg, now) ?: return)
+        store.covered = true
     }
     private fun removeOverlay() {
-        overlay?.let { runCatching { windows.removeView(it) } }
-        overlay = null; overlayPackage = null
+        overlay.hide()
         store.covered = store.foreground?.let { store.remaining(it, System.currentTimeMillis()) == 0L } ?: false
     }
+    /** New rules or balance re-render the takeover in place; an app that opened up again loses it. */
+    private fun refreshOverlay() {
+        val pkg = overlay.pkg ?: return
+        val now = System.currentTimeMillis()
+        if (store.remaining(pkg, now) == 0L) store.blockFacts(pkg, now)?.let { overlay.update(it) }
+        else if (!overlay.holds(pkg)) removeOverlay()
+    }
+
+    override val language: String get() = store.language
+    override fun facts(pkg: String) = store.blockFacts(pkg, System.currentTimeMillis())
+    override fun buy(facts: BlockFacts, done: (Throwable?) -> Unit) = purchaseTime(facts.slug, facts.cost, facts.minutes) { _, error -> done(error) }
+    override fun dismiss() = removeOverlay()
+
     private fun notification() {
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(NotificationChannel("safini_limits", "Safini", NotificationManager.IMPORTANCE_LOW))
