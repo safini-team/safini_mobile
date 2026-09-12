@@ -61,6 +61,13 @@
     </plurals>
     <string name="block_try_again">Qayta urinish</string>
     <string name="block_failed_hint">Internet, balans va ota-ona cheklovlarini tekshir.</string>
+    <string name="block_task_instead">Yoki tanga ishlab top</string>
+    <string name="block_task_meanwhile">Hozircha tanga ishlab top</string>
+    <string name="block_tasks_today">Bugungi vazifalar</string>
+    <plurals name="block_task_count">
+        <item quantity="one">%d ta vazifa</item>
+        <item quantity="other">%d ta vazifa</item>
+    </plurals>
     <plurals name="block_coins">
         <item quantity="one">%d tanga</item>
         <item quantity="other">%d tanga</item>

@@ -73,6 +73,15 @@
     </plurals>
     <string name="block_try_again">Попробовать ещё раз</string>
     <string name="block_failed_hint">Проверь интернет, баланс и лимиты от родителей.</string>
+    <string name="block_task_instead">Или заработай монеты</string>
+    <string name="block_task_meanwhile">А пока заработай монеты</string>
+    <string name="block_tasks_today">Задания на сегодня</string>
+    <plurals name="block_task_count">
+        <item quantity="one">%d задание</item>
+        <item quantity="few">%d задания</item>
+        <item quantity="many">%d заданий</item>
+        <item quantity="other">%d задания</item>
+    </plurals>
     <plurals name="block_coins">
         <item quantity="one">%d монета</item>
         <item quantity="few">%d монеты</item>
