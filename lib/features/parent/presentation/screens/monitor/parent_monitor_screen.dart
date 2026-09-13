@@ -10,6 +10,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.d
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
+import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
 import 'package:safini/features/parent/presentation/widgets/layout/parent_monitor_states.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
@@ -24,9 +25,9 @@ class ParentMonitorScreen extends StatelessWidget {
         BlocProvider(
           create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
         ),
-        BlocProvider(
-          create: (context) => getIt<ParentTasksCubit>()..loadTasks(),
-        ),
+        // The tasks cubit comes from the shell: a second instance here meant
+        // an approval on the Tasks tab never reached this card, and the tab
+        // badge never heard about one made from Today.
       ],
       child: const _ParentMonitorView(),
     );
@@ -38,22 +39,18 @@ class _ParentMonitorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) => OnAppResume(
+        // Coins, streak and screen time all move while the parent is away.
+        onResume: () => context.read<ParentMonitorCubit>().loadMonitorData(),
+        child: _buildContent(context),
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<ParentMonitorCubit, ParentMonitorState>(
-          // When the parent switches child, reload that child's tasks so the
-          // review list and the stat row match the child on the card.
-          listenWhen: (prev, curr) =>
-              curr is ParentMonitorLoaded &&
-              (prev is! ParentMonitorLoaded ||
-                  prev.selectedChild?.id != curr.selectedChild?.id),
-          listener: (context, state) {
-            final childId = (state as ParentMonitorLoaded).selectedChild?.id;
-            if (childId != null) {
-              context.read<ParentTasksCubit>().loadTasks(childId: childId);
-            }
-          },
-        ),
         BlocListener<ParentTasksCubit, ParentTasksState>(
           // Approving pays coins and moves the streak, and both of those live
           // on the monitor's child row, not in the tasks cubit. Without this
@@ -150,7 +147,15 @@ class _ParentMonitorView extends StatelessWidget {
     final used = apps.fold<int>(0, (sum, app) => sum + app.usedMinutes);
     final limit = state.screenTime.limitMinutes ?? 0;
 
-    final reviews = (tasks?.pendingApproval ?? const <ParentTaskInstanceModel>[])
+    // The list covers the whole family, so the card takes the selected
+    // child's share of it rather than labelling someone else's task with
+    // this child's name.
+    final childTasks = (tasks?.tasks ?? const <ParentTaskInstanceModel>[])
+        .where((task) => child == null || (task.childId ?? child.id) == child.id)
+        .toList();
+
+    final reviews = childTasks
+        .where((task) => task.isPendingApproval)
         .map(
           (task) => TodayReview(
             id: task.id,
@@ -182,8 +187,8 @@ class _ParentMonitorView extends StatelessWidget {
       topApp: apps.isEmpty || apps.first.usedMinutes == 0
           ? ''
           : apps.first.name,
-      tasksDone: tasks?.completedTasks.length ?? 0,
-      tasksTotal: tasks?.tasks.length ?? 0,
+      tasksDone: childTasks.where((task) => task.isCompleted).length,
+      tasksTotal: childTasks.length,
       coins: child?.coinsBalance ?? 0,
       streakDays: child?.currentStreakDays,
       reviews: reviews,

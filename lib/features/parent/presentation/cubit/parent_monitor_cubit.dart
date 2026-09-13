@@ -53,25 +53,32 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   Future<void> loadMonitorData() async {
     emit(const ParentMonitorLoading());
 
-    if (_familyCubit.state.family == null) {
-      await _familyCubit.loadCurrentFamily(refresh: true);
-    }
+    // Always refetch the family. The coin balance and the streak on the card
+    // come from the child rows in it, so skipping this when a family was
+    // already loaded left a pull-to-refresh showing the balance from app
+    // start, while the usage below it updated.
+    final selectedId = _children.length > _selectedIndex
+        ? _children[_selectedIndex].id
+        : null;
+    await _familyCubit.loadCurrentFamily(refresh: true);
 
     _children = _childrenFromFamily(_familyCubit.state.family);
-    _selectedIndex = 0;
+    // Keep looking at the same child across a refresh; only fall back to the
+    // first one when that child is gone.
+    final keptIndex = _children.indexWhere((c) => c.id == selectedId);
+    _selectedIndex = keptIndex == -1 ? 0 : keptIndex;
 
     if (_children.isEmpty) {
       emit(const ParentMonitorNoChild());
       return;
     }
 
+    final child = _children[_selectedIndex];
     _appUsage = const [];
     _screenTime = ScreenTimeModel.none;
-    final result = await _appUsageRepo.fetchAppUsage(_children.first.id);
+    final result = await _appUsageRepo.fetchAppUsage(child.id);
     result.fold(_clearUsage, _takeUsage);
-    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
-      _children.first.id,
-    );
+    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(child.id);
 
     emit(
       ParentMonitorLoaded(

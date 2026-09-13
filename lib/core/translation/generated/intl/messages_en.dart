@@ -203,6 +203,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ageRequired": MessageLookupByLibrary.simpleMessage("Age is required."),
     "allCaughtUp": MessageLookupByLibrary.simpleMessage("All caught up"),
+    "allDoneToday": MessageLookupByLibrary.simpleMessage("All done today"),
+    "allDoneTodayBody": MessageLookupByLibrary.simpleMessage(
+      "Every task is approved and the coins are in your wallet.",
+    ),
     "allTasks": MessageLookupByLibrary.simpleMessage("All tasks"),
     "almostYours": MessageLookupByLibrary.simpleMessage("Almost yours"),
     "alwaysAllowedNoRedemption": MessageLookupByLibrary.simpleMessage(
@@ -704,6 +708,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noteFromParent": MessageLookupByLibrary.simpleMessage(
       "Note from your parent",
+    ),
+    "nothingForToday": MessageLookupByLibrary.simpleMessage(
+      "Nothing for today",
+    ),
+    "nothingForTodayBody": MessageLookupByLibrary.simpleMessage(
+      "No tasks yet. Enjoy the day.",
     ),
     "nothingHereYet": MessageLookupByLibrary.simpleMessage("Nothing here yet"),
     "nothingInStore": MessageLookupByLibrary.simpleMessage(

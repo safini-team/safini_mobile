@@ -498,6 +498,22 @@
   "markItDone": "Mark it done",
   "keepHolding": "Keep holding…",
   "everythingSent": "Everything's sent",
+  "allDoneToday": "All done today",
+  "@allDoneToday": {
+    "description": "Child Today hero headline when every task for the day is approved."
+  },
+  "allDoneTodayBody": "Every task is approved and the coins are in your wallet.",
+  "@allDoneTodayBody": {
+    "description": "Child Today card body when every task for the day is approved."
+  },
+  "nothingForToday": "Nothing for today",
+  "@nothingForToday": {
+    "description": "Child Today hero headline when the day has no tasks at all."
+  },
+  "nothingForTodayBody": "No tasks yet. Enjoy the day.",
+  "@nothingForTodayBody": {
+    "description": "Child Today card body when the day has no tasks at all."
+  },
   "parentReviewsNext": "Your parent reviews them next. Coins land after that.",
   "coinsToGo": "{count, plural, =1{1 coin to go} other{{count} coins to go}}",
   "childTasksSubtitle": "{done} of {total} done today · {coins} coins waiting",
