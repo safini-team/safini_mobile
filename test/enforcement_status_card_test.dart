@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/enforcement_status_card.dart';
 
@@ -97,6 +98,22 @@ void main() {
     await pumpCard(tester, 'child-2');
     expect(find.byIcon(Icons.verified_user_outlined), findsNothing);
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+  });
+
+  testWidgets('the warning icon is yellow, the sentence is not', (
+    tester,
+  ) async {
+    adapter.status = 'not_configured';
+    await pumpCard(tester, 'child-1');
+    final icon = tester.widget<Icon>(find.byIcon(Icons.warning_amber_rounded));
+    expect(icon.color, AppColors.warning);
+    final text = tester.widget<Text>(find.textContaining('Set up app limits'));
+    expect(text.style?.color, isNot(AppColors.warning));
+
+    adapter.status = 'active';
+    await pumpCard(tester, 'child-2');
+    final shield = tester.widget<Icon>(find.byIcon(Icons.verified_user_outlined));
+    expect(shield.color, AppColors.success);
   });
 
   testWidgets('a failed check says so instead of claiming everything is fine',

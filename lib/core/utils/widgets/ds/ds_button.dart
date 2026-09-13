@@ -21,6 +21,7 @@ class DsPrimaryButton extends StatelessWidget {
     this.padding = const EdgeInsets.all(17),
     this.radius = AppRadius.button,
     this.busy = false,
+    this.border,
   });
 
   /// `background:#EFEBE3;color:#0C231C;font-weight:600` - the quiet twin that
@@ -36,7 +37,8 @@ class DsPrimaryButton extends StatelessWidget {
     this.busy = false,
   }) : background = AppColors.fill,
        foreground = AppColors.ink,
-       shadow = const <BoxShadow>[];
+       shadow = const <BoxShadow>[],
+       border = null;
 
   final String label;
   final VoidCallback? onTap;
@@ -48,6 +50,10 @@ class DsPrimaryButton extends StatelessWidget {
   final EdgeInsets padding;
   final double radius;
   final bool busy;
+
+  /// Only the Google button uses one: its branding asks for a white fill with
+  /// a grey outline rather than our green.
+  final BoxBorder? border;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +71,7 @@ class DsPrimaryButton extends StatelessWidget {
           color: bg,
           borderRadius: BorderRadius.circular(radius),
           boxShadow: live ? shadow : const [],
+          border: border,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +83,7 @@ class DsPrimaryButton extends StatelessWidget {
                 child: CircularProgressIndicator(strokeWidth: 2.2, color: fg),
               )
             else ...[
-              if (icon != null) ...[icon!, const SizedBox(width: 8)],
+              if (icon != null) ...[icon!, const SizedBox(width: 10)],
               Flexible(
                 child: Text(
                   label,
@@ -123,15 +130,18 @@ class DsInlineButton extends StatelessWidget {
           color: background,
           borderRadius: BorderRadius.circular(AppRadius.action),
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: AppText.chip.copyWith(
-            fontSize: 14.5,
-            letterSpacing: -0.0725,
-            color: foreground,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            softWrap: false,
+            style: AppText.chip.copyWith(
+              fontSize: 14.5,
+              letterSpacing: -0.0725,
+              color: foreground,
+            ),
           ),
         ),
       ),

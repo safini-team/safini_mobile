@@ -151,6 +151,7 @@ class DsLargeTitle extends StatelessWidget {
     this.eyebrow,
     this.eyebrowColor = AppColors.primary,
     this.subtitle,
+    this.leading,
     this.trailing,
     this.crossAxisAlignment = CrossAxisAlignment.end,
   });
@@ -159,6 +160,9 @@ class DsLargeTitle extends StatelessWidget {
   final String? eyebrow;
   final Color eyebrowColor;
   final String? subtitle;
+
+  /// Sits before the title block, e.g. the child's avatar on Today.
+  final Widget? leading;
   final Widget? trailing;
   final CrossAxisAlignment crossAxisAlignment;
 
@@ -198,14 +202,14 @@ class DsLargeTitle extends StatelessWidget {
         AppSpacing.textGutter,
         0,
       ),
-      child: trailing == null
+      child: trailing == null && leading == null
           ? block
           : Row(
               crossAxisAlignment: crossAxisAlignment,
               children: [
+                if (leading != null) ...[leading!, const SizedBox(width: 12)],
                 Expanded(child: block),
-                const SizedBox(width: 12),
-                trailing!,
+                if (trailing != null) ...[const SizedBox(width: 12), trailing!],
               ],
             ),
     );

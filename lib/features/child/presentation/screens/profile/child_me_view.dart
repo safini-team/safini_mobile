@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
 
 class MeBadge {
   const MeBadge({required this.emoji, required this.label, this.earned = true});
@@ -146,53 +147,10 @@ class _ProfileCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: SizedBox(
-              width: 88,
-              height: 88,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: data.avatarColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        data.faceEmoji,
-                        style: const TextStyle(fontSize: 42, height: 1.15),
-                      ),
-                    ),
-                  ),
-                  if (data.accessoryEmoji != null)
-                    Positioned(
-                      right: -2,
-                      bottom: -2,
-                      child: Container(
-                        width: 32,
-                        height: 32,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          color: AppColors.surface,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x4D0C231C),
-                              offset: Offset(0, 2),
-                              blurRadius: 8,
-                              spreadRadius: -2,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          data.accessoryEmoji!,
-                          style: const TextStyle(fontSize: 17, height: 1.15),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+            child: ChildAvatar(
+              faceEmoji: data.faceEmoji,
+              color: data.avatarColor,
+              accessoryEmoji: data.accessoryEmoji,
             ),
           ),
           const SizedBox(height: 14),

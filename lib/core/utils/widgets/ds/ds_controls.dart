@@ -54,19 +54,24 @@ class DsSegmentedControl extends StatelessWidget {
                           ]
                         : const [],
                   ),
-                  child: Text(
-                    labels[i],
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.04,
-                      height: 1.2,
-                      color: i == selectedIndex
-                          ? AppColors.ink
-                          : AppColors.textSecondary,
+                  // A long Russian or Uzbek label shrinks to fit its segment
+                  // instead of losing its end to "...".
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      labels[i],
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.04,
+                        height: 1.2,
+                        color: i == selectedIndex
+                            ? AppColors.ink
+                            : AppColors.textSecondary,
+                      ),
                     ),
                   ),
                 ),

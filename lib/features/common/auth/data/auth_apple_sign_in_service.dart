@@ -7,9 +7,12 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthAppleSignInFailure implements Exception {
-  const AuthAppleSignInFailure(this.message);
+  const AuthAppleSignInFailure(this.message, {this.cancelled = false});
 
   final String message;
+
+  /// The person closed the Apple sheet. Not an error to show them.
+  final bool cancelled;
 
   @override
   String toString() => message;
@@ -85,7 +88,10 @@ class AuthAppleSignInService {
         '[AppleSignIn] Authorization failed code=${e.code} message=${e.message}',
       );
       if (e.code == AuthorizationErrorCode.canceled) {
-        throw const AuthAppleSignInFailure('Apple sign-in was cancelled.');
+        throw const AuthAppleSignInFailure(
+          'Apple sign-in was cancelled.',
+          cancelled: true,
+        );
       }
       throw AuthAppleSignInFailure('Apple sign-in failed: ${e.message}');
     } on SignInWithAppleException catch (e) {

@@ -93,7 +93,7 @@ class ParentTodayData {
 }
 
 /// `hm()` from the artboard script, with localised units: `2 h 10 m` in
-/// English, `2 ч 10 мин` in Russian, `2 s 10 d` in Uzbek.
+/// English, `2 ч 10 м` in Russian, `2 s 10 d` in Uzbek.
 String formatHm(S s, int minutes) {
   final h = minutes ~/ 60;
   final m = minutes % 60;

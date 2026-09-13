@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -99,17 +100,22 @@ class DsPill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leading != null) ...[leading!, const SizedBox(width: 5)],
+          // Shrinks rather than truncating: "Check…" on a status pill hides
+          // the one word the pill exists to say.
           Flexible(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w700,
-                color: foreground,
-                height: 1,
-                fontFeatures: AppText.tabular,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                softWrap: false,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w700,
+                  color: foreground,
+                  height: 1,
+                  fontFeatures: AppText.tabular,
+                ),
               ),
             ),
           ),
@@ -119,32 +125,41 @@ class DsPill extends StatelessWidget {
   }
 }
 
-/// The amber coin token - `22px` circle, `#E8A33D` with a `c` in `#3A2A08`.
+/// The Safini Time Coin: a green-rimmed gold coin with a white tick, redrawn as
+/// SVG from the brand artwork so it stays crisp from a 14px price pill up to
+/// the reward sheet.
 class DsCoinToken extends StatelessWidget {
   const DsCoinToken({super.key, this.size = 22});
 
   final double size;
 
+  static const String svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+      '<defs>'
+      '<linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">'
+      '<stop offset="0" stop-color="#FFE45A"/><stop offset="1" stop-color="#F9BE1C"/>'
+      '</linearGradient>'
+      '<linearGradient id="face" x1="0.2" y1="0.1" x2="0.8" y2="0.95">'
+      '<stop offset="0" stop-color="#FFD12B"/><stop offset="1" stop-color="#F58C0A"/>'
+      '</linearGradient>'
+      '<radialGradient id="gloss" cx="0.34" cy="0.24" r="0.3">'
+      '<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.28"/>'
+      '<stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>'
+      '</radialGradient>'
+      '</defs>'
+      '<circle cx="50" cy="50" r="50" fill="#0B5E3F"/>'
+      '<circle cx="50" cy="50" r="45" fill="url(#rim)"/>'
+      '<circle cx="50" cy="50" r="38.6" fill="url(#face)" stroke="#E8850A" stroke-width="1.8"/>'
+      '<circle cx="50" cy="50" r="37.5" fill="url(#gloss)"/>'
+      '<path d="M30.9 47.9L41.9 62.5L72.2 36.4" fill="none" stroke="#B35A0C" '
+      'stroke-width="12.4" stroke-linecap="round" stroke-linejoin="round"/>'
+      '<path d="M30.9 47.9L41.9 62.5L72.2 36.4" fill="none" stroke="#FFFFFF" '
+      'stroke-width="9.6" stroke-linecap="round" stroke-linejoin="round"/>'
+      '</svg>';
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: AppColors.coin,
-        shape: BoxShape.circle,
-      ),
-      child: Text(
-        'c',
-        style: TextStyle(
-          fontSize: size * 0.5,
-          fontWeight: FontWeight.w800,
-          color: AppColors.coinInk,
-          height: 1,
-        ),
-      ),
-    );
+    return SvgPicture.string(svg, width: size, height: size);
   }
 }
 

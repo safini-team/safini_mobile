@@ -229,26 +229,34 @@ class _Group extends StatelessWidget {
               ),
               const SizedBox(width: 9),
               Flexible(
-                child: Text(
-                  group.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.chip.copyWith(letterSpacing: -0.116),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    group.name,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: AppText.chip.copyWith(letterSpacing: -0.116),
+                  ),
                 ),
               ),
               const SizedBox(width: 9),
               const Expanded(child: DsDivider(color: AppColors.hairline)),
               const SizedBox(width: 9),
               Flexible(
-                child: Text(
-                  group.summary,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.right,
-                  style: AppText.caption.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textTertiary,
-                  ).nums,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    group.summary,
+                    maxLines: 1,
+                    softWrap: false,
+                    textAlign: TextAlign.right,
+                    style: AppText.caption.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textTertiary,
+                    ).nums,
+                  ),
                 ),
               ),
             ],

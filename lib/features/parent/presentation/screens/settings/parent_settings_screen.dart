@@ -7,7 +7,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/core/utils/widgets/app_version_label.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/language_sheet.dart';
 import 'package:safini/features/common/auth/presentation/account_deletion_flow.dart';
@@ -76,11 +76,10 @@ class ParentSettingsScreen extends StatelessWidget {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                languageName(
-                                  Localizations.localeOf(context).languageCode,
-                                  s,
-                                ),
+                              LanguageLabel(
+                                code: Localizations.localeOf(
+                                  context,
+                                ).languageCode,
                                 style: AppText.body.copyWith(
                                   fontWeight: FontWeight.w400,
                                   color: AppColors.textTertiary,
@@ -126,14 +125,7 @@ class ParentSettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    '${AppConstants.appName} '
-                    '${AppConstants.appVersion} (${AppConstants.buildNumber})',
-                    textAlign: TextAlign.center,
-                    style: AppText.caption.copyWith(
-                      color: AppColors.textTertiary,
-                    ),
-                  ),
+                  const AppVersionLabel(),
                 ],
               ),
             ),

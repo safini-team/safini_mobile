@@ -66,10 +66,11 @@ class _ChildStoreScreen extends StatelessWidget {
                   StoreCardData(
                     id: item.id,
                     emoji: '⏱️',
-                    name: s.appTimeItem(item.title, item.minutes),
+                    name: item.title,
+                    detail: s.appTimeMinutes(item.minutes),
+                    fullName: s.appTimeItem(item.title, item.minutes),
                     cost: item.cost,
                     affordable: item.isEnabled && coins >= item.cost,
-                    toGo: (item.cost - coins).clamp(0, item.cost),
                     badge: item.remainingMinutes > 0
                         ? s.minutesLeftShort(item.remainingMinutes)
                         : null,
@@ -88,7 +89,6 @@ class _ChildStoreScreen extends StatelessWidget {
                     cost: item.cost ?? 0,
                     owned: item.isEquipped || item.isFree,
                     affordable: item.cost == null || coins >= (item.cost ?? 0),
-                    toGo: ((item.cost ?? 0) - coins).clamp(0, item.cost ?? 0),
                     badge: item.isEquipped
                         ? s.wornLabel
                         : (item.isLocked ? item.lockLabel : null),
@@ -131,7 +131,7 @@ class _ChildStoreScreen extends StatelessWidget {
     final confirmed = await showRewardSheet(
       context,
       emoji: card.emoji,
-      name: card.name,
+      name: card.fullName,
       cost: card.cost,
       coins: coins,
       blurb: blurb,

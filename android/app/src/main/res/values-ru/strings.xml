@@ -7,12 +7,12 @@
     <string name="block_coins_only_body">Бесплатного времени сегодня нет. Открой немного за монеты.</string>
     <string name="block_unavailable_body">Сегодня приложение закрыто.</string>
     <string name="block_today">Сегодня</string>
-    <string name="block_minutes_of">%1$d / %2$d мин</string>
+    <string name="block_minutes_of">%1$d / %2$d м</string>
     <string name="block_back_in">Вернётся через %1$s</string>
-    <string name="block_hours_minutes">%1$d ч %2$d мин</string>
+    <string name="block_hours_minutes">%1$d ч %2$d м</string>
     <string name="block_hours">%1$d ч</string>
-    <string name="block_minutes">%1$d мин</string>
-    <string name="block_unlock">Открыть на %1$d мин</string>
+    <string name="block_minutes">%1$d м</string>
+    <string name="block_unlock">Открыть на %1$d м</string>
     <string name="block_earn_title">Или заработай ещё монет</string>
     <string name="block_earn_subtitle">Выполни задание в Safini</string>
     <string name="block_open_safini">Открыть Safini</string>
@@ -41,7 +41,7 @@
         <item quantity="other">Ещё %d монеты</item>
     </plurals>
     <string name="block_need_body">Выполни задание в Safini, чтобы их заработать.</string>
-    <string name="block_towards">Копим на %1$d мин</string>
+    <string name="block_towards">Копим на %1$d м</string>
     <string name="block_earn_coins">Заработать монеты в Safini</string>
     <string name="block_paused_title">%1$s на паузе</string>
     <string name="block_paused_body">Родитель поставил приложение на паузу, монетами его не открыть. Попроси включить его снова.</string>

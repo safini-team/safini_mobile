@@ -2,7 +2,7 @@ name: safini
 description: "Safini - kids earn their screen time with Time Coins."
 publish_to: 'none'
 
-version: 1.0.0+18
+version: 1.0.1+19
 
 environment:
   sdk: ^3.10.7
@@ -37,6 +37,7 @@ dependencies:
   firebase_messaging: ^16.0.2
   sign_in_with_apple: ^8.1.0
   crypto: ^3.0.7
+  package_info_plus: ^10.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

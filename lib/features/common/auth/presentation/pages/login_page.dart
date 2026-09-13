@@ -19,8 +19,9 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubi
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
-/// Sign-in, laid out like the Welcome artboard: logo and wordmark up top, with
-/// the public Google action and an optional debug/review email action below.
+/// Sign-in, laid out like the Welcome artboard: logo and wordmark up top, the
+/// platform's own sign-in first (Apple on iOS, Google on Android), and an
+/// optional debug/review email action below.
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -81,6 +82,30 @@ class _LoginView extends StatelessWidget {
             (defaultTargetPlatform == TargetPlatform.iOS ||
                 defaultTargetPlatform == TargetPlatform.macOS);
 
+        final googleButton = DsPrimaryButton(
+          key: const ValueKey('login-google'),
+          label: googleLoading ? s.signingIn : s.loginWithGoogle,
+          enabled: !googleBlocked && (!loading || googleLoading),
+          busy: googleLoading,
+          background: Colors.white,
+          foreground: const Color(0xFF1F1F1F),
+          border: Border.all(color: const Color(0xFF747775)),
+          shadow: const [],
+          icon: AppIcons.google(size: 20),
+          onTap: () => context.read<AuthSessionCubit>().signInWithGoogle(),
+        );
+        final appleButton = DsPrimaryButton(
+          key: const ValueKey('login-apple'),
+          label: appleLoading ? s.signingIn : s.loginWithApple,
+          enabled: !supabaseBlocked && (!loading || appleLoading),
+          busy: appleLoading,
+          background: Colors.black,
+          foreground: Colors.white,
+          shadow: const [],
+          icon: const Icon(Icons.apple, size: 22, color: Colors.white),
+          onTap: () => context.read<AuthSessionCubit>().signInWithApple(),
+        );
+
         return Scaffold(
           backgroundColor: AppColors.surface,
           body: DsScreenEntrance(
@@ -104,11 +129,8 @@ class _LoginView extends StatelessWidget {
                             color: AppColors.fill,
                             borderRadius: BorderRadius.circular(AppRadius.pill),
                           ),
-                          child: Text(
-                            languageName(
-                              Localizations.localeOf(context).languageCode,
-                              s,
-                            ),
+                          child: LanguageLabel(
+                            code: Localizations.localeOf(context).languageCode,
                             style: AppText.chip,
                           ),
                         ),
@@ -160,32 +182,14 @@ class _LoginView extends StatelessWidget {
                       ),
                     if (!(state.status == AuthSessionStatus.profileError &&
                         state.isUnauthorized)) ...[
-                      DsPrimaryButton(
-                        label: googleLoading ? s.signingIn : s.loginWithGoogle,
-                        enabled: !googleBlocked && (!loading || googleLoading),
-                        busy: googleLoading,
-                        onTap: () =>
-                            context.read<AuthSessionCubit>().signInWithGoogle(),
-                      ),
+                      // The platform's own sign-in goes first: Apple on
+                      // iPhone, Google everywhere else. Android has no Apple
+                      // button at all - it would need a web OAuth flow.
                       if (showApple) ...[
+                        appleButton,
                         const SizedBox(height: 10),
-                        DsPrimaryButton(
-                          label: appleLoading ? s.signingIn : s.loginWithApple,
-                          enabled: !supabaseBlocked && (!loading || appleLoading),
-                          busy: appleLoading,
-                          background: Colors.black,
-                          foreground: Colors.white,
-                          shadow: const [],
-                          icon: const Icon(
-                            Icons.apple,
-                            size: 22,
-                            color: Colors.white,
-                          ),
-                          onTap: () => context
-                              .read<AuthSessionCubit>()
-                              .signInWithApple(),
-                        ),
                       ],
+                      googleButton,
                       if (SupabaseConfig.isEmailSignInEnabled) ...[
                         const SizedBox(height: 10),
                         DsPrimaryButton.secondary(

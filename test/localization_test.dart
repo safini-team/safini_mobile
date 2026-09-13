@@ -252,7 +252,7 @@ void main() {
       // in there is the kind of leak the arb diff cannot see.
       const cases = {
         'en': ('h', 'm'),
-        'ru': ('ч', 'мин'),
+        'ru': ('ч', 'м'),
         'uz': ('s', 'd'),
       };
 

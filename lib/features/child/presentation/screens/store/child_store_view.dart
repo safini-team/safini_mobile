@@ -14,20 +14,27 @@ class StoreCardData {
     required this.name,
     required this.cost,
     required this.affordable,
-    this.toGo,
+    this.detail,
+    String? fullName,
     this.badge,
     this.owned = false,
     this.pending = false,
-  });
+  }) : fullName = fullName ?? name;
 
   final String id;
   final String emoji;
+
+  /// What it is - "Brawl Stars", "Cosmic Cape". One line on the tile.
   final String name;
+
+  /// The second line under the name, e.g. "30 min" for app time.
+  final String? detail;
+
+  /// Name and detail together, for the reward sheet: "Brawl Stars · 30 min".
+  final String fullName;
+
   final int cost;
   final bool affordable;
-
-  /// Coins still missing, shown on a locked tile instead of the price.
-  final int? toGo;
 
   /// Overrides the price pill, e.g. "12 m left" on an active unlock.
   final String? badge;
@@ -55,9 +62,8 @@ class ChildStoreData {
   final String footnote;
 }
 
-/// Kid · Store: a two-column grid of reward tiles. A locked tile shows how far
-/// off it is rather than just greying out - that is the whole point of the
-/// artboard's copy note.
+/// Kid · Store: a two-column grid of reward tiles, each with its name and its
+/// price in coins. A tile the child cannot afford yet is dimmed.
 class ChildStoreView extends StatelessWidget {
   const ChildStoreView({
     super.key,
@@ -149,18 +155,12 @@ class _StoreTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The price and the gap, not just the gap. An unaffordable tile used to
-    // read only "75 to go" - the child never saw what the thing actually
-    // cost, while the landing page promised they see the same prices as the
-    // parent.
-    final label =
-        card.badge ??
-        (card.affordable
-            ? '${card.cost}'
-            : S.of(context).priceAndGap(
-                '${card.cost}',
-                '${card.toGo ?? card.cost}',
-              ));
+    final nameStyle = AppText.rowTitleStrong.copyWith(
+      fontSize: 15.5,
+      letterSpacing: -0.186,
+    );
+    const coin = DsCoinToken(size: 15);
+    final price = '${card.cost}';
 
     return DsCard(
       onTap: onTap,
@@ -177,15 +177,30 @@ class _StoreTile extends StatelessWidget {
                 : 0.4,
             child: Text(card.emoji, style: const TextStyle(fontSize: 32)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
+          // The tile is a fixed 168pt. The name wraps at the tile's width as
+          // usual, and only when its lines are taller than the room left does
+          // the whole block shrink - never "...", never a half-cut second line
+          // the way `maxLines: 2` inside this box used to render.
           Expanded(
-            child: Text(
-              card.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.rowTitleStrong.copyWith(
-                fontSize: 15.5,
-                letterSpacing: -0.186,
+            child: LayoutBuilder(
+              builder: (context, box) => FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.topLeft,
+                child: SizedBox(
+                  width: box.maxWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(card.name, style: nameStyle),
+                      if (card.detail != null) ...[
+                        const SizedBox(height: 2),
+                        Text(card.detail!, style: AppText.caption),
+                      ],
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -205,10 +220,28 @@ class _StoreTile extends StatelessWidget {
               height: 26,
               fontSize: 13.5,
             )
+          // "12 m left" on an active unlock, a lock reason: a state, not a
+          // price, so no coin in front of it.
+          else if (card.badge != null)
+            card.affordable
+                ? DsPill.coins(label: card.badge!, height: 26, fontSize: 13.5)
+                : DsPill.muted(label: card.badge!, height: 26, fontSize: 13.5)
+          // Name and price, nothing else: a tile the child cannot afford yet is
+          // dimmed, not annotated with how far off it is.
           else if (card.affordable)
-            DsPill.coins(label: label, height: 26, fontSize: 13.5)
+            DsPill.coins(
+              label: price,
+              leading: coin,
+              height: 26,
+              fontSize: 13.5,
+            )
           else
-            DsPill.muted(label: label, height: 26, fontSize: 13.5),
+            DsPill.muted(
+              label: price,
+              leading: const Opacity(opacity: 0.55, child: coin),
+              height: 26,
+              fontSize: 13.5,
+            ),
         ],
       ),
     );

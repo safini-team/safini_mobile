@@ -22,13 +22,20 @@ class DsToast {
     _entry?.remove();
     final generation = ++_generation;
 
+    // The root overlay sits above every Scaffold, so nothing here inherits a
+    // Material text style. Without this the message falls back to Flutter's
+    // "no Material" style - yellow double underline, monospace - in release
+    // builds as well as debug.
     final entry = OverlayEntry(
       builder: (context) => Positioned(
         left: 0,
         right: 0,
         bottom: 112,
-        child: IgnorePointer(
-          child: Center(child: _Toast(message: message, success: success)),
+        child: Material(
+          type: MaterialType.transparency,
+          child: IgnorePointer(
+            child: Center(child: _Toast(message: message, success: success)),
+          ),
         ),
       ),
     );

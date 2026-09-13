@@ -2,10 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
+import 'package:safini/core/config/platform_support.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/common/auth/presentation/pages/child_coming_soon_page.dart';
 
 /// The Welcome artboard: two doors, no account wall on the kid side.
 ///
@@ -67,15 +69,41 @@ class RoleSelectionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 DsChoiceCard(
+                  key: const ValueKey('role-kid'),
                   title: s.imAKid,
-                  subtitle: s.kidSubtitle,
-                  onTap: () =>
-                      context.router.push(const NamedRoute('enterInviteCode')),
+                  subtitle: isChildModeAvailable
+                      ? s.kidSubtitle
+                      : s.kidComingSoonIos,
+                  onTap: isChildModeAvailable
+                      ? () => context.router.push(
+                          const NamedRoute('enterInviteCode'),
+                        )
+                      : () => _showKidComingSoon(context, s),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// iOS cannot block apps yet, so the kid door explains instead of starting
+  /// a claim that would end on a home screen enforcing nothing.
+  Future<void> _showKidComingSoon(BuildContext context, S s) {
+    return showDsSheet<void>(
+      context: context,
+      builder: (sheetContext) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ChildComingSoonMessage(s: s, compact: true),
+          const SizedBox(height: 22),
+          DsPrimaryButton(
+            label: s.ok,
+            onTap: () => Navigator.of(sheetContext).pop(),
+          ),
+        ],
       ),
     );
   }

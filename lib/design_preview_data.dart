@@ -325,6 +325,26 @@ class SampleData {
       emoji: '🧹',
       coins: 15,
     ),
+    more: const [
+      TodayQuest(
+        id: 'q2',
+        title: 'Clear the table',
+        meta: 'After dinner',
+        emoji: '🍽️',
+        coins: 10,
+      ),
+      TodayQuest(
+        id: 'q5',
+        title: 'Brush teeth, evening',
+        meta: 'Health · 21:00',
+        emoji: '🪥',
+        coins: 5,
+      ),
+    ],
+    faceEmoji: '🦊',
+    accessoryEmoji: '🧢',
+    avatarColor: const Color(0xFF1A5C4A),
+    level: 4,
     teaser: const TodayTeaser(
       name: '30 extra minutes of Roblox',
       emoji: '🎮',
@@ -417,7 +437,14 @@ class SampleData {
         name: 'Trip to the pool',
         cost: 320,
         affordable: false,
-        toGo: 80,
+      ),
+      StoreCardData(
+        id: 'w5',
+        emoji: '⏱️',
+        name: 'Brawl Stars',
+        detail: '30 min',
+        cost: 90,
+        affordable: false,
       ),
     ],
   );

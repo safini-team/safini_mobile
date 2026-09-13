@@ -98,10 +98,21 @@ class _ChildTodayScreen extends StatelessWidget {
             streakDays: profile.dayStreak > 0 ? profile.dayStreak : null,
             holdToComplete: true,
             next: next == null ? null : _toTodayQuest(next, s),
+            more: [
+              for (final quest in open.skip(1).take(2))
+                _toTodayQuest(quest, s),
+            ],
+            faceEmoji: profile.equippedFaceEmoji,
+            accessoryEmoji: profile.equippedBadgeEmoji.isEmpty
+                ? null
+                : profile.equippedBadgeEmoji,
+            avatarColor: AppColors.avatarPalette[1],
+            level: profile.level,
             teaser: _teaser(store, coins, s),
           ),
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
           onOpenTasks: () => context.read<ChildHomeCubit>().selectTab(1),
+          onOpenProfile: () => context.read<ChildHomeCubit>().selectTab(3),
           onOpenQuest: (quest) => _openQuest(context, quests, quest.id),
           onSendQuest: (quest) => _send(context, quests, quest.id, s),
           onRefresh: () async {

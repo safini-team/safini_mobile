@@ -26,8 +26,7 @@ class AddChildPage extends StatefulWidget {
 
 enum _Gender {
   boy('boy'),
-  girl('girl'),
-  other('other');
+  girl('girl');
 
   const _Gender(this.apiValue);
 
@@ -113,7 +112,7 @@ class _AddChildPageState extends State<AddChildPage> {
                     child: Row(
                       children: [
                         SizedBox(
-                          width: 56,
+                          width: 72,
                           child: Text(s.name, style: AppText.field),
                         ),
                         const SizedBox(width: 14),
@@ -149,7 +148,7 @@ class _AddChildPageState extends State<AddChildPage> {
                     child: Row(
                       children: [
                         SizedBox(
-                          width: 56,
+                          width: 72,
                           child: Text(s.ageFieldLabel, style: AppText.field),
                         ),
                         const SizedBox(width: 14),
@@ -314,7 +313,6 @@ class _AddChildPageState extends State<AddChildPage> {
   String _genderLabel(S s, _Gender option) => switch (option) {
     _Gender.boy => s.genderBoy,
     _Gender.girl => s.genderGirl,
-    _Gender.other => s.genderOther,
   };
 
   Future<void> _submit() async {

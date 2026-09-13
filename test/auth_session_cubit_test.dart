@@ -24,6 +24,12 @@ class _FakeGoogleAuth extends AuthGoogleSignInService {
 
 class _FakeAppleAuth extends AuthAppleSignInService {}
 
+class _CancellingGoogleAuth extends AuthGoogleSignInService {
+  @override
+  Future<AuthResponse> signInWithGoogle() async =>
+      throw const AuthGoogleSignInFailure('cancelled', cancelled: true);
+}
+
 class _FakeEmailAuth extends AuthEmailSignInService {
   String? receivedEmail;
   String? receivedPassword;
@@ -120,6 +126,24 @@ void main() {
     expect(emailAuth.receivedPassword, 'review-password');
     expect(cubit.state.status, AuthSessionStatus.signInError);
     expect(cubit.state.errorMessage, 'Invalid test credentials');
+  });
+
+  test('closing the Google prompt goes back to the buttons silently', () async {
+    final tokens = _FakeTokens();
+    final cubit = AuthSessionCubit(
+      _CancellingGoogleAuth(),
+      _FakeAppleAuth(),
+      _FakeEmailAuth(),
+      _meService(tokens),
+      tokens,
+    );
+    addTearDown(cubit.close);
+
+    await cubit.signInWithGoogle();
+
+    expect(cubit.state.status, AuthSessionStatus.unauthenticated);
+    expect(cubit.state.errorMessage, isNull);
+    expect(cubit.state.isUnauthorized, isFalse);
   });
 
   test('a startup 401 preserves the session and never signs out', () async {

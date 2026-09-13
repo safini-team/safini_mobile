@@ -24,14 +24,25 @@ debug build has the same SHA-1 for Google Sign-In.
 ## 2. Bump the version
 
 Version lives in one place: [`pubspec.yaml`](../pubspec.yaml) `version:`
-field, e.g. `1.0.0+17`.
+field, e.g. `1.0.1+19`.
 
-- `1.0.0` → `versionName` (user-visible version)
-- `17` → `versionCode` (Play Store requires this to strictly increase on
+- `1.0.1` → `versionName` (user-visible version)
+- `19` → `versionCode` (Play Store requires this to strictly increase on
   every upload, including internal/beta tracks)
 
 Both are read into Gradle automatically via `flutter.versionName` /
-`flutter.versionCode` — nothing to edit in `android/`.
+`flutter.versionCode`, so there is nothing to edit in `android/`. iOS reads the same
+field as `CFBundleShortVersionString` / `CFBundleVersion`, and Settings shows
+it as `Safini 1.0.1 (19)` straight from the installed binary.
+
+The rule, for both stores:
+
+- Every upload (internal, TestFlight, beta, production) gets the next build
+  number: `+19` → `+20`. Never reuse one, even for a rebuild of the same code.
+  `make build-android` and `make build-ios` do this bump for you before
+  building; commit the bumped `pubspec.yaml` once the upload is accepted.
+- A release of fixes bumps the last part of the version: `1.0.1` → `1.0.2`.
+  New features bump the middle part: `1.0.x` → `1.1.0`.
 
 ## 3. Build the release artifact
 

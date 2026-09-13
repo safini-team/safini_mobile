@@ -6,7 +6,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 
 /// The artboard's reward sheet: big emoji, name, the price pill, a line of
-/// blurb, then either "Ask for this" or how many coins are still missing.
+/// blurb, then "Ask for this", or a disabled "Not enough coins".
 Future<bool?> showRewardSheet(
   BuildContext context, {
   required String emoji,
@@ -16,7 +16,6 @@ Future<bool?> showRewardSheet(
   required String blurb,
 }) {
   final canBuy = coins >= cost;
-  final toGo = (cost - coins).clamp(0, cost);
 
   return showDsSheet<bool>(
     context: context,
@@ -37,6 +36,7 @@ Future<bool?> showRewardSheet(
           Center(
             child: DsPill.coins(
               label: s.coinCountShort(cost),
+              leading: const DsCoinToken(size: 18),
               height: 30,
               fontSize: 15,
               horizontalPadding: 14,
@@ -50,7 +50,7 @@ Future<bool?> showRewardSheet(
           ),
           const SizedBox(height: 22),
           DsPrimaryButton(
-            label: canBuy ? s.askForThis : s.coinsToGo(toGo),
+            label: canBuy ? s.askForThis : s.notEnoughCoins,
             enabled: canBuy,
             shadow: canBuy ? AppShadows.primaryGlowLg : const [],
             onTap: () => Navigator.of(context).pop(true),
