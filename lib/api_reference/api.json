@@ -2957,7 +2957,7 @@
           "enforcement"
         ],
         "summary": "Unpair",
-        "description": "Auth: X-Safini-Device-Token. Business requirement: revoke this device on explicit sign-out.",
+        "description": "Auth: X-Safini-Device-Token. Business requirement: revoke this device on explicit sign-out and alert parents that protection stopped. Frontend note: the credential expires immediately; the stopped status is retained.",
         "operationId": "unpair_v1_children__child_id__enforcement_session_delete",
         "parameters": [
           {
@@ -3009,7 +3009,7 @@
           "enforcement"
         ],
         "summary": "Sync",
-        "description": "Auth: X-Safini-Device-Token from child pairing. Business requirement: native background usage, rule synchronization and heartbeat. Frontend note: cumulative whole-minute totals keyed by family-local usage_date, retried safely; do not send deltas. Missing heartbeat means offline/unknown, not confirmed tampering.",
+        "description": "Auth: X-Safini-Device-Token from child pairing. Business requirement: native background usage, rule synchronization and heartbeat. Frontend note: cumulative whole-minute totals keyed by family-local usage_date, retried safely; do not send deltas. Missing heartbeat means offline/unknown, not confirmed tampering. The snapshot's `tasks` lists up to three of today's open tasks (id, title, category, coin_reward), best paid first, for the block screen.",
         "operationId": "sync_v1_children__child_id__enforcement_sync_post",
         "parameters": [
           {
@@ -3640,7 +3640,7 @@
           "apps"
         ],
         "summary": "Replace Child Installed Apps",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Stores the full list of apps installed on the child's device so the parent can see the child's real apps instead of only the controlled-app catalog.\n\n**Frontend note:** Send the whole snapshot on every upload; it replaces the stored list rather than merging into it. Only the child's own device may write, so call this with the child's token, not the parent's. Android only in practice - iOS cannot enumerate installed apps, so an iPhone should not call this at all.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Stores the full list of apps installed on the child's device so the parent can see the child's real apps instead of only the controlled-app catalog.\n\n**Frontend note:** Send the whole snapshot on every upload; it replaces the stored list rather than merging into it. Only the child's own device may write, so call this with the child's token, not the parent's. Android only in practice - iOS cannot enumerate installed apps, so an iPhone should not call this at all. Icons are uploaded lazily: send `icon_sha256` for every app, then upload again with `icon_png` for each hash the response lists in `missing_icon_sha256`, until that list is empty. An app keeps its previous icon until the new one's bytes arrive.",
         "operationId": "replace_child_installed_apps_v1_children__child_id__installed_apps_put",
         "security": [
           {
@@ -3687,10 +3687,14 @@
                     },
                     {
                       "package_name": "com.google.android.apps.youtube.kids",
-                      "app_name": "YouTube Kids"
+                      "app_name": "YouTube Kids",
+                      "icon_url": "/v1/children/4c3d73d7-b950-47ee-bc20-5a237d37f4a0/installed-apps/com.google.android.apps.youtube.kids/icon?v=9f2c4d1e8b7a6f5e"
                     }
                   ],
-                  "updated_at": "2026-08-30T12:00:00Z"
+                  "updated_at": "2026-08-30T12:00:00Z",
+                  "missing_icon_sha256": [
+                    "9f2c4d1e8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e"
+                  ]
                 }
               }
             }
@@ -3762,7 +3766,7 @@
           "apps"
         ],
         "summary": "Get Child Installed Apps",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the apps currently installed on the child's device, for the parent screen that lists what is actually on the phone.\n\n**Frontend note:** Readable by a parent of this child or by the child. `updated_at` is null when the device has never uploaded, which is how you tell an empty phone apart from one that has not reported yet - show the never-reported state rather than an empty list.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the apps currently installed on the child's device, for the parent screen that lists what is actually on the phone.\n\n**Frontend note:** Readable by a parent of this child or by the child. `updated_at` is null when the device has never uploaded, which is how you tell an empty phone apart from one that has not reported yet - show the never-reported state rather than an empty list. `icon_url` is a path relative to the API origin, fetched with the same bearer token; it is null until the device has uploaded that icon, so keep a placeholder for it.",
         "operationId": "get_child_installed_apps_v1_children__child_id__installed_apps_get",
         "security": [
           {
@@ -3795,12 +3799,108 @@
                   "apps": [
                     {
                       "package_name": "com.roblox.client",
-                      "app_name": "Roblox"
+                      "app_name": "Roblox",
+                      "icon_url": "/v1/children/4c3d73d7-b950-47ee-bc20-5a237d37f4a0/installed-apps/com.roblox.client/icon?v=9f2c4d1e8b7a6f5e"
                     }
                   ],
                   "updated_at": "2026-08-30T12:00:00Z"
                 }
               }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/installed-apps/{package_name}/icon": {
+      "get": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Get Child Installed App Icon",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Serves the launcher icon the child's device uploaded for one of its apps, so the parent sees the real YouTube icon rather than a guessed emoji.\n\n**Frontend note:** Use the `icon_url` from the installed-apps list or an app row rather than building this path; its `v` query changes whenever the icon does, so a fetched icon can be cached for as long as the URL stays the same. Readable by a parent of this child or by the child. An uninstalled app keeps its last icon. `404` means there is no icon, so show the placeholder.",
+        "operationId": "get_child_installed_app_icon_v1_children__child_id__installed_apps__package_name__icon_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "package_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "pattern": "^[A-Za-z0-9._-]+$",
+              "title": "Package Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The icon.",
+            "content": {
+              "image/png": {}
             }
           },
           "401": {
@@ -4002,7 +4102,9 @@
                   "app_time_offers": [
                     {
                       "app_slug": "youtube-kids",
+                      "package_name": "com.google.android.apps.youtube.kids",
                       "display_name": "YouTube Kids",
+                      "icon_url": "/v1/children/4c3d73d7-b950-47ee-bc20-5a237d37f4a0/installed-apps/com.google.android.apps.youtube.kids/icon?v=9f2c4d1e8b7a6f5e",
                       "is_enabled": true,
                       "daily_limit_minutes": 60,
                       "redeem_coin_cost": 100,
@@ -4079,7 +4181,7 @@
           "store"
         ],
         "summary": "Redeem App Time",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Spends Time Coins to create a new app-time grant for one configured entertainment app.\n\n**Frontend note:** This is the key loop that turns productive behavior into extra minutes. The app must be enabled in child app rules for redemption to succeed.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Spends Time Coins to create a new app-time grant for one configured entertainment app.\n\n**Frontend note:** This is the key loop that turns productive behavior into extra minutes. The app must be enabled in child app rules for redemption to succeed. Generate one `client_request_id` per purchase attempt (or send the same value as an `Idempotency-Key` header) and reuse it on retry: without a key, two taps are two purchases.",
         "operationId": "redeem_app_time_v1_children__child_id__redemptions_app_time_post",
         "security": [
           {
@@ -4094,6 +4196,23 @@
             "schema": {
               "type": "string",
               "title": "Child Id"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
             }
           }
         ],
@@ -4985,6 +5104,19 @@
             "minLength": 1,
             "title": "App Slug",
             "description": "Controlled app slug to redeem extra minutes for."
+          },
+          "client_request_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Request Id",
+            "description": "Idempotency key generated once per purchase attempt. Retrying with the same value returns the original grant instead of charging again."
           }
         },
         "additionalProperties": false,
@@ -4994,7 +5126,8 @@
         ],
         "title": "AppTimeRedemptionRequest",
         "example": {
-          "app_slug": "youtube-kids"
+          "app_slug": "youtube-kids",
+          "client_request_id": "6b1f0f9e-9a6f-4a1b-8a3a-2f7f6b4d9c11"
         }
       },
       "AppUsageReportRequest": {
@@ -5338,6 +5471,32 @@
             "title": "App Name",
             "description": "User-visible app label. Falls back to `package_name` when blank, so the parent screen never renders an unnamed row.",
             "default": ""
+          },
+          "icon_sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon Sha256",
+            "description": "Lowercase hex SHA-256 of the app's launcher icon as a PNG. Send it on every upload; the response's `missing_icon_sha256` lists the icons the server still needs the bytes for."
+          },
+          "icon_png": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 87384
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon Png",
+            "description": "Base64 PNG of the icon, at most 64 KiB and 512x512. Only send it for a hash in `missing_icon_sha256`; the server already has every other one."
           }
         },
         "additionalProperties": false,
@@ -5348,6 +5507,7 @@
         "title": "InstalledAppEntry",
         "example": {
           "app_name": "Roblox",
+          "icon_sha256": "9f2c4d1e8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e",
           "package_name": "com.roblox.client"
         }
       },
@@ -5373,6 +5533,7 @@
           "apps": [
             {
               "app_name": "Roblox",
+              "icon_sha256": "9f2c4d1e8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e",
               "package_name": "com.roblox.client"
             },
             {
