@@ -93,9 +93,14 @@ class AvatarStateModel {
 
   const AvatarStateModel({required this.equipped});
 
+  /// A child row with no avatar yet (`avatar_state` null) arrives as `{}`.
+  /// The hard cast used to throw there, and Save on Edit child spun forever.
   factory AvatarStateModel.fromJson(Map<String, dynamic> json) {
+    final equipped = json['equipped'];
     return AvatarStateModel(
-      equipped: Map<String, String>.from(json['equipped'] as Map),
+      equipped: equipped is Map
+          ? Map<String, String>.from(equipped)
+          : const <String, String>{},
     );
   }
 

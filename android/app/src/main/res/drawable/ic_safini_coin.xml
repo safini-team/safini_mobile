@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Safini Time Coin, the same drawing as DsCoinToken.svg in
+     lib/core/utils/widgets/ds/ds_pill.dart: green ring, gold rim, orange inner
+     ring, gold-to-orange face, white tick with a brown outline. Keep the two in
+     step. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <path
+        android:fillColor="#FF0B5E3F"
+        android:pathData="M0,50a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+
+    <path android:pathData="M5,50a45,45 0,1 1,90 0a45,45 0,1 1,-90 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="50"
+                android:startY="5"
+                android:endX="50"
+                android:endY="95">
+                <item android:offset="0" android:color="#FFFFE45A" />
+                <item android:offset="1" android:color="#FFF9BE1C" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:strokeColor="#FFE8850A"
+        android:strokeWidth="1.8"
+        android:pathData="M11.4,50a38.6,38.6 0,1 1,77.2 0a38.6,38.6 0,1 1,-77.2 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="26.8"
+                android:startY="19.1"
+                android:endX="73.2"
+                android:endY="84.7">
+                <item android:offset="0" android:color="#FFFFD12B" />
+                <item android:offset="1" android:color="#FFF58C0A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path android:pathData="M12.5,50a37.5,37.5 0,1 1,75 0a37.5,37.5 0,1 1,-75 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="38"
+                android:centerY="30.5"
+                android:gradientRadius="22.5">
+                <item android:offset="0" android:color="#47FFFFFF" />
+                <item android:offset="1" android:color="#00FFFFFF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:strokeColor="#FFB35A0C"
+        android:strokeWidth="12.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M30.9,47.9L41.9,62.5L72.2,36.4" />
+
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="9.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M30.9,47.9L41.9,62.5L72.2,36.4" />
+</vector>
