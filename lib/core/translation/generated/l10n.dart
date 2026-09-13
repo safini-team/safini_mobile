@@ -3239,6 +3239,47 @@ class S {
     );
   }
 
+  /// `All done today`
+  String get allDoneToday {
+    return Intl.message(
+      'All done today',
+      name: 'allDoneToday',
+      desc:
+          'Child Today hero headline when every task for the day is approved.',
+      args: [],
+    );
+  }
+
+  /// `Every task is approved and the coins are in your wallet.`
+  String get allDoneTodayBody {
+    return Intl.message(
+      'Every task is approved and the coins are in your wallet.',
+      name: 'allDoneTodayBody',
+      desc: 'Child Today card body when every task for the day is approved.',
+      args: [],
+    );
+  }
+
+  /// `Nothing for today`
+  String get nothingForToday {
+    return Intl.message(
+      'Nothing for today',
+      name: 'nothingForToday',
+      desc: 'Child Today hero headline when the day has no tasks at all.',
+      args: [],
+    );
+  }
+
+  /// `No tasks yet. Enjoy the day.`
+  String get nothingForTodayBody {
+    return Intl.message(
+      'No tasks yet. Enjoy the day.',
+      name: 'nothingForTodayBody',
+      desc: 'Child Today card body when the day has no tasks at all.',
+      args: [],
+    );
+  }
+
   /// `Your parent reviews them next. Coins land after that.`
   String get parentReviewsNext {
     return Intl.message(

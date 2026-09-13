@@ -6,6 +6,7 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
@@ -36,14 +37,30 @@ class ChildHomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<QuestCubit>(),
       // Reload when the Today tab becomes active so submissions made on the
-      // Tasks tab (a separate cubit) show up here.
-      child: BlocListener<ChildHomeCubit, ChildHomeState>(
-        listenWhen: (prev, curr) =>
-            prev.selectedIndex != curr.selectedIndex && curr.selectedIndex == 0,
-        listener: (ctx, _) => ctx.read<QuestCubit>().loadQuests(),
-        child: const _ChildTodayScreen(),
+      // Tasks tab (a separate cubit) show up here, and again whenever the app
+      // comes back: the parent approves and the block screen spends coins
+      // while this app is in the background.
+      child: Builder(
+        builder: (context) => BlocListener<ChildHomeCubit, ChildHomeState>(
+          listenWhen: (prev, curr) =>
+              prev.selectedIndex != curr.selectedIndex &&
+              curr.selectedIndex == 0,
+          listener: (ctx, _) => _refresh(ctx),
+          child: OnAppResume(
+            onResume: () => _refresh(context),
+            child: const _ChildTodayScreen(),
+          ),
+        ),
       ),
     );
+  }
+
+  /// Tasks, wallet and store together: the coin balance shown on Today, Store
+  /// and Me is one shared cubit, and reloading only the tasks left it stale.
+  static void _refresh(BuildContext context) {
+    context.read<QuestCubit>().loadQuests();
+    context.read<ProfileCubit>().loadProfile();
+    context.read<RewardStoreCubit>().loadStore();
   }
 }
 
@@ -76,6 +93,7 @@ class _ChildTodayScreen extends StatelessWidget {
             coins: coins,
             questsDone: quests.completedCount,
             questsTotal: quests.totalCount,
+            questsAwaitingReview: quests.quests.where((q) => q.isSubmitted).length,
             openCoins: open.fold(0, (sum, q) => sum + q.coins),
             streakDays: profile.dayStreak > 0 ? profile.dayStreak : null,
             holdToComplete: true,
@@ -85,8 +103,17 @@ class _ChildTodayScreen extends StatelessWidget {
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
           onOpenTasks: () => context.read<ChildHomeCubit>().selectTab(1),
           onOpenQuest: (quest) => _openQuest(context, quests, quest.id),
-          onSendQuest: (quest) => _send(context, quest.id, s),
-          onRefresh: () => context.read<QuestCubit>().loadQuests(),
+          onSendQuest: (quest) => _send(context, quests, quest.id, s),
+          onRefresh: () async {
+            final cubit = context.read<QuestCubit>();
+            final profile = context.read<ProfileCubit>();
+            final store = context.read<RewardStoreCubit>();
+            await Future.wait([
+              cubit.loadQuests(),
+              profile.loadProfile(),
+              store.loadStore(),
+            ]);
+          },
         );
       },
     );
@@ -98,6 +125,7 @@ class _ChildTodayScreen extends StatelessWidget {
     meta: quest.localizedSubtitle(s),
     emoji: quest.emoji ?? '⭐',
     coins: quest.coins,
+    needsPhoto: quest.needsPhoto,
   );
 
   /// The cheapest thing the child cannot afford yet - the artboard's
@@ -139,7 +167,21 @@ class _ChildTodayScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _send(BuildContext context, String questId, S s) async {
+  /// The card sends a task straight off Today. A task the parent asked photo
+  /// proof for cannot be sent that way - it opens the sheet that collects the
+  /// photo, which is the same rule the sheet itself enforces.
+  Future<void> _send(
+    BuildContext context,
+    QuestState state,
+    String questId,
+    S s,
+  ) async {
+    final quest = state.quests.where((q) => q.id == questId).firstOrNull;
+    if (quest == null) return;
+    if (quest.needsPhoto) {
+      _openQuest(context, state, questId);
+      return;
+    }
     final cubit = context.read<QuestCubit>();
     final error = await cubit.submitQuest(questId);
     if (!context.mounted) return;

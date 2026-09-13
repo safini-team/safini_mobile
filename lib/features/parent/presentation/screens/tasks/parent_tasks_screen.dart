@@ -5,10 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_view.dart';
 import 'package:safini/features/parent/presentation/widgets/layout/parent_task_states.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
@@ -35,23 +38,35 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   /// on most days.
   bool _laneChosenByUser = false;
 
-  Future<void> _reload() {
-    final cubit = context.read<ParentTasksCubit>();
-    return _scope == _allScope
-        ? cubit.loadAllTasks()
-        : cubit.loadTasks(childId: _scope);
-  }
+  /// Always the whole family. One list for the Tasks tab, the tab badge and
+  /// the Today card means an approval anywhere is visible everywhere; the kid
+  /// chips filter what is already here instead of refetching.
+  Future<void> _reload() => context.read<ParentTasksCubit>().loadAllTasks();
 
   void _selectScope(String scope) {
     if (scope == _scope) return;
     setState(() => _scope = scope);
-    unawaited(_reload());
   }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
 
+    // The list is fetched once and the cubit lives for the whole session, so a
+    // submission that lands while the parent is on another tab, or while the
+    // app is in the background, never showed up until a pull-to-refresh.
+    return BlocListener<ParentHomeCubit, ParentHomeState>(
+      listenWhen: (prev, curr) =>
+          prev.selectedIndex != curr.selectedIndex && curr.selectedIndex == 1,
+      listener: (_, _) => unawaited(_reload()),
+      child: OnAppResume(
+        onResume: () => unawaited(_reload()),
+        child: _buildContent(context, s),
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, S s) {
     return BlocConsumer<ParentTasksCubit, ParentTasksState>(
       listener: (context, state) => _onState(context, state, s),
       builder: (context, state) {
@@ -171,17 +186,23 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         ? TaskLane.done
         : TaskLane.active;
 
+    final scoped = _scope == _allScope
+        ? loaded.tasks
+        : loaded.tasks
+              .where((task) => (task.childId ?? loaded.childId) == _scope)
+              .toList();
+
     final counts = {
-      TaskLane.review: loaded.pendingApproval.length,
-      TaskLane.active: loaded.activeTasks.length,
-      TaskLane.done: loaded.completedTasks.length,
+      TaskLane.review: scoped.where((t) => t.isPendingApproval).length,
+      TaskLane.active: scoped.where((t) => laneOf(t) == TaskLane.active).length,
+      TaskLane.done: scoped.where((t) => t.isCompleted).length,
     };
 
     final lane = _laneChosenByUser
         ? _lane
         : (counts[TaskLane.review]! > 0 ? TaskLane.review : TaskLane.active);
 
-    final rows = loaded.tasks
+    final rows = scoped
         .where((task) => laneOf(task) == lane)
         .map(
           (task) => TaskRowData(
@@ -222,7 +243,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
               loaded.childName;
 
     return ParentTasksData(
-      scopeLine: s.taskScopeLine(scopeName, s.taskCount(loaded.tasks.length)),
+      scopeLine: s.taskScopeLine(scopeName, s.taskCount(scoped.length)),
       chips: [
         TaskScopeChip(key: _allScope, label: s.scopeEveryone, hasAvatar: false),
         for (final child in children)

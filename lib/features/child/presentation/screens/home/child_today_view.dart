@@ -14,6 +14,7 @@ class TodayQuest {
     required this.meta,
     required this.emoji,
     required this.coins,
+    this.needsPhoto = false,
   });
 
   final String id;
@@ -21,6 +22,10 @@ class TodayQuest {
   final String meta;
   final String emoji;
   final int coins;
+
+  /// The parent asked for photo proof, so this one cannot be sent from the
+  /// card: the button opens the sheet that collects the photo.
+  final bool needsPhoto;
 }
 
 class TodayTeaser {
@@ -41,6 +46,9 @@ class TodayTeaser {
   double get progress => cost <= 0 ? 1 : (coins / cost).clamp(0.0, 1.0);
 }
 
+/// Why the child has nothing to start right now.
+enum TodayRest { withParent, allDone, empty }
+
 class ChildTodayData {
   const ChildTodayData({
     required this.greeting,
@@ -51,6 +59,7 @@ class ChildTodayData {
     required this.openCoins,
     required this.next,
     required this.holdToComplete,
+    this.questsAwaitingReview = 0,
     this.teaser,
     this.streakDays,
   });
@@ -60,6 +69,10 @@ class ChildTodayData {
   final int coins;
   final int questsDone;
   final int questsTotal;
+
+  /// Sent and waiting for the parent. Nothing left to do is not the same as
+  /// everything being approved, and the card used to say the former for both.
+  final int questsAwaitingReview;
 
   /// Coins still on the table across every open task.
   final int openCoins;
@@ -76,12 +89,24 @@ class ChildTodayData {
 
   int get questsLeft => (questsTotal - questsDone).clamp(0, questsTotal);
 
-  String headline(S s) => next == null
-      ? s.everythingIsWithParent
-      : s.tasksLeftCoinsOnTable(
-          s.taskCount(questsLeft),
-          s.coinCountShort(openCoins),
-        );
+  /// What the day looks like once there is nothing left to start.
+  TodayRest get rest => questsAwaitingReview > 0
+      ? TodayRest.withParent
+      : (questsTotal > 0 ? TodayRest.allDone : TodayRest.empty);
+
+  String headline(S s) {
+    if (next != null) {
+      return s.tasksLeftCoinsOnTable(
+        s.taskCount(questsLeft),
+        s.coinCountShort(openCoins),
+      );
+    }
+    return switch (rest) {
+      TodayRest.withParent => s.everythingIsWithParent,
+      TodayRest.allDone => s.allDoneToday,
+      TodayRest.empty => s.nothingForToday,
+    };
+  }
 }
 
 /// Kid · Today. Deep-purple hero, then the one task to do next with the
@@ -148,7 +173,7 @@ class ChildTodayView extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
             child: next == null
-                ? const _AllSent()
+                ? _Rest(rest: data.rest)
                 : _NextQuestCard(
                     quest: next,
                     holdToComplete: data.holdToComplete,
@@ -325,10 +350,14 @@ class _NextQuestCard extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           DsHoldButton(
-            label: holdToComplete ? s.holdToMarkDone : s.markItDone,
+            label: quest.needsPhoto
+                ? s.addPhoto
+                : (holdToComplete ? s.holdToMarkDone : s.markItDone),
             holdingLabel: s.keepHolding,
-            requireHold: holdToComplete,
-            onComplete: onSend,
+            requireHold: holdToComplete && !quest.needsPhoto,
+            // A task the parent wants a photo for goes to the sheet that
+            // collects it. Sending it from here skipped the proof entirely.
+            onComplete: quest.needsPhoto ? onOpen : onSend,
           ),
         ],
       ),
@@ -336,26 +365,32 @@ class _NextQuestCard extends StatelessWidget {
   }
 }
 
-class _AllSent extends StatelessWidget {
-  const _AllSent();
+class _Rest extends StatelessWidget {
+  const _Rest({required this.rest});
+
+  final TodayRest rest;
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final (emoji, title, body) = switch (rest) {
+      TodayRest.withParent => ('🎈', s.everythingSent, s.parentReviewsNext),
+      TodayRest.allDone => ('🎉', s.allDoneToday, s.allDoneTodayBody),
+      TodayRest.empty => ('🌤️', s.nothingForToday, s.nothingForTodayBody),
+    };
+
     return DsCard(
       radius: AppRadius.feature,
       shadow: AppShadows.flat,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
       child: Column(
         children: [
-          const Text('🎈', style: TextStyle(fontSize: 30)),
+          Text(emoji, style: const TextStyle(fontSize: 30)),
           const SizedBox(height: 10),
-          Text(
-            S.of(context).everythingSent,
-            style: AppText.cardTitle.copyWith(fontSize: 18),
-          ),
+          Text(title, style: AppText.cardTitle.copyWith(fontSize: 18)),
           const SizedBox(height: 5),
           Text(
-            S.of(context).parentReviewsNext,
+            body,
             textAlign: TextAlign.center,
             style: AppText.meta.copyWith(fontSize: 14, height: 1.4),
           ),

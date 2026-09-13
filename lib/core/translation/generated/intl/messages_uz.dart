@@ -202,6 +202,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Yosh kiritilishi shart.",
     ),
     "allCaughtUp": MessageLookupByLibrary.simpleMessage("Hammasi tekshirildi"),
+    "allDoneToday": MessageLookupByLibrary.simpleMessage(
+      "Bugungi ishlar bajarildi",
+    ),
+    "allDoneTodayBody": MessageLookupByLibrary.simpleMessage(
+      "Hamma vazifa tasdiqlandi, tangalar hamyoningda.",
+    ),
     "allTasks": MessageLookupByLibrary.simpleMessage("Barcha vazifalar"),
     "almostYours": MessageLookupByLibrary.simpleMessage("Deyarli seniki"),
     "alwaysAllowedNoRedemption": MessageLookupByLibrary.simpleMessage(
@@ -734,6 +740,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ota-onaga izoh · ixtiyoriy",
     ),
     "noteFromParent": MessageLookupByLibrary.simpleMessage("Ota-onadan izoh"),
+    "nothingForToday": MessageLookupByLibrary.simpleMessage(
+      "Bugunga vazifa yoʻq",
+    ),
+    "nothingForTodayBody": MessageLookupByLibrary.simpleMessage(
+      "Hozircha vazifa yoʻq. Yaxshi dam ol.",
+    ),
     "nothingHereYet": MessageLookupByLibrary.simpleMessage("Hozircha boʻsh"),
     "nothingInStore": MessageLookupByLibrary.simpleMessage(
       "Doʻkon hozircha boʻsh.",

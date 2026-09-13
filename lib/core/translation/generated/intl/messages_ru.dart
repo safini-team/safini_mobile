@@ -202,6 +202,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ageRequired": MessageLookupByLibrary.simpleMessage("Укажите возраст."),
     "allCaughtUp": MessageLookupByLibrary.simpleMessage("Всё проверено"),
+    "allDoneToday": MessageLookupByLibrary.simpleMessage(
+      "На сегодня всё сделано",
+    ),
+    "allDoneTodayBody": MessageLookupByLibrary.simpleMessage(
+      "Все задания одобрены, монеты уже в кошельке.",
+    ),
     "allTasks": MessageLookupByLibrary.simpleMessage("Все задания"),
     "almostYours": MessageLookupByLibrary.simpleMessage("Почти твоё"),
     "alwaysAllowedNoRedemption": MessageLookupByLibrary.simpleMessage(
@@ -721,6 +727,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noteFromParent": MessageLookupByLibrary.simpleMessage(
       "Заметка от родителя",
+    ),
+    "nothingForToday": MessageLookupByLibrary.simpleMessage(
+      "На сегодня заданий нет",
+    ),
+    "nothingForTodayBody": MessageLookupByLibrary.simpleMessage(
+      "Заданий пока нет. Отдыхай.",
     ),
     "nothingHereYet": MessageLookupByLibrary.simpleMessage("Здесь пока пусто"),
     "nothingInStore": MessageLookupByLibrary.simpleMessage(
