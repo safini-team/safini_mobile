@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
+import 'package:safini/core/utils/constants/controlled_apps.dart';
 import 'package:safini/core/utils/request_id.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
@@ -82,6 +83,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           final map = item.map((key, value) => MapEntry(key.toString(), value));
           final slug = _stringValue(map, ['app_slug', 'id', 'key']);
           final title = _stringValue(map, ['display_name', 'title', 'name']);
+          final packageName = _stringValue(map, ['package_name']);
+          final iconUrl = _stringValue(map, ['icon_url']);
           return AppTimeItem(
             id: slug,
             title: title.isEmpty ? slug : title,
@@ -100,6 +103,11 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
                   'bonus_minutes_remaining',
                 ]) ??
                 0,
+            // An API from before the store sent packages still maps by slug.
+            packageName: packageName.isNotEmpty
+                ? packageName
+                : ControlledApps.packageFor(slug),
+            iconUrl: iconUrl.isEmpty ? null : iconUrl,
           );
         })
         .where((item) => item.id.isNotEmpty)

@@ -354,19 +354,22 @@ class _AppRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.fill,
-              borderRadius: BorderRadius.circular(AppRadius.sm),
+          if (app.iconPng != null)
+            Image.memory(app.iconPng!, width: 36, height: 36)
+          else
+            Container(
+              width: 36,
+              height: 36,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.fill,
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+              ),
+              child: Text(
+                AppData.getEmojiForApp(app.appName),
+                style: const TextStyle(fontSize: 18),
+              ),
             ),
-            child: Text(
-              AppData.getEmojiForApp(app.appName),
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -378,7 +381,10 @@ class _AppRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  app.packageName,
+                  app.iconPng == null
+                      ? '${app.packageName} · no icon'
+                      : '${app.packageName} · '
+                            'icon ${app.iconPng!.length ~/ 1024} KiB',
                   style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
                 ),
               ],

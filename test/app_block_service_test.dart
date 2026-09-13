@@ -84,12 +84,42 @@ void main() {
     expect(apps.single.packageName, 'com.roblox.client');
   });
 
+  test('installed apps carry the icon native rendered', () async {
+    final png = Uint8List.fromList([0x89, 0x50, 0x4e, 0x47]);
+    reply = [
+      {
+        'packageName': 'com.google.android.youtube',
+        'appName': 'YouTube',
+        'iconPng': png,
+        'iconSha256': 'ab' * 32,
+      },
+      // An icon that failed to render still lists the app.
+      {'packageName': 'com.no.icon', 'appName': 'No Icon', 'iconPng': null},
+    ];
+    final apps = await android.installedApps();
+    expect(apps.first.iconPng, png);
+    expect(apps.first.iconSha256, 'ab' * 32);
+    expect(apps.last.iconPng, isNull);
+    expect(apps.last.iconSha256, isNull);
+  });
+
+  test('one app icon is asked for by package', () async {
+    final png = Uint8List.fromList([1, 2, 3]);
+    reply = png;
+    expect(await android.appIcon('com.google.android.youtube'), png);
+    expect(calls.single.method, 'appIcon');
+    expect(calls.single.arguments, {
+      'packageName': 'com.google.android.youtube',
+    });
+  });
+
   test('a platform without the native side is never called', () async {
     await elsewhere.startService();
     await elsewhere.syncNow();
     await elsewhere.stopService();
     await elsewhere.configure({'childId': 'child-1'});
     expect(await elsewhere.installedApps(), isEmpty);
+    expect(await elsewhere.appIcon('com.roblox.client'), isNull);
     expect(calls, isEmpty);
 
     // Permission checks answer "granted" off Android on purpose: the child

@@ -124,6 +124,7 @@ class _ParentLimitsView extends StatelessWidget {
             canRedeem: limit['canRedeem'] as bool? ?? true,
             redeemCoinCost: (limit['cost'] as int?) ?? 100,
             redeemRewardMinutes: (limit['reward'] as int?) ?? 30,
+            iconUrl: limit['icon'] as String?,
           );
         }).toList();
 

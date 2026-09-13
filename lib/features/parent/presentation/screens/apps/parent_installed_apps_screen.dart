@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/app_icons/app_icon_tile.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
@@ -201,7 +202,7 @@ class _AppsList extends StatelessWidget {
       showAppLimitSheet(
         context,
         cubit: cubit,
-        app: _limitsAppFor(existing, label),
+        app: _limitsAppFor(existing, label, app.iconUrl),
         childName: childName,
       );
       return;
@@ -221,7 +222,7 @@ class _AppsList extends StatelessWidget {
             label: s.installedAppsSetLimit,
             onTap: () {
               Navigator.of(sheetContext).pop();
-              _addRule(context, cubit, slug, label, block: false);
+              _addRule(context, cubit, slug, label, app.iconUrl, block: false);
             },
           ),
           const SizedBox(height: 10),
@@ -229,7 +230,7 @@ class _AppsList extends StatelessWidget {
             label: s.installedAppsBlockCompletely,
             onTap: () {
               Navigator.of(sheetContext).pop();
-              _addRule(context, cubit, slug, label, block: true);
+              _addRule(context, cubit, slug, label, app.iconUrl, block: true);
             },
           ),
         ],
@@ -241,7 +242,8 @@ class _AppsList extends StatelessWidget {
     BuildContext context,
     ParentAppsCubit cubit,
     String slug,
-    String label, {
+    String label,
+    String? iconUrl, {
     required bool block,
   }) async {
     final error = await cubit.addApp(
@@ -271,13 +273,17 @@ class _AppsList extends StatelessWidget {
       showAppLimitSheet(
         context,
         cubit: cubit,
-        app: _limitsAppFor(rule, label),
+        app: _limitsAppFor(rule, label, iconUrl),
         childName: childName,
       );
     }
   }
 
-  LimitsApp _limitsAppFor(ChildAppUsageModel rule, String fallbackName) {
+  LimitsApp _limitsAppFor(
+    ChildAppUsageModel rule,
+    String fallbackName,
+    String? fallbackIconUrl,
+  ) {
     final name = rule.displayName.isEmpty ? fallbackName : rule.displayName;
     return LimitsApp(
       slug: rule.appSlug,
@@ -290,6 +296,7 @@ class _AppsList extends StatelessWidget {
       canRedeem: rule.canRedeem,
       redeemCoinCost: rule.redeemCoinCost,
       redeemRewardMinutes: rule.redeemRewardMinutes,
+      iconUrl: rule.iconUrl ?? fallbackIconUrl,
     );
   }
 }
@@ -311,8 +318,9 @@ class _InstalledAppRow extends StatelessWidget {
       title: app.appName.isEmpty ? app.packageName : app.appName,
       subtitle: app.packageName,
       subtitleStyle: AppText.metaSm.copyWith(color: AppColors.textTertiary),
-      leading: DsEmojiTile(
+      leading: AppIconTile(
         emoji: AppData.getEmojiForApp(app.appName),
+        iconUrl: app.iconUrl,
         size: 36,
         radius: AppRadius.sm,
         fontSize: 18,

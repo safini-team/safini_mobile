@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/app_icons/app_icon_tile.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -6,10 +7,13 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 
 /// The artboard's reward sheet: big emoji, name, the price pill, a line of
-/// blurb, then "Ask for this", or a disabled "Not enough coins".
+/// blurb, then "Ask for this", or a disabled "Not enough coins". App time
+/// shows the app's own icon in place of the emoji when there is one.
 Future<bool?> showRewardSheet(
   BuildContext context, {
   required String emoji,
+  String? packageName,
+  String? iconUrl,
   required String name,
   required int cost,
   required int coins,
@@ -25,10 +29,18 @@ Future<bool?> showRewardSheet(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            emoji,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 52),
+          Center(
+            child: AppIconTile(
+              emoji: emoji,
+              packageName: packageName,
+              iconUrl: iconUrl,
+              size: 72,
+              placeholder: Text(
+                emoji,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 52),
+              ),
+            ),
           ),
           const SizedBox(height: 12),
           Text(name, textAlign: TextAlign.center, style: AppText.title3),

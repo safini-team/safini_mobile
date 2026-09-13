@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/app_icons/app_icon_tile.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -112,8 +113,9 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
       children: [
         Row(
           children: [
-            DsEmojiTile(
+            AppIconTile(
               emoji: widget.app.emoji,
+              iconUrl: widget.app.iconUrl,
               size: 52,
               radius: AppRadius.icon,
               fontSize: 26,

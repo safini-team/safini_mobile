@@ -50,6 +50,9 @@ class AppBlockService {
   Future<void> startService() => _call('startService');
   Future<void> syncNow() => _call('syncNow');
   Future<void> stopService() => _call('stopService');
+
+  /// Every launchable app on this phone, with its launcher icon. Rendering
+  /// the icons takes native a second or two; it happens off the UI thread.
   Future<List<InstalledApp>> installedApps() async {
     if (!isSupported) return [];
     final raw = await channel.invokeListMethod<dynamic>('installedApps') ?? [];
@@ -59,8 +62,23 @@ class AppBlockService {
           (a) => InstalledApp(
             packageName: a['packageName'].toString(),
             appName: a['appName'].toString(),
+            iconPng: a['iconPng'] is Uint8List
+                ? a['iconPng'] as Uint8List
+                : null,
+            iconSha256: a['iconSha256'] is String
+                ? a['iconSha256'] as String
+                : null,
           ),
         )
         .toList();
+  }
+
+  /// The launcher icon of one app on this phone as a PNG, or `null` when the
+  /// app is not installed (or this is not Android).
+  Future<Uint8List?> appIcon(String packageName) async {
+    if (!isSupported) return null;
+    return channel.invokeMethod<Uint8List>('appIcon', {
+      'packageName': packageName,
+    });
   }
 }

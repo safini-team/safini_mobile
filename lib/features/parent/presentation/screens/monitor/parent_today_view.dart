@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/app_icons/app_icon_tile.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -42,10 +43,14 @@ class TodayApp {
     required this.emoji,
     required this.usedMinutes,
     required this.limitMinutes,
+    this.iconUrl,
   });
 
   final String name;
   final String emoji;
+
+  /// The child's own icon for this app; [emoji] stands in until it loads.
+  final String? iconUrl;
   final int usedMinutes;
   final int limitMinutes;
 
@@ -547,7 +552,7 @@ class _AppRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
         children: [
-          DsEmojiTile(emoji: app.emoji, fontSize: 17),
+          AppIconTile(emoji: app.emoji, iconUrl: app.iconUrl, fontSize: 17),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

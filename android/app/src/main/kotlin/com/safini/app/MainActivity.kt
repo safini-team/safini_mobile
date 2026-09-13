@@ -11,6 +11,8 @@ import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -77,7 +79,11 @@ class MainActivity : FlutterActivity() {
                                 runOnUiThread { result.success(null) }
                             }.start()
                         }
-                        "installedApps" -> result.success(installedLaunchableApps())
+                        "installedApps" -> inBackground(result) { AppIcons.installedApps(this) }
+                        "appIcon" -> {
+                            val app = call.argument<String>("packageName")!!
+                            inBackground(result) { AppIcons.icon(this, app) }
+                        }
                         else -> result.notImplemented()
                     }
                 } catch (e: Exception) { result.error("enforcement", e.message, null) }
@@ -105,18 +111,18 @@ class MainActivity : FlutterActivity() {
         )
     }
 
-    private fun installedLaunchableApps(): List<Map<String, String>> {
-        val pm = packageManager
-        val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
-        return pm.queryIntentActivities(intent, 0)
-            .mapNotNull { info ->
-                val appPackage = info.activityInfo?.packageName ?: return@mapNotNull null
-                if (appPackage == packageName) return@mapNotNull null
-                mapOf(
-                    "packageName" to appPackage,
-                    "appName" to info.loadLabel(pm).toString(),
-                )
+    /** Icons take a second or two for a full phone; never on the UI thread. */
+    private fun inBackground(result: MethodChannel.Result, work: () -> Any?) {
+        iconWorkers.execute {
+            val outcome = runCatching(work)
+            runOnUiThread {
+                outcome.fold({ result.success(it) }, { result.error("apps", it.message, null) })
             }
-            .distinctBy { it["packageName"] }
+        }
+    }
+
+    private companion object {
+        /** Two, so a single icon for a tile does not queue behind a full sync. */
+        val iconWorkers: ExecutorService = Executors.newFixedThreadPool(2)
     }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/app_icons/app_icon_tile.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -19,10 +20,17 @@ class StoreCardData {
     this.badge,
     this.owned = false,
     this.pending = false,
+    this.packageName,
+    this.iconUrl,
   }) : fullName = fullName ?? name;
 
   final String id;
   final String emoji;
+
+  /// An app's real icon replaces [emoji] on app-time tiles: from this phone's
+  /// launcher by package, else the copy it uploaded.
+  final String? packageName;
+  final String? iconUrl;
 
   /// What it is - "Brawl Stars", "Cosmic Cape". One line on the tile.
   final String name;
@@ -175,7 +183,18 @@ class _StoreTile extends StatelessWidget {
                 : card.affordable || card.owned
                 ? 1
                 : 0.4,
-            child: Text(card.emoji, style: const TextStyle(fontSize: 32)),
+            child: AppIconTile(
+              emoji: card.emoji,
+              packageName: card.packageName,
+              iconUrl: card.iconUrl,
+              // As tall as the 32pt emoji's line, so the name under an icon
+              // sits where it sits under an emoji.
+              size: 46,
+              placeholder: Text(
+                card.emoji,
+                style: const TextStyle(fontSize: 32),
+              ),
+            ),
           ),
           const SizedBox(height: 10),
           // The tile is a fixed 168pt. The name wraps at the tile's width as

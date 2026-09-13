@@ -167,7 +167,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       'name': app.displayName,
       'used': app.usedMinutes,
       'limit': app.dailyLimitMinutes,
-      'icon': null,
+      'icon': app.iconUrl,
       'isBlocked': app.isBlocked,
       'isLimited': app.isLimited,
       'canRedeem': app.canRedeem,

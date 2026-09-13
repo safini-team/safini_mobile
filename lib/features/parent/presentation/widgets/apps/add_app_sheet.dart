@@ -1,12 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:safini/core/app_icons/app_icon_tile.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/constants/controlled_apps.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/data/app_data.dart';
+import 'package:safini/features/parent/data/services/parent_app_blocking_service.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
@@ -42,6 +46,10 @@ class _AddAppSheetState extends State<_AddAppSheet> {
   bool _loading = true;
   String? _loadError;
 
+  /// Icons of the catalog apps the child's phone has, by slug. A chip without
+  /// one keeps its emoji.
+  Map<String, String> _iconUrls = const {};
+
   String? _slug;
   int _limit = 60;
   int _cost = 100;
@@ -52,6 +60,32 @@ class _AddAppSheetState extends State<_AddAppSheet> {
   void initState() {
     super.initState();
     unawaited(_loadCatalog());
+    unawaited(_loadIcons());
+  }
+
+  /// Best effort, alongside the catalog: the chips work without it.
+  Future<void> _loadIcons() async {
+    final childId = widget.cubit.childId;
+    if (childId == null || !getIt.isRegistered<ParentAppBlockingService>()) {
+      return;
+    }
+    final result = await getIt<ParentAppBlockingService>().fetchInstalledApps(
+      childId,
+    );
+    if (!mounted) return;
+    result.fold((_) {}, (snapshot) {
+      final byPackage = {
+        for (final app in snapshot.apps)
+          if (app.iconUrl != null) app.packageName: app.iconUrl!,
+      };
+      setState(() {
+        _iconUrls = {
+          for (final MapEntry(key: slug, value: package)
+              in ControlledApps.slugToPackage.entries)
+            if (byPackage[package] != null) slug: byPackage[package]!,
+        };
+      });
+    });
   }
 
   /// The list comes from `GET /v1/apps` now. It used to be a hard-coded copy
@@ -165,6 +199,19 @@ class _AddAppSheetState extends State<_AddAppSheet> {
               DsCategoryChip(
                 label: app.displayName,
                 emoji: AppData.getEmojiForApp(app.displayName),
+                leading: _iconUrls[app.appSlug] == null
+                    ? null
+                    : AppIconTile(
+                        emoji: AppData.getEmojiForApp(app.displayName),
+                        iconUrl: _iconUrls[app.appSlug],
+                        // The height of the 14pt emoji's line, so chips with
+                        // and without an icon stay the same height.
+                        size: 17,
+                        placeholder: Text(
+                          AppData.getEmojiForApp(app.displayName),
+                          style: const TextStyle(fontSize: 14, height: 1.2),
+                        ),
+                      ),
                 selected: app.appSlug == _slug,
                 restBackground: AppColors.fill,
                 padding: const EdgeInsets.symmetric(
