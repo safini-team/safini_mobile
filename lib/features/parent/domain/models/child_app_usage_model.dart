@@ -46,6 +46,10 @@ class ChildAppUsageModel {
   final int redeemCoinCost;
   final int redeemRewardMinutes;
 
+  /// The icon the child's phone uploaded for this app, as a path on the API.
+  /// `null` until it has, or when the app is not on that phone.
+  final String? iconUrl;
+
   const ChildAppUsageModel({
     required this.appSlug,
     required this.displayName,
@@ -57,11 +61,13 @@ class ChildAppUsageModel {
     required this.remainingMinutesToday,
     required this.redeemCoinCost,
     required this.redeemRewardMinutes,
+    this.iconUrl,
   });
 
   factory ChildAppUsageModel.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic v) => v is num ? v.toInt() : 0;
     int? asNullableInt(dynamic v) => v is num ? v.toInt() : null;
+    final iconUrl = json['icon_url'];
     return ChildAppUsageModel(
       appSlug: (json['app_slug'] ?? '').toString(),
       displayName: (json['display_name'] ?? '').toString(),
@@ -75,6 +81,7 @@ class ChildAppUsageModel {
       remainingMinutesToday: asNullableInt(json['remaining_minutes_today']),
       redeemCoinCost: asInt(json['redeem_coin_cost']),
       redeemRewardMinutes: asInt(json['redeem_reward_minutes']),
+      iconUrl: iconUrl is String && iconUrl.isNotEmpty ? iconUrl : null,
     );
   }
 
@@ -112,6 +119,7 @@ class ChildAppUsageModel {
       remainingMinutesToday: remainingMinutesToday,
       redeemCoinCost: redeemCoinCost ?? this.redeemCoinCost,
       redeemRewardMinutes: redeemRewardMinutes ?? this.redeemRewardMinutes,
+      iconUrl: iconUrl,
     );
   }
 }

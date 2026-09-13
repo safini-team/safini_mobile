@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safini/core/app_icons/app_icon_tile.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -30,11 +31,16 @@ class LimitsApp {
     required this.canRedeem,
     this.redeemCoinCost = 100,
     this.redeemRewardMinutes = 30,
+    this.iconUrl,
   });
 
   final String slug;
   final String name;
   final String emoji;
+
+  /// The child's own icon for this app, drawn in place of [emoji] once it
+  /// loads. A path on the API; `null` until the child's phone uploads it.
+  final String? iconUrl;
   final int usedMinutes;
   final int limitMinutes;
 
@@ -377,8 +383,9 @@ class _AppRow extends StatelessWidget {
       subtitleStyle: AppText.metaSm.copyWith(
         color: app.isOver ? AppColors.dangerDeep : AppColors.textSecondary,
       ),
-      leading: DsEmojiTile(
+      leading: AppIconTile(
         emoji: app.emoji,
+        iconUrl: app.iconUrl,
         size: 36,
         radius: AppRadius.sm,
         fontSize: 18,

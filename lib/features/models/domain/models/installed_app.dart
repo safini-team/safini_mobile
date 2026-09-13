@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 /// One app installed on a child's device, as enumerated natively on the child
 /// device and synced to the backend so the parent can see the child's apps.
 ///
@@ -8,16 +11,42 @@ class InstalledApp {
   final String packageName;
   final String appName;
 
-  const InstalledApp({required this.packageName, required this.appName});
+  /// Lowercase hex SHA-256 of [iconPng]. Sent on every upload; the server
+  /// answers with the hashes it still needs the bytes for.
+  final String? iconSha256;
 
-  factory InstalledApp.fromJson(Map<String, dynamic> json) => InstalledApp(
-    packageName: (json['package_name'] ?? json['packageName'] ?? '').toString(),
-    appName: (json['app_name'] ?? json['appName'] ?? '').toString(),
-  );
+  /// The launcher icon as a PNG. Only the phone that has the app has this.
+  final Uint8List? iconPng;
 
-  Map<String, dynamic> toJson() => {
+  /// Where anyone else gets the icon: a path on the API, `null` until the
+  /// child's phone has uploaded it.
+  final String? iconUrl;
+
+  const InstalledApp({
+    required this.packageName,
+    required this.appName,
+    this.iconSha256,
+    this.iconPng,
+    this.iconUrl,
+  });
+
+  factory InstalledApp.fromJson(Map<String, dynamic> json) {
+    final iconUrl = json['icon_url'];
+    return InstalledApp(
+      packageName: (json['package_name'] ?? json['packageName'] ?? '')
+          .toString(),
+      appName: (json['app_name'] ?? json['appName'] ?? '').toString(),
+      iconUrl: iconUrl is String && iconUrl.isNotEmpty ? iconUrl : null,
+    );
+  }
+
+  /// One entry of the upload. The icon's bytes only go when [withIcon] - the
+  /// server has most of them already.
+  Map<String, dynamic> toJson({bool withIcon = false}) => {
     'package_name': packageName,
     'app_name': appName,
+    if (iconSha256 != null) 'icon_sha256': iconSha256,
+    if (withIcon && iconPng != null) 'icon_png': base64Encode(iconPng!),
   };
 }
 

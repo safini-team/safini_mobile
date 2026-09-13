@@ -75,6 +75,8 @@ class _ChildStoreScreen extends StatelessWidget {
                         ? s.minutesLeftShort(item.remainingMinutes)
                         : null,
                     pending: state.pendingPurchases.contains(item.id),
+                    packageName: item.packageName,
+                    iconUrl: item.iconUrl,
                   ),
               ]
             : [
@@ -131,6 +133,8 @@ class _ChildStoreScreen extends StatelessWidget {
     final confirmed = await showRewardSheet(
       context,
       emoji: card.emoji,
+      packageName: card.packageName,
+      iconUrl: card.iconUrl,
       name: card.fullName,
       cost: card.cost,
       coins: coins,

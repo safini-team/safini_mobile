@@ -5,11 +5,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/app/app_router.dart';
+import 'package:safini/core/app_icons/app_icon_cache.dart';
 import 'package:safini/core/network/dio_network.dart';
 import 'package:safini/core/notifications/parent_push_service.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/child/child_injection.dart';
+import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/features/common/common_injection.dart';
 import 'package:safini/features/parent/parent_injection.dart';
 
@@ -51,6 +53,18 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
   if (!getIt.isRegistered<Dio>()) {
     DioNetwork.initDio();
     getIt.registerLazySingleton<Dio>(() => DioNetwork.appAPI);
+  }
+
+  // App icons for both shells: the launcher's own on a child's Android phone,
+  // the child's uploaded copies everywhere else.
+  if (!getIt.isRegistered<AppIconCache>()) {
+    getIt.registerLazySingleton<AppIconCache>(
+      () => AppIconCache.api(
+        getIt<Dio>(),
+        loadLocal: (packageName) =>
+            getIt<AppBlockService>().appIcon(packageName),
+      ),
+    );
   }
 
   if (!getIt.isRegistered<PushDeepLinks>()) {

@@ -91,8 +91,17 @@ class ChildAppRulesService {
   /// The backend caps a snapshot at 1000 apps (`InstalledAppsReplaceRequest`).
   static const int _maxInstalledApps = 1000;
 
+  /// Icon bytes per upload. The server takes 4 MiB; a smaller batch keeps
+  /// each request quick on a phone's connection.
+  static const int _iconBatchBytes = 1024 * 1024;
+
   /// Uploads the full snapshot of apps installed on the child's device so the
   /// parent can see them. Replaces the previous snapshot (PUT).
+  ///
+  /// Icons go up lazily. The first PUT names every icon by hash only; the
+  /// server answers with the hashes it has no bytes for, and the snapshot goes
+  /// again with those icons attached, a batch at a time, until nothing is
+  /// missing. Once the server has them, a sync is back to one small request.
   Future<Either<Failure, Unit>> reportInstalledApps(
     String childId,
     List<InstalledApp> apps,
@@ -101,10 +110,41 @@ class ChildAppRulesService {
       final payload = apps.length > _maxInstalledApps
           ? apps.sublist(0, _maxInstalledApps)
           : apps;
-      await _dio.put<dynamic>(
-        ApiConst.childInstalledApps(childId),
-        data: {'apps': payload.map((a) => a.toJson()).toList()},
-      );
+      final icons = <String, int>{
+        for (final app in payload)
+          if (app.iconSha256 != null && app.iconPng != null)
+            app.iconSha256!: app.iconPng!.length,
+      };
+      final sent = <String>{};
+      var attach = <String>{};
+      while (true) {
+        final inBody = <String>{};
+        final response = await _dio.put<Map<String, dynamic>>(
+          ApiConst.childInstalledApps(childId),
+          data: {
+            'apps': [
+              for (final app in payload)
+                app.toJson(
+                  // Apps can share an icon; its bytes only need to go once.
+                  withIcon:
+                      attach.contains(app.iconSha256) &&
+                      inBody.add(app.iconSha256!),
+                ),
+            ],
+          },
+        );
+        sent.addAll(attach);
+        final missing = response.data?['missing_icon_sha256'];
+        // Only icons this phone has and has not already sent: a hash the
+        // server keeps asking for must not turn into an endless loop.
+        final pending = [
+          if (missing is List)
+            for (final hash in missing.whereType<String>())
+              if (icons.containsKey(hash) && !sent.contains(hash)) hash,
+        ];
+        if (pending.isEmpty) break;
+        attach = _iconBatch(pending, icons);
+      }
       return const Right(unit);
     } on DioException catch (e) {
       return Left(mapDioError(e, 'Unable to sync installed apps.'));
@@ -112,6 +152,20 @@ class ChildAppRulesService {
       debugPrint('[ChildAppRulesService] reportInstalledApps error: $e');
       return Left(ServerFailure(e.toString()));
     }
+  }
+
+  /// The next icons to attach: as many as fit in [_iconBatchBytes], and
+  /// always at least one, so a large icon still gets through.
+  static Set<String> _iconBatch(List<String> pending, Map<String, int> sizes) {
+    final batch = <String>{};
+    var bytes = 0;
+    for (final hash in pending) {
+      final size = sizes[hash]!;
+      if (batch.isNotEmpty && bytes + size > _iconBatchBytes) break;
+      batch.add(hash);
+      bytes += size;
+    }
+    return batch;
   }
 
   /// Reads back the snapshot the child device previously uploaded (the child may

@@ -136,6 +136,7 @@ class _ParentMonitorView extends StatelessWidget {
             emoji: AppData.getEmojiForApp(name),
             usedMinutes: (limit['used'] as int?) ?? 0,
             limitMinutes: (limit['limit'] as int?) ?? 0,
+            iconUrl: limit['icon'] as String?,
           );
         }).toList()
           ..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));

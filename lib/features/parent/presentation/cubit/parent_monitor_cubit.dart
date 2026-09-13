@@ -153,7 +153,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
       'name': app.displayName,
       'used': app.usedMinutes,
       'limit': app.dailyLimitMinutes,
-      'icon': null,
+      'icon': app.iconUrl,
       'isLimited': app.isLimited,
       'canRedeem': app.canRedeem,
       'cost': app.redeemCoinCost,

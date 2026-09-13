@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
 
@@ -33,5 +35,45 @@ void main() {
 
     expect(snapshot.apps, isEmpty);
     expect(snapshot.neverSynced, isTrue);
+  });
+
+  test('an app links the icon its phone uploaded, or none yet', () {
+    final snapshot = InstalledAppsSnapshot.fromJson({
+      'apps': [
+        {
+          'package_name': 'com.google.android.youtube',
+          'app_name': 'YouTube',
+          'icon_url': '/v1/children/c1/installed-apps/com.google.android.youtube/icon?v=ab',
+        },
+        {'package_name': 'com.no.icon', 'app_name': 'No Icon', 'icon_url': null},
+      ],
+      'updated_at': '2026-09-13T12:00:00Z',
+    });
+
+    expect(
+      snapshot.apps.first.iconUrl,
+      '/v1/children/c1/installed-apps/com.google.android.youtube/icon?v=ab',
+    );
+    expect(snapshot.apps.last.iconUrl, isNull);
+  });
+
+  test('the upload names every icon but only attaches bytes on request', () {
+    final app = InstalledApp(
+      packageName: 'com.google.android.youtube',
+      appName: 'YouTube',
+      iconSha256: 'ab' * 32,
+      iconPng: Uint8List.fromList([1, 2, 3]),
+    );
+
+    expect(app.toJson(), {
+      'package_name': 'com.google.android.youtube',
+      'app_name': 'YouTube',
+      'icon_sha256': 'ab' * 32,
+    });
+    expect(app.toJson(withIcon: true)['icon_png'], 'AQID');
+    expect(
+      const InstalledApp(packageName: 'com.a', appName: 'A').toJson(),
+      {'package_name': 'com.a', 'app_name': 'A'},
+    );
   });
 }

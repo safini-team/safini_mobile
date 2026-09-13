@@ -17,6 +17,12 @@ class AppTimeItem {
   /// Redeemed minutes still available for this app (0 = none active).
   final int remainingMinutes;
 
+  /// The Android package, so the tile can show the launcher's own icon.
+  final String? packageName;
+
+  /// The icon this phone uploaded, for when the launcher has none to give.
+  final String? iconUrl;
+
   const AppTimeItem({
     required this.id,
     required this.title,
@@ -27,6 +33,8 @@ class AppTimeItem {
     required this.cost,
     this.isEnabled = true,
     this.remainingMinutes = 0,
+    this.packageName,
+    this.iconUrl,
   });
 
   AppTimeItem copyWith({int? remainingMinutes}) {
@@ -40,6 +48,8 @@ class AppTimeItem {
       cost: cost,
       isEnabled: isEnabled,
       remainingMinutes: remainingMinutes ?? this.remainingMinutes,
+      packageName: packageName,
+      iconUrl: iconUrl,
     );
   }
 }

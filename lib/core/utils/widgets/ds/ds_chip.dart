@@ -80,6 +80,7 @@ class DsCategoryChip extends StatelessWidget {
     required this.label,
     required this.selected,
     this.emoji,
+    this.leading,
     this.onTap,
     this.restBackground = AppColors.chipRest,
     this.padding = const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -89,6 +90,9 @@ class DsCategoryChip extends StatelessWidget {
   final String label;
   final bool selected;
   final String? emoji;
+
+  /// Drawn in place of [emoji], e.g. an app's real icon.
+  final Widget? leading;
   final VoidCallback? onTap;
   final Color restBackground;
   final EdgeInsets padding;
@@ -110,7 +114,10 @@ class DsCategoryChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (emoji != null) ...[
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: 7),
+            ] else if (emoji != null) ...[
               Text(emoji!, style: TextStyle(fontSize: fontSize, height: 1.2)),
               const SizedBox(width: 7),
             ],
