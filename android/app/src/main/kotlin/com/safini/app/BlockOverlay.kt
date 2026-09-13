@@ -96,7 +96,6 @@ private val CHEVRON = 0xFFB5C2BC.toInt()
 private val TEXT_SECONDARY = 0xFF4A5A54.toInt()
 private val TEXT_TERTIARY = 0xFF64736D.toInt()
 private val COIN = 0xFFE8A33D.toInt()
-private val COIN_INK = 0xFF3A2A08.toInt()
 private val COIN_PILL_BG = 0xFFFBF1DF.toInt()
 private val COIN_PILL_FG = 0xFF9A6512.toInt()
 private val SCRIM = Color.argb(107, 12, 35, 28)
@@ -817,10 +816,9 @@ class BlockOverlay(private val context: Context, private val host: Host) {
             setPadding(px(10), px(10), px(10), px(10))
         }.tap(action)
 
-    /** The amber Time Coin from DsCoinToken: amber is reserved for coins. */
-    private fun coin(size: Int) = label("c", 0f, COIN_INK, bold).apply {
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, dp(size)*.5f)
-        background = oval(COIN)
+    /** The Safini Time Coin, the same drawing as DsCoinToken in the Flutter app. */
+    private fun coin(size: Int) = ImageView(context).apply {
+        setImageResource(R.drawable.ic_safini_coin)
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         layoutParams = LinearLayout.LayoutParams(px(size), px(size))
     }

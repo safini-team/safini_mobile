@@ -6,6 +6,7 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
 
 class TodayQuest {
   const TodayQuest({
@@ -41,8 +42,6 @@ class TodayTeaser {
   final int cost;
   final int coins;
 
-  int get toGo => (cost - coins).clamp(0, cost);
-
   double get progress => cost <= 0 ? 1 : (coins / cost).clamp(0.0, 1.0);
 }
 
@@ -60,8 +59,13 @@ class ChildTodayData {
     required this.next,
     required this.holdToComplete,
     this.questsAwaitingReview = 0,
+    this.more = const [],
     this.teaser,
     this.streakDays,
+    this.faceEmoji,
+    this.accessoryEmoji,
+    this.avatarColor,
+    this.level,
   });
 
   final String greeting;
@@ -78,11 +82,22 @@ class ChildTodayData {
   final int openCoins;
 
   final TodayQuest? next;
+
+  /// Up to two more open tasks after [next], shown as compact rows so Today
+  /// previews the day without becoming the Tasks tab.
+  final List<TodayQuest> more;
+
   final bool holdToComplete;
   final TodayTeaser? teaser;
 
   /// Null until the backend exposes streaks; the pill is hidden when it is.
   final int? streakDays;
+
+  /// The avatar beside the greeting; hidden while the profile has not loaded.
+  final String? faceEmoji;
+  final String? accessoryEmoji;
+  final Color? avatarColor;
+  final int? level;
 
   double get ringProgress =>
       questsTotal <= 0 ? 0 : (questsDone / questsTotal).clamp(0.0, 1.0);
@@ -109,8 +124,9 @@ class ChildTodayData {
   }
 }
 
-/// Kid · Today. Deep-purple hero, then the one task to do next with the
-/// press-and-hold send, then what the coins are heading towards.
+/// Kid · Today. The child's avatar and greeting, the deep hero, then the next
+/// task with the press-and-hold send and up to two more after it, then what
+/// the coins are heading towards.
 class ChildTodayView extends StatelessWidget {
   const ChildTodayView({
     super.key,
@@ -119,12 +135,14 @@ class ChildTodayView extends StatelessWidget {
     required this.onOpenTasks,
     required this.onOpenQuest,
     required this.onSendQuest,
+    this.onOpenProfile,
     this.onRefresh,
   });
 
   final ChildTodayData data;
   final VoidCallback onOpenStore;
   final VoidCallback onOpenTasks;
+  final VoidCallback? onOpenProfile;
   final ValueChanged<TodayQuest> onOpenQuest;
   final ValueChanged<TodayQuest> onSendQuest;
   final Future<void> Function()? onRefresh;
@@ -142,7 +160,24 @@ class ChildTodayView extends StatelessWidget {
           child: DsLargeTitle(
             title: data.name,
             eyebrow: data.greeting,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            leading: data.faceEmoji == null
+                ? null
+                : Pressable(
+                    onTap: onOpenProfile,
+                    scale: 0.95,
+                    child: Padding(
+                      // Room for the level pill that hangs below the disc.
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: ChildAvatar(
+                        faceEmoji: data.faceEmoji!,
+                        color: data.avatarColor ?? AppColors.avatarPalette[1],
+                        accessoryEmoji: data.accessoryEmoji,
+                        level: data.level,
+                        size: 54,
+                      ),
+                    ),
+                  ),
             trailing: DsCoinBalance(
               coins: data.coins,
               onTap: onOpenStore,
@@ -182,6 +217,27 @@ class ChildTodayView extends StatelessWidget {
                   ),
           ),
         ),
+        if (next != null && data.more.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.gutter,
+                10,
+                AppSpacing.gutter,
+                0,
+              ),
+              child: DsGroup(
+                shadow: AppShadows.flat,
+                children: [
+                  for (final quest in data.more.take(2))
+                    _MoreQuestRow(
+                      quest: quest,
+                      onTap: () => onOpenQuest(quest),
+                    ),
+                ],
+              ),
+            ),
+          ),
         if (data.teaser != null) ...[
           SliverToBoxAdapter(
             child: DsSectionHeader(title: s.almostYours, top: 28),
@@ -267,13 +323,17 @@ class _Hero extends StatelessWidget {
                         AppIcons.flame(),
                         const SizedBox(width: 6),
                         Flexible(
-                          child: Text(
-                            s.nDayStreak(data.streakDays!),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppText.metaSm.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textOnPrimary,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              s.nDayStreak(data.streakDays!),
+                              maxLines: 1,
+                              softWrap: false,
+                              style: AppText.metaSm.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textOnPrimary,
+                              ),
                             ),
                           ),
                         ),
@@ -365,6 +425,43 @@ class _NextQuestCard extends StatelessWidget {
   }
 }
 
+/// A task after the first: tap opens its sheet, where it can be sent.
+class _MoreQuestRow extends StatelessWidget {
+  const _MoreQuestRow({required this.quest, required this.onTap});
+
+  final TodayQuest quest;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Pressable.row(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 13),
+        child: Row(
+          children: [
+            DsEmojiTile(
+              emoji: quest.emoji,
+              size: 36,
+              radius: AppRadius.xs,
+              background: AppColors.primaryTint,
+              fontSize: 18,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(quest.title, style: AppText.rowTitleStrong),
+            ),
+            const SizedBox(width: 10),
+            DsPill.coins(label: '+${quest.coins}', height: 24, fontSize: 13),
+            const SizedBox(width: 8),
+            AppIcons.chevronRight(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _Rest extends StatelessWidget {
   const _Rest({required this.rest});
 
@@ -439,9 +536,12 @@ class _TeaserCard extends StatelessWidget {
                   color: AppColors.coin,
                 ),
                 const SizedBox(height: 7),
-                Text(
-                  S.of(context).coinsToGo(teaser.toGo),
-                  style: AppText.caption,
+                Row(
+                  children: [
+                    const DsCoinToken(size: 14),
+                    const SizedBox(width: 5),
+                    Text('${teaser.cost}', style: AppText.caption.nums),
+                  ],
                 ),
               ],
             ),

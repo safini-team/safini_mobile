@@ -1141,10 +1141,10 @@ class S {
     return Intl.message('Sign in', name: 'loginTitle', desc: '', args: []);
   }
 
-  /// `Continue with your Google account`
+  /// `Sign in to continue`
   String get loginSubtitle {
     return Intl.message(
-      'Continue with your Google account',
+      'Sign in to continue',
       name: 'loginSubtitle',
       desc: '',
       args: [],
@@ -2039,11 +2039,6 @@ class S {
   /// `Girl`
   String get genderGirl {
     return Intl.message('Girl', name: 'genderGirl', desc: '', args: []);
-  }
-
-  /// `Other`
-  String get genderOther {
-    return Intl.message('Other', name: 'genderOther', desc: '', args: []);
   }
 
   /// `Create Child`
@@ -3290,18 +3285,6 @@ class S {
     );
   }
 
-  /// `{count, plural, =1{1 coin to go} other{{count} coins to go}}`
-  String coinsToGo(num count) {
-    return Intl.plural(
-      count,
-      one: '1 coin to go',
-      other: '$count coins to go',
-      name: 'coinsToGo',
-      desc: '',
-      args: [count],
-    );
-  }
-
   /// `{done} of {total} done today · {coins} coins waiting`
   String childTasksSubtitle(Object done, Object total, Object coins) {
     return Intl.message(
@@ -3374,6 +3357,16 @@ class S {
       name: 'appTimeItem',
       desc: '',
       args: [app, minutes],
+    );
+  }
+
+  /// `{minutes} min`
+  String appTimeMinutes(Object minutes) {
+    return Intl.message(
+      '$minutes min',
+      name: 'appTimeMinutes',
+      desc: '',
+      args: [minutes],
     );
   }
 
@@ -3535,18 +3528,6 @@ class S {
       name: 'unlockOnceKeepForever',
       desc: '',
       args: [],
-    );
-  }
-
-  /// `{count, plural, =1{1 coin to go} other{{count} coins to go}}`
-  String coinsToGoShort(num count) {
-    return Intl.plural(
-      count,
-      one: '1 coin to go',
-      other: '$count coins to go',
-      name: 'coinsToGoShort',
-      desc: '',
-      args: [count],
     );
   }
 
@@ -4195,16 +4176,6 @@ class S {
     );
   }
 
-  /// `{cost} · {gap} to go`
-  String priceAndGap(Object cost, Object gap) {
-    return Intl.message(
-      '$cost · $gap to go',
-      name: 'priceAndGap',
-      desc: '',
-      args: [cost, gap],
-    );
-  }
-
   /// `Pause this app, including purchased time.`
   String get manualBlockHint {
     return Intl.message(
@@ -4350,6 +4321,36 @@ class S {
     return Intl.message(
       'Block completely',
       name: 'blockCompletely',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coming soon on iOS`
+  String get kidComingSoonIos {
+    return Intl.message(
+      'Coming soon on iOS',
+      name: 'kidComingSoonIos',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Kid mode is coming to iPhone`
+  String get kidComingSoonIosTitle {
+    return Intl.message(
+      'Kid mode is coming to iPhone',
+      name: 'kidComingSoonIosTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For now, set Safini up on your child’s Android phone. The parent app already works on iPhone.`
+  String get kidComingSoonIosBody {
+    return Intl.message(
+      'For now, set Safini up on your child’s Android phone. The parent app already works on iPhone.',
+      name: 'kidComingSoonIosBody',
       desc: '',
       args: [],
     );

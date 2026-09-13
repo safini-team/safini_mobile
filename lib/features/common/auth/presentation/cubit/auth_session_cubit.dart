@@ -73,6 +73,12 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
         missingSessionMessage:
             'Supabase did not return a session after Google login.',
       );
+    } on AuthGoogleSignInFailure catch (e) {
+      if (e.cancelled) {
+        _emitSignInCancelled();
+      } else {
+        _emitSignInError(e.message);
+      }
     } catch (e) {
       _emitSignInError(e.toString().replaceFirst('Exception: ', ''));
     }
@@ -88,6 +94,12 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
         missingSessionMessage:
             'Supabase did not return a session after Apple login.',
       );
+    } on AuthAppleSignInFailure catch (e) {
+      if (e.cancelled) {
+        _emitSignInCancelled();
+      } else {
+        _emitSignInError(e.message);
+      }
     } catch (e) {
       _emitSignInError(e.toString().replaceFirst('Exception: ', ''));
     }
@@ -136,6 +148,19 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
       return;
     }
     await _fetchProfile();
+  }
+
+  /// Closing the Google or Apple prompt is a choice, not a failure: back to
+  /// the buttons, no toast.
+  void _emitSignInCancelled() {
+    emit(
+      state.copyWith(
+        status: AuthSessionStatus.unauthenticated,
+        errorMessage: null,
+        canRetry: false,
+        isUnauthorized: false,
+      ),
+    );
   }
 
   void _emitSignInError(String message) {

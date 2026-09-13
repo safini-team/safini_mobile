@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 /// A stale heartbeat means unknown connectivity, not confirmed tampering.
@@ -85,8 +86,10 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
       child: SafeArea(
         bottom: false,
         child: ListTile(
+          // Only the icon carries the state colour; the sentence stays ink.
           leading: Icon(
             active ? Icons.verified_user_outlined : Icons.warning_amber_rounded,
+            color: active ? AppColors.success : AppColors.warning,
           ),
           title: Text(message),
           onTap: _load,

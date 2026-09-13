@@ -5,9 +5,12 @@ import 'package:safini/core/config/supabase_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthGoogleSignInFailure implements Exception {
-  const AuthGoogleSignInFailure(this.message);
+  const AuthGoogleSignInFailure(this.message, {this.cancelled = false});
 
   final String message;
+
+  /// The person closed the Google prompt. Not an error to show them.
+  final bool cancelled;
 
   @override
   String toString() => message;
@@ -89,8 +92,12 @@ class AuthGoogleSignInService {
       );
       if (e.code == GoogleSignInExceptionCode.canceled ||
           e.code == GoogleSignInExceptionCode.interrupted) {
+        // Kept for the debug log: a cancel right after picking an account on
+        // Android usually means the OAuth package name, SHA-1 or web
+        // serverClientId is wrong. The user sees nothing either way.
         throw const AuthGoogleSignInFailure(
           'Google sign-in was cancelled. If this happens after choosing an account, check the Android OAuth package name, SHA-1, and web serverClientId.',
+          cancelled: true,
         );
       }
       if (e.code == GoogleSignInExceptionCode.clientConfigurationError ||

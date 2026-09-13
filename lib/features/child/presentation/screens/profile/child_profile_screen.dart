@@ -216,8 +216,8 @@ class ChildMeSettings extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  languageName(Localizations.localeOf(context).languageCode, s),
+                LanguageLabel(
+                  code: Localizations.localeOf(context).languageCode,
                   style: AppText.body.copyWith(
                     fontWeight: FontWeight.w400,
                     color: AppColors.textTertiary,

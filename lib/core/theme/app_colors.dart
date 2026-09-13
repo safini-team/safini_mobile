@@ -62,6 +62,10 @@ class AppColors {
   static const Color dangerDeep = Color(0xFFA6371F);
   static const Color warnBg = Color(0xFFFBF1DF);
   static const Color warnFg = Color(0xFF9A6512);
+
+  /// Warning icons only, never text: a caution-sign yellow, deliberately
+  /// lighter and greener than [coin] so a warning never reads as currency.
+  static const Color warning = Color(0xFFF2B705);
   static const Color info = Color(0xFF2E6F8E);
 
   // ── task categories ── (icon, tint) pairs shared by quests, tasks and the

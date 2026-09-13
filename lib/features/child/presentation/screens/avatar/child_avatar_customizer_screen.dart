@@ -320,9 +320,7 @@ class _ExtraRow extends StatelessWidget {
           ? s.wornLabel
           : owned
           ? s.yoursLabel
-          : affordable
-          ? s.unlockOnceKeepForever
-          : s.coinsToGoShort(cost - coins),
+          : s.unlockOnceKeepForever,
       subtitleStyle: AppText.caption,
       leading: DsEmojiTile(
         emoji: item.emoji,
@@ -336,9 +334,23 @@ class _ExtraRow extends StatelessWidget {
           ? DsPill.paid(label: s.wornLabel, height: 24, fontSize: 13)
           : owned
           ? DsPill.tint(label: s.wearLabel, height: 24)
+          // The price either way; an extra the child cannot afford yet is
+          // dimmed rather than told how many coins it is short.
           : affordable
-          ? DsPill.tint(label: '$cost', height: 24)
-          : DsPill.muted(label: s.lockedLabel, height: 24, fontSize: 13),
+          ? DsPill.tint(
+              label: '$cost',
+              leading: const DsCoinToken(size: 14),
+              height: 24,
+            )
+          : DsPill.muted(
+              label: '$cost',
+              leading: const Opacity(
+                opacity: 0.55,
+                child: DsCoinToken(size: 14),
+              ),
+              height: 24,
+              fontSize: 13,
+            ),
     );
   }
 }

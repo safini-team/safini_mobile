@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:safini/core/config/platform_support.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
-import 'package:safini/features/common/auth/presentation/pages/auth_page.dart';
+import 'package:safini/features/common/auth/presentation/pages/child_coming_soon_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/create_family_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/enter_invite_code_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/family_decision_page.dart';
@@ -29,11 +30,6 @@ class AppRouter {
         name: 'login',
         path: '/login',
         builder: (context, data) => const LoginPage(),
-      ),
-      NamedRouteDef(
-        name: 'auth',
-        path: '/auth',
-        builder: (context, data) => const AuthPage(),
       ),
       NamedRouteDef(
         name: 'roleSelection',
@@ -68,7 +64,11 @@ class AppRouter {
       NamedRouteDef(
         name: 'childHome',
         path: '/child-home',
-        builder: (context, data) => const ChildMainScreen(),
+        // Every way into child mode passes through here - sign-in, a restored
+        // session, the invite claim, a deep link - so iOS is gated once.
+        builder: (context, data) => isChildModeAvailable
+            ? const ChildMainScreen()
+            : const ChildComingSoonPage(),
       ),
       NamedRouteDef(
         name: 'parentHome',

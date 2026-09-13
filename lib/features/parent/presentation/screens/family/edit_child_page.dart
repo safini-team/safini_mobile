@@ -25,8 +25,7 @@ class EditChildPage extends StatefulWidget {
 
 enum _Gender {
   boy('boy'),
-  girl('girl'),
-  other('other');
+  girl('girl');
 
   const _Gender(this.apiValue);
 
@@ -101,7 +100,7 @@ class _EditChildPageState extends State<EditChildPage> {
                       children: [
                         DsFieldRow(
                           label: s.name,
-                          labelWidth: 56,
+                          labelWidth: 72,
                           child: TextField(
                             controller: _name,
                             textCapitalization: TextCapitalization.words,
@@ -115,7 +114,7 @@ class _EditChildPageState extends State<EditChildPage> {
                           child: Row(
                             children: [
                               SizedBox(
-                                width: 56,
+                                width: 72,
                                 child: Text(
                                   s.ageFieldLabel,
                                   style: AppText.field,
@@ -204,7 +203,6 @@ class _EditChildPageState extends State<EditChildPage> {
   String _label(S s, _Gender option) => switch (option) {
     _Gender.boy => s.genderBoy,
     _Gender.girl => s.genderGirl,
-    _Gender.other => s.genderOther,
   };
 
   Future<void> _submit() async {

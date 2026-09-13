@@ -121,6 +121,8 @@ void main() {
             device: device,
             label: 'Parent Tasks',
           );
+          // Nothing on these screens ends in "...": labels shrink instead.
+          _expectNoClippedText(tester, 'Parent Tasks in $locale on ${device.name}');
         });
 
         testWidgets('Parent Limits lays out cleanly', (tester) async {
@@ -190,6 +192,8 @@ void main() {
             device: device,
             label: 'Kid Today',
           );
+          // Nothing on these screens ends in "...": labels shrink instead.
+          _expectNoClippedText(tester, 'Kid Today in $locale on ${device.name}');
         });
 
         testWidgets('Kid Tasks lays out cleanly', (tester) async {
@@ -204,6 +208,8 @@ void main() {
             device: device,
             label: 'Kid Tasks',
           );
+          // Nothing on these screens ends in "...": labels shrink instead.
+          _expectNoClippedText(tester, 'Kid Tasks in $locale on ${device.name}');
         });
 
         testWidgets('Kid Store lays out cleanly', (tester) async {
@@ -218,6 +224,8 @@ void main() {
             device: device,
             label: 'Kid Store',
           );
+          // Nothing on these screens ends in "...": labels shrink instead.
+          _expectNoClippedText(tester, 'Kid Store in $locale on ${device.name}');
         });
 
         testWidgets('Kid Me lays out cleanly', (tester) async {
