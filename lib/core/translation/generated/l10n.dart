@@ -4355,6 +4355,181 @@ class S {
       args: [],
     );
   }
+
+  /// `Set up Screen Time`
+  String get iosScreenTimeSetup {
+    return Intl.message(
+      'Set up Screen Time',
+      name: 'iosScreenTimeSetup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ask your parent to help on this iPhone or iPad. The child’s Apple Account must belong to the parent’s Apple Family Sharing group.`
+  String get iosScreenTimeFamily {
+    return Intl.message(
+      'Ask your parent to help on this iPhone or iPad. The child’s Apple Account must belong to the parent’s Apple Family Sharing group.',
+      name: 'iosScreenTimeFamily',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Usage reports stay on this device. Safini syncs rules and protection status, not your app usage history.`
+  String get iosScreenTimePrivacy {
+    return Intl.message(
+      'Usage reports stay on this device. Safini syncs rules and protection status, not your app usage history.',
+      name: 'iosScreenTimePrivacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow Screen Time`
+  String get iosScreenTimeAllow {
+    return Intl.message(
+      'Allow Screen Time',
+      name: 'iosScreenTimeAllow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For each rule, choose its matching app in Apple’s picker. Select exactly one app, not a category. Saved links can only be reset after your parent revokes Safini access in Settings.`
+  String get iosScreenTimeChoose {
+    return Intl.message(
+      'For each rule, choose its matching app in Apple’s picker. Select exactly one app, not a category. Saved links can only be reset after your parent revokes Safini access in Settings.',
+      name: 'iosScreenTimeChoose',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Linked on this device`
+  String get iosScreenTimeLinked {
+    return Intl.message(
+      'Linked on this device',
+      name: 'iosScreenTimeLinked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the matching app`
+  String get iosScreenTimeSelect {
+    return Intl.message(
+      'Choose the matching app',
+      name: 'iosScreenTimeSelect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your parent can add app rules in Limits.`
+  String get iosScreenTimeNoRules {
+    return Intl.message(
+      'Your parent can add app rules in Limits.',
+      name: 'iosScreenTimeNoRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `7 days`
+  String get iosScreenTimeWeek {
+    return Intl.message(
+      '7 days',
+      name: 'iosScreenTimeWeek',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done`
+  String get iosScreenTimeDone {
+    return Intl.message('Done', name: 'iosScreenTimeDone', desc: '', args: []);
+  }
+
+  /// `View activity report`
+  String get iosScreenTimeReport {
+    return Intl.message(
+      'View activity report',
+      name: 'iosScreenTimeReport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open Safini on this device to receive new parent rules. Saved limits continue while Safini is closed. Earned minutes expire at the family’s midnight; limits apply to this device.`
+  String get iosScreenTimeSyncHint {
+    return Intl.message(
+      'Open Safini on this device to receive new parent rules. Saved limits continue while Safini is closed. Earned minutes expire at the family’s midnight; limits apply to this device.',
+      name: 'iosScreenTimeSyncHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not update Screen Time. Check your connection and permissions, then retry. Saved limits remain in effect.`
+  String get iosScreenTimeRetry {
+    return Intl.message(
+      'Could not update Screen Time. Check your connection and permissions, then retry. Saved limits remain in effect.',
+      name: 'iosScreenTimeRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sync rules and status`
+  String get iosScreenTimeSync {
+    return Intl.message(
+      'Sync rules and status',
+      name: 'iosScreenTimeSync',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `iOS Screen Time · last reported status`
+  String get iosScreenTimeParent {
+    return Intl.message(
+      'iOS Screen Time · last reported status',
+      name: 'iosScreenTimeParent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monitoring configured`
+  String get iosScreenTimeOn {
+    return Intl.message(
+      'Monitoring configured',
+      name: 'iosScreenTimeOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup needs attention`
+  String get iosScreenTimeOff {
+    return Intl.message(
+      'Setup needs attention',
+      name: 'iosScreenTimeOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View actual usage in Screen Time on the child’s device.`
+  String get iosScreenTimeLocalUsage {
+    return Intl.message(
+      'View actual usage in Screen Time on the child’s device.',
+      name: 'iosScreenTimeLocalUsage',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

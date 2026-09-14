@@ -80,6 +80,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
 
     final previous = _screenTime;
     _screenTime = ScreenTimeModel(
+      usageAvailable: previous.usageAvailable,
       limitMinutes: minutes,
       usedMinutes: previous.usedMinutes,
       remainingMinutes: minutes == null

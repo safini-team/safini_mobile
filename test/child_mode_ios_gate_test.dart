@@ -10,9 +10,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/common/auth/presentation/pages/role_selection_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// iOS cannot block apps yet (Family Controls is not granted), so a child on an
-/// iPhone would get tasks and coins with nothing enforcing the limits. The kid
-/// door says "coming soon" there instead of starting an invite-code claim.
+/// Child accounts reach the native Screen Time setup after claiming a profile.
 Future<void> _pumpRoles(WidgetTester tester) async {
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
@@ -39,19 +37,14 @@ Future<void> _pumpRoles(WidgetTester tester) async {
 void main() {
   tearDown(() => debugDefaultTargetPlatformOverride = null);
 
-  testWidgets('on iOS the kid door explains instead of opening a claim', (
+  testWidgets('iOS exposes child mode now that release setup is available', (
     tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    expect(isChildModeAvailable, isFalse);
-
+    expect(isChildModeAvailable, isTrue);
     await _pumpRoles(tester);
-    expect(find.text('Coming soon on iOS'), findsOneWidget);
-    expect(find.text('Earn coins & play'), findsNothing);
-
-    await tester.tap(find.byKey(const ValueKey('role-kid')));
-    await tester.pumpAndSettle();
-    expect(find.text('Kid mode is coming to iPhone'), findsOneWidget);
+    expect(find.text('Earn coins & play'), findsOneWidget);
+    expect(find.text('Coming soon on iOS'), findsNothing);
     debugDefaultTargetPlatformOverride = null;
   });
 

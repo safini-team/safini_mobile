@@ -1,3 +1,4 @@
+import 'package:safini/features/child/presentation/cubit/ios_screen_time_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:safini/features/child/data/datasources/child_remote_datasource.dart';
@@ -31,6 +32,10 @@ void registerChildDependencies(GetIt sl) {
   sl.registerLazySingleton<ScreenTimeService>(() => const ScreenTimeService());
   sl.registerLazySingleton<ChildAppRulesService>(
     () => ChildAppRulesService(sl<Dio>()),
+  );
+
+  sl.registerLazySingleton<IosScreenTimeCubit>(
+    () => IosScreenTimeCubit(sl<ScreenTimeService>(), sl<Dio>()),
   );
 
   // Repositories

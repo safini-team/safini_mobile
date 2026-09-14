@@ -567,6 +567,56 @@ class MessageLookup extends MessageLookupByLibrary {
       "Taklif kodi · 24 soat",
     ),
     "invited": MessageLookupByLibrary.simpleMessage("Taklif"),
+    "iosScreenTimeAllow": MessageLookupByLibrary.simpleMessage(
+      "Ekran vaqtiga ruxsat berish",
+    ),
+    "iosScreenTimeChoose": MessageLookupByLibrary.simpleMessage(
+      "Har bir qoida uchun Apple oynasida mos ilovani tanlang. Toifa emas, faqat bitta ilova tanlang. Tanlovni tiklash uchun ota-ona Sozlamalarda Safini ruxsatini bekor qilishi kerak.",
+    ),
+    "iosScreenTimeDone": MessageLookupByLibrary.simpleMessage("Tayyor"),
+    "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
+      "Ota-onangizdan shu iPhone yoki iPad’da yordam so‘rang. Bolaning Apple Account’i ota-onaning Apple oilaviy guruhida bo‘lishi kerak.",
+    ),
+    "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
+      "Shu qurilmaga bog‘langan",
+    ),
+    "iosScreenTimeLocalUsage": MessageLookupByLibrary.simpleMessage(
+      "Haqiqiy foydalanishni bolaning qurilmasidagi Ekran vaqti bo‘limida ko‘ring.",
+    ),
+    "iosScreenTimeNoRules": MessageLookupByLibrary.simpleMessage(
+      "Ota-onangiz Cheklovlar bo‘limida ilova qoidalarini qo‘shishi mumkin.",
+    ),
+    "iosScreenTimeOff": MessageLookupByLibrary.simpleMessage(
+      "Sozlamalarni tekshiring",
+    ),
+    "iosScreenTimeOn": MessageLookupByLibrary.simpleMessage(
+      "Nazorat sozlangan",
+    ),
+    "iosScreenTimeParent": MessageLookupByLibrary.simpleMessage(
+      "iOS ekran vaqti · oxirgi holat",
+    ),
+    "iosScreenTimePrivacy": MessageLookupByLibrary.simpleMessage(
+      "Foydalanish hisobotlari qurilmada qoladi. Safini qoidalar va himoya holatini sinxronlaydi, ilovalardan foydalanish tarixini emas.",
+    ),
+    "iosScreenTimeReport": MessageLookupByLibrary.simpleMessage(
+      "Faollik hisobotini ko‘rish",
+    ),
+    "iosScreenTimeRetry": MessageLookupByLibrary.simpleMessage(
+      "Ekran vaqtini yangilab bo‘lmadi. Internet va ruxsatlarni tekshirib, qayta urining. Saqlangan cheklovlar amal qilishda davom etadi.",
+    ),
+    "iosScreenTimeSelect": MessageLookupByLibrary.simpleMessage(
+      "Mos ilovani tanlang",
+    ),
+    "iosScreenTimeSetup": MessageLookupByLibrary.simpleMessage(
+      "Ekran vaqtini sozlash",
+    ),
+    "iosScreenTimeSync": MessageLookupByLibrary.simpleMessage(
+      "Qoidalar va holatni sinxronlash",
+    ),
+    "iosScreenTimeSyncHint": MessageLookupByLibrary.simpleMessage(
+      "Yangi ota-ona qoidalarini olish uchun shu qurilmada Safini’ni oching. Saqlangan cheklovlar ilova yopilganda ham ishlaydi. Olingan daqiqalar oila vaqti bilan yarim tunda tugaydi; cheklovlar shu qurilmaga tegishli.",
+    ),
+    "iosScreenTimeWeek": MessageLookupByLibrary.simpleMessage("7 kun"),
     "joinFamilyAction": MessageLookupByLibrary.simpleMessage(
       "Kod bilan qoʻshilish",
     ),

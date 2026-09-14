@@ -16,6 +16,7 @@ class EnforcementStatusCard extends StatefulWidget {
 class _EnforcementStatusCardState extends State<EnforcementStatusCard>
     with WidgetsBindingObserver {
   String? _status;
+  Map<String, dynamic>? _ios;
   Timer? _timer;
   bool _loading = false;
   @override
@@ -31,6 +32,7 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.childId != widget.childId) {
       _status = null;
+      _ios = null;
       _load();
     }
   }
@@ -47,6 +49,16 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
     _loading = true;
     final id = widget.childId;
     try {
+      try {
+        final ios = await getIt<Dio>().get<Map<String, dynamic>>(
+          '/v1/children/$id/screen-time-status',
+        );
+        if (!mounted || widget.childId != id) return;
+        setState(() => _ios = ios.data?["platform"] == "ios" ? ios.data : null);
+        if (_ios != null) return;
+      } on DioException catch (_) {
+        /* Android and pre-migration API fallback. */
+      }
       final response = await getIt<Dio>().get<Map<String, dynamic>>(
         '/v1/children/$id/enforcement/status',
       );
@@ -71,6 +83,28 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
 
   @override
   Widget build(BuildContext context) {
+    if (_ios != null) {
+      final s = S.of(context);
+      final reported = DateTime.tryParse(_ios!['updated_at']?.toString() ?? '');
+      final recent =
+          reported != null && DateTime.now().difference(reported).inMinutes < 5;
+      final active =
+          _ios!['authorization'] == 'approved' &&
+          _ios!['monitoring_active'] == true;
+      final lastSeen = reported == null
+          ? ''
+          : '${MaterialLocalizations.of(context).formatShortDate(reported.toLocal())} ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(reported.toLocal()))}';
+      return ListTile(
+        leading: Icon(
+          active && recent ? Icons.shield_outlined : Icons.info_outline,
+        ),
+        title: Text(s.iosScreenTimeParent),
+        subtitle: Text(
+          '${active ? s.iosScreenTimeOn : s.iosScreenTimeOff}\n$lastSeen\n${s.iosScreenTimeLocalUsage}\n${s.iosScreenTimeSyncHint}',
+        ),
+        onTap: _load,
+      );
+    }
     if (_status == null) return const SizedBox.shrink();
     final s = S.of(context);
     final active = _status == 'active';

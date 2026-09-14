@@ -16,6 +16,7 @@ class ScreenTimeStatus {
   final int selectedApplications;
   final int selectedCategories;
   final bool shieldActive;
+  final bool monitoringActive;
 
   /// When the child device last pushed this. `null` → never synced.
   final DateTime? updatedAt;
@@ -26,6 +27,7 @@ class ScreenTimeStatus {
     this.selectedApplications = 0,
     this.selectedCategories = 0,
     this.shieldActive = false,
+    this.monitoringActive = false,
     this.updatedAt,
   });
 
@@ -38,6 +40,7 @@ class ScreenTimeStatus {
     'selected_applications': selectedApplications,
     'selected_categories': selectedCategories,
     'shield_active': shieldActive,
+    'monitoring_active': monitoringActive,
   };
 
   factory ScreenTimeStatus.fromJson(Map<String, dynamic> json) {
@@ -54,6 +57,7 @@ class ScreenTimeStatus {
       ),
       shieldActive:
           (json['shield_active'] ?? json['shieldActive'] ?? false) == true,
+      monitoringActive: json["monitoring_active"] == true,
       updatedAt: rawUpdatedAt is String && rawUpdatedAt.isNotEmpty
           ? DateTime.tryParse(rawUpdatedAt)
           : null,

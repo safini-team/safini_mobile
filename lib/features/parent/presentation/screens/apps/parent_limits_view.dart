@@ -74,7 +74,9 @@ class LimitsApp {
 }
 
 class ParentLimitsData {
+  final bool usageAvailable;
   const ParentLimitsData({
+    this.usageAvailable = true,
     required this.kids,
     required this.selectedKidId,
     required this.kidName,
@@ -222,7 +224,11 @@ class ParentLimitsView extends StatelessWidget {
                 DsGroup(
                   children: [
                     for (final app in data.apps)
-                      _AppRow(app: app, onTap: () => onOpenApp(app)),
+                      _AppRow(
+                        usageAvailable: data.usageAvailable,
+                        app: app,
+                        onTap: () => onOpenApp(app),
+                      ),
                     _AddAppRow(onTap: onAddApp),
                   ],
                 ),
@@ -326,19 +332,22 @@ class _AllowancePanel extends StatelessWidget {
                 .nums,
           ),
           const SizedBox(height: 18),
-          DsProgressBar(
-            progress: data.progress,
-            height: 8,
-            trackColor: const Color(0x29FFFFFF),
-            color: AppColors.primaryBar,
-          ),
+          if (data.usageAvailable)
+            DsProgressBar(
+              progress: data.progress,
+              height: 8,
+              trackColor: const Color(0x29FFFFFF),
+              color: AppColors.primaryBar,
+            ),
           const SizedBox(height: 9),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
                 child: Text(
-                  s.timeUsed(formatHm(s, data.usedMinutes)),
+                  data.usageAvailable
+                      ? s.timeUsed(formatHm(s, data.usedMinutes))
+                      : s.iosScreenTimeLocalUsage,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppText.metaSm.copyWith(
@@ -349,7 +358,7 @@ class _AllowancePanel extends StatelessWidget {
               const SizedBox(width: 12),
               Flexible(
                 child: Text(
-                  data.allowanceMinutes <= 0
+                  !data.usageAvailable || data.allowanceMinutes <= 0
                       ? ''
                       : s.timeLeft(formatHm(s, data.leftMinutes)),
                   maxLines: 1,
@@ -369,7 +378,12 @@ class _AllowancePanel extends StatelessWidget {
 }
 
 class _AppRow extends StatelessWidget {
-  const _AppRow({required this.app, required this.onTap});
+  final bool usageAvailable;
+  const _AppRow({
+    this.usageAvailable = true,
+    required this.app,
+    required this.onTap,
+  });
 
   final LimitsApp app;
   final VoidCallback onTap;
@@ -379,7 +393,9 @@ class _AppRow extends StatelessWidget {
     return DsRow(
       onTap: onTap,
       title: app.name,
-      subtitle: app.subtitle(S.of(context)),
+      subtitle: usageAvailable
+          ? app.subtitle(S.of(context))
+          : S.of(context).iosScreenTimeLocalUsage,
       subtitleStyle: AppText.metaSm.copyWith(
         color: app.isOver ? AppColors.dangerDeep : AppColors.textSecondary,
       ),

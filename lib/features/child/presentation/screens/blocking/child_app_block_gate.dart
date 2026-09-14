@@ -1,3 +1,5 @@
+import 'package:safini/features/child/presentation/screens/screen_time/ios_screen_time_screen.dart';
+import 'package:safini/features/child/data/services/screen_time_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
@@ -44,6 +46,9 @@ class _ChildAppBlockGateState extends State<ChildAppBlockGate>
 
   @override
   Widget build(BuildContext context) {
+    if (getIt<ScreenTimeService>().isSupported) {
+      return IosScreenTimeGate(child: widget.child);
+    }
     final s = S.of(context);
     final cubit = context.read<ChildAppBlockCubit>();
     return BlocBuilder<ChildAppBlockCubit, AppBlockState>(

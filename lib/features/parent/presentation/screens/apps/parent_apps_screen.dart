@@ -138,6 +138,7 @@ class _ParentLimitsView extends StatelessWidget {
             Expanded(
               child: ParentLimitsView(
                 data: ParentLimitsData(
+                  usageAvailable: state.screenTime.usageAvailable,
                   kids: [
                     for (final child in children)
                       LimitsKid(

@@ -1,3 +1,4 @@
+import 'package:safini/features/child/presentation/cubit/ios_screen_time_cubit.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -261,6 +262,9 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
   // ── Sign out ───────────────────────────────────────────────────────────
 
   Future<void> signOut() async {
+    if (getIt.isRegistered<IosScreenTimeCubit>()) {
+      getIt<IosScreenTimeCubit>().endSession();
+    }
     if (getIt.isRegistered<AppBlockService>()) {
       await getIt<AppBlockService>().stopService();
     }
