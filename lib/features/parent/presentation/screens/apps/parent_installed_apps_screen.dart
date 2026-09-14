@@ -9,7 +9,6 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/constants/controlled_apps.dart';
 import 'package:safini/core/utils/relative_date.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
@@ -25,10 +24,10 @@ import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet
 /// Parent · list of the apps installed on a child's device.
 ///
 /// The child device enumerates its apps natively and uploads them; this screen
-/// reads that snapshot back. Rows for apps that map to a backend catalog slug
-/// (`ControlledApps.slugFor`) are tappable — they open the add / limit / block
-/// flow on the shared `ParentAppsCubit` (provided by the Limits screen). Other
-/// rows are informational only. Pushed from the Limits screen.
+/// reads that snapshot back. Every row opens the add / limit / block flow on
+/// the shared `ParentAppsCubit` (provided by the Limits screen), under the
+/// slug the API names for that app (`InstalledApp.ruleSlug`). Pushed from the
+/// Limits screen.
 class ParentInstalledAppsScreen extends StatelessWidget {
   const ParentInstalledAppsScreen({
     super.key,
@@ -174,7 +173,7 @@ class _AppsList extends StatelessWidget {
               for (final app in apps)
                 _InstalledAppRow(
                   app: app,
-                  slug: ControlledApps.slugFor(app.packageName),
+                  slug: app.ruleSlug,
                   onTap: () => _handleTap(context, app),
                 ),
             ],
@@ -184,11 +183,11 @@ class _AppsList extends StatelessWidget {
     );
   }
 
-  /// A catalog-mapped app opens the add / limit / block flow; anything else
-  /// just explains that Safini can't limit it yet.
+  /// Opens the add / limit / block flow. Only an API from before every app had
+  /// a slug leaves one without, and then Safini can't limit it yet.
   void _handleTap(BuildContext context, InstalledApp app) {
     final s = S.of(context);
-    final slug = ControlledApps.slugFor(app.packageName);
+    final slug = app.ruleSlug;
     if (slug == null) {
       AppSnackBar.info(context, s.installedAppsNotControllable);
       return;

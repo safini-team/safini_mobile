@@ -6,7 +6,6 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/constants/controlled_apps.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/data/app_data.dart';
@@ -74,15 +73,11 @@ class _AddAppSheetState extends State<_AddAppSheet> {
     );
     if (!mounted) return;
     result.fold((_) {}, (snapshot) {
-      final byPackage = {
-        for (final app in snapshot.apps)
-          if (app.iconUrl != null) app.packageName: app.iconUrl!,
-      };
       setState(() {
         _iconUrls = {
-          for (final MapEntry(key: slug, value: package)
-              in ControlledApps.slugToPackage.entries)
-            if (byPackage[package] != null) slug: byPackage[package]!,
+          for (final app in snapshot.apps)
+            if (app.iconUrl != null && app.ruleSlug != null)
+              app.ruleSlug!: app.iconUrl!,
         };
       });
     });

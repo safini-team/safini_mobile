@@ -1,12 +1,11 @@
-/// Single source of truth mapping the backend's controlled-app **slug**
-/// (e.g. `youtube-kids`) to the Android **package name** the native blocking
-/// engine needs (e.g. `com.google.android.apps.youtube.kids`).
+/// The curated catalog's **slugs** (e.g. `youtube-kids`) and their Android
+/// **package names** (e.g. `com.google.android.apps.youtube.kids`), as the
+/// backend had them before it named a slug for every app itself.
 ///
-/// The backend keys every app rule by slug (the `GET /v1/apps` catalog and the
-/// `app-rules` / `app-usage` endpoints — see `CatalogAppModel`), but
-/// `UsageStatsManager` and the overlay service on the child device operate on
-/// package names. Keep this map in sync with the backend catalog whenever a new
-/// controlled app is added.
+/// Only a fallback now. The API sends `app_slug` on every installed app,
+/// including the ones outside the catalog, and `package_name` on every rule,
+/// which is what the native blocker runs on. This map covers APIs from before
+/// either field existed, so it does not need to grow with the catalog.
 class ControlledApps {
   const ControlledApps._();
 

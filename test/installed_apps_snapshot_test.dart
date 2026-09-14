@@ -57,6 +57,44 @@ void main() {
     expect(snapshot.apps.last.iconUrl, isNull);
   });
 
+  test('every app names the slug a parent can limit it under', () {
+    final snapshot = InstalledAppsSnapshot.fromJson({
+      'apps': [
+        {
+          'package_name': 'com.google.android.youtube',
+          'app_name': 'YouTube',
+          'app_slug': 'youtube',
+        },
+        // Not in the catalog: the API still names a slug for it.
+        {
+          'package_name': 'com.whatsapp',
+          'app_name': 'WhatsApp',
+          'app_slug': 'com.whatsapp',
+        },
+      ],
+      'updated_at': '2026-09-13T12:00:00Z',
+    });
+
+    expect(snapshot.apps.map((app) => app.ruleSlug), [
+      'youtube',
+      'com.whatsapp',
+    ]);
+  });
+
+  test('an API without app_slug still maps the catalog apps by package', () {
+    final snapshot = InstalledAppsSnapshot.fromJson({
+      'apps': [
+        {'package_name': 'com.roblox.client', 'app_name': 'Roblox'},
+        {'package_name': 'com.whatsapp', 'app_name': 'WhatsApp'},
+        {'package_name': 'com.blank', 'app_name': 'Blank', 'app_slug': ''},
+      ],
+      'updated_at': '2026-09-13T12:00:00Z',
+    });
+
+    expect(snapshot.apps.map((app) => app.appSlug), [null, null, null]);
+    expect(snapshot.apps.map((app) => app.ruleSlug), ['roblox', null, null]);
+  });
+
   test('the upload names every icon but only attaches bytes on request', () {
     final app = InstalledApp(
       packageName: 'com.google.android.youtube',
