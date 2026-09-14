@@ -14,6 +14,8 @@ class EnforcementStore(context: Context) {
     var snapshot: JSONObject = JSONObject(prefs.getString("snapshot", "{}")!!)
         private set
     private val usage = JSONObject(prefs.getString("usage", "{}")!!)
+    /** Every app the child opened, uncapped, for "where the time went". Nothing is spent from it. */
+    private val device = JSONObject(prefs.getString("device_usage", "{}")!!)
     var cursor: Long = prefs.getLong("cursor", System.currentTimeMillis())
     var foreground: String? = prefs.getString("foreground", null)
     var covered: Boolean = prefs.getBoolean("covered", false)
@@ -33,15 +35,19 @@ class EnforcementStore(context: Context) {
     fun app(pkg: String): JSONObject? =
         if (AlwaysAllowed.contains(appContext, pkg)) null else apps().firstOrNull { it.optString("package_name") == pkg }
     fun used(pkg: String, date: String): Long = usage.optJSONObject(date)?.optLong(pkg) ?: 0
+    fun deviceUsed(pkg: String, date: String): Long = device.optJSONObject(date)?.optLong(pkg) ?: 0
 
-    fun record(pkg: String, from: Long, to: Long) {
+    fun record(pkg: String, from: Long, to: Long) = add(usage, pkg, from, to)
+    fun recordDevice(pkg: String, from: Long, to: Long) = add(device, pkg, from, to)
+
+    private fun add(days: JSONObject, pkg: String, from: Long, to: Long) {
         var start = from
         while (start < to) {
             val date = day(start)
             val endOfDay = Instant.ofEpochMilli(start).atZone(zone()).toLocalDate().plusDays(1).atStartOfDay(zone()).toInstant().toEpochMilli()
             val end = minOf(to, endOfDay)
-            val values = usage.optJSONObject(date) ?: JSONObject().also { usage.put(date, it) }
-            values.put(pkg, (used(pkg, date) + end - start).coerceAtMost(86_400_000))
+            val values = days.optJSONObject(date) ?: JSONObject().also { days.put(date, it) }
+            values.put(pkg, (values.optLong(pkg) + end - start).coerceAtMost(86_400_000))
             start = end
         }
     }
@@ -123,15 +129,32 @@ class EnforcementStore(context: Context) {
         return reports
     }
 
+    /** Cumulative whole minutes per package for today and yesterday; the server keeps the larger total. */
+    fun deviceReports(): JSONArray {
+        val reports = JSONArray()
+        for (date in device.keys().asSequence().sorted().toList().takeLast(2)) {
+            val values = device.getJSONObject(date)
+            for (pkg in values.keys()) {
+                val minutes = values.optLong(pkg)/60000
+                if (minutes > 0 && reports.length() < 1000) reports.put(JSONObject().put("package_name", pkg)
+                    .put("usage_date", date).put("used_minutes", minutes))
+            }
+        }
+        return reports
+    }
+
     fun persist() {
         usage.keys().asSequence().sorted().toList().dropLast(7).forEach { usage.remove(it) }
+        device.keys().asSequence().sorted().toList().dropLast(2).forEach { device.remove(it) }
         prefs.edit().putString("snapshot", snapshot.toString()).putString("usage", usage.toString())
+            .putString("device_usage", device.toString())
             .putLong("cursor", cursor).putString("foreground", foreground).putBoolean("covered", covered).commit()
     }
     fun clear() {
         prefs.edit().clear().commit()
         snapshot = JSONObject()
         usage.keys().asSequence().toList().forEach { usage.remove(it) }
+        device.keys().asSequence().toList().forEach { device.remove(it) }
         cursor = System.currentTimeMillis()
         foreground = null
         covered = false

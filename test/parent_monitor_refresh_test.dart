@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/models/data/services/device_usage_service.dart';
+import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
@@ -59,6 +61,22 @@ class _Usage extends Fake implements IParentAppUsageRepository {
   Future<String?> fetchChildFaceEmoji(String childId) async => null;
 }
 
+class _DeviceUsage extends Fake implements DeviceUsageService {
+  final requested = <String>[];
+
+  @override
+  Future<Either<Failure, DeviceUsage>> fetch(String childId) async {
+    requested.add(childId);
+    return Right(
+      DeviceUsage(
+        usageAvailable: true,
+        totalMinutes: 40,
+        apps: [DeviceUsageApp(displayName: childId, usedMinutes: 40)],
+      ),
+    );
+  }
+}
+
 void main() {
   test('a reload refetches the family, so the coin balance is current', () async {
     final family = _Family(_family({'amir': 25}));
@@ -109,5 +127,25 @@ void main() {
     await cubit.loadMonitorData();
 
     expect((cubit.state as ParentMonitorLoaded).selectedChild?.id, 'amir');
+  });
+
+  test('every app the child used loads with the day, per child', () async {
+    final family = _Family(_family({'amir': 25, 'zilola': 40}));
+    final device = _DeviceUsage();
+    final cubit = ParentMonitorCubit(family, _Usage(), deviceUsage: device);
+    addTearDown(cubit.close);
+
+    await cubit.loadMonitorData();
+    expect(
+      (cubit.state as ParentMonitorLoaded).deviceUsage?.apps.single.displayName,
+      'amir',
+    );
+
+    await cubit.selectChild(1);
+    expect(device.requested, ['amir', 'zilola']);
+    expect(
+      (cubit.state as ParentMonitorLoaded).deviceUsage?.apps.single.displayName,
+      'zilola',
+    );
   });
 }

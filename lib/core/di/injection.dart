@@ -13,6 +13,7 @@ import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/child/child_injection.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/features/common/common_injection.dart';
+import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:safini/features/parent/parent_injection.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -64,6 +65,12 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
         loadLocal: (packageName) =>
             getIt<AppBlockService>().appIcon(packageName),
       ),
+    );
+  }
+
+  if (!getIt.isRegistered<DeviceUsageService>()) {
+    getIt.registerLazySingleton<DeviceUsageService>(
+      () => DeviceUsageService(getIt<Dio>()),
     );
   }
 

@@ -1,4 +1,6 @@
+import 'package:safini/features/child/presentation/cubit/child_time_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/ios_screen_time_cubit.dart';
+import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:safini/features/child/data/datasources/child_remote_datasource.dart';
@@ -78,6 +80,12 @@ void registerChildDependencies(GetIt sl) {
     () => AvatarCubit(
       sl<CoinsCubit>(),
       sl<Dio>(),
+      sl<safini_profile.ProfileController>(),
+    ),
+  );
+  sl.registerFactory<ChildTimeCubit>(
+    () => ChildTimeCubit(
+      sl<DeviceUsageService>(),
       sl<safini_profile.ProfileController>(),
     ),
   );

@@ -3135,7 +3135,7 @@
           "enforcement"
         ],
         "summary": "Sync",
-        "description": "Auth: X-Safini-Device-Token from child pairing. Business requirement: native background usage, rule synchronization and heartbeat. Frontend note: cumulative whole-minute totals keyed by family-local usage_date, retried safely; do not send deltas. Missing heartbeat means offline/unknown, not confirmed tampering. The snapshot's `tasks` lists up to three of today's open tasks (id, title, category, coin_reward), best paid first, for the block screen.",
+        "description": "Auth: X-Safini-Device-Token from child pairing. Business requirement: native background usage, rule synchronization and heartbeat. Frontend note: cumulative whole-minute totals keyed by family-local usage_date, retried safely; do not send deltas. `usage` carries configured apps only and is capped at what the child may spend; `device_usage` carries every app opened, keyed by package and uncapped, for `GET /children/{child_id}/device-usage`. Missing heartbeat means offline/unknown, not confirmed tampering. The snapshot's `tasks` lists up to three of today's open tasks (id, title, category, coin_reward), best paid first, for the block screen.",
         "operationId": "sync_v1_children__child_id__enforcement_sync_post",
         "parameters": [
           {
@@ -3563,7 +3563,7 @@
           "apps"
         ],
         "summary": "List Controlled Apps",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the catalog of apps a parent can put limits on, with the defaults a new rule starts from.\n\n**Frontend note:** Use this to populate the parent's app picker. It replaces any hard-coded slug list on the client, which is how the app and the catalog drifted apart in the first place. `is_default_for_new_child` marks the apps a new child is set up with automatically.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the catalog of apps a parent can put limits on, with the defaults a new rule starts from.\n\n**Frontend note:** Use this to populate the parent's app picker. It replaces any hard-coded slug list on the client, which is how the app and the catalog drifted apart in the first place. `is_default_for_new_child` marks the apps a new child is set up with automatically. Only curated apps are listed: every other app on a child's phone is limited through the `app_slug` on that child's installed-apps list, and never shows up here.",
         "operationId": "list_controlled_apps_v1_apps_get",
         "responses": {
           "200": {
@@ -3626,7 +3626,7 @@
           "apps"
         ],
         "summary": "Upsert Child App Rule",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent configure how one entertainment app behaves for a child: enabled flag, daily limit, and coin-to-minutes exchange rate.\n\n**Frontend note:** This backs the parent app-limits screen. Use the `app_slug` path parameter to select which catalog app you are updating.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent configure how one entertainment app behaves for a child: enabled flag, daily limit, and coin-to-minutes exchange rate.\n\n**Frontend note:** This backs the parent app-limits screen. Use the `app_slug` path parameter to select which app you are updating: a catalog slug, or any `app_slug` from `GET /children/{child_id}/installed-apps`, so every app on the child's phone can be limited or blocked. The first rule on an app outside the catalog registers it; that slug is accepted while the app is on this child's phone, and for as long as the rule exists after an uninstall. `404` means the app is neither in the catalog nor on this phone. `409` means it is the phone's Phone, Messages or Settings app, which stay always allowed. Keep using the `app_slug` the response returns.",
         "operationId": "upsert_child_app_rule_v1_children__child_id__app_rules__app_slug__put",
         "security": [
           {
@@ -4017,13 +4017,161 @@
         }
       }
     },
+    "/v1/children/{child_id}/device-usage": {
+      "get": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Get Child Device Usage",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Shows where the child's time went on one day: every app they opened, whether or not a parent has set a rule on it, most used first.\n\n**Frontend note:** Readable by a parent of this child or by the child. Apps with no minutes are left out, and so are Phone, Messages and Settings. `used_minutes` is what the child actually spent, so a limited app can read more than its limit here while `GET app-usage` stops at what was spendable. `has_rule` false means `is_blocked`, `is_limited` and `daily_limit_minutes` say nothing; use `app_slug` to add a rule. `usage_available` false is an iPhone, whose usage stays on the device: show that state rather than an empty day. `icon_url` is a path relative to the API origin and may be null.",
+        "operationId": "get_child_device_usage_v1_children__child_id__device_usage_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "usage_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Date to inspect in YYYY-MM-DD format. Defaults to the family-local today when omitted.",
+              "title": "Usage Date"
+            },
+            "description": "Date to inspect in YYYY-MM-DD format. Defaults to the family-local today when omitted."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Where the child's time went.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Child Device Usage V1 Children  Child Id  Device Usage Get"
+                },
+                "example": {
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "usage_date": "2026-09-14",
+                  "family_timezone": "Asia/Tashkent",
+                  "usage_available": true,
+                  "total_minutes": 95,
+                  "apps": [
+                    {
+                      "package_name": "com.roblox.client",
+                      "app_slug": "roblox",
+                      "display_name": "Roblox",
+                      "icon_url": "/v1/children/4c3d73d7-b950-47ee-bc20-5a237d37f4a0/installed-apps/com.roblox.client/icon?v=9f2c4d1e8b7a6f5e",
+                      "used_minutes": 70,
+                      "has_rule": true,
+                      "is_blocked": false,
+                      "is_limited": true,
+                      "daily_limit_minutes": 60
+                    },
+                    {
+                      "package_name": "com.whatsapp",
+                      "app_slug": "com.whatsapp",
+                      "display_name": "WhatsApp",
+                      "used_minutes": 25,
+                      "has_rule": false,
+                      "is_blocked": false,
+                      "is_limited": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/children/{child_id}/installed-apps": {
       "put": {
         "tags": [
           "apps"
         ],
         "summary": "Replace Child Installed Apps",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Stores the full list of apps installed on the child's device so the parent can see the child's real apps instead of only the controlled-app catalog.\n\n**Frontend note:** Send the whole snapshot on every upload; it replaces the stored list rather than merging into it. Only the child's own device may write, so call this with the child's token, not the parent's. Android only in practice - iOS cannot enumerate installed apps, so an iPhone should not call this at all. Icons are uploaded lazily: send `icon_sha256` for every app, then upload again with `icon_png` for each hash the response lists in `missing_icon_sha256`, until that list is empty. An app keeps its previous icon until the new one's bytes arrive.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Stores the full list of apps installed on the child's device so the parent can see the child's real apps instead of only the controlled-app catalog.\n\n**Frontend note:** Send the whole snapshot on every upload; it replaces the stored list rather than merging into it. Only the child's own device may write, so call this with the child's token, not the parent's. Android only in practice - iOS cannot enumerate installed apps, so an iPhone should not call this at all. Icons are uploaded lazily: send `icon_sha256` for every app, then upload again with `icon_png` for each hash the response lists in `missing_icon_sha256`, until that list is empty. An app keeps its previous icon until the new one's bytes arrive. Set `always_allowed` on the default dialer, default SMS app and system Settings.",
         "operationId": "replace_child_installed_apps_v1_children__child_id__installed_apps_put",
         "security": [
           {
@@ -4066,11 +4214,15 @@
                   "apps": [
                     {
                       "package_name": "com.roblox.client",
-                      "app_name": "Roblox"
+                      "app_name": "Roblox",
+                      "app_slug": "roblox",
+                      "always_allowed": false
                     },
                     {
                       "package_name": "com.google.android.apps.youtube.kids",
                       "app_name": "YouTube Kids",
+                      "app_slug": "youtube-kids",
+                      "always_allowed": false,
                       "icon_url": "/v1/children/4c3d73d7-b950-47ee-bc20-5a237d37f4a0/installed-apps/com.google.android.apps.youtube.kids/icon?v=9f2c4d1e8b7a6f5e"
                     }
                   ],
@@ -4149,7 +4301,7 @@
           "apps"
         ],
         "summary": "Get Child Installed Apps",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the apps currently installed on the child's device, for the parent screen that lists what is actually on the phone.\n\n**Frontend note:** Readable by a parent of this child or by the child. `updated_at` is null when the device has never uploaded, which is how you tell an empty phone apart from one that has not reported yet - show the never-reported state rather than an empty list. `icon_url` is a path relative to the API origin, fetched with the same bearer token; it is null until the device has uploaded that icon, so keep a placeholder for it.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the apps currently installed on the child's device, for the parent screen that lists what is actually on the phone.\n\n**Frontend note:** Readable by a parent of this child or by the child. `updated_at` is null when the device has never uploaded, which is how you tell an empty phone apart from one that has not reported yet - show the never-reported state rather than an empty list. `icon_url` is a path relative to the API origin, fetched with the same bearer token; it is null until the device has uploaded that icon, so keep a placeholder for it. Every app has an `app_slug`: pass it to `PUT /children/{child_id}/app-rules/{app_slug}` to limit or block that app, and match it against the `app_slug` of the child's rules to tell which apps already have one. It is the catalog slug for a curated app and derived from the package for any other. `always_allowed` marks Phone, Messages and Settings: show them, but do not offer a limit, since the rule is refused with `409`.",
         "operationId": "get_child_installed_apps_v1_children__child_id__installed_apps_get",
         "security": [
           {
@@ -4183,7 +4335,21 @@
                     {
                       "package_name": "com.roblox.client",
                       "app_name": "Roblox",
+                      "app_slug": "roblox",
+                      "always_allowed": false,
                       "icon_url": "/v1/children/4c3d73d7-b950-47ee-bc20-5a237d37f4a0/installed-apps/com.roblox.client/icon?v=9f2c4d1e8b7a6f5e"
+                    },
+                    {
+                      "package_name": "com.whatsapp",
+                      "app_name": "WhatsApp",
+                      "app_slug": "com.whatsapp",
+                      "always_allowed": false
+                    },
+                    {
+                      "package_name": "com.google.android.dialer",
+                      "app_name": "Phone",
+                      "app_slug": "com.google.android.dialer",
+                      "always_allowed": true
                     }
                   ],
                   "updated_at": "2026-08-30T12:00:00Z"
@@ -5556,7 +5722,7 @@
             "maxLength": 60,
             "minLength": 1,
             "title": "App Slug",
-            "description": "Controlled app key such as `youtube-kids` or `roblox`."
+            "description": "Controlled app key such as `youtube-kids`, or an installed app's slug such as `com.whatsapp`."
           },
           "used_minutes": {
             "type": "integer",
@@ -5804,6 +5970,41 @@
           "title": "Buddy"
         }
       },
+      "DeviceAppUsageReport": {
+        "properties": {
+          "package_name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Package Name"
+          },
+          "used_minutes": {
+            "type": "integer",
+            "maximum": 1440.0,
+            "minimum": 0.0,
+            "title": "Used Minutes"
+          },
+          "usage_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage Date"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "package_name",
+          "used_minutes"
+        ],
+        "title": "DeviceAppUsageReport"
+      },
       "FamilyCreateRequest": {
         "properties": {
           "name": {
@@ -5891,6 +6092,12 @@
             "description": "User-visible app label. Falls back to `package_name` when blank, so the parent screen never renders an unnamed row.",
             "default": ""
           },
+          "always_allowed": {
+            "type": "boolean",
+            "title": "Always Allowed",
+            "description": "True for the phone's default dialer, default SMS app and system Settings. Those stay always allowed: a parent cannot limit or block them.",
+            "default": false
+          },
           "icon_sha256": {
             "anyOf": [
               {
@@ -5958,6 +6165,11 @@
             {
               "app_name": "YouTube Kids",
               "package_name": "com.google.android.apps.youtube.kids"
+            },
+            {
+              "always_allowed": true,
+              "app_name": "Phone",
+              "package_name": "com.google.android.dialer"
             }
           ]
         }
@@ -6410,6 +6622,14 @@
             "type": "array",
             "maxItems": 1000,
             "title": "Usage"
+          },
+          "device_usage": {
+            "items": {
+              "$ref": "#/components/schemas/DeviceAppUsageReport"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Device Usage"
           },
           "usage_access": {
             "type": "boolean",

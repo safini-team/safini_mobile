@@ -94,13 +94,18 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         val events = getSystemService(UsageStatsManager::class.java).queryEvents(store.cursor, now) ?: return
         val event = UsageEvents.Event()
         var from = store.cursor
+        val overlays = Settings.canDrawOverlays(this)
         fun accrue(until: Long) {
             val pkg = store.foreground
-            if (pkg != null && !store.covered && store.app(pkg) != null) {
+            if (pkg != null && !store.covered) {
                 // Do not charge more usage than the budget, including during restart recovery.
                 val allowed = store.remaining(pkg, from)
                 val end = if (allowed == null) until else minOf(until, from+allowed)
-                if (end > from) store.record(pkg, from, end)
+                if (store.app(pkg) != null && end > from) store.record(pkg, from, end)
+                // Where the time went counts what the child really spent: past the budget too,
+                // unless the block screen was covering the app.
+                val spent = if (allowed != null && overlays) end else until
+                if (spent > from && countsAsApp(pkg)) store.recordDevice(pkg, from, spent)
             }
             from = until
         }
@@ -123,6 +128,19 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         store.cursor = now
     }
 
+    private val launchable = HashMap<String, Boolean>()
+
+    /** An app the child opens: not Safini, the home screen, system UI, or Phone, Messages and Settings. */
+    private fun countsAsApp(pkg: String): Boolean {
+        if (pkg == packageName || AlwaysAllowed.contains(this, pkg)) return false
+        return launchable.getOrPut(pkg) {
+            val home = runCatching {
+                packageManager.resolveActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0)?.activityInfo?.packageName
+            }.getOrNull()
+            pkg != home && runCatching { packageManager.getLaunchIntentForPackage(pkg) != null }.getOrDefault(false)
+        }
+    }
+
     fun syncNow(done: ((Throwable?) -> Unit)? = null) {
         done?.let { waiters.add(it) }
         if (syncing || stopped) return
@@ -131,7 +149,9 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         if (usageAccess(this)) runCatching { account(System.currentTimeMillis()) }
         syncing = true
         nextSync = SystemClock.elapsedRealtime()+60_000
-        val body = JSONObject().put("usage", store.reports())
+        // Installs and a changed home app are picked up once a minute.
+        launchable.clear()
+        val body = JSONObject().put("usage", store.reports()).put("device_usage", store.deviceReports())
             .put("usage_access", usageAccess(this)).put("overlay_permission", Settings.canDrawOverlays(this))
             .put("service_running", true).put("manufacturer", Build.MANUFACTURER.take(80))
         network.execute {

@@ -8,6 +8,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/child/presentation/cubit/child_time_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_state.dart';
@@ -19,6 +20,8 @@ import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
 import 'package:safini/features/child/presentation/widgets/dialogs/task_detail_dialog.dart';
+import 'package:safini/features/models/domain/models/device_usage.dart';
+import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
 
 /// Localized greeting based on the current time of day.
 String childGreeting(S s) {
@@ -34,8 +37,11 @@ class ChildHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<QuestCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<QuestCubit>()),
+        BlocProvider(create: (_) => getIt<ChildTimeCubit>()..load()),
+      ],
       // Reload when the Today tab becomes active so submissions made on the
       // Tasks tab (a separate cubit) show up here, and again whenever the app
       // comes back: the parent approves and the block screen spends coins
@@ -59,6 +65,7 @@ class ChildHomeScreen extends StatelessWidget {
   /// and Me is one shared cubit, and reloading only the tasks left it stale.
   static void _refresh(BuildContext context) {
     context.read<QuestCubit>().loadQuests();
+    context.read<ChildTimeCubit>().load();
     context.read<ProfileCubit>().loadProfile();
     context.read<RewardStoreCubit>().loadStore();
   }
@@ -80,6 +87,7 @@ class _ChildTodayScreen extends StatelessWidget {
         final coins = context.watch<CoinsCubit>().state;
         final profile = context.watch<ProfileCubit>().state;
         final store = context.watch<RewardStoreCubit>().state;
+        final time = context.watch<ChildTimeCubit>().state;
 
         final open = quests.quests
             .where((q) => !q.isCompleted && !q.isSubmitted)
@@ -109,6 +117,8 @@ class _ChildTodayScreen extends StatelessWidget {
             avatarColor: AppColors.avatarPalette[1],
             level: profile.level,
             teaser: _teaser(store, coins, s),
+            timeApps: _timeApps(time),
+            timeMinutes: time?.totalMinutes ?? 0,
           ),
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
           onOpenTasks: () => context.read<ChildHomeCubit>().selectTab(1),
@@ -119,8 +129,10 @@ class _ChildTodayScreen extends StatelessWidget {
             final cubit = context.read<QuestCubit>();
             final profile = context.read<ProfileCubit>();
             final store = context.read<RewardStoreCubit>();
+            final time = context.read<ChildTimeCubit>();
             await Future.wait([
               cubit.loadQuests(),
+              time.load(),
               profile.loadProfile(),
               store.loadStore(),
             ]);
@@ -128,6 +140,19 @@ class _ChildTodayScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  List<AppTimeRow> _timeApps(DeviceUsage? time) {
+    if (time == null || !time.usageAvailable) return const [];
+    return [
+      for (final app in time.apps)
+        AppTimeRow(
+          name: app.displayName,
+          iconUrl: app.iconUrl,
+          usedMinutes: app.usedMinutes,
+          isOver: app.isOver,
+        ),
+    ];
   }
 
   TodayQuest _toTodayQuest(QuestModel quest, S s) => TodayQuest(

@@ -7,6 +7,9 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
+import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
+import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
+    show formatHm;
 
 class TodayQuest {
   const TodayQuest({
@@ -66,6 +69,8 @@ class ChildTodayData {
     this.accessoryEmoji,
     this.avatarColor,
     this.level,
+    this.timeApps = const [],
+    this.timeMinutes = 0,
   });
 
   final String greeting;
@@ -98,6 +103,11 @@ class ChildTodayData {
   final String? accessoryEmoji;
   final Color? avatarColor;
   final int? level;
+
+  /// Every app the child used today, most used first. Empty hides "My time
+  /// today": nothing used yet, or an iPhone, which keeps usage on the device.
+  final List<AppTimeRow> timeApps;
+  final int timeMinutes;
 
   double get ringProgress =>
       questsTotal <= 0 ? 0 : (questsDone / questsTotal).clamp(0.0, 1.0);
@@ -248,6 +258,23 @@ class ChildTodayView extends StatelessWidget {
                 horizontal: AppSpacing.gutter,
               ),
               child: _TeaserCard(teaser: data.teaser!, onTap: onOpenStore),
+            ),
+          ),
+        ],
+        if (data.timeApps.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: DsSectionHeader(
+              title: s.myTimeToday,
+              trailingText: formatHm(s, data.timeMinutes),
+              top: 28,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.gutter,
+              ),
+              child: AppTimeList(apps: data.timeApps),
             ),
           ),
         ],

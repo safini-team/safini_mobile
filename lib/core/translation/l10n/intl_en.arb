@@ -670,5 +670,15 @@
   "iosScreenTimeParent": "iOS Screen Time · last reported status",
   "iosScreenTimeOn": "Monitoring configured",
   "iosScreenTimeOff": "Setup needs attention",
-  "iosScreenTimeLocalUsage": "View actual usage in Screen Time on the child’s device."
+  "iosScreenTimeLocalUsage": "View actual usage in Screen Time on the child’s device.",
+  "showAllAppsCount": "Show all {count} apps",
+  "showFewerApps": "Show fewer",
+  "myTimeToday": "My time today",
+  "@showAllAppsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -20,6 +20,7 @@ import 'package:safini/features/parent/domain/repositories/i_parent_user_reposit
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
+import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_installed_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -68,6 +69,7 @@ void registerParentDependencies(GetIt sl) {
     () => ParentMonitorCubit(
       sl<ParentFamilyCubit>(),
       sl<IParentAppUsageRepository>(),
+      deviceUsage: sl<DeviceUsageService>(),
     ),
   );
   sl.registerFactory<ParentAppsCubit>(
