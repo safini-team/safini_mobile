@@ -72,13 +72,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
                 if (getSystemService(UserManager::class.java).isUserUnlocked) {
                     if (usageAccess(this@AppBlockForegroundService)) account(now)
                     else { store.foreground = null; store.cursor = now }
-                    val interactive = getSystemService(PowerManager::class.java).isInteractive &&
-                        !getSystemService(KeyguardManager::class.java).isKeyguardLocked
-                    val pkg = store.foreground
-                    if (interactive && Settings.canDrawOverlays(this@AppBlockForegroundService) &&
-                        pkg != null && pkg != packageName && store.remaining(pkg, now) == 0L) showOverlay(pkg, now)
-                    // The success screen stays over the reopened app until the child leaves it.
-                    else if (!interactive || pkg == null || !overlay.holds(pkg)) removeOverlay()
+                    evaluateOverlay(now)
                     if (SystemClock.elapsedRealtime() >= nextSync && !syncing) syncNow()
                 }
                 if (SystemClock.elapsedRealtime() >= nextPersist) { store.persist(); nextPersist = SystemClock.elapsedRealtime()+5000 }
@@ -128,6 +122,40 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         store.cursor = now
     }
 
+    /**
+     * Decide whether the block screen should be up right now. The blocked app is
+     * either UsageStats' single foreground app, or - the case UsageStats is blind
+     * to - a limited, out-of-time app that owns a visible window the accessibility
+     * guard reported (picture-in-picture, split-screen, a floating player).
+     */
+    private fun evaluateOverlay(now: Long) {
+        val interactive = getSystemService(PowerManager::class.java).isInteractive &&
+            !getSystemService(KeyguardManager::class.java).isKeyguardLocked
+        val pkg = store.foreground
+        val blocked = pkg != null && pkg != packageName && store.remaining(pkg, now) == 0L
+        val floating = if (!blocked) floatingBlocked(now) else null
+        val target = if (blocked) pkg else floating
+        if (interactive && Settings.canDrawOverlays(this) && target != null) showOverlay(target, now)
+        // The success screen stays over the reopened app until the child leaves it.
+        else if (!interactive || (target == null && (pkg == null || !overlay.holds(pkg)))) removeOverlay()
+    }
+
+    /** A limited, out-of-time app the accessibility guard sees in a floating/split window. */
+    private fun floatingBlocked(now: Long): String? =
+        SafiniAccessibilityService.visible.firstOrNull {
+            it != packageName && store.app(it) != null && store.remaining(it, now) == 0L
+        }
+
+    /** The accessibility guard calls this the instant a window changes, for a snappy cover. */
+    fun reblockNow() {
+        if (stopped) return
+        handler.post {
+            if (stopped) return@post
+            if (!getSystemService(UserManager::class.java).isUserUnlocked) return@post
+            runCatching { evaluateOverlay(System.currentTimeMillis()) }
+        }
+    }
+
     private val launchable = HashMap<String, Boolean>()
 
     /** An app the child opens: not Safini, the home screen, system UI, or Phone, Messages and Settings. */
@@ -154,6 +182,8 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         val body = JSONObject().put("usage", store.reports()).put("device_usage", store.deviceReports())
             .put("usage_access", usageAccess(this)).put("overlay_permission", Settings.canDrawOverlays(this))
             .put("service_running", true).put("manufacturer", Build.MANUFACTURER.take(80))
+            .put("device_admin_active", SafiniDeviceAdminReceiver.isActive(this))
+            .put("accessibility_active", accessibilityEnabled(this))
         network.execute {
             val response = runCatching { client.request("/sync", body) }
             handler.post {

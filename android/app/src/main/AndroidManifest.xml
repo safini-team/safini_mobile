@@ -73,6 +73,37 @@
                 android:value="parental_control_app_time_enforcement" />
         </service>
 
+        <!-- Device admin: resists uninstall/clear-data of the child build and lets
+             us alert the parent the instant it is turned off. Empty policy set. -->
+        <receiver
+            android:name=".SafiniDeviceAdminReceiver"
+            android:description="@string/device_admin_description"
+            android:label="@string/device_admin_label"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Accessibility guard: sees PiP/split-screen/floating windows UsageStats
+             cannot, and bounces the child off Safini's own App-info page. -->
+        <service
+            android:name=".SafiniAccessibilityService"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
         <!-- Restarts enforcement after a reboot when it was previously active. -->
         <receiver
             android:name=".BootReceiver"

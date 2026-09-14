@@ -647,9 +647,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "limitThisApp": MessageLookupByLibrary.simpleMessage(
       "Ограничить приложение",
     ),
+    "limitsAccessibility": MessageLookupByLibrary.simpleMessage(
+      "Плавающие окна",
+    ),
+    "limitsAccessibilityHint": MessageLookupByLibrary.simpleMessage(
+      "Ловит «картинку в картинке» и разделённый экран.",
+    ),
     "limitsBattery": MessageLookupByLibrary.simpleMessage("Настройки батареи"),
     "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
       "На Samsung разрешите работу без ограничений батареи. На Xiaomi также включите автозапуск. Исключите Safini из спящих приложений.",
+    ),
+    "limitsDeviceAdmin": MessageLookupByLibrary.simpleMessage(
+      "Защита от удаления",
+    ),
+    "limitsDeviceAdminHint": MessageLookupByLibrary.simpleMessage(
+      "Не даёт удалить лимиты; родитель узнает, если это отключат.",
     ),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
       "Когда дневной лимит закончится, приложение перестанет открываться и покажет экран Safini.",
@@ -667,7 +679,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не удалось подключить лимиты. Проверьте интернет и повторите.",
     ),
     "limitsSetupHint": MessageLookupByLibrary.simpleMessage(
-      "Разрешите доступ к статистике использования и показ поверх других приложений в настройках Android.",
+      "Выполните все шаги ниже, чтобы лимиты работали и их нельзя было отключить.",
     ),
     "limitsSetupTitle": MessageLookupByLibrary.simpleMessage(
       "Включите лимиты приложений",

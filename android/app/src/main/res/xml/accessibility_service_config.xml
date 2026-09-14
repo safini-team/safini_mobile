@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Window-change events only. We never read text or view content; the block
+     engine only needs to know which app owns a visible window (picture-in-picture
+     and split-screen included, which UsageStats cannot see) and to notice the
+     child on Safini's own App-info page. No packageNames filter, because any
+     limited app can be the one that floats. -->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowsChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagRetrieveInteractiveWindows|flagReportViewIds"
+    android:canRetrieveWindowContent="true"
+    android:notificationTimeout="100"
+    android:description="@string/accessibility_service_description"
+    android:summary="@string/accessibility_service_description" />

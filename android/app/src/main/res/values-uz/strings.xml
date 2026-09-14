@@ -72,4 +72,12 @@
         <item quantity="one">%d tanga</item>
         <item quantity="other">%d tanga</item>
     </plurals>
+
+    <string name="device_admin_label">Safini ilova limitlari</string>
+    <string name="device_admin_description">Safini ilova limitlarini o\'chirib tashlashga yo\'l qo\'ymaydi. Bu yoqilgan bo\'lsa, avval uni o\'chirmasdan Safini\'ni o\'chirib bo\'lmaydi va ota-onaga xabar beriladi.</string>
+    <string name="device_admin_explanation">Limitlarni ota-ona bilmasdan olib tashlab bo\'lmasligi uchun yoqing. Safini telefonni bloklamaydi, o\'chirmaydi va boshqarib olmaydi.</string>
+    <string name="device_admin_disable_warning">Ilova limitlari bu telefonni himoya qilishni to\'xtatadi va ota-onaga xabar beriladi.</string>
+
+    <string name="accessibility_service_label">Safini ilova limitlari</string>
+    <string name="accessibility_service_description">Safini bundan limitlar ishlashi uchun foydalanadi. Limitli ilova suzuvchi oynada, «rasm ichida rasm» yoki bo\'lingan ekranda paydo bo\'lganini sezadi, shunda bloklash ekrani uni baribir yopadi, hamda limitlar o\'chirilishiga yo\'l qo\'ymaslikka yordam beradi. Safini ilovalar ichidagi narsalarni o\'qimaydi va yozganingizni yig\'maydi.</string>
 </resources>

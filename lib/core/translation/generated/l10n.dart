@@ -4266,10 +4266,10 @@ class S {
     );
   }
 
-  /// `Grant Usage Access and Display over other apps in Android Settings.`
+  /// `Grant every step below so app limits work and can’t be switched off.`
   String get limitsSetupHint {
     return Intl.message(
-      'Grant Usage Access and Display over other apps in Android Settings.',
+      'Grant every step below so app limits work and can’t be switched off.',
       name: 'limitsSetupHint',
       desc: '',
       args: [],
@@ -4291,6 +4291,46 @@ class S {
     return Intl.message(
       'Display over other apps',
       name: 'limitsOverlayAccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prevent uninstall`
+  String get limitsDeviceAdmin {
+    return Intl.message(
+      'Prevent uninstall',
+      name: 'limitsDeviceAdmin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keeps app limits from being deleted; a parent is told if it’s turned off.`
+  String get limitsDeviceAdminHint {
+    return Intl.message(
+      'Keeps app limits from being deleted; a parent is told if it’s turned off.',
+      name: 'limitsDeviceAdminHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cover floating windows`
+  String get limitsAccessibility {
+    return Intl.message(
+      'Cover floating windows',
+      name: 'limitsAccessibility',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Catches picture-in-picture and split screen.`
+  String get limitsAccessibilityHint {
+    return Intl.message(
+      'Catches picture-in-picture and split screen.',
+      name: 'limitsAccessibilityHint',
       desc: '',
       args: [],
     );
