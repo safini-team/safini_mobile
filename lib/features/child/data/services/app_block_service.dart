@@ -27,12 +27,10 @@ class AppBlockService {
   Future<void> requestOverlayPermission() => _call('requestOverlayPermission');
   Future<void> requestBatterySettings() => _call('requestBatterySettings');
 
-  /// Tamper guards. Device admin resists uninstall/clear-data; the accessibility
-  /// guard covers floating/PiP windows and Safini's own App-info page.
+  /// Uninstall guard. An active device admin cannot be uninstalled,
+  /// clear-data'd or force-stopped, and its removal alerts the parent.
   Future<bool> hasDeviceAdmin() => _bool('hasDeviceAdmin');
   Future<void> requestDeviceAdmin() => _call('requestDeviceAdmin');
-  Future<bool> hasAccessibility() => _bool('hasAccessibility');
-  Future<void> requestAccessibility() => _call('requestAccessibility');
   Future<bool> isConfigured(String childId) =>
       _bool('isConfigured', {'childId': childId});
   Future<bool> isRunning() => _bool('isRunning');

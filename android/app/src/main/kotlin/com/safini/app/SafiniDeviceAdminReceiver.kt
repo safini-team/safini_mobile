@@ -5,39 +5,71 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
+import org.json.JSONObject
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Being an active device admin is what stops a child from just uninstalling
- * Safini (or clearing its data) to drop the limits. We ask for no policy - no
- * lock, wipe or password control - so the activation dialog is honest and there
- * is nothing invasive for the child or Play review to worry about.
+ * Safini (or clearing its data, or force-stopping it) to drop the limits. We ask
+ * for no policy - no lock, wipe or password control - so the activation dialog
+ * is honest and there is nothing invasive for the child or Play review to weigh.
  *
  * The one thing we do with the callbacks: the moment admin is removed, push a
- * heartbeat so the server sees it and alerts the parent. Removing admin is the
- * gate to uninstalling, so this fires while the app still works, before the app
- * can be gone.
+ * heartbeat that says so, because removing admin is the last step before an
+ * uninstall and it fires while the app still works. The catch is timing: the
+ * platform only strips the admin *after* onDisabled returns, so a plain
+ * heartbeat here would still read `isAdminActive() == true`. We report an
+ * explicit `false` and hold the broadcast open with goAsync() until it is sent.
  */
 class SafiniDeviceAdminReceiver : DeviceAdminReceiver() {
-    override fun onEnabled(context: Context, intent: Intent) = ping(context)
-    override fun onDisabled(context: Context, intent: Intent) = ping(context)
-
-    override fun onDisableRequested(context: Context, intent: Intent): CharSequence {
-        // The confirm dialog before removal. Also nudge a heartbeat, so even if
-        // onDisabled is delayed the parent hears about it as early as possible.
-        ping(context)
-        return context.getString(R.string.device_admin_disable_warning)
+    override fun onEnabled(context: Context, intent: Intent) {
+        // Only nudge a service that is already up; never start one here, or a
+        // sign-out (which deactivates admin) would resurrect a stopped service.
+        AppBlockForegroundService.instance?.syncNow()
     }
 
-    /** Report the new state now instead of waiting up to a minute for the next tick. */
-    private fun ping(context: Context) {
-        val running = AppBlockForegroundService.instance
-        if (running != null) running.syncNow()
-        else runCatching {
-            context.startForegroundService(
-                Intent(context, AppBlockForegroundService::class.java)
-                    .setAction(AppBlockForegroundService.ACTION_SYNC)
-            )
-        }
+    override fun onDisabled(context: Context, intent: Intent) {
+        // A sanctioned sign-out clears the pairing before deactivating admin, so
+        // enabled is already false: nothing to report, and no false alert.
+        if (!EnforcementStore(context).enabled) return
+        reportRemoved(context)
+    }
+
+    override fun onDisableRequested(context: Context, intent: Intent): CharSequence =
+        context.getString(R.string.device_admin_disable_warning)
+
+    /**
+     * Post one heartbeat with `device_admin_active=false`, holding the broadcast
+     * open until it lands. The uninstall path force-stops us ~10s after this
+     * returns (DEVICE_ADMIN_DEACTIVATE_TIMEOUT), and EnforcementClient is a 10s
+     * connect + 10s read, so we cap our own wait at 8s and finish regardless.
+     */
+    private fun reportRemoved(context: Context) {
+        val pending = goAsync()
+        val done = AtomicBoolean(false)
+        val main = Handler(Looper.getMainLooper())
+        val finish = Runnable { if (done.compareAndSet(false, true)) runCatching { pending.finish() } }
+        main.postDelayed(finish, 8000)
+        // The running service, if any, will not report the true state fast enough
+        // and reads isAdminActive() as still-true, so we send false directly.
+        EnforcementStore(context).deviceAdminSeen = true
+        Thread {
+            runCatching {
+                val body = JSONObject()
+                    .put("usage_access", usageAccess(context))
+                    .put("overlay_permission", Settings.canDrawOverlays(context))
+                    .put("service_running", AppBlockForegroundService.instance != null)
+                    .put("manufacturer", Build.MANUFACTURER.take(80))
+                    .put("device_admin_active", false)
+                EnforcementClient(context).request("/sync", body)
+            }
+            main.removeCallbacks(finish)
+            finish.run()
+        }.start()
     }
 
     companion object {

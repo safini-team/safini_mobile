@@ -95,14 +95,6 @@ class _ChildAppBlockGateState extends State<ChildAppBlockGate>
                   ),
                   onTap: cubit.requestDeviceAdmin,
                 ),
-                ListTile(
-                  title: Text(s.limitsAccessibility),
-                  subtitle: Text(s.limitsAccessibilityHint),
-                  trailing: Icon(
-                    state.hasAccessibility ? Icons.check_circle : Icons.settings,
-                  ),
-                  onTap: cubit.requestAccessibility,
-                ),
                 const SizedBox(height: 16),
                 Text(s.limitsBatteryHint),
                 TextButton(

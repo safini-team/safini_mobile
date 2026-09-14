@@ -25,6 +25,11 @@ class EnforcementStore(context: Context) {
     var language: String
         get() = prefs.getString("language", "en")!!
         set(value) { prefs.edit().putString("language", value).apply() }
+    /** True once the device-admin guard has been active for this pairing. Reset
+     *  by clear() on a new pairing, so the heartbeat sends null until then. */
+    var deviceAdminSeen: Boolean
+        get() = prefs.getBoolean("device_admin_seen", false)
+        set(value) { prefs.edit().putBoolean("device_admin_seen", value).apply() }
 
     fun day(at: Long): String = Instant.ofEpochMilli(at).atZone(zone()).toLocalDate().toString()
     private fun zone(): ZoneId = runCatching { ZoneId.of(snapshot.optString("family_timezone", "UTC")) }.getOrDefault(ZoneId.of("UTC"))

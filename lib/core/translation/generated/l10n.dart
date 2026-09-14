@@ -4316,26 +4316,6 @@ class S {
     );
   }
 
-  /// `Cover floating windows`
-  String get limitsAccessibility {
-    return Intl.message(
-      'Cover floating windows',
-      name: 'limitsAccessibility',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Catches picture-in-picture and split screen.`
-  String get limitsAccessibilityHint {
-    return Intl.message(
-      'Catches picture-in-picture and split screen.',
-      name: 'limitsAccessibilityHint',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Battery settings`
   String get limitsBattery {
     return Intl.message(

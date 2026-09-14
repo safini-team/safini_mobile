@@ -634,12 +634,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "levelShort": MessageLookupByLibrary.simpleMessage("Level"),
     "levelValue": m28,
     "limitThisApp": MessageLookupByLibrary.simpleMessage("Limit this app"),
-    "limitsAccessibility": MessageLookupByLibrary.simpleMessage(
-      "Cover floating windows",
-    ),
-    "limitsAccessibilityHint": MessageLookupByLibrary.simpleMessage(
-      "Catches picture-in-picture and split screen.",
-    ),
     "limitsBattery": MessageLookupByLibrary.simpleMessage("Battery settings"),
     "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
       "On Samsung, allow unrestricted battery use. On Xiaomi, also enable autostart. Keep Safini out of sleeping-app lists.",

@@ -659,12 +659,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "levelShort": MessageLookupByLibrary.simpleMessage("Daraja"),
     "levelValue": m28,
     "limitThisApp": MessageLookupByLibrary.simpleMessage("Ilovani cheklash"),
-    "limitsAccessibility": MessageLookupByLibrary.simpleMessage(
-      "Suzuvchi oynalar",
-    ),
-    "limitsAccessibilityHint": MessageLookupByLibrary.simpleMessage(
-      "«Rasm ichida rasm» va bo‘lingan ekranni ushlaydi.",
-    ),
     "limitsBattery": MessageLookupByLibrary.simpleMessage(
       "Batareya sozlamalari",
     ),

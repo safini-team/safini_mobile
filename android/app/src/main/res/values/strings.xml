@@ -80,9 +80,4 @@
     <string name="device_admin_description">Keeps Safini\'s app limits from being removed. While this is on, Safini can\'t be uninstalled without turning it off first, and a parent is told if it is.</string>
     <string name="device_admin_explanation">Turn this on so app limits can\'t be removed without a parent knowing. Safini never locks, wipes or takes over the phone.</string>
     <string name="device_admin_disable_warning">App limits will stop protecting this phone and a parent will be notified.</string>
-
-    <!-- Accessibility service: shown in Settings > Accessibility. Honest about the
-         narrow purpose; Google Play requires this disclosure for the permission. -->
-    <string name="accessibility_service_label">Safini app limits</string>
-    <string name="accessibility_service_description">Safini uses this to keep app limits working. It notices when a limited app appears in a floating, picture-in-picture or split-screen window so the block screen can still cover it, and it helps keep the limits from being switched off. Safini does not read the content of your apps or collect what you type.</string>
 </resources>

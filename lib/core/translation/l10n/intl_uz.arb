@@ -521,8 +521,6 @@
   "limitsOverlayAccess": "Boshqa ilovalar ustida",
   "limitsDeviceAdmin": "O‘chirishdan himoya",
   "limitsDeviceAdminHint": "Limitlarni o‘chirib tashlashga yo‘l qo‘ymaydi; o‘chirilsa, ota-ona biladi.",
-  "limitsAccessibility": "Suzuvchi oynalar",
-  "limitsAccessibilityHint": "«Rasm ichida rasm» va bo‘lingan ekranni ushlaydi.",
   "limitsBattery": "Batareya sozlamalari",
   "limitsBatteryHint": "Samsung’da batareya cheklovlarini o‘chiring. Xiaomi’da avtomatik ishga tushirishni ham yoqing. Safini’ni uyqudagi ilovalardan chiqaring.",
   "limitsRetry": "Tekshirish va ulanish",

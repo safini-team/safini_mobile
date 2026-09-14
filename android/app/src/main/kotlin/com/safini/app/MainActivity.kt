@@ -45,10 +45,6 @@ class MainActivity : FlutterActivity() {
                             )
                             result.success(null)
                         }
-                        "hasAccessibility" -> result.success(accessibilityEnabled(this))
-                        "requestAccessibility" -> {
-                            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); result.success(null)
-                        }
                         "isConfigured" -> result.success(client.configured(call.argument<String>("childId")!!))
                         "configure" -> {
                             val childId = call.argument<String>("childId")!!
