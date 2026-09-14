@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:safini/core/app_icons/app_icon_tile.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -7,6 +6,7 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
 
 /// One kid in the scope strip.
 class TodayKid {
@@ -36,7 +36,7 @@ class TodayReview {
   final int coins;
 }
 
-/// One app row in "Where the time went".
+/// One app row in "Where the time went": every app the child used today.
 class TodayApp {
   const TodayApp({
     required this.name,
@@ -230,9 +230,18 @@ class ParentTodayView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.gutter,
               ),
-              child: DsGroup(
-                verticalPadding: 4,
-                children: [for (final app in data.apps) _AppRow(app: app)],
+              child: AppTimeList(
+                // A new child is a new list, collapsed again.
+                key: ValueKey(data.kidName),
+                apps: [
+                  for (final app in data.apps)
+                    AppTimeRow(
+                      name: app.name,
+                      iconUrl: app.iconUrl,
+                      usedMinutes: app.usedMinutes,
+                      isOver: app.isOver,
+                    ),
+                ],
               ),
             ),
           ),
@@ -534,61 +543,6 @@ class _AllCaughtUp extends StatelessWidget {
             S.of(context).newSubmissionsLandHere,
             style: AppText.meta,
             textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AppRow extends StatelessWidget {
-  const _AppRow({required this.app});
-
-  final TodayApp app;
-
-  /// The artboard scales every bar against a fixed 90-minute reference so the
-  /// rows stay comparable, rather than each app filling its own limit.
-  static const int _scaleMinutes = 90;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: Row(
-        children: [
-          AppIconTile(emoji: app.emoji, iconUrl: app.iconUrl, fontSize: 17),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Expanded(child: Text(app.name, style: AppText.body)),
-                    Text(
-                      formatHm(S.of(context), app.usedMinutes),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        height: 1.2,
-                        color: app.isOver
-                            ? AppColors.dangerDeep
-                            : AppColors.textSecondary,
-                        fontFeatures: AppText.tabular,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 7),
-                DsProgressBar(
-                  progress: app.usedMinutes / _scaleMinutes,
-                  color: app.isOver ? AppColors.danger : AppColors.primary,
-                ),
-              ],
-            ),
           ),
         ],
       ),

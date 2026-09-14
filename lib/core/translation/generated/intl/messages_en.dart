@@ -124,48 +124,50 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m44(name) => "Saved for ${name}";
 
-  static String m45(count) =>
+  static String m45(count) => "Show all ${count} apps";
+
+  static String m46(count) =>
       "${Intl.plural(count, one: '1 task', other: '${count} tasks')}";
 
-  static String m46(tasks, coins) => "${tasks} · ${coins}";
+  static String m47(tasks, coins) => "${tasks} · ${coins}";
 
-  static String m47(scope, tasks) => "${scope} · ${tasks}";
+  static String m48(scope, tasks) => "${scope} · ${tasks}";
 
-  static String m48(tasks, coins) => "${tasks} left - ${coins} on the table";
+  static String m49(tasks, coins) => "${tasks} left - ${coins} on the table";
 
-  static String m49(time) => "${time} left";
+  static String m50(time) => "${time} left";
 
-  static String m50(time) => "${time} used";
+  static String m51(time) => "${time} used";
 
-  static String m51(count) => "${count} to go";
+  static String m52(count) => "${count} to go";
 
-  static String m52(name) =>
+  static String m53(name) =>
       "Type it on ${name}\'s phone, under \"I\'m a kid\".";
 
-  static String m53(used, limit) => "${used} used / ${limit} limit";
+  static String m54(used, limit) => "${used} used / ${limit} limit";
 
-  static String m54(used) => "${used} · no limit";
+  static String m55(used) => "${used} · no limit";
 
-  static String m55(used, limit) => "${used} of ${limit}";
+  static String m56(used, limit) => "${used} of ${limit}";
 
-  static String m56(used, limit) => "${used} of ${limit} · over";
+  static String m57(used, limit) => "${used} of ${limit} · over";
 
-  static String m57(time) => "${time} today";
+  static String m58(time) => "${time} today";
 
-  static String m58(count) =>
+  static String m59(count) =>
       "${Intl.plural(count, one: '1 waiting', other: '${count} waiting')}";
 
-  static String m59(name) => "Waiting for ${name}\'s phone…";
+  static String m60(name) => "Waiting for ${name}\'s phone…";
 
-  static String m60(name, coins) => "${name} · worth ${coins}";
+  static String m61(name, coins) => "${name} · worth ${coins}";
 
-  static String m61(age) =>
+  static String m62(age) =>
       "${Intl.plural(age, one: '1 year old', other: '${age} years old')}";
 
-  static String m62(count) =>
+  static String m63(count) =>
       "${Intl.plural(count, one: 'You need 1 more coin.', other: 'You need ${count} more coins.')}";
 
-  static String m63(name) => "${name} (you)";
+  static String m64(name) => "${name} (you)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -699,6 +701,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "myFamily": MessageLookupByLibrary.simpleMessage("My Family"),
     "myProfile": MessageLookupByLibrary.simpleMessage("My Profile"),
     "myQuests": MessageLookupByLibrary.simpleMessage("My Quests"),
+    "myTimeToday": MessageLookupByLibrary.simpleMessage("My time today"),
     "nDayStreak": m36,
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameHintExample": MessageLookupByLibrary.simpleMessage("Amir"),
@@ -925,6 +928,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "setupYourFamily": MessageLookupByLibrary.simpleMessage(
       "Set Up Your Family",
     ),
+    "showAllAppsCount": m45,
+    "showFewerApps": MessageLookupByLibrary.simpleMessage("Show fewer"),
     "signInAction": MessageLookupByLibrary.simpleMessage("Sign in"),
     "signInError": MessageLookupByLibrary.simpleMessage(
       "Sign in failed. Please try again.",
@@ -981,7 +986,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Master the board"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Chess Lesson"),
-    "taskCount": m45,
+    "taskCount": m46,
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage("Task created!"),
     "taskDeletedMessage": MessageLookupByLibrary.simpleMessage("Task deleted."),
     "taskDetailsHint": MessageLookupByLibrary.simpleMessage(
@@ -994,7 +999,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Complete Duolingo",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Task"),
-    "taskGroupSummary": m46,
+    "taskGroupSummary": m47,
     "taskPuzzleSub": MessageLookupByLibrary.simpleMessage("Brain power boost"),
     "taskPuzzleTitle": MessageLookupByLibrary.simpleMessage("Logical Puzzle"),
     "taskReadingSub": MessageLookupByLibrary.simpleMessage("Expand your mind"),
@@ -1006,7 +1011,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskRoomSub": MessageLookupByLibrary.simpleMessage("Daily chore"),
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Clean your room"),
-    "taskScopeLine": m47,
+    "taskScopeLine": m48,
     "taskStepsSub": MessageLookupByLibrary.simpleMessage("Keep it moving!"),
     "taskStepsTitle": MessageLookupByLibrary.simpleMessage("Walk 5,000 Steps"),
     "taskSubmittedForReview": MessageLookupByLibrary.simpleMessage(
@@ -1016,7 +1021,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskUpdatedMessage": MessageLookupByLibrary.simpleMessage("Task updated!"),
     "tasks": MessageLookupByLibrary.simpleMessage("Tasks"),
     "tasksAndRewards": MessageLookupByLibrary.simpleMessage("Tasks & Rewards"),
-    "tasksLeftCoinsOnTable": m48,
+    "tasksLeftCoinsOnTable": m49,
     "theirNote": MessageLookupByLibrary.simpleMessage("Their note"),
     "theyInstallSafini": MessageLookupByLibrary.simpleMessage(
       "They install Safini and sign in, then enter this code.",
@@ -1024,8 +1029,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "thisWeek": MessageLookupByLibrary.simpleMessage("This week"),
     "thu": MessageLookupByLibrary.simpleMessage("THU"),
     "timeCoins": MessageLookupByLibrary.simpleMessage("Time Coins"),
-    "timeLeft": m49,
-    "timeUsed": m50,
+    "timeLeft": m50,
+    "timeUsed": m51,
     "tip1": MessageLookupByLibrary.simpleMessage(
       "Set meaningful tasks that teach responsibility",
     ),
@@ -1039,7 +1044,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Adjust coin values to match effort levels",
     ),
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Tips for Parents"),
-    "toGo": m51,
+    "toGo": m52,
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Today\'s Quests"),
     "tryAgain": MessageLookupByLibrary.simpleMessage("Try again"),
     "tue": MessageLookupByLibrary.simpleMessage("TUE"),
@@ -1049,7 +1054,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "typeCodeFromParent": MessageLookupByLibrary.simpleMessage(
       "Type the code from your parent",
     ),
-    "typeItOnPhone": m52,
+    "typeItOnPhone": m53,
     "unitHour": MessageLookupByLibrary.simpleMessage("h"),
     "unitMinute": MessageLookupByLibrary.simpleMessage("m"),
     "unlockExtraTime": MessageLookupByLibrary.simpleMessage(
@@ -1059,18 +1064,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Unlock once, keep forever",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("unlocked"),
-    "usedLimit": m53,
-    "usedNoLimit": m54,
-    "usedOfLimit": m55,
-    "usedOfLimitOver": m56,
-    "usedTodayShort": m57,
+    "usedLimit": m54,
+    "usedNoLimit": m55,
+    "usedOfLimit": m56,
+    "usedOfLimitOver": m57,
+    "usedTodayShort": m58,
     "uzbek": MessageLookupByLibrary.simpleMessage("Uzbek"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("View as Kid"),
-    "waitingCount": m58,
+    "waitingCount": m59,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Waiting for your parent to check it",
     ),
-    "waitingForPhone": m59,
+    "waitingForPhone": m60,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Wear"),
     "wed": MessageLookupByLibrary.simpleMessage("WED"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Fri"),
@@ -1091,10 +1096,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "whoSection": MessageLookupByLibrary.simpleMessage("Who"),
     "wornLabel": MessageLookupByLibrary.simpleMessage("On"),
-    "worthCoins": m60,
-    "yearsOld": m61,
-    "youNeedMoreCoins": m62,
-    "youSuffix": m63,
+    "worthCoins": m61,
+    "yearsOld": m62,
+    "youNeedMoreCoins": m63,
+    "youSuffix": m64,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Your account"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Your avatar"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("YOUR CHILDREN"),

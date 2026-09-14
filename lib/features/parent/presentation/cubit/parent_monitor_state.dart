@@ -1,3 +1,4 @@
+import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
@@ -32,6 +33,11 @@ class ParentMonitorLoaded extends ParentMonitorState {
   /// per-app limits, which is not a budget anyone can spend.
   final ScreenTimeModel screenTime;
 
+  /// Every app the selected child used today, rule or not. Null while it
+  /// loads or when the request failed; the list then falls back to
+  /// [appLimits].
+  final DeviceUsage? deviceUsage;
+
   /// The selected child's chosen face emoji (null → default avatar).
   final String? faceEmoji;
 
@@ -51,6 +57,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
     required this.appLimits,
     this.screenTime = ScreenTimeModel.none,
     this.hasActivityData = false,
+    this.deviceUsage,
     this.faceEmoji,
   });
 
@@ -65,6 +72,8 @@ class ParentMonitorLoaded extends ParentMonitorState {
     List<Map<String, dynamic>>? appLimits,
     ScreenTimeModel? screenTime,
     bool? hasActivityData,
+    DeviceUsage? deviceUsage,
+    bool clearDeviceUsage = false,
     String? faceEmoji,
     bool clearFaceEmoji = false,
   }) {
@@ -79,6 +88,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
       appLimits: appLimits ?? this.appLimits,
       screenTime: screenTime ?? this.screenTime,
       hasActivityData: hasActivityData ?? this.hasActivityData,
+      deviceUsage: clearDeviceUsage ? null : (deviceUsage ?? this.deviceUsage),
       faceEmoji: clearFaceEmoji ? null : (faceEmoji ?? this.faceEmoji),
     );
   }

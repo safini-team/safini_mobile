@@ -544,5 +544,8 @@
   "iosScreenTimeParent": "iOS ekran vaqti · oxirgi holat",
   "iosScreenTimeOn": "Nazorat sozlangan",
   "iosScreenTimeOff": "Sozlamalarni tekshiring",
-  "iosScreenTimeLocalUsage": "Haqiqiy foydalanishni bolaning qurilmasidagi Ekran vaqti bo‘limida ko‘ring."
+  "iosScreenTimeLocalUsage": "Haqiqiy foydalanishni bolaning qurilmasidagi Ekran vaqti bo‘limida ko‘ring.",
+  "showAllAppsCount": "Barcha {count} ta ilovani koʻrsatish",
+  "showFewerApps": "Yigʻish",
+  "myTimeToday": "Bugungi vaqtim"
 }

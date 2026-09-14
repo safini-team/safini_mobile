@@ -35,6 +35,10 @@ class ApiConst {
   static String childAppUsage(String childId) =>
       '/v1/children/$childId/app-usage';
 
+  /// GET — every app the child used today, rule or not, most used first.
+  static String childDeviceUsage(String childId) =>
+      '/v1/children/$childId/device-usage';
+
   /// PUT — upsert a controlled-app rule (limit / enabled) for a child.
   static String childAppRule(String childId, String appSlug) =>
       '/v1/children/$childId/app-rules/$appSlug';

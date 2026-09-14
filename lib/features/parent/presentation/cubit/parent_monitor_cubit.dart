@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/features/models/data/services/device_usage_service.dart';
+import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
@@ -11,6 +13,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.d
 class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   final ParentFamilyCubit _familyCubit;
   final IParentAppUsageRepository _appUsageRepo;
+  final DeviceUsageService? _deviceUsage;
   StreamSubscription? _familySub;
 
   List<ChildSummaryModel> _children = const [];
@@ -18,8 +21,12 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   List<ChildAppUsageModel> _appUsage = const [];
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
 
-  ParentMonitorCubit(this._familyCubit, this._appUsageRepo)
-    : super(const ParentMonitorInitial()) {
+  ParentMonitorCubit(
+    this._familyCubit,
+    this._appUsageRepo, {
+    DeviceUsageService? deviceUsage,
+  }) : _deviceUsage = deviceUsage,
+       super(const ParentMonitorInitial()) {
     _familySub = _familyCubit.stream.listen((familyState) {
       if (familyState.family == null) return;
       _children = _childrenFromFamily(familyState.family);
@@ -76,6 +83,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     final child = _children[_selectedIndex];
     _appUsage = const [];
     _screenTime = ScreenTimeModel.none;
+    final deviceUsage = _fetchDeviceUsage(child.id);
     final result = await _appUsageRepo.fetchAppUsage(child.id);
     result.fold(_clearUsage, _takeUsage);
     final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(child.id);
@@ -95,8 +103,18 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         weeklyUsage: const [0, 0, 0, 0, 0, 0, 0],
         appLimits: _appUsage.map(_toLimitMap).toList(),
         screenTime: _screenTime,
+        deviceUsage: await deviceUsage,
       ),
     );
+  }
+
+  /// Started before the other requests and awaited after them, so the three
+  /// load together. A failure leaves the list on the rule rows.
+  Future<DeviceUsage?> _fetchDeviceUsage(String childId) async {
+    final service = _deviceUsage;
+    if (service == null) return null;
+    final result = await service.fetch(childId);
+    return result.fold((_) => null, (usage) => usage);
   }
 
   /// Called when the parent swipes the progress card to another child.
@@ -116,10 +134,12 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         selectedIndex: index,
         appLimits: const [],
         screenTime: ScreenTimeModel.none,
+        clearDeviceUsage: true,
         clearFaceEmoji: true,
       ),
     );
 
+    final deviceUsage = _fetchDeviceUsage(_children[index].id);
     final result = await _appUsageRepo.fetchAppUsage(_children[index].id);
     result.fold(_clearUsage, _takeUsage);
     final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
@@ -131,6 +151,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         (state as ParentMonitorLoaded).copyWith(
           appLimits: _appUsage.map(_toLimitMap).toList(),
           screenTime: _screenTime,
+          deviceUsage: await deviceUsage,
           faceEmoji: faceEmoji,
         ),
       );

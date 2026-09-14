@@ -129,7 +129,7 @@ class _ParentMonitorView extends StatelessWidget {
     final child = state.selectedChild;
     final tasks = _loadedOf(tasksState);
 
-    final apps = state.appLimits.map((limit) {
+    final ruleApps = state.appLimits.map((limit) {
       final name = (limit['name'] ?? '').toString();
       return TodayApp(
         name: name,
@@ -140,12 +140,36 @@ class _ParentMonitorView extends StatelessWidget {
       );
     }).toList()..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));
 
+    // Every app the child opened, not only the ones with a rule. The rule rows
+    // stand in when the device-usage request failed.
+    final device = state.deviceUsage;
+    final apps = device == null
+        ? ruleApps.where((app) => app.usedMinutes > 0).toList()
+        : [
+            for (final app in device.apps)
+              TodayApp(
+                name: app.displayName,
+                emoji: AppData.getEmojiForApp(app.displayName),
+                usedMinutes: app.usedMinutes,
+                limitMinutes: app.hasRule && app.isLimited && !app.isBlocked
+                    ? app.dailyLimitMinutes ?? 0
+                    : 0,
+                iconUrl: app.iconUrl,
+              ),
+          ];
+
     // The ring draws against the whole-device cap the parent set. When there
     // is none the card falls back to usage only: the sum of the per-app limits
     // used to stand in for a budget here, and it is not one - nothing draws
     // from it, so "3 h 15 m left" was a number the child could not spend.
-    final used = apps.fold<int>(0, (sum, app) => sum + app.usedMinutes);
+    //
+    // The cap is spent from the rule apps alone, so "left today" keeps their
+    // sum. Without a cap the card says what the child really used.
     final limit = state.screenTime.limitMinutes ?? 0;
+    final ruleUsed = ruleApps.fold<int>(0, (sum, app) => sum + app.usedMinutes);
+    final used = limit > 0 || device == null
+        ? ruleUsed
+        : (device.totalMinutes > ruleUsed ? device.totalMinutes : ruleUsed);
 
     // The list covers the whole family, so the card takes the selected
     // child's share of it rather than labelling someone else's task with
@@ -195,7 +219,7 @@ class _ParentMonitorView extends StatelessWidget {
       coins: child?.coinsBalance ?? 0,
       streakDays: child?.currentStreakDays,
       reviews: reviews,
-      apps: state.screenTime.usageAvailable ? apps.take(3).toList() : [],
+      apps: state.screenTime.usageAvailable ? apps : [],
     );
   }
 }

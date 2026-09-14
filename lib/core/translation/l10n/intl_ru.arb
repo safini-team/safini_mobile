@@ -644,5 +644,8 @@
   "iosScreenTimeParent": "Экранное время iOS · последний статус",
   "iosScreenTimeOn": "Контроль настроен",
   "iosScreenTimeOff": "Проверьте настройку",
-  "iosScreenTimeLocalUsage": "Фактическое использование доступно в разделе «Экранное время» на устройстве ребёнка."
+  "iosScreenTimeLocalUsage": "Фактическое использование доступно в разделе «Экранное время» на устройстве ребёнка.",
+  "showAllAppsCount": "Показать все приложения ({count})",
+  "showFewerApps": "Свернуть",
+  "myTimeToday": "Моё время сегодня"
 }

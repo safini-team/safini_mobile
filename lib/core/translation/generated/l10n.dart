@@ -4550,6 +4550,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Show all {count} apps`
+  String showAllAppsCount(int count) {
+    return Intl.message(
+      'Show all $count apps',
+      name: 'showAllAppsCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Show fewer`
+  String get showFewerApps {
+    return Intl.message(
+      'Show fewer',
+      name: 'showFewerApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My time today`
+  String get myTimeToday {
+    return Intl.message(
+      'My time today',
+      name: 'myTimeToday',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
