@@ -528,6 +528,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Uni shu telefon cheklovlariga qoʻshing. Kunlik limitni keyin sozlashingiz mumkin.",
     ),
     "installedAppsAddTitle": m18,
+    "installedAppsAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
+      "Doimo ruxsat etilgan",
+    ),
+    "installedAppsAlwaysAllowedInfo": MessageLookupByLibrary.simpleMessage(
+      "Telefon, xabarlar va sozlamalar doimo ruxsat etilgan, shunda farzandingiz siz bilan har doim bogʻlana oladi.",
+    ),
     "installedAppsBlockCompletely": MessageLookupByLibrary.simpleMessage(
       "Toʻliq bloklash",
     ),

@@ -103,6 +103,22 @@ void main() {
     expect(apps.last.iconSha256, isNull);
   });
 
+  test('native marks Phone, Messages and Settings as always allowed', () async {
+    reply = [
+      {
+        'packageName': 'com.android.contacts',
+        'appName': 'Phone',
+        'alwaysAllowed': true,
+      },
+      {'packageName': 'com.whatsapp', 'appName': 'WhatsApp'},
+    ];
+    final apps = await android.installedApps();
+    expect(apps.map((app) => app.alwaysAllowed), [true, false]);
+    expect(apps.first.toJson()['always_allowed'], isTrue);
+    // Only the flagged apps send the field at all.
+    expect(apps.last.toJson().containsKey('always_allowed'), isFalse);
+  });
+
   test('one app icon is asked for by package', () async {
     final png = Uint8List.fromList([1, 2, 3]);
     reply = png;

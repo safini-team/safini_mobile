@@ -24,6 +24,11 @@ class InstalledApp {
   /// child's phone has uploaded it.
   final String? iconUrl;
 
+  /// Phone, Messages or Settings: listed for the parent, never limited, so
+  /// the child can always reach them. The child's phone decides, since only
+  /// it knows its default dialer and SMS app.
+  final bool alwaysAllowed;
+
   /// The slug a parent's rule on this app goes under, as the API names it.
   /// Every app on the phone has one, not only the catalog's.
   final String? appSlug;
@@ -35,6 +40,7 @@ class InstalledApp {
     this.iconPng,
     this.iconUrl,
     this.appSlug,
+    this.alwaysAllowed = false,
   });
 
   factory InstalledApp.fromJson(Map<String, dynamic> json) {
@@ -46,6 +52,7 @@ class InstalledApp {
       appName: (json['app_name'] ?? json['appName'] ?? '').toString(),
       iconUrl: iconUrl is String && iconUrl.isNotEmpty ? iconUrl : null,
       appSlug: appSlug is String && appSlug.isNotEmpty ? appSlug : null,
+      alwaysAllowed: json['always_allowed'] == true,
     );
   }
 
@@ -59,6 +66,7 @@ class InstalledApp {
   Map<String, dynamic> toJson({bool withIcon = false}) => {
     'package_name': packageName,
     'app_name': appName,
+    if (alwaysAllowed) 'always_allowed': true,
     if (iconSha256 != null) 'icon_sha256': iconSha256,
     if (withIcon && iconPng != null) 'icon_png': base64Encode(iconPng!),
   };

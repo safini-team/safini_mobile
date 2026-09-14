@@ -409,6 +409,8 @@
   "installedAppsLastSynced": "Синхронизировано: {date}",
   "installedAppsTapHint": "Нажмите на знакомое приложение, чтобы задать лимит или заблокировать.",
   "installedAppsNotControllable": "Safini пока не может ограничить это приложение.",
+  "installedAppsAlwaysAllowed": "Всегда разрешено",
+  "installedAppsAlwaysAllowedInfo": "Телефон, сообщения и настройки всегда разрешены, чтобы ребёнок всегда мог связаться с вами.",
   "installedAppsAddTitle": "Ограничить {name}?",
   "installedAppsAddBody": "Добавьте его в лимиты этого телефона. Дневной лимит можно настроить дальше.",
   "installedAppsSetLimit": "Задать дневной лимит",

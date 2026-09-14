@@ -62,6 +62,7 @@ class AppBlockService {
           (a) => InstalledApp(
             packageName: a['packageName'].toString(),
             appName: a['appName'].toString(),
+            alwaysAllowed: a['alwaysAllowed'] == true,
             iconPng: a['iconPng'] is Uint8List
                 ? a['iconPng'] as Uint8List
                 : null,

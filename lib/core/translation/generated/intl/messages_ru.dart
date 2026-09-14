@@ -520,6 +520,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Добавьте его в лимиты этого телефона. Дневной лимит можно настроить дальше.",
     ),
     "installedAppsAddTitle": m18,
+    "installedAppsAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
+      "Всегда разрешено",
+    ),
+    "installedAppsAlwaysAllowedInfo": MessageLookupByLibrary.simpleMessage(
+      "Телефон, сообщения и настройки всегда разрешены, чтобы ребёнок всегда мог связаться с вами.",
+    ),
     "installedAppsBlockCompletely": MessageLookupByLibrary.simpleMessage(
       "Полностью заблокировать",
     ),

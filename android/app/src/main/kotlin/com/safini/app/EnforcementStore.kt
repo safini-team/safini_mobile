@@ -8,6 +8,7 @@ import java.time.ZoneId
 
 /** Non-secret budgets live in device-protected storage so boot can resume offline. */
 class EnforcementStore(context: Context) {
+    private val appContext = context.applicationContext
     private val prefs = context.createDeviceProtectedStorageContext()
         .getSharedPreferences("safini_enforcement_v2", Context.MODE_PRIVATE)
     var snapshot: JSONObject = JSONObject(prefs.getString("snapshot", "{}")!!)
@@ -28,7 +29,9 @@ class EnforcementStore(context: Context) {
     fun apps(): List<JSONObject> = snapshot.optJSONArray("apps")?.let { list ->
         (0 until list.length()).map { list.getJSONObject(it) }
     } ?: emptyList()
-    fun app(pkg: String): JSONObject? = apps().firstOrNull { it.optString("package_name") == pkg }
+    /** The rule for [pkg]; never one for Phone, Messages or Settings, whatever the server sent. */
+    fun app(pkg: String): JSONObject? =
+        if (AlwaysAllowed.contains(appContext, pkg)) null else apps().firstOrNull { it.optString("package_name") == pkg }
     fun used(pkg: String, date: String): Long = usage.optJSONObject(date)?.optLong(pkg) ?: 0
 
     fun record(pkg: String, from: Long, to: Long) {

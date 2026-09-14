@@ -95,6 +95,27 @@ void main() {
     expect(snapshot.apps.map((app) => app.ruleSlug), ['roblox', null, null]);
   });
 
+  test('Phone, Messages and Settings come back always allowed', () {
+    final snapshot = InstalledAppsSnapshot.fromJson({
+      'apps': [
+        {
+          'package_name': 'com.google.android.dialer',
+          'app_name': 'Phone',
+          'app_slug': 'com.google.android.dialer',
+          'always_allowed': true,
+        },
+        {
+          'package_name': 'com.whatsapp',
+          'app_name': 'WhatsApp',
+          'app_slug': 'com.whatsapp',
+        },
+      ],
+      'updated_at': '2026-09-14T12:00:00Z',
+    });
+
+    expect(snapshot.apps.map((app) => app.alwaysAllowed), [true, false]);
+  });
+
   test('the upload names every icon but only attaches bytes on request', () {
     final app = InstalledApp(
       packageName: 'com.google.android.youtube',

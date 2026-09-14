@@ -27,6 +27,7 @@ object AppIcons {
     fun installedApps(context: Context): List<Map<String, Any?>> {
         val pm = context.packageManager
         val launcher = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+        val alwaysAllowed = AlwaysAllowed.packages(context)
         return pm.queryIntentActivities(launcher, 0)
             .filter { it.activityInfo != null && it.activityInfo.packageName != context.packageName }
             .distinctBy { it.activityInfo.packageName }
@@ -35,6 +36,7 @@ object AppIcons {
                 mapOf(
                     "packageName" to info.activityInfo.packageName,
                     "appName" to info.loadLabel(pm).toString(),
+                    "alwaysAllowed" to (info.activityInfo.packageName in alwaysAllowed),
                     "iconPng" to png,
                     "iconSha256" to png?.let(::sha256),
                 )
