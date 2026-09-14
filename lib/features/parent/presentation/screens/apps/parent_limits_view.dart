@@ -20,7 +20,9 @@ class LimitsKid {
 }
 
 class LimitsApp {
+  final bool usageAvailable;
   const LimitsApp({
+    this.usageAvailable = true,
     required this.slug,
     required this.name,
     required this.emoji,
