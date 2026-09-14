@@ -8,6 +8,7 @@
 class ScreenTimeModel {
   /// Null when there is no global cap, which is the default.
   final int? limitMinutes;
+  final bool usageAvailable;
 
   /// Minutes used today across every controlled app. Always a real number.
   final int usedMinutes;
@@ -16,6 +17,7 @@ class ScreenTimeModel {
   final int? remainingMinutes;
 
   const ScreenTimeModel({
+    this.usageAvailable = true,
     required this.limitMinutes,
     required this.usedMinutes,
     required this.remainingMinutes,
@@ -37,6 +39,7 @@ class ScreenTimeModel {
   factory ScreenTimeModel.fromJson(Map<String, dynamic> json) {
     int? asNullableInt(dynamic v) => v is num ? v.toInt() : null;
     return ScreenTimeModel(
+      usageAvailable: json["usage_available"] != false,
       limitMinutes: asNullableInt(json['global_limit_minutes']),
       usedMinutes: asNullableInt(json['global_used_minutes']) ?? 0,
       remainingMinutes: asNullableInt(json['global_remaining_minutes']),

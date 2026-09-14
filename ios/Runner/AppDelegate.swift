@@ -28,6 +28,25 @@ import UIKit
     channel.setMethodCallHandler { call, result in
       let manager = ScreenTimeManager.shared
       switch call.method {
+      case "configurePolicy":
+        do {
+          let data = try JSONSerialization.data(withJSONObject: call.arguments ?? [:])
+          try manager.configurePolicy(data)
+          result(manager.releaseStatus())
+        } catch { result(FlutterError(code: "policy_failed", message: error.localizedDescription, details: nil)) }
+      case "releaseStatus":
+        result(manager.releaseStatus())
+      case "selectRule":
+        let slug = (call.arguments as? [String: Any])?["slug"] as? String ?? ""
+        manager.selectRule(slug) { outcome in
+          switch outcome {
+          case .success: result(manager.releaseStatus())
+          case .failure(let error): result(FlutterError(code: "selection_failed", message: error.localizedDescription, details: nil))
+          }
+        }
+      case "showReport":
+        do { try manager.showReport(call.arguments as? [String: String] ?? [:]); result(nil) }
+        catch { result(FlutterError(code: "report_failed", message: error.localizedDescription, details: nil)) }
       case "authorizationStatus":
         result(manager.authorizationStatus())
 

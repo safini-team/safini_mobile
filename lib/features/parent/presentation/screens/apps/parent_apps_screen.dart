@@ -96,6 +96,7 @@ class _ParentLimitsView extends StatelessWidget {
         // (add / limit / block), so the screen needs the ParentAppsCubit.
         final VoidCallback? onSeeAllApps =
             AppConstants.childInstalledAppsShipped &&
+                state.screenTime.usageAvailable &&
                 selectedId != null &&
                 selectedId.isNotEmpty
             ? () => Navigator.of(context).push(
@@ -114,6 +115,7 @@ class _ParentLimitsView extends StatelessWidget {
         final apps = state.appLimits.map((limit) {
           final name = (limit['name'] ?? '').toString();
           return LimitsApp(
+            usageAvailable: state.screenTime.usageAvailable,
             slug: (limit['slug'] ?? '').toString(),
             name: name,
             emoji: AppData.getEmojiForApp(name),
@@ -138,6 +140,7 @@ class _ParentLimitsView extends StatelessWidget {
             Expanded(
               child: ParentLimitsView(
                 data: ParentLimitsData(
+                  usageAvailable: state.screenTime.usageAvailable,
                   kids: [
                     for (final child in children)
                       LimitsKid(

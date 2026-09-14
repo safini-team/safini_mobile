@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -71,7 +72,9 @@ class _ChildStoreScreen extends StatelessWidget {
                     fullName: s.appTimeItem(item.title, item.minutes),
                     cost: item.cost,
                     affordable: item.isEnabled && coins >= item.cost,
-                    badge: item.remainingMinutes > 0
+                    badge:
+                        defaultTargetPlatform != TargetPlatform.iOS &&
+                            item.remainingMinutes > 0
                         ? s.minutesLeftShort(item.remainingMinutes)
                         : null,
                     pending: state.pendingPurchases.contains(item.id),

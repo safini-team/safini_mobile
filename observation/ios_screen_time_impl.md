@@ -1,128 +1,52 @@
-# iOS Screen Time blocking — implementation status
+# iOS Screen Time
 
-This is the iOS counterpart to the Android app-blocking engine
-(`observation/app_blocking.md`). The mechanism is completely different — see
-`observation/child_get_apps.md` §6 and `observation/screenzen_research.md` for
-the "why", and `observation/block_flow.md` for how the parent/child setup flow
-forks by platform. This file tracks **what is actually built** and **what
-remains**.
+The release implementation replaces the former debug-only prototype. Child mode
+is enabled on iOS, with Apple Family Sharing child authorization required before
+setup can complete. See `ios_screen_time_review.md` for provisioning and testing.
 
-## TL;DR
+## Architecture
 
-- **Increment 1 (done, in this branch):** authorize → pick apps in Apple's
-  `FamilyActivityPicker` → apply / clear the **system shield** immediately, all
-  from the main app target. A debug screen exercises the whole flow.
-- **Hard blocker:** Screen Time APIs stay inert until Family Controls is in
-  **both** the provisioning profile and `Runner.entitlements`. Development
-  authorize is verified on device. Confirm distribution (TestFlight) on SAF-135.
-- **Increment 2 (deferred):** scheduling + a branded overlay require separate
-  Xcode **app-extension targets** and an **App Group** (must be added in Xcode).
+- Flutter: `IosScreenTimeCubit` loads the authenticated child's policy on entry,
+  resume, every 30 seconds while foreground, and after successful redemption.
+- Native setup: one app token is linked locally to each catalog rule. Apple does
+  not tell Safini the selected app's identity; the supervising parent must choose
+  the matching app. Categories, websites and overlapping selections are rejected.
+- Links cannot be edited while authorized. The parent first revokes Safini's
+  access in Apple Settings, then authorizes and links again. Signing out preserves
+  enforcement. An authorized device cannot silently switch child accounts.
+- `ScreenTimeMonitor` enforces daily per-app and aggregate limits through a named
+  Managed Settings store, including manual blocks and zero-minute allowances.
+  Events include past activity so foreground sync does not reset usage.
+- Base and bonus thresholds are both scheduled. Bonuses expire at the family's
+  midnight even while offline. A repeating base threshold remains for tomorrow.
+- `ScreenTimeReport` renders today's / seven-day totals and app breakdown locally.
+  It has no App Group entitlement and never writes or exports report data.
+- `group.com.safini.app` is shared only by Runner and the monitor, for policy,
+  opaque selection tokens and local threshold state. Tokens never reach the API.
 
-## What Screen Time can and cannot do
+## API dependency
 
-- **No app list, ever.** iOS does not let an app enumerate installed apps. The
-  child picks apps in Apple's own `FamilyActivityPicker`, which returns **opaque
-  tokens** (`ApplicationToken` / `ActivityCategoryToken`) — no names, no bundle
-  ids. So the UI shows *counts*, not names. This is a platform limit, not a TODO.
-- **The overlay is Apple's**, drawn by the OS over a shielded app. We don't draw
-  it. We can only brand it (title/subtitle/icon/≤2 buttons) via an extension.
-- **Per-app usage is not readable** by us either (only `DeviceActivity`
-  thresholds fire callbacks). So the Android "used minutes / remaining" reporting
-  has no direct iOS equivalent.
+Deploy the companion API migration and endpoints before releasing mobile:
 
-## Files (Increment 1)
+- GET `/v1/children/{id}/screen-time-policy`: family timezone, global cap,
+  per-app rules and today's granted bonus totals with expiry.
+- PUT/GET `/v1/children/{id}/screen-time-status`: authorization, selected counts,
+  monitoring/shield status, and server timestamp. Only the claimed child writes.
+- Existing `/app-usage` includes `screen_time.usage_available=false` for a child
+  with an iOS status. Parent views show local-report guidance instead of zeros.
+- Existing app-time redemption remains the coin-ledger authority. Policy refresh
+  failures after successful purchase are retried without repurchasing.
 
-Native (Runner app target):
+## Limits of this release
 
-- `ios/Runner/Runner.entitlements` — `com.apple.developer.family-controls`
-  (must match the profile; see helper-communication note in the file).
-- `ios/Runner.xcodeproj/project.pbxproj` — wires `CODE_SIGN_ENTITLEMENTS` into
-  all three Runner configs (Debug/Release/Profile) and adds
-  `ScreenTimeManager.swift` to the build.
-- `ios/Runner/ScreenTimeManager.swift` — the engine:
-  - `authorizationStatus()` → `notDetermined | denied | approved`
-  - `requestAuthorization(member:)` → `.individual` (self, no Family Sharing) or
-    `.child` (parent-managed)
-  - `presentPicker()` → hosts `FamilyActivityPicker` in a `UIHostingController`,
-    persists the `FamilyActivitySelection` (Codable) to `UserDefaults`
-  - `applyShield()` / `clearShield()` → writes tokens to a `ManagedSettingsStore`
-- `ios/Runner/AppDelegate.swift` — MethodChannel `com.safini.app/screen_time`
-  (registered via the implicit-engine plugin registrar's messenger).
+Rules update when the child opens Safini; background push policy delivery is not
+implemented. Previously downloaded limits continue offline. Status is the last
+foreground observation, not a live heartbeat or attestation.
 
-Dart:
+Limits apply per child device, not as one shared multi-device budget. The global
+cap covers the linked applications; it does not include unselected apps.
+The parent cannot read the child's detailed iOS usage through Safini's backend.
 
-- `lib/features/child/data/services/screen_time_service.dart` — bridge +
-  `ScreenTimeAuthStatus`, `ScreenTimeMember`, `ScreenTimeSelection`,
-  `ScreenTimeException`. iOS-only (`isSupported`); no-ops elsewhere.
-- Registered in `lib/features/child/child_injection.dart`.
-- `lib/features/child/presentation/screens/dev/child_screen_time_debug_screen.dart`
-  — DEV screen (buttons: request auth, pick apps, block, unblock). Reachable
-  from Kid · Me → "DEV · Screen Time (iOS)" in debug builds only.
-
-`ScreenTimeService` is intentionally **separate** from `AppBlockService`
-(Android-only). The platforms share no primitives, so a single cross-platform
-interface would leak wrong assumptions (app lists, usage minutes) onto iOS.
-
-## Channel contract (`com.safini.app/screen_time`)
-
-| Method | Args | Returns |
-|--------|------|---------|
-| `authorizationStatus` | — | `String` status |
-| `requestAuthorization` | `{ member: "individual" \| "child" }` | `String` status, or `FlutterError("authorization_failed")` |
-| `presentPicker` | — | `{ applications: Int, categories: Int }`, or `FlutterError("picker_failed")` |
-| `applyShield` | — | `Bool` (false = nothing selected) |
-| `clearShield` | — | `null` |
-| `selectionCounts` | — | `{ applications: Int, categories: Int }` |
-
-## How to test
-
-1. On a **real device** (Screen Time isn't in the Simulator), run a debug build.
-2. Kid · Me → **DEV · Screen Time (iOS)**.
-3. **Request authorization** → approve (`.individual`, no Family Sharing).
-4. **Pick apps** → Done. Card shows token counts.
-5. **Block** → open a picked app → system shield.
-6. **Unblock** → shield lifts.
-
-Family Controls must be in **both** the profile and `Runner.entitlements`.
-Profile-only → "Couldn't communicate with a helper application".
-Entitlements-only → install integrity failure.
-
-## Remaining work
-
-### A. Entitlement — development works; confirm distribution
-
-Increment 1 **authorizes on device**. Still confirm Certificates → Provisioning
-Support lists **TestFlight + App Store**
-([SAF-135](https://linear.app/safini-team/issue/SAF-135)).
-
-### B. Increment 2 — scheduling + branded overlay (needs Xcode)
-
-[SAF-155](https://linear.app/safini-team/issue/SAF-155). New app-extension
-targets + App Group `group.com.safini.app` (create in Xcode, do not hand-edit
-pbxproj):
-
-1. **DeviceActivityMonitor** — daily limits / schedules that survive app kill.
-2. **ShieldConfiguration** + **ShieldAction** — brand the system shield.
-3. Optional Shortcuts "Open App" interstitial.
-
-### C. Backend + parent (do this next)
-
-Full write-up: `observation/ios_parent_backend_sync.md`.
-
-- [SAF-154](https://linear.app/safini-team/issue/SAF-154) — child PUTs Screen Time
-  status; parent GETs it (counts + auth, **never tokens**).
-  **Client plumbing already landed** (ahead of the endpoint): `ScreenTimeStatus`
-  model, `ChildAppRulesService.report/fetchScreenTimeStatus`, and a "Sync status
-  to backend, then read back" button on `ChildScreenTimeDebugScreen`. The GET
-  returns 404 until the route deploys — the dev screen prints that verbatim.
-  Still missing: automatic PUT after auth/pick/apply/clear, and the parent card.
-- [SAF-156](https://linear.app/safini-team/issue/SAF-156) — iOS child fetches
-  `/app-usage` and apply/clear the **local** shield from parent rules.
-- [SAF-153](https://linear.app/safini-team/issue/SAF-153) — installed-apps API
-  (Android only; iOS has no list).
-
-## Constraints recap
-
-- Min iOS: **17.4** (already the project's deployment target + Podfile platform).
-- Device-only (no Simulator support for Screen Time).
-- Selection tokens are per-device and non-portable; never sent to the backend.
+No EU-only usage-export API or related entitlement is requested. This release
+uses the standard privacy-preserving Screen Time reporting and controls APIs.
+Shield appearance uses Apple's standard screen.

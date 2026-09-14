@@ -557,6 +557,56 @@ class MessageLookup extends MessageLookupByLibrary {
       "Код приглашения · 24 часа",
     ),
     "invited": MessageLookupByLibrary.simpleMessage("Приглашён"),
+    "iosScreenTimeAllow": MessageLookupByLibrary.simpleMessage(
+      "Разрешить экранное время",
+    ),
+    "iosScreenTimeChoose": MessageLookupByLibrary.simpleMessage(
+      "Для каждого правила выберите соответствующее приложение в окне Apple. Выберите одно приложение, а не категорию. Чтобы сбросить выбор, родитель должен отозвать доступ Safini в Настройках.",
+    ),
+    "iosScreenTimeDone": MessageLookupByLibrary.simpleMessage("Готово"),
+    "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
+      "Попросите родителя помочь на этом iPhone или iPad. Apple Account ребёнка должен входить в семейную группу Apple родителя.",
+    ),
+    "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
+      "Связано на этом устройстве",
+    ),
+    "iosScreenTimeLocalUsage": MessageLookupByLibrary.simpleMessage(
+      "Фактическое использование доступно в разделе «Экранное время» на устройстве ребёнка.",
+    ),
+    "iosScreenTimeNoRules": MessageLookupByLibrary.simpleMessage(
+      "Родитель может добавить правила в разделе «Лимиты».",
+    ),
+    "iosScreenTimeOff": MessageLookupByLibrary.simpleMessage(
+      "Проверьте настройку",
+    ),
+    "iosScreenTimeOn": MessageLookupByLibrary.simpleMessage(
+      "Контроль настроен",
+    ),
+    "iosScreenTimeParent": MessageLookupByLibrary.simpleMessage(
+      "Экранное время iOS · последний статус",
+    ),
+    "iosScreenTimePrivacy": MessageLookupByLibrary.simpleMessage(
+      "Отчёты об использовании остаются на устройстве. Safini синхронизирует правила и состояние защиты, но не историю использования приложений.",
+    ),
+    "iosScreenTimeReport": MessageLookupByLibrary.simpleMessage(
+      "Посмотреть отчёт",
+    ),
+    "iosScreenTimeRetry": MessageLookupByLibrary.simpleMessage(
+      "Не удалось обновить экранное время. Проверьте интернет и разрешения, затем повторите. Сохранённые лимиты продолжают действовать.",
+    ),
+    "iosScreenTimeSelect": MessageLookupByLibrary.simpleMessage(
+      "Выберите соответствующее приложение",
+    ),
+    "iosScreenTimeSetup": MessageLookupByLibrary.simpleMessage(
+      "Настройка экранного времени",
+    ),
+    "iosScreenTimeSync": MessageLookupByLibrary.simpleMessage(
+      "Синхронизировать правила и статус",
+    ),
+    "iosScreenTimeSyncHint": MessageLookupByLibrary.simpleMessage(
+      "Откройте Safini на этом устройстве для получения новых правил. Сохранённые лимиты действуют и при закрытом приложении. Заработанные минуты истекают в полночь по времени семьи; лимиты действуют на этом устройстве.",
+    ),
+    "iosScreenTimeWeek": MessageLookupByLibrary.simpleMessage("7 дней"),
     "joinFamilyAction": MessageLookupByLibrary.simpleMessage("Войти по коду"),
     "joinFamilySubtitle": MessageLookupByLibrary.simpleMessage(
       "Используйте код от второго родителя",

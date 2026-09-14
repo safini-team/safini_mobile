@@ -58,7 +58,9 @@ class TodayApp {
 }
 
 class ParentTodayData {
+  final bool usageAvailable;
   const ParentTodayData({
+    this.usageAvailable = true,
     required this.kids,
     required this.selectedIndex,
     required this.kidName,
@@ -90,8 +92,9 @@ class ParentTodayData {
   /// the cell reads "-" in that window.
   final int? streakDays;
 
-  int get leftMinutes =>
-      limitMinutes <= 0 ? 0 : (limitMinutes - usedMinutes).clamp(0, limitMinutes);
+  int get leftMinutes => limitMinutes <= 0
+      ? 0
+      : (limitMinutes - usedMinutes).clamp(0, limitMinutes);
 
   double get ringProgress =>
       limitMinutes <= 0 ? 0 : (usedMinutes / limitMinutes).clamp(0.0, 1.0);
@@ -111,9 +114,7 @@ String formatHmTight(S s, int minutes) {
   final h = minutes ~/ 60;
   final m = minutes % 60;
   if (h == 0) return '$m${s.unitMinute}';
-  return m == 0
-      ? '$h${s.unitHour}'
-      : '$h${s.unitHour}${m < 10 ? '0' : ''}$m';
+  return m == 0 ? '$h${s.unitHour}' : '$h${s.unitHour}${m < 10 ? '0' : ''}$m';
 }
 
 /// Parent · Today, laid out exactly as the artboard: date eyebrow and large
@@ -146,7 +147,9 @@ class ParentTodayView extends StatelessWidget {
     return DsScreen(
       onRefresh: onRefresh,
       slivers: [
-        SliverToBoxAdapter(child: _Header(data: data, onTap: onOpenSettings)),
+        SliverToBoxAdapter(
+          child: _Header(data: data, onTap: onOpenSettings),
+        ),
         if (data.kids.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
@@ -159,10 +162,9 @@ class ParentTodayView extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: DsKidPicker(
-                  selectedKey: data.kids[data.selectedIndex.clamp(
-                    0,
-                    data.kids.length - 1,
-                  )].id,
+                  selectedKey: data
+                      .kids[data.selectedIndex.clamp(0, data.kids.length - 1)]
+                      .id,
                   options: [
                     for (final kid in data.kids)
                       DsPickerOption(
@@ -171,9 +173,8 @@ class ParentTodayView extends StatelessWidget {
                         color: kid.color,
                       ),
                   ],
-                  onSelect: (id) => onSelectKid(
-                    data.kids.indexWhere((kid) => kid.id == id),
-                  ),
+                  onSelect: (id) =>
+                      onSelectKid(data.kids.indexWhere((kid) => kid.id == id)),
                 ),
               ),
             ),
@@ -287,32 +288,33 @@ class _ScreenTimeCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              DsProgressRing(
-                progress: data.ringProgress,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      formatHmTight(s, data.usedMinutes),
-                      style: const TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.504,
-                        height: 1.1,
-                        color: AppColors.ink,
-                        fontFeatures: AppText.tabular,
+              if (data.usageAvailable)
+                DsProgressRing(
+                  progress: data.ringProgress,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        formatHmTight(s, data.usedMinutes),
+                        style: const TextStyle(
+                          fontSize: 21,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.504,
+                          height: 1.1,
+                          color: AppColors.ink,
+                          fontFeatures: AppText.tabular,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      data.limitMinutes > 0
-                          ? s.ofTotal(formatHmTight(s, data.limitMinutes))
-                          : s.tabToday,
-                      style: AppText.micro,
-                    ),
-                  ],
+                      const SizedBox(height: 1),
+                      Text(
+                        data.limitMinutes > 0
+                            ? s.ofTotal(formatHmTight(s, data.limitMinutes))
+                            : s.tabToday,
+                        style: AppText.micro,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               const SizedBox(width: 18),
               Expanded(
                 child: Column(
@@ -322,7 +324,9 @@ class _ScreenTimeCard extends StatelessWidget {
                     Text(s.screenTime.toUpperCase(), style: AppText.overline),
                     const SizedBox(height: 6),
                     Text(
-                      data.limitMinutes > 0
+                      !data.usageAvailable
+                          ? s.iosScreenTimeLocalUsage
+                          : data.limitMinutes > 0
                           ? s.kidHasLeftToday(
                               data.kidName,
                               formatHm(s, data.leftMinutes),
@@ -337,7 +341,7 @@ class _ScreenTimeCard extends StatelessWidget {
                         height: 1.35,
                       ),
                     ),
-                    if (data.topApp.isNotEmpty) ...[
+                    if (data.usageAvailable && data.topApp.isNotEmpty) ...[
                       const SizedBox(height: 5),
                       Text(
                         s.mostOfItIn(data.topApp),

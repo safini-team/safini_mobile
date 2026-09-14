@@ -40,7 +40,8 @@ enum ScreenTimeMember {
   /// A child device enrolled in Family Sharing (parent approves).
   child;
 
-  String get nativeValue => this == ScreenTimeMember.child ? 'child' : 'individual';
+  String get nativeValue =>
+      this == ScreenTimeMember.child ? 'child' : 'individual';
 }
 
 /// Result of a Screen Time selection or shield state — opaque token *counts*
@@ -50,10 +51,7 @@ class ScreenTimeSelection {
   final int applications;
   final int categories;
 
-  const ScreenTimeSelection({
-    this.applications = 0,
-    this.categories = 0,
-  });
+  const ScreenTimeSelection({this.applications = 0, this.categories = 0});
 
   bool get isEmpty => applications == 0 && categories == 0;
   int get total => applications + categories;
@@ -94,11 +92,57 @@ class ScreenTimeException implements Exception {
 class ScreenTimeService {
   const ScreenTimeService();
 
-  static const MethodChannel _channel =
-      MethodChannel('com.safini.app/screen_time');
+  static const MethodChannel _channel = MethodChannel(
+    'com.safini.app/screen_time',
+  );
 
   /// Whether this platform can use Screen Time at all (iOS only).
   bool get isSupported => !kIsWeb && Platform.isIOS;
+
+  Future<Map<String, dynamic>> _releaseCall(
+    String method, [
+    Object? arguments,
+  ]) async {
+    if (!isSupported) {
+      throw const ScreenTimeException(
+        'unsupported',
+        'Screen Time requires an iPhone or iPad.',
+      );
+    }
+    try {
+      return await _channel.invokeMapMethod<String, dynamic>(
+            method,
+            arguments,
+          ) ??
+          {};
+    } on PlatformException catch (e) {
+      throw ScreenTimeException(
+        e.code,
+        e.message ?? 'Screen Time could not be updated.',
+      );
+    } on MissingPluginException {
+      throw const ScreenTimeException(
+        'missing_plugin',
+        'Screen Time is unavailable in this build.',
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> releaseStatus() => _releaseCall('releaseStatus');
+  Future<Map<String, dynamic>> configurePolicy(Map<String, dynamic> policy) =>
+      _releaseCall('configurePolicy', policy);
+  Future<Map<String, dynamic>> selectRule(String slug) =>
+      _releaseCall('selectRule', {'slug': slug});
+  Future<void> showReport(Map<String, String> labels) async {
+    try {
+      await _channel.invokeMethod<void>('showReport', labels);
+    } on PlatformException catch (e) {
+      throw ScreenTimeException(
+        e.code,
+        e.message ?? 'Unable to show activity.',
+      );
+    }
+  }
 
   /// Current authorization status. Returns [ScreenTimeAuthStatus.unavailable]
   /// off-iOS or if the native handler is missing.
@@ -110,7 +154,9 @@ class ScreenTimeService {
     } on MissingPluginException {
       return ScreenTimeAuthStatus.unavailable;
     } on PlatformException catch (e) {
-      debugPrint('[ScreenTimeService] authorizationStatus failed: ${e.message}');
+      debugPrint(
+        '[ScreenTimeService] authorizationStatus failed: ${e.message}',
+      );
       return ScreenTimeAuthStatus.unavailable;
     }
   }
@@ -144,7 +190,9 @@ class ScreenTimeService {
   Future<ScreenTimeSelection> presentPicker() async {
     if (!isSupported) return const ScreenTimeSelection();
     try {
-      final raw = await _channel.invokeMapMethod<String, dynamic>('presentPicker');
+      final raw = await _channel.invokeMapMethod<String, dynamic>(
+        'presentPicker',
+      );
       return ScreenTimeSelection.fromMap(raw);
     } on MissingPluginException {
       throw const ScreenTimeException(
@@ -185,7 +233,9 @@ class ScreenTimeService {
   Future<ScreenTimeSelection> selectionCounts() async {
     if (!isSupported) return const ScreenTimeSelection();
     try {
-      final raw = await _channel.invokeMapMethod<String, dynamic>('selectionCounts');
+      final raw = await _channel.invokeMapMethod<String, dynamic>(
+        'selectionCounts',
+      );
       return ScreenTimeSelection.fromMap(raw);
     } on MissingPluginException {
       return const ScreenTimeSelection();

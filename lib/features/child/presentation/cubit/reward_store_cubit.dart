@@ -1,3 +1,4 @@
+import 'package:safini/features/child/presentation/cubit/ios_screen_time_cubit.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/core/theme/app_colors.dart';
@@ -177,9 +178,7 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
   void _endPurchase(String id) {
     if (isClosed) return;
     emit(
-      state.copyWith(
-        pendingPurchases: {...state.pendingPurchases}..remove(id),
-      ),
+      state.copyWith(pendingPurchases: {...state.pendingPurchases}..remove(id)),
     );
   }
 
@@ -197,6 +196,15 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
     }
 
     try {
+      final ios = getIt.isRegistered<IosScreenTimeCubit>()
+          ? getIt<IosScreenTimeCubit>()
+          : null;
+      if (ios?.native.isSupported == true) await ios!.refresh();
+      if (ios?.native.isSupported == true && !ios!.canPurchase(childId, id)) {
+        throw StateError(
+          'Screen Time must be configured and the daily cap must allow more time.',
+        );
+      }
       final native = getIt.isRegistered<AppBlockService>()
           ? getIt<AppBlockService>()
           : null;
@@ -218,6 +226,9 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
         );
         _applyBalanceAfter(response.data, fallbackCost: item.cost);
         remaining = _grantRemainingMinutes(response.data);
+        // A successful purchase remains successful even if syncing fails. The
+        // setup screen exposes retry; re-purchasing must not be the remedy.
+        if (ios?.native.isSupported == true) await ios!.refresh();
       }
       final updated = state.appTimeItems
           .map(
@@ -291,6 +302,7 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
 
   /// Extracts a human-readable message from a failed redeem request.
   String _purchaseErrorMessage(Object error) {
+    if (error is StateError) return error.message;
     if (error is DioException) {
       final data = error.response?.data;
       final map = _asMap(data);

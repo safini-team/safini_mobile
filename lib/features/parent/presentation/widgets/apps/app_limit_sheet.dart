@@ -129,7 +129,9 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
                   Text(widget.app.name, style: AppText.title4),
                   const SizedBox(height: 2),
                   Text(
-                    s.usedTodayShort(formatHm(s, widget.app.usedMinutes)),
+                    widget.app.usageAvailable
+                        ? s.usedTodayShort(formatHm(s, widget.app.usedMinutes))
+                        : s.iosScreenTimeLocalUsage,
                     style: AppText.meta.copyWith(fontSize: 14),
                   ),
                 ],
@@ -184,12 +186,13 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
                 ],
               ),
               const SizedBox(height: 16),
-              DsProgressBar(
-                progress: _isLimited ? _progress : 0,
-                height: 7,
-                trackColor: AppColors.trackAlt,
-                color: _isOver ? AppColors.danger : AppColors.primary,
-              ),
+              if (widget.app.usageAvailable)
+                DsProgressBar(
+                  progress: _isLimited ? _progress : 0,
+                  height: 7,
+                  trackColor: AppColors.trackAlt,
+                  color: _isOver ? AppColors.danger : AppColors.primary,
+                ),
             ],
           ),
         ),

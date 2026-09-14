@@ -544,6 +544,56 @@ class MessageLookup extends MessageLookupByLibrary {
       "Invite code · valid 24 hours",
     ),
     "invited": MessageLookupByLibrary.simpleMessage("Invited"),
+    "iosScreenTimeAllow": MessageLookupByLibrary.simpleMessage(
+      "Allow Screen Time",
+    ),
+    "iosScreenTimeChoose": MessageLookupByLibrary.simpleMessage(
+      "For each rule, choose its matching app in Apple’s picker. Select exactly one app, not a category. Saved links can only be reset after your parent revokes Safini access in Settings.",
+    ),
+    "iosScreenTimeDone": MessageLookupByLibrary.simpleMessage("Done"),
+    "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
+      "Ask your parent to help on this iPhone or iPad. The child’s Apple Account must belong to the parent’s Apple Family Sharing group.",
+    ),
+    "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
+      "Linked on this device",
+    ),
+    "iosScreenTimeLocalUsage": MessageLookupByLibrary.simpleMessage(
+      "View actual usage in Screen Time on the child’s device.",
+    ),
+    "iosScreenTimeNoRules": MessageLookupByLibrary.simpleMessage(
+      "Your parent can add app rules in Limits.",
+    ),
+    "iosScreenTimeOff": MessageLookupByLibrary.simpleMessage(
+      "Setup needs attention",
+    ),
+    "iosScreenTimeOn": MessageLookupByLibrary.simpleMessage(
+      "Monitoring configured",
+    ),
+    "iosScreenTimeParent": MessageLookupByLibrary.simpleMessage(
+      "iOS Screen Time · last reported status",
+    ),
+    "iosScreenTimePrivacy": MessageLookupByLibrary.simpleMessage(
+      "Usage reports stay on this device. Safini syncs rules and protection status, not your app usage history.",
+    ),
+    "iosScreenTimeReport": MessageLookupByLibrary.simpleMessage(
+      "View activity report",
+    ),
+    "iosScreenTimeRetry": MessageLookupByLibrary.simpleMessage(
+      "Could not update Screen Time. Check your connection and permissions, then retry. Saved limits remain in effect.",
+    ),
+    "iosScreenTimeSelect": MessageLookupByLibrary.simpleMessage(
+      "Choose the matching app",
+    ),
+    "iosScreenTimeSetup": MessageLookupByLibrary.simpleMessage(
+      "Set up Screen Time",
+    ),
+    "iosScreenTimeSync": MessageLookupByLibrary.simpleMessage(
+      "Sync rules and status",
+    ),
+    "iosScreenTimeSyncHint": MessageLookupByLibrary.simpleMessage(
+      "Open Safini on this device to receive new parent rules. Saved limits continue while Safini is closed. Earned minutes expire at the family’s midnight; limits apply to this device.",
+    ),
+    "iosScreenTimeWeek": MessageLookupByLibrary.simpleMessage("7 days"),
     "joinFamilyAction": MessageLookupByLibrary.simpleMessage(
       "Join with a code",
     ),

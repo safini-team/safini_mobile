@@ -1,0 +1,25 @@
+name: iOS Screen Time
+on:
+  pull_request:
+    paths:
+      - 'ios/**'
+      - 'lib/**'
+      - 'pubspec.*'
+      - 'Package.swift'
+      - 'test/native/**'
+      - '.github/workflows/ios-screen-time.yml'
+jobs:
+  native:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.1
+          channel: stable
+          cache: true
+      - run: swift test
+      - run: flutter pub get
+      - name: Compile app and Screen Time extensions without distribution signing
+        run: flutter build ios --release --no-codesign

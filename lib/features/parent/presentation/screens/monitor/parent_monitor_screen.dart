@@ -108,17 +108,18 @@ class _ParentMonitorView extends StatelessWidget {
     showReviewSheet(context, cubit: cubit, task: task);
   }
 
-  static ParentTasksLoaded? _loadedOf(ParentTasksState state) => switch (state) {
-    ParentTasksLoaded() => state,
-    ParentTaskSaving() => state.base,
-    ParentTaskSaved() => state.base,
-    ParentTaskDeleting() => state.base,
-    ParentTaskDeleted() => state.base,
-    ParentTaskReviewing() => state.base,
-    ParentTaskReviewed() => state.base,
-    ParentTaskActionError() => state.base,
-    _ => null,
-  };
+  static ParentTasksLoaded? _loadedOf(ParentTasksState state) =>
+      switch (state) {
+        ParentTasksLoaded() => state,
+        ParentTaskSaving() => state.base,
+        ParentTaskSaved() => state.base,
+        ParentTaskDeleting() => state.base,
+        ParentTaskDeleted() => state.base,
+        ParentTaskReviewing() => state.base,
+        ParentTaskReviewed() => state.base,
+        ParentTaskActionError() => state.base,
+        _ => null,
+      };
 
   ParentTodayData _buildData(
     BuildContext context,
@@ -128,18 +129,16 @@ class _ParentMonitorView extends StatelessWidget {
     final child = state.selectedChild;
     final tasks = _loadedOf(tasksState);
 
-    final apps =
-        state.appLimits.map((limit) {
-          final name = (limit['name'] ?? '').toString();
-          return TodayApp(
-            name: name,
-            emoji: AppData.getEmojiForApp(name),
-            usedMinutes: (limit['used'] as int?) ?? 0,
-            limitMinutes: (limit['limit'] as int?) ?? 0,
-            iconUrl: limit['icon'] as String?,
-          );
-        }).toList()
-          ..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));
+    final apps = state.appLimits.map((limit) {
+      final name = (limit['name'] ?? '').toString();
+      return TodayApp(
+        name: name,
+        emoji: AppData.getEmojiForApp(name),
+        usedMinutes: (limit['used'] as int?) ?? 0,
+        limitMinutes: (limit['limit'] as int?) ?? 0,
+        iconUrl: limit['icon'] as String?,
+      );
+    }).toList()..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));
 
     // The ring draws against the whole-device cap the parent set. When there
     // is none the card falls back to usage only: the sum of the per-app limits
@@ -152,7 +151,9 @@ class _ParentMonitorView extends StatelessWidget {
     // child's share of it rather than labelling someone else's task with
     // this child's name.
     final childTasks = (tasks?.tasks ?? const <ParentTaskInstanceModel>[])
-        .where((task) => child == null || (task.childId ?? child.id) == child.id)
+        .where(
+          (task) => child == null || (task.childId ?? child.id) == child.id,
+        )
         .toList();
 
     final reviews = childTasks
@@ -173,6 +174,7 @@ class _ParentMonitorView extends StatelessWidget {
         .toList();
 
     return ParentTodayData(
+      usageAvailable: state.screenTime.usageAvailable,
       kids: [
         for (final kid in state.children)
           TodayKid(
@@ -193,7 +195,7 @@ class _ParentMonitorView extends StatelessWidget {
       coins: child?.coinsBalance ?? 0,
       streakDays: child?.currentStreakDays,
       reviews: reviews,
-      apps: apps.take(3).toList(),
+      apps: state.screenTime.usageAvailable ? apps.take(3).toList() : [],
     );
   }
 }

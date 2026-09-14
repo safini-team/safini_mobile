@@ -1,30 +1,12 @@
+import DeviceActivity
 import FamilyControls
 import ManagedSettings
 import SwiftUI
 import UIKit
 
-/// Native entry point for the iOS Screen Time / FamilyControls blocking path.
-///
-/// This is the iOS counterpart to the Android `AppBlockForegroundService`, but
-/// the mechanism is fundamentally different (see `observation/screenzen_research.md`):
-///  - We never enumerate or name apps. The user picks them in Apple's own
-///    `FamilyActivityPicker`, which hands back **opaque tokens**.
-///  - Blocking is Apple's **system shield**, applied by writing those tokens to a
-///    `ManagedSettingsStore`. The OS draws the overlay; we don't.
-///
-/// Everything here links and compiles without the FamilyControls entitlement, but
-/// `requestAuthorization` fails at runtime until an approved provisioning profile
-/// carries `com.apple.developer.family-controls`. That failure is reported back to
-/// Dart as a `PlatformException`, not a crash.
-///
-/// Scope of this first increment (main app target only):
-///  - authorization + status
-///  - present the picker, persist the selection
-///  - apply / clear the shield immediately ("block now" / "unblock now")
-///
-/// Deferred to a follow-up (needs separate Xcode app-extension targets + App Group):
-///  - `DeviceActivityMonitor` for time-of-day / usage-threshold scheduling
-///  - `ShieldConfiguration` / `ShieldAction` extensions to brand the overlay
+/// Native authorization, rule linking, and private report presentation.
+/// Release policy is stored in the App Group and enforced by ScreenTimeMonitor.
+/// Apple tokens and report data never cross the network bridge.
 final class ScreenTimeManager {
   static let shared = ScreenTimeManager()
 
@@ -44,7 +26,7 @@ final class ScreenTimeManager {
     case .notDetermined: return "notDetermined"
     case .denied: return "denied"
     case .approved: return "approved"
-    @unknown default: return "unknown"
+    default: return "unavailable"
     }
   }
 
@@ -59,6 +41,12 @@ final class ScreenTimeManager {
     member: String,
     completion: @escaping (Result<String, Error>) -> Void
   ) {
+    if authorizationStatus() != "approved" {
+      let shared = ScreenTimeStore()
+      let policy = shared.policy
+      shared.resetAfterRevocation()
+      shared.policy = policy
+    }
     let target: FamilyControlsMember = (member == "child") ? .child : .individual
     Task { @MainActor in
       do {
@@ -179,5 +167,101 @@ private struct FamilyPickerContainer: View {
       .onChange(of: isPresented) { _, presented in
         if !presented { onDismiss(selection) }
       }
+  }
+}
+
+
+extension ScreenTimeManager {
+  func configurePolicy(_ data: Data) throws {
+    let incoming = try JSONDecoder().decode(ScreenTimePolicy.self, from: data)
+    guard incoming.apps.count <= 50,
+          Set(incoming.apps.map(\.app_slug)).count == incoming.apps.count,
+          incoming.apps.allSatisfy({ !$0.app_slug.isEmpty && $0.daily_limit_minutes >= 0 && $0.bonus_minutes >= 0 }),
+          incoming.global_limit_minutes.map({ $0 >= 0 && $0 <= 1440 }) ?? true,
+          TimeZone(identifier: incoming.family_timezone) != nil else {
+      throw NSError(domain: "Safini", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid Screen Time policy."])
+    }
+    let shared = ScreenTimeStore()
+    let authorized = authorizationStatus() == "approved"
+    if let previous = shared.policy, previous.child_id != incoming.child_id {
+      guard !authorized else {
+        throw NSError(domain: "Safini", code: 2, userInfo: [NSLocalizedDescriptionKey: "Ask your parent to revoke Safini's Screen Time access in Settings before changing the child account on this device."])
+      }
+      shared.resetAfterRevocation()
+    }
+    let previous = shared.policy
+    shared.policy = incoming
+    guard authorized else { return }
+    if shared.allApplications.isEmpty {
+      DeviceActivityCenter().stopMonitoring([ScreenTimeStore.activity])
+      ScreenTimeStore.managed.clearAllSettings()
+      shared.defaults.set(false, forKey: "shieldActive")
+      return
+    }
+    if previous != incoming || !DeviceActivityCenter().activities.contains(ScreenTimeStore.activity) {
+      do { try shared.installMonitoring() }
+      catch { shared.policy = previous; throw error }
+    } else { shared.refreshShields() }
+  }
+
+  func releaseStatus() -> [String: Any] {
+    let shared = ScreenTimeStore()
+    let authorized = authorizationStatus() == "approved"
+    let mapped = shared.selections
+    let slugs = shared.policy?.apps.compactMap { mapped[$0.app_slug]?.applicationTokens.isEmpty == false ? $0.app_slug : nil } ?? []
+    if authorized { shared.refreshShields() }
+    return [
+      "child_id": shared.policy?.child_id ?? "",
+      "policy_loaded": shared.policy != nil,
+      "all_mapped": shared.policy.map { $0.apps.allSatisfy { mapped[$0.app_slug]?.applicationTokens.isEmpty == false } } ?? false,
+      "authorization": authorizationStatus(),
+      "selected_applications": shared.allApplications.count,
+      "selected_categories": 0,
+      "shield_active": authorized && shared.defaults.bool(forKey: "shieldActive"),
+      "monitoring_active": authorized && DeviceActivityCenter().activities.contains(ScreenTimeStore.activity),
+      "global_blocked": shared.policy?.global_limit_minutes.map { $0 == 0 || shared.reached("@global", minutes: $0) } ?? false,
+      "mapped_slugs": slugs,
+    ]
+  }
+
+  func selectRule(_ slug: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    let shared = ScreenTimeStore()
+    guard authorizationStatus() == "approved", shared.policy?.apps.contains(where: { $0.app_slug == slug }) == true,
+          shared.selections[slug] == nil, let presenter = Self.topViewController() else {
+      completion(.failure(NSError(domain: "Safini", code: 3, userInfo: [NSLocalizedDescriptionKey: "Authorize Screen Time and select an unlinked app. To change a saved selection, ask your parent to revoke access in Settings first."])))
+      return
+    }
+    var hosting: UIViewController?
+    let picker = FamilyPickerContainer(selection: FamilyActivitySelection()) { selection in
+      hosting?.dismiss(animated: true)
+      hosting = nil
+      let alreadySelected = Set(shared.selections.values.flatMap { $0.applicationTokens })
+      guard selection.applicationTokens.count == 1, selection.categoryTokens.isEmpty,
+            selection.webDomainTokens.isEmpty,
+            selection.applicationTokens.isDisjoint(with: alreadySelected) else {
+        completion(.failure(NSError(domain: "Safini", code: 4, userInfo: [NSLocalizedDescriptionKey: "Choose exactly one app that has not already been linked. Do not select a whole category or website."])))
+        return
+      }
+      let old = shared.selections
+      var updated = old
+      updated[slug] = selection
+      shared.selections = updated
+      do { try shared.installMonitoring(); completion(.success(())) }
+      catch { shared.selections = old; completion(.failure(error)) }
+    }
+    hosting = UIHostingController(rootView: picker)
+    presenter.present(hosting!, animated: true)
+  }
+
+  func showReport(_ labels: [String: String]) throws {
+    guard authorizationStatus() == "approved", let presenter = Self.topViewController() else {
+      throw NSError(domain: "Safini", code: 5, userInfo: [NSLocalizedDescriptionKey: "Authorize Screen Time before viewing activity."])
+    }
+    var host: UIViewController?
+    host = UIHostingController(rootView: ScreenTimeReportHost(
+      title: labels["title"] ?? "Screen Time", privacy: labels["privacy"] ?? "",
+      today: labels["today"] ?? "Today", week: labels["week"] ?? "7 days", done: labels["done"] ?? "Done",
+      dismiss: { host?.dismiss(animated: true); host = nil }))
+    presenter.present(host!, animated: true)
   }
 }
