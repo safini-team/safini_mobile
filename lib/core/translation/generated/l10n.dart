@@ -2600,6 +2600,26 @@ class S {
     );
   }
 
+  /// `Always allowed`
+  String get installedAppsAlwaysAllowed {
+    return Intl.message(
+      'Always allowed',
+      name: 'installedAppsAlwaysAllowed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone, Messages and Settings are always allowed, so your child can always reach you.`
+  String get installedAppsAlwaysAllowedInfo {
+    return Intl.message(
+      'Phone, Messages and Settings are always allowed, so your child can always reach you.',
+      name: 'installedAppsAlwaysAllowedInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Limit {name}?`
   String installedAppsAddTitle(Object name) {
     return Intl.message(

@@ -309,6 +309,8 @@
   "installedAppsLastSynced": "Oxirgi sinxronizatsiya: {date}",
   "installedAppsTapHint": "Cheklov qoʻyish yoki bloklash uchun tanish ilovani bosing.",
   "installedAppsNotControllable": "Safini bu ilovani hali cheklay olmaydi.",
+  "installedAppsAlwaysAllowed": "Doimo ruxsat etilgan",
+  "installedAppsAlwaysAllowedInfo": "Telefon, xabarlar va sozlamalar doimo ruxsat etilgan, shunda farzandingiz siz bilan har doim bogʻlana oladi.",
   "installedAppsAddTitle": "{name} cheklansinmi?",
   "installedAppsAddBody": "Uni shu telefon cheklovlariga qoʻshing. Kunlik limitni keyin sozlashingiz mumkin.",
   "installedAppsSetLimit": "Kunlik limit qoʻyish",

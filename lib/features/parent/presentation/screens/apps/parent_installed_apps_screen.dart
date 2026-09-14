@@ -26,8 +26,9 @@ import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet
 /// The child device enumerates its apps natively and uploads them; this screen
 /// reads that snapshot back. Every row opens the add / limit / block flow on
 /// the shared `ParentAppsCubit` (provided by the Limits screen), under the
-/// slug the API names for that app (`InstalledApp.ruleSlug`). Pushed from the
-/// Limits screen.
+/// slug the API names for that app (`InstalledApp.ruleSlug`). Phone, Messages
+/// and Settings are listed as always allowed and offer no limit. Pushed from
+/// the Limits screen.
 class ParentInstalledAppsScreen extends StatelessWidget {
   const ParentInstalledAppsScreen({
     super.key,
@@ -187,6 +188,10 @@ class _AppsList extends StatelessWidget {
   /// a slug leaves one without, and then Safini can't limit it yet.
   void _handleTap(BuildContext context, InstalledApp app) {
     final s = S.of(context);
+    if (app.alwaysAllowed) {
+      AppSnackBar.info(context, s.installedAppsAlwaysAllowedInfo);
+      return;
+    }
     final slug = app.ruleSlug;
     if (slug == null) {
       AppSnackBar.info(context, s.installedAppsNotControllable);
@@ -324,7 +329,12 @@ class _InstalledAppRow extends StatelessWidget {
         radius: AppRadius.sm,
         fontSize: 18,
       ),
-      trailing: slug != null
+      trailing: app.alwaysAllowed
+          ? Text(
+              S.of(context).installedAppsAlwaysAllowed,
+              style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
+            )
+          : slug != null
           ? const Icon(
               Icons.chevron_right_rounded,
               size: 20,
