@@ -17,6 +17,7 @@ import 'package:safini/features/parent/domain/models/child_app_usage_model.dart'
 class NativeFake extends AppBlockService {
   bool usage = true;
   bool overlay = true;
+  bool admin = true;
   bool cached = false;
   bool failStart = false;
   bool running = true;
@@ -27,6 +28,8 @@ class NativeFake extends AppBlockService {
   Future<bool> hasUsageAccess() async => usage;
   @override
   Future<bool> hasOverlayPermission() async => overlay;
+  @override
+  Future<bool> hasDeviceAdmin() async => admin;
   @override
   Future<bool> isConfigured(String id) async => true;
   @override
@@ -191,6 +194,17 @@ void main() {
     await cubit.onResumed();
     expect(cubit.state.status, AppBlockStatus.needsPermissions);
     expect(native.starts, 1);
+    await cubit.close();
+  });
+  test('device admin is part of a complete setup', () async {
+    final native = NativeFake()..admin = false;
+    final cubit = ChildAppBlockCubit(native, RulesFake(), ProfileFake());
+    await cubit.start();
+    expect(cubit.state.status, AppBlockStatus.needsPermissions);
+    expect(native.starts, 0);
+    native.admin = true;
+    await cubit.onResumed();
+    expect(cubit.state.status, AppBlockStatus.active);
     await cubit.close();
   });
   test(

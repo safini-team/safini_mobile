@@ -638,6 +638,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
       "On Samsung, allow unrestricted battery use. On Xiaomi, also enable autostart. Keep Safini out of sleeping-app lists.",
     ),
+    "limitsDeviceAdmin": MessageLookupByLibrary.simpleMessage(
+      "Prevent uninstall",
+    ),
+    "limitsDeviceAdminHint": MessageLookupByLibrary.simpleMessage(
+      "Keeps app limits from being deleted; a parent is told if it’s turned off.",
+    ),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
       "When the daily limit runs out, the app stops opening and shows the Safini screen instead.",
     ),
@@ -652,7 +658,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Could not connect app limits. Check the connection and try again.",
     ),
     "limitsSetupHint": MessageLookupByLibrary.simpleMessage(
-      "Grant Usage Access and Display over other apps in Android Settings.",
+      "Grant every step below so app limits work and can’t be switched off.",
     ),
     "limitsSetupTitle": MessageLookupByLibrary.simpleMessage(
       "Turn on app limits",

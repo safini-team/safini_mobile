@@ -21,6 +21,12 @@
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true">
+        <!-- Play's stalkerware/monitoring policy: a parental-control app that
+             transmits a child's app usage must declare itself as a monitoring
+             tool on every version code, or Play Protect flags it. -->
+        <meta-data
+            android:name="isMonitoringTool"
+            android:value="child_monitoring" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -72,6 +78,23 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="parental_control_app_time_enforcement" />
         </service>
+
+        <!-- Device admin: resists uninstall/clear-data/force-stop of the child
+             build and lets us alert the parent the instant it is turned off,
+             which is the last callback before an uninstall. Empty policy set. -->
+        <receiver
+            android:name=".SafiniDeviceAdminReceiver"
+            android:description="@string/device_admin_description"
+            android:label="@string/device_admin_label"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
 
         <!-- Restarts enforcement after a reboot when it was previously active. -->
         <receiver

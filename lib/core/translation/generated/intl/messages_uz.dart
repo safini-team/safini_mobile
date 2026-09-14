@@ -665,6 +665,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
       "Samsung’da batareya cheklovlarini o‘chiring. Xiaomi’da avtomatik ishga tushirishni ham yoqing. Safini’ni uyqudagi ilovalardan chiqaring.",
     ),
+    "limitsDeviceAdmin": MessageLookupByLibrary.simpleMessage(
+      "O‘chirishdan himoya",
+    ),
+    "limitsDeviceAdminHint": MessageLookupByLibrary.simpleMessage(
+      "Limitlarni o‘chirib tashlashga yo‘l qo‘ymaydi; o‘chirilsa, ota-ona biladi.",
+    ),
     "limitsFootnote": MessageLookupByLibrary.simpleMessage(
       "Kunlik limit tugagach, ilova ochilmay qoladi va Safini ekranini koʻrsatadi.",
     ),
@@ -681,7 +687,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Limitlarga ulanib bo‘lmadi. Internetni tekshirib, qayta urining.",
     ),
     "limitsSetupHint": MessageLookupByLibrary.simpleMessage(
-      "Android sozlamalarida foydalanish statistikasiga va boshqa ilovalar ustida ko‘rsatishga ruxsat bering.",
+      "Limitlar ishlashi va o‘chirib bo‘lmasligi uchun quyidagi barcha qadamlarga ruxsat bering.",
     ),
     "limitsSetupTitle": MessageLookupByLibrary.simpleMessage(
       "Ilova limitlarini yoqing",

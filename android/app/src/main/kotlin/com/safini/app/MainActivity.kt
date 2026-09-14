@@ -2,6 +2,7 @@ package com.safini.app
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.admin.DevicePolicyManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -34,6 +35,15 @@ class MainActivity : FlutterActivity() {
                         }
                         "requestBatterySettings" -> {
                             startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)); result.success(null)
+                        }
+                        "hasDeviceAdmin" -> result.success(SafiniDeviceAdminReceiver.isActive(this))
+                        "requestDeviceAdmin" -> {
+                            startActivity(
+                                Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+                                    .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, SafiniDeviceAdminReceiver.component(this))
+                                    .putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.device_admin_explanation))
+                            )
+                            result.success(null)
                         }
                         "isConfigured" -> result.success(client.configured(call.argument<String>("childId")!!))
                         "configure" -> {
@@ -72,6 +82,9 @@ class MainActivity : FlutterActivity() {
                         "stopService" -> {
                             AppBlockForegroundService.instance?.shutdown()
                             EnforcementStore(this).clear()
+                            // Sign-out is the sanctioned way off: drop admin so the
+                            // app uninstalls normally again.
+                            SafiniDeviceAdminReceiver.deactivate(this)
                             // Best effort remote revocation; local cleanup must also work offline.
                             Thread {
                                 runCatching { client.request("/session", null, "DELETE") }

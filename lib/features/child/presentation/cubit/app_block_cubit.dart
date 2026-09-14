@@ -23,6 +23,7 @@ class ChildAppBlockCubit extends Cubit<AppBlockState> {
       _blockService.requestOverlayPermission();
   Future<void> requestBatterySettings() =>
       _blockService.requestBatterySettings();
+  Future<void> requestDeviceAdmin() => _blockService.requestDeviceAdmin();
   Future<void> syncNow() => _blockService.syncNow();
 
   Future<void> refreshPermissions() async {
@@ -36,11 +37,21 @@ class ChildAppBlockCubit extends Cubit<AppBlockState> {
     try {
       final usage = await _blockService.hasUsageAccess();
       final overlay = await _blockService.hasOverlayPermission();
+      final admin = await _blockService.hasDeviceAdmin();
       if (isClosed) return;
       emit(
-        state.copyWith(hasUsageAccess: usage, hasOverlayPermission: overlay),
+        state.copyWith(
+          hasUsageAccess: usage,
+          hasOverlayPermission: overlay,
+          hasDeviceAdmin: admin,
+        ),
       );
-      if (!usage || !overlay) {
+      // All three are part of a complete setup: the two permissions enforcement
+      // needs, plus the device-admin guard that keeps a child from quietly
+      // uninstalling Safini. We pair and start the service only once they are all
+      // on, so the very first heartbeat reports the guard true and later
+      // revocation is a real alert, not a setup-time false alarm.
+      if (!usage || !overlay || !admin) {
         emit(
           state.copyWith(
             status: AppBlockStatus.needsPermissions,

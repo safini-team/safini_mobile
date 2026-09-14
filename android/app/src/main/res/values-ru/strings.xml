@@ -88,4 +88,9 @@
         <item quantity="many">%d монет</item>
         <item quantity="other">%d монеты</item>
     </plurals>
+
+    <string name="device_admin_label">Лимиты приложений Safini</string>
+    <string name="device_admin_description">Не даёт удалить лимиты приложений Safini. Пока это включено, Safini нельзя удалить, не отключив это сначала, и родитель получит уведомление.</string>
+    <string name="device_admin_explanation">Включите, чтобы лимиты нельзя было убрать без ведома родителя. Safini не блокирует, не стирает и не управляет телефоном.</string>
+    <string name="device_admin_disable_warning">Лимиты приложений перестанут защищать этот телефон, и родитель получит уведомление.</string>
 </resources>

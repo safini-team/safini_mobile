@@ -26,6 +26,11 @@ class AppBlockService {
   Future<void> requestUsageAccess() => _call('requestUsageAccess');
   Future<void> requestOverlayPermission() => _call('requestOverlayPermission');
   Future<void> requestBatterySettings() => _call('requestBatterySettings');
+
+  /// Uninstall guard. An active device admin cannot be uninstalled,
+  /// clear-data'd or force-stopped, and its removal alerts the parent.
+  Future<bool> hasDeviceAdmin() => _bool('hasDeviceAdmin');
+  Future<void> requestDeviceAdmin() => _call('requestDeviceAdmin');
   Future<bool> isConfigured(String childId) =>
       _bool('isConfigured', {'childId': childId});
   Future<bool> isRunning() => _bool('isRunning');

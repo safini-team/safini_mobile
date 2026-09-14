@@ -28,6 +28,11 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     private var nextPersist = 0L
     private var purchase = false
     private val waiters = mutableListOf<(Throwable?) -> Unit>()
+    // Every package with an activity that is resumed, or paused for a PiP/split
+    // window and not yet stopped. UsageStats reports one foreground app, so this
+    // is how a video floating in picture-in-picture or a limited app in a split
+    // pane still gets charged and covered. Cleared when the screen goes off.
+    private val visible = LinkedHashSet<String>()
 
     override fun onCreate() {
         super.onCreate()
@@ -72,13 +77,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
                 if (getSystemService(UserManager::class.java).isUserUnlocked) {
                     if (usageAccess(this@AppBlockForegroundService)) account(now)
                     else { store.foreground = null; store.cursor = now }
-                    val interactive = getSystemService(PowerManager::class.java).isInteractive &&
-                        !getSystemService(KeyguardManager::class.java).isKeyguardLocked
-                    val pkg = store.foreground
-                    if (interactive && Settings.canDrawOverlays(this@AppBlockForegroundService) &&
-                        pkg != null && pkg != packageName && store.remaining(pkg, now) == 0L) showOverlay(pkg, now)
-                    // The success screen stays over the reopened app until the child leaves it.
-                    else if (!interactive || pkg == null || !overlay.holds(pkg)) removeOverlay()
+                    evaluateOverlay(now)
                     if (SystemClock.elapsedRealtime() >= nextSync && !syncing) syncNow()
                 }
                 if (SystemClock.elapsedRealtime() >= nextPersist) { store.persist(); nextPersist = SystemClock.elapsedRealtime()+5000 }
@@ -107,6 +106,16 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
                 val spent = if (allowed != null && overlays) end else until
                 if (spent > from && countsAsApp(pkg)) store.recordDevice(pkg, from, spent)
             }
+            // A limited app in a PiP/split window is not the foreground app, but it
+            // is still on screen playing, so it must burn its own budget down to 0.
+            for (other in visible) {
+                if (other == pkg || other == packageName) continue
+                val allowed = store.remaining(other, from) ?: continue
+                if (allowed > 0 && store.app(other) != null) {
+                    val end = minOf(until, from+allowed)
+                    if (end > from) store.record(other, from, end)
+                }
+            }
             from = until
         }
         while (events.hasNextEvent()) {
@@ -114,19 +123,59 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             if (event.timeStamp < from) continue
             accrue(event.timeStamp)
             when (event.eventType) {
+                // MOVE_TO_FOREGROUND == ACTIVITY_RESUMED.
                 UsageEvents.Event.MOVE_TO_FOREGROUND -> {
                     store.foreground = event.packageName
                     store.covered = store.remaining(event.packageName, event.timeStamp) == 0L
+                    visible.add(event.packageName)
                 }
+                // MOVE_TO_BACKGROUND == ACTIVITY_PAUSED. A paused activity may still
+                // be on screen (PiP/split), so it stays in `visible` until STOPPED.
                 UsageEvents.Event.MOVE_TO_BACKGROUND -> if (store.foreground == event.packageName && !store.covered) store.foreground = null
                 UsageEvents.Event.SCREEN_NON_INTERACTIVE,
                 UsageEvents.Event.KEYGUARD_SHOWN,
-                UsageEvents.Event.DEVICE_SHUTDOWN -> { store.foreground = null; store.covered = false }
+                UsageEvents.Event.DEVICE_SHUTDOWN -> { store.foreground = null; store.covered = false; visible.clear() }
+                // API 29+. The activity is gone from the screen, PiP window closed.
+                else -> if (Build.VERSION.SDK_INT >= 29 && event.eventType == UsageEvents.Event.ACTIVITY_STOPPED) {
+                    visible.remove(event.packageName)
+                    if (store.foreground == event.packageName && !store.covered) store.foreground = null
+                }
             }
         }
         accrue(now)
         store.cursor = now
     }
+
+    /**
+     * Decide whether the block screen should be up right now. The blocked app is
+     * either UsageStats' single foreground app, or - the case a single foreground
+     * slot misses - a limited, out-of-time app in a PiP/split window while some
+     * other normal app is in front.
+     *
+     * We only raise the overlay for a floating app when the front app is itself a
+     * normal, limitable app. If the child is deliberately in Phone, Settings or
+     * Safini, a full-screen cover would trap them out of an essential app, so we
+     * let the floating video be instead - it is still burning its own budget.
+     */
+    private fun evaluateOverlay(now: Long) {
+        val interactive = getSystemService(PowerManager::class.java).isInteractive &&
+            !getSystemService(KeyguardManager::class.java).isKeyguardLocked
+        val pkg = store.foreground
+        val frontLimitable = pkg != null && pkg != packageName && !AlwaysAllowed.contains(this, pkg)
+        val blocked = frontLimitable && store.remaining(pkg, now) == 0L
+        val floating = if (frontLimitable && !blocked) floatingBlocked(now) else null
+        val target = if (blocked) pkg else floating
+        if (interactive && Settings.canDrawOverlays(this) && target != null) showOverlay(target, now)
+        // The success screen stays over the reopened app until the child leaves it.
+        else if (!interactive || (target == null && (pkg == null || !overlay.holds(pkg)))) removeOverlay()
+    }
+
+    /** A limited, out-of-time app on screen in a PiP/split window, newest first. */
+    private fun floatingBlocked(now: Long): String? =
+        visible.lastOrNull {
+            it != packageName && it != store.foreground &&
+                store.app(it) != null && store.remaining(it, now) == 0L
+        }
 
     private val launchable = HashMap<String, Boolean>()
 
@@ -139,6 +188,18 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             }.getOrNull()
             pkg != home && runCatching { packageManager.getLaunchIntentForPackage(pkg) != null }.getOrDefault(false)
         }
+    }
+
+    /**
+     * `device_admin_active` for the heartbeat. Null until the guard has been on
+     * once for this pairing, so neither an app upgrade (the service restarts
+     * before the child re-grants) nor a half-finished setup reports a bare
+     * `false` and false-alarms the parent. The server reads null as unknown.
+     */
+    private fun deviceAdminFlag(): Any {
+        val active = SafiniDeviceAdminReceiver.isActive(this)
+        if (active) store.deviceAdminSeen = true
+        return if (store.deviceAdminSeen) active else JSONObject.NULL
     }
 
     fun syncNow(done: ((Throwable?) -> Unit)? = null) {
@@ -154,6 +215,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         val body = JSONObject().put("usage", store.reports()).put("device_usage", store.deviceReports())
             .put("usage_access", usageAccess(this)).put("overlay_permission", Settings.canDrawOverlays(this))
             .put("service_running", true).put("manufacturer", Build.MANUFACTURER.take(80))
+            .put("device_admin_active", deviceAdminFlag())
         network.execute {
             val response = runCatching { client.request("/sync", body) }
             handler.post {
