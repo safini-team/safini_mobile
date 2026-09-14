@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:safini/core/utils/constants/controlled_apps.dart';
+
 /// One app installed on a child's device, as enumerated natively on the child
 /// device and synced to the backend so the parent can see the child's apps.
 ///
@@ -22,23 +24,35 @@ class InstalledApp {
   /// child's phone has uploaded it.
   final String? iconUrl;
 
+  /// The slug a parent's rule on this app goes under, as the API names it.
+  /// Every app on the phone has one, not only the catalog's.
+  final String? appSlug;
+
   const InstalledApp({
     required this.packageName,
     required this.appName,
     this.iconSha256,
     this.iconPng,
     this.iconUrl,
+    this.appSlug,
   });
 
   factory InstalledApp.fromJson(Map<String, dynamic> json) {
     final iconUrl = json['icon_url'];
+    final appSlug = json['app_slug'];
     return InstalledApp(
       packageName: (json['package_name'] ?? json['packageName'] ?? '')
           .toString(),
       appName: (json['app_name'] ?? json['appName'] ?? '').toString(),
       iconUrl: iconUrl is String && iconUrl.isNotEmpty ? iconUrl : null,
+      appSlug: appSlug is String && appSlug.isNotEmpty ? appSlug : null,
     );
   }
+
+  /// The slug to set a limit or block under, or `null` when this app cannot
+  /// take one. An API from before every app had a slug only knew the
+  /// catalog's apps, so those still map by package.
+  String? get ruleSlug => appSlug ?? ControlledApps.slugFor(packageName);
 
   /// One entry of the upload. The icon's bytes only go when [withIcon] - the
   /// server has most of them already.

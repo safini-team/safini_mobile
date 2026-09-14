@@ -1,9 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/utils/constants/controlled_apps.dart';
 
-/// The installed-apps screen decides whether a row is tappable (add / limit /
-/// block) purely from `ControlledApps.slugFor`. A wrong answer here either
-/// hides a controllable app or offers to limit one the backend can't key.
+/// Against an API that predates `app_slug` on installed apps, the installed-
+/// apps screen decides whether a row is tappable (add / limit / block) purely
+/// from `ControlledApps.slugFor`. A wrong answer here either hides a
+/// controllable app or offers to limit one the backend can't key.
 void main() {
   test('slug ⇄ package round-trips for every catalog entry', () {
     ControlledApps.slugToPackage.forEach((slug, package) {
