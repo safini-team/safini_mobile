@@ -1,3 +1,4 @@
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -108,7 +109,18 @@ class IosScreenTimeScreen extends StatelessWidget {
       bloc: cubit,
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(title: Text(s.screenTime)),
+          appBar: AppBar(
+            title: Text(s.screenTime),
+            actions: [
+              if (setup)
+                TextButton(
+                  onPressed: state.busy
+                      ? null
+                      : () => context.read<AuthSessionCubit>().signOut(),
+                  child: Text(s.logout),
+                ),
+            ],
+          ),
           body: SafeArea(
             child: ListView(
               padding: const EdgeInsets.all(24),

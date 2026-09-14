@@ -33,4 +33,3 @@ final class ScreenTimePolicyTests: XCTestCase {
     XCTAssertEqual(p.allowance(p.apps[0], at: Date()), 30)
   }
 }
-

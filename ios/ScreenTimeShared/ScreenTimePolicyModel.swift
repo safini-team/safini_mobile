@@ -27,4 +27,3 @@ struct ScreenTimePolicy: Codable, Equatable {
     return min(1440, rule.daily_limit_minutes + (bonusIsCurrent(at: now) ? rule.bonus_minutes : 0))
   }
 }
-
