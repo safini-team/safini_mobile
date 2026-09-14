@@ -20,7 +20,7 @@
 		843B8563429834FBB120C74A /* ScreenTimePolicyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DC508C2919BEDF04EBADA4 /* ScreenTimePolicyModel.swift */; };
 		8BE3F7618C868F7D6B441B4A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 464238173710E86DC0826C7D /* Foundation.framework */; };
 		8ED5276EF6F79A46C0E1CF83 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3825DCBD285905568F1C440 /* GoogleService-Info.plist */; };
-		9070C1819DD10EBD49272EF3 /* ScreenTimeReport.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 3EE5544BD347ED24203B0942 /* ScreenTimeReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9070C1819DD10EBD49272EF3 /* ScreenTimeReport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 3EE5544BD347ED24203B0942 /* ScreenTimeReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -74,9 +74,19 @@
 			dstSubfolderSpec = 13;
 			files = (
 				ED322CF6CAE454CC25DCCDAF /* ScreenTimeMonitor.appex in Embed App Extensions */,
-				9070C1819DD10EBD49272EF3 /* ScreenTimeReport.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4E1A7B25D3F4E6A9B0C1D2E /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				9070C1819DD10EBD49272EF3 /* ScreenTimeReport.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -91,7 +101,7 @@
 		394B14320B84B32C98065F2F /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		3E78432CA11CE133F2034364 /* ScreenTimeReportHost.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScreenTimeReportHost.swift; sourceTree = "<group>"; };
-		3EE5544BD347ED24203B0942 /* ScreenTimeReport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ScreenTimeReport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3EE5544BD347ED24203B0942 /* ScreenTimeReport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = ScreenTimeReport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		413597681147B46929D50FC7 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		464238173710E86DC0826C7D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		4E21E14F21E1C12D3A607113 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -318,7 +328,7 @@
 			name = ScreenTimeReport;
 			productName = ScreenTimeReport;
 			productReference = 3EE5544BD347ED24203B0942 /* ScreenTimeReport.appex */;
-			productType = "com.apple.product-type.app-extension";
+			productType = "com.apple.product-type.extensionkit-extension";
 		};
 		97C146ED1CF9000F007C117D /* Runner */ = {
 			isa = PBXNativeTarget;
@@ -326,6 +336,7 @@
 			buildPhases = (
 				6E870C2F836A9CB23271597B /* [CP] Check Pods Manifest.lock */,
 				D625965F905C355736F81DE9 /* Embed App Extensions */,
+				C4E1A7B25D3F4E6A9B0C1D2E /* Embed ExtensionKit Extensions */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
