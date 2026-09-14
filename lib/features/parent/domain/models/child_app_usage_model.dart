@@ -16,10 +16,12 @@ class ChildAppUsageSnapshot {
   );
 
   /// The old headline figure: the per-app limits added up. Still shown when no
-  /// global cap is set, labelled as the sum it is.
+  /// global cap is set, labelled as the sum it is. A blocked app adds nothing,
+  /// whatever `daily_limit_minutes` its rule still carries.
   int get combinedLimitMinutes => apps.fold(
     0,
-    (sum, app) => sum + (app.isLimited ? app.dailyLimitMinutes : 0),
+    (sum, app) =>
+        sum + (app.isLimited && !app.isBlocked ? app.dailyLimitMinutes : 0),
   );
 }
 
@@ -29,9 +31,12 @@ class ChildAppUsageModel {
   final String appSlug;
   final String displayName;
 
+  /// Manual block. The server reports no minutes left, purchased ones
+  /// included, whatever [isLimited] and [dailyLimitMinutes] say.
+  final bool isBlocked;
+
   /// Does `dailyLimitMinutes` apply at all. False means the app is never
   /// capped, which is what a parent means by "no limit".
-  final bool isBlocked;
   final bool isLimited;
 
   /// May the child spend coins on extra minutes for this app.

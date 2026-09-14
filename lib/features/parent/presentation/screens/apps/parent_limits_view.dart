@@ -44,8 +44,10 @@ class LimitsApp {
   final int usedMinutes;
   final int limitMinutes;
 
-  /// Does the daily cap apply at all. This is the real "no limit".
+  /// Paused outright, purchased time included, whatever the limit says.
   final bool isBlocked;
+
+  /// Does the daily cap apply at all. This is the real "no limit".
   final bool isLimited;
 
   /// May the child buy extra minutes. Independent of [isLimited]: a parent may
@@ -97,8 +99,19 @@ class ParentLimitsData {
 
   /// The sum of the per-app limits. Shown only when there is no cap, and
   /// labelled as the sum it is - nothing spends from this figure.
-  int get combinedLimitMinutes =>
-      apps.fold(0, (sum, app) => sum + app.limitMinutes);
+  ///
+  /// A blocked app adds nothing: its rule still carries a daily limit, but the
+  /// child gets none of it. Neither does an app with no limit. A limited app at
+  /// zero adds its zero - no free time is still a limit.
+  int get combinedLimitMinutes => apps.fold(
+    0,
+    (sum, app) =>
+        sum + (app.isLimited && !app.isBlocked ? app.limitMinutes : 0),
+  );
+
+  /// Is any app blocked or limited, a limit of zero included. Only without one
+  /// is "no limits set" true; blocked apps adding up to zero are not that.
+  bool get hasAppLimits => apps.any((app) => app.isBlocked || app.isLimited);
 
   /// What the panel counts down: the real cap when set, else the sum.
   int get allowanceMinutes => capMinutes ?? combinedLimitMinutes;
@@ -270,11 +283,14 @@ class _AllowancePanel extends StatelessWidget {
   final ValueChanged<int?>? onSetCap;
 
   /// With a cap: the cap. Without: the old sum, and the label says so.
+  ///
+  /// A sum of zero from blocked or zero-limit apps reads "0 m", the same as a
+  /// cap of zero does. "No limits set" is kept for when nothing is limited.
   String _headline(S s) {
     if (data.hasCap) return formatHm(s, data.capMinutes!);
-    return data.combinedLimitMinutes <= 0
-        ? s.noLimitsSet
-        : formatHm(s, data.combinedLimitMinutes);
+    return data.hasAppLimits
+        ? formatHm(s, data.combinedLimitMinutes)
+        : s.noLimitsSet;
   }
 
   @override
