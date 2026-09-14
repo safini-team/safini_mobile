@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Safini API",
-    "description": "Safini API powers the MVP for **earned screen time**. Parents create a family,\ndefine tasks and app-time rules, and children earn **Time Coins** by completing\nhealthy or educational actions.\n\n### Start here: auth and app bootstrap\n\n- Google sign-in happens in the mobile app through **Supabase Auth**\n- This backend does **not** expose a Google login endpoint\n- After sign-in, send `Authorization: Bearer <access_token>`\n- Your first protected call should be `GET /v1/me`\n- Route the app by `account_type`\n  - `parent` -> load the parent shell, then call `GET /v1/families/current`\n  - `child` -> load the child shell using `child_id`\n  - `null` -> show the role chooser\n\n```mermaid\nflowchart TD\n    A[\"Supabase Google sign-in\"] --> B[\"GET /v1/me\"]\n    B --> C{\"account_type\"}\n    C -->|parent| D[\"GET /v1/families/current\"]\n    C -->|child| E[\"GET /v1/children/{child_id}/home\"]\n    C -->|null| F[\"Show role chooser\"]\n    F --> G[\"POST /v1/families\"]\n    F --> H[\"POST /v1/families/join\"]\n    F --> I[\"POST /v1/children/claim\"]\n```\n\n### What this backend covers\n\n- Parent onboarding, second-parent join flow, and family setup\n- Child profiles, avatar state, and invite-code claiming\n- Daily tasks, manual proof submission, parent approval, and steps auto-approval\n- Controlled app rules, usage reporting, and app-time redemption\n- Wallet history, store items, and avatar purchases\n- Guarded MVP AI endpoints for task suggestions and the child AI friend\n\n### Main product flows\n\n1. **Parent onboarding**: create a family, add one or more children, and let the backend seed\n   starter tasks, app rules, and avatar items.\n2. **Second parent join**: an existing parent calls `POST /v1/families/current/parent-invite-code`\n   and the second parent joins through `POST /v1/families/join` as another admin.\n3. **Child claim**: a child signs in, enters the child invite code, and links to one child profile.\n4. **Kid daily loop**: load today's tasks, submit proof or steps, earn Time Coins,\n   then spend coins on app time or avatar cosmetics.\n5. **Parent review loop**: either parent admin can review pending tasks, approve or reject them, and watch dashboards and wallet history update.\n\n### Supabase Auth for frontend and Flutter engineers\n\n- Public routes: `GET /ping`, `GET /v1/health/live`, `GET /v1/health/ready`,\n  and `GET /v1/system/info`\n- Protected routes: all other business endpoints\n- Sign in with a normal Supabase Auth client flow\n- Read the current session access token\n  - React Native / web: `session.access_token`\n  - Flutter: `supabase.auth.currentSession?.accessToken`\n- Send the token as `Authorization: Bearer <access_token>`\n- On `401`, refresh the Supabase session and retry once\n\n### Response conventions\n\n- IDs are UUID strings\n- Timestamps are ISO 8601 strings in UTC\n- Daily tasks, streaks, and app-time limits reset on the family's local\n  calendar day, derived from the family `timezone` (UTC when unset);\n  timestamps themselves remain UTC\n- Coins, XP, and minutes are integers\n- `GET /v1/me` is the bootstrap endpoint for routing the app\n- Parent users receive `family_id`; child users receive `child_id`\n- Proof uploads are represented by URLs or object keys; this API does not accept\n  raw binary uploads directly\n- The MVP tracks app-time grants and usage, but it does not yet enforce OS-level\n  app blocking",
+    "description": "Safini API powers the MVP for **earned screen time**. Parents create a family,\ndefine tasks and app-time rules, and children earn **Time Coins** by completing\nhealthy or educational actions.\n\n### Start here: auth and app bootstrap\n\n- Google sign-in happens in the mobile app through **Supabase Auth**\n- This backend does **not** expose a Google login endpoint\n- After sign-in, send `Authorization: Bearer <access_token>`\n- Your first protected call should be `GET /v1/me`\n- Route the app by `account_type`\n  - `parent` -> load the parent shell, then call `GET /v1/families/current`\n  - `child` -> load the child shell using `child_id`\n  - `null` -> show the role chooser\n\n```mermaid\nflowchart TD\n    A[\"Supabase Google sign-in\"] --> B[\"GET /v1/me\"]\n    B --> C{\"account_type\"}\n    C -->|parent| D[\"GET /v1/families/current\"]\n    C -->|child| E[\"GET /v1/children/{child_id}/home\"]\n    C -->|null| F[\"Show role chooser\"]\n    F --> G[\"POST /v1/families\"]\n    F --> H[\"POST /v1/families/join\"]\n    F --> I[\"POST /v1/children/claim\"]\n```\n\n### What this backend covers\n\n- Parent onboarding, second-parent join flow, and family setup\n- Child profiles, avatar state, and invite-code claiming\n- Daily tasks, manual proof submission, parent approval, and steps auto-approval\n- Controlled app rules, usage reporting, and app-time redemption\n- Wallet history, store items, and avatar purchases\n- Guarded MVP AI endpoints for task suggestions and the child AI friend\n\n### Main product flows\n\n1. **Parent onboarding**: create a family, add one or more children, and let the backend seed\n   starter tasks, app rules, and avatar items.\n2. **Second parent join**: an existing parent calls `POST /v1/families/current/parent-invite-code`\n   and the second parent joins through `POST /v1/families/join` as another admin.\n3. **Child claim**: a child signs in, enters the child invite code, and links to one child profile.\n4. **Kid daily loop**: load today's tasks, submit proof or steps, earn Time Coins,\n   then spend coins on app time or avatar cosmetics.\n5. **Parent review loop**: either parent admin can review pending tasks, approve or reject them, and watch dashboards and wallet history update.\n\n### Supabase Auth for frontend and Flutter engineers\n\n- Public routes: `GET /ping`, `GET /v1/health/live`, `GET /v1/health/ready`,\n  and `GET /v1/system/info`\n- Protected routes: all other business endpoints\n- Sign in with a normal Supabase Auth client flow\n- Read the current session access token\n  - React Native / web: `session.access_token`\n  - Flutter: `supabase.auth.currentSession?.accessToken`\n- Send the token as `Authorization: Bearer <access_token>`\n- On `401`, refresh the Supabase session and retry once\n\n### Response conventions\n\n- Database unavailability or a bounded database wait can return `503` with\n  `Retry-After: 1`. Retry reads after that delay. Do not blindly replay writes:\n  reuse the same idempotency key on endpoints that support one, otherwise\n  reconcile the resulting state before retrying.\n- IDs are UUID strings\n- Timestamps are ISO 8601 strings in UTC\n- Daily tasks, streaks, and app-time limits reset on the family's local\n  calendar day, derived from the family `timezone` (UTC when unset);\n  timestamps themselves remain UTC\n- Coins, XP, and minutes are integers\n- `GET /v1/me` is the bootstrap endpoint for routing the app\n- Parent users receive `family_id`; child users receive `child_id`\n- Proof uploads are represented by URLs or object keys; this API does not accept\n  raw binary uploads directly\n- The MVP tracks app-time grants and usage, but it does not yet enforce OS-level\n  app blocking",
     "version": "0.1.3"
   },
   "paths": {
@@ -28,6 +28,24 @@
                 },
                 "example": {
                   "status": "ok"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
                 }
               }
             }
@@ -116,22 +134,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -164,22 +182,22 @@
           "204": {
             "description": "Account and associated data deleted."
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -241,22 +259,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -305,6 +323,24 @@
                 "schema": {}
               }
             }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
           }
         },
         "security": [
@@ -336,6 +372,24 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
               }
             }
           },
@@ -379,6 +433,24 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
               }
             }
           },
@@ -431,6 +503,24 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
           }
         }
       }
@@ -472,22 +562,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -531,22 +621,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -609,22 +699,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -711,22 +801,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -775,22 +865,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -879,22 +969,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1008,22 +1098,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1124,22 +1214,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1230,22 +1320,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1348,22 +1438,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1479,22 +1569,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1578,22 +1668,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1697,22 +1787,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1818,22 +1908,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -1964,22 +2054,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2084,22 +2174,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2206,22 +2296,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2308,22 +2398,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2425,22 +2515,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2572,22 +2662,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2689,22 +2779,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2843,22 +2933,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -2940,6 +3030,24 @@
               }
             }
           },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -2987,6 +3095,24 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
               }
             }
           },
@@ -3052,6 +3178,24 @@
               }
             }
           },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -3114,6 +3258,24 @@
               }
             }
           },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -3158,6 +3320,227 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/screen-time-policy": {
+      "get": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Policy",
+        "description": "Auth: Use Authorization: Bearer <access_token> from Supabase Auth. Business requirement: enforce parent rules on a child iPhone. Frontend note: map each slug to one locally selected Apple token. Limits are absolute daily minutes in family_timezone; bonus_minutes expire at bonus_expires_at. Refresh on foreground and after redemption. No usage analytics are returned or expected from iOS. Limits apply per device, not as a shared multi-device usage budget.",
+        "operationId": "policy_v1_children__child_id__screen_time_policy_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/screen-time-status": {
+      "put": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Put Status",
+        "description": "Auth: Use Authorization: Bearer <access_token> from Supabase Auth; claimed child only. Business requirement: show parents the last reported iOS protection status. Frontend note: one current status per child, refreshed while Safini is open. Never send tokens, app identities, or usage-report data. This is a device-reported observation, not tamper-proof attestation.",
+        "operationId": "put_status_v1_children__child_id__screen_time_status_put",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenTimeStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "apps"
+        ],
+        "summary": "Get Status",
+        "description": "Auth: Use Authorization: Bearer <access_token> from Supabase Auth; family parent or claimed child. Business requirement: parent visibility into iOS setup. Frontend note: null means no report for the current child account. updated_at is the last app sync; an old report is not proof of current protection. Contains status only, never usage minutes.",
+        "operationId": "get_status_v1_children__child_id__screen_time_status_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
               }
             }
           },
@@ -3209,22 +3592,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -3305,22 +3688,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -3436,22 +3819,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -3571,22 +3954,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -3699,22 +4082,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -3808,22 +4191,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -3867,7 +4250,7 @@
           "apps"
         ],
         "summary": "Get Child Installed App Icon",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Serves the launcher icon the child's device uploaded for one of its apps, so the parent sees the real YouTube icon rather than a guessed emoji.\n\n**Frontend note:** Use the `icon_url` from the installed-apps list or an app row rather than building this path; its `v` query changes whenever the icon does, so a fetched icon can be cached for as long as the URL stays the same. Readable by a parent of this child or by the child. An uninstalled app keeps its last icon. `404` means there is no icon, so show the placeholder.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Serves the launcher icon the child's device uploaded for one of its apps, so the parent sees the real YouTube icon rather than a guessed emoji.\n\n**Frontend note:** Use the `icon_url` from the installed-apps list or an app row rather than building this path; its `v` query changes whenever the icon does, so a fetched icon can be cached for as long as the URL stays the same. Readable by a parent of this child or by the child. An uninstalled app keeps its last icon. `404` means there is no icon, so show the placeholder. Reads are queued with bounded concurrency; on `503`, retry after the Retry-After delay.",
         "operationId": "get_child_installed_app_icon_v1_children__child_id__installed_apps__package_name__icon_get",
         "security": [
           {
@@ -3903,22 +4286,22 @@
               "image/png": {}
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4010,22 +4393,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4122,22 +4505,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4254,22 +4637,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4374,22 +4757,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4477,22 +4860,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4603,22 +4986,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4727,22 +5110,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4842,22 +5225,22 @@
               }
             }
           },
-          "401": {
-            "description": "Missing, expired, or invalid Supabase bearer token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Invalid or expired token"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Auth verification or database configuration is not available.",
             "content": {
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -4932,6 +5315,24 @@
               }
             }
           },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
           "409": {
             "description": "The action conflicts with current business state.",
             "content": {
@@ -4977,6 +5378,24 @@
                 },
                 "example": {
                   "message": "pong"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
                 }
               }
             }
@@ -5896,6 +6315,56 @@
           "token"
         ],
         "title": "PushDeviceRevokeRequest"
+      },
+      "ScreenTimeStatusRequest": {
+        "properties": {
+          "platform": {
+            "type": "string",
+            "const": "ios",
+            "title": "Platform",
+            "default": "ios"
+          },
+          "authorization": {
+            "type": "string",
+            "enum": [
+              "notDetermined",
+              "denied",
+              "approved",
+              "unavailable"
+            ],
+            "title": "Authorization"
+          },
+          "selected_applications": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Selected Applications",
+            "default": 0
+          },
+          "selected_categories": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Selected Categories",
+            "default": 0
+          },
+          "shield_active": {
+            "type": "boolean",
+            "title": "Shield Active",
+            "default": false
+          },
+          "monitoring_active": {
+            "type": "boolean",
+            "title": "Monitoring Active",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "authorization"
+        ],
+        "title": "ScreenTimeStatusRequest"
       },
       "StepsReportRequest": {
         "properties": {
