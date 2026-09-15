@@ -1006,6 +1006,33 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Task"),
     "taskGroupSummary": m47,
+    "taskIdeaBrushTeethDetails": MessageLookupByLibrary.simpleMessage(
+      "Brush for two minutes after you wake up, then send a photo.",
+    ),
+    "taskIdeaBrushTeethTitle": MessageLookupByLibrary.simpleMessage(
+      "Brush teeth in the morning",
+    ),
+    "taskIdeaDuolingoDetails": MessageLookupByLibrary.simpleMessage(
+      "Finish at least one lesson in Duolingo today.",
+    ),
+    "taskIdeaDuolingoTitle": MessageLookupByLibrary.simpleMessage(
+      "Complete a Duolingo lesson",
+    ),
+    "taskIdeaNapDetails": MessageLookupByLibrary.simpleMessage(
+      "Sleep for 2 hours during the day, with the phone put away.",
+    ),
+    "taskIdeaNapTitle": MessageLookupByLibrary.simpleMessage("Nap for 2 hours"),
+    "taskIdeaStepsDetails": MessageLookupByLibrary.simpleMessage(
+      "Get to 5,000 steps on the step counter of your phone or watch.",
+    ),
+    "taskIdeaStepsTitle": MessageLookupByLibrary.simpleMessage(
+      "Walk 5,000 steps",
+    ),
+    "taskIdeasEmptyTitle": MessageLookupByLibrary.simpleMessage("No tasks yet"),
+    "taskIdeasHint": MessageLookupByLibrary.simpleMessage(
+      "Tap an idea to check the details, then add it.",
+    ),
+    "taskIdeasMoreTitle": MessageLookupByLibrary.simpleMessage("More ideas"),
     "taskPuzzleSub": MessageLookupByLibrary.simpleMessage("Brain power boost"),
     "taskPuzzleTitle": MessageLookupByLibrary.simpleMessage("Logical Puzzle"),
     "taskReadingSub": MessageLookupByLibrary.simpleMessage("Expand your mind"),

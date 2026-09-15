@@ -7,6 +7,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
+import 'package:safini/features/parent/domain/models/task_idea.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
@@ -94,6 +95,12 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
           }),
           onOpenTask: (row) => _openTask(context, loaded, row.id),
           onNewTask: () => _openTask(context, loaded, null),
+          onOpenIdea: (idea) => showTaskSheet(
+            context,
+            cubit: context.read<ParentTasksCubit>(),
+            childId: _childIdFor(loaded),
+            idea: idea,
+          ),
           onRefresh: _reload,
         );
       },
@@ -267,6 +274,12 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         TaskLane.active => s.emptyActiveBody,
         TaskLane.done => s.emptyDoneBody,
       },
+      ideas: [
+        for (final idea in TaskIdea.offeredAlongside(
+          scoped.map((task) => task.metadata),
+        ))
+          TaskIdeaRowData.of(idea, s),
+      ],
     );
   }
 

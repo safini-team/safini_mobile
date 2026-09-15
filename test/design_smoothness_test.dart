@@ -125,6 +125,29 @@ void main() {
           _expectNoClippedText(tester, 'Parent Tasks in $locale on ${device.name}');
         });
 
+        testWidgets('Parent Tasks with only task ideas lays out cleanly', (
+          tester,
+        ) async {
+          await _pumpClean(
+            tester,
+            (context) => ParentTasksView(
+              data: SampleData.parentTasksFirstRun(S.of(context)),
+              onSelectScope: (_) {},
+              onSelectLane: (_) {},
+              onOpenTask: (_) {},
+              onNewTask: () {},
+              onOpenIdea: (_) {},
+            ),
+            locale: locale,
+            device: device,
+            label: 'Parent Tasks first run',
+          );
+          _expectNoClippedText(
+            tester,
+            'Parent Tasks first run in $locale on ${device.name}',
+          );
+        });
+
         testWidgets('Parent Limits lays out cleanly', (tester) async {
           await _pumpClean(
             tester,

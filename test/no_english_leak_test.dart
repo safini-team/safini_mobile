@@ -174,6 +174,22 @@ void main() {
         );
       });
 
+      testWidgets('Parent Tasks, first run', (tester) async {
+        await _expectNoEnglish(
+          tester,
+          (context) => ParentTasksView(
+            data: SampleData.parentTasksFirstRun(S.of(context)),
+            onSelectScope: (_) {},
+            onSelectLane: (_) {},
+            onOpenTask: (_) {},
+            onNewTask: () {},
+            onOpenIdea: (_) {},
+          ),
+          locale: locale,
+          screen: 'Parent Tasks, first run',
+        );
+      });
+
       testWidgets('Parent Limits', (tester) async {
         await _expectNoEnglish(
           tester,
