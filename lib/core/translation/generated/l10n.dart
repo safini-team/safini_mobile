@@ -2432,6 +2432,116 @@ class S {
     );
   }
 
+  /// `No tasks yet`
+  String get taskIdeasEmptyTitle {
+    return Intl.message(
+      'No tasks yet',
+      name: 'taskIdeasEmptyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `More ideas`
+  String get taskIdeasMoreTitle {
+    return Intl.message(
+      'More ideas',
+      name: 'taskIdeasMoreTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap an idea to check the details, then add it.`
+  String get taskIdeasHint {
+    return Intl.message(
+      'Tap an idea to check the details, then add it.',
+      name: 'taskIdeasHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Complete a Duolingo lesson`
+  String get taskIdeaDuolingoTitle {
+    return Intl.message(
+      'Complete a Duolingo lesson',
+      name: 'taskIdeaDuolingoTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish at least one lesson in Duolingo today.`
+  String get taskIdeaDuolingoDetails {
+    return Intl.message(
+      'Finish at least one lesson in Duolingo today.',
+      name: 'taskIdeaDuolingoDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Walk 5,000 steps`
+  String get taskIdeaStepsTitle {
+    return Intl.message(
+      'Walk 5,000 steps',
+      name: 'taskIdeaStepsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get to 5,000 steps on the step counter of your phone or watch.`
+  String get taskIdeaStepsDetails {
+    return Intl.message(
+      'Get to 5,000 steps on the step counter of your phone or watch.',
+      name: 'taskIdeaStepsDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nap for 2 hours`
+  String get taskIdeaNapTitle {
+    return Intl.message(
+      'Nap for 2 hours',
+      name: 'taskIdeaNapTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sleep for 2 hours during the day, with the phone put away.`
+  String get taskIdeaNapDetails {
+    return Intl.message(
+      'Sleep for 2 hours during the day, with the phone put away.',
+      name: 'taskIdeaNapDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Brush teeth in the morning`
+  String get taskIdeaBrushTeethTitle {
+    return Intl.message(
+      'Brush teeth in the morning',
+      name: 'taskIdeaBrushTeethTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Brush for two minutes after you wake up, then send a photo.`
+  String get taskIdeaBrushTeethDetails {
+    return Intl.message(
+      'Brush for two minutes after you wake up, then send a photo.',
+      name: 'taskIdeaBrushTeethDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{name}'s phone · today`
   String limitsSubtitle(Object name) {
     return Intl.message(

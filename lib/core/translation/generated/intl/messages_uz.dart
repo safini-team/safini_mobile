@@ -1059,6 +1059,37 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Vazifa"),
     "taskGroupSummary": m47,
+    "taskIdeaBrushTeethDetails": MessageLookupByLibrary.simpleMessage(
+      "Uygʻonganingdan keyin ikki daqiqa tishingni yuv va rasmini yubor.",
+    ),
+    "taskIdeaBrushTeethTitle": MessageLookupByLibrary.simpleMessage(
+      "Ertalab tish yuvish",
+    ),
+    "taskIdeaDuolingoDetails": MessageLookupByLibrary.simpleMessage(
+      "Bugun Duolingoda kamida bitta dars oʻt.",
+    ),
+    "taskIdeaDuolingoTitle": MessageLookupByLibrary.simpleMessage(
+      "Duolingoda bitta dars oʻtish",
+    ),
+    "taskIdeaNapDetails": MessageLookupByLibrary.simpleMessage(
+      "Kunduzi 2 soat uxla, telefonni esa chetga qoʻy.",
+    ),
+    "taskIdeaNapTitle": MessageLookupByLibrary.simpleMessage(
+      "Kunduzi 2 soat uxlash",
+    ),
+    "taskIdeaStepsDetails": MessageLookupByLibrary.simpleMessage(
+      "Telefon yoki soatdagi qadam hisoblagichda 5 000 qadamga yet.",
+    ),
+    "taskIdeaStepsTitle": MessageLookupByLibrary.simpleMessage(
+      "5 000 qadam yurish",
+    ),
+    "taskIdeasEmptyTitle": MessageLookupByLibrary.simpleMessage(
+      "Hozircha vazifa yoʻq",
+    ),
+    "taskIdeasHint": MessageLookupByLibrary.simpleMessage(
+      "Gʻoyani bosing, tafsilotlarni koʻrib chiqing va qoʻshing.",
+    ),
+    "taskIdeasMoreTitle": MessageLookupByLibrary.simpleMessage("Yana gʻoyalar"),
     "taskPuzzleSub": MessageLookupByLibrary.simpleMessage("Miya uchun mashq"),
     "taskPuzzleTitle": MessageLookupByLibrary.simpleMessage("Mantiqiy jumboq"),
     "taskReadingSub": MessageLookupByLibrary.simpleMessage(

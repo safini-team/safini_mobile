@@ -1029,6 +1029,37 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Задание"),
     "taskGroupSummary": m47,
+    "taskIdeaBrushTeethDetails": MessageLookupByLibrary.simpleMessage(
+      "Почисти зубы две минуты после сна и пришли фото.",
+    ),
+    "taskIdeaBrushTeethTitle": MessageLookupByLibrary.simpleMessage(
+      "Почистить зубы утром",
+    ),
+    "taskIdeaDuolingoDetails": MessageLookupByLibrary.simpleMessage(
+      "Пройди сегодня хотя бы один урок в Duolingo.",
+    ),
+    "taskIdeaDuolingoTitle": MessageLookupByLibrary.simpleMessage(
+      "Пройти урок в Duolingo",
+    ),
+    "taskIdeaNapDetails": MessageLookupByLibrary.simpleMessage(
+      "Поспи днём 2 часа, а телефон отложи.",
+    ),
+    "taskIdeaNapTitle": MessageLookupByLibrary.simpleMessage(
+      "Поспать днём 2 часа",
+    ),
+    "taskIdeaStepsDetails": MessageLookupByLibrary.simpleMessage(
+      "Набери 5 000 шагов по шагомеру в телефоне или часах.",
+    ),
+    "taskIdeaStepsTitle": MessageLookupByLibrary.simpleMessage(
+      "Пройти 5 000 шагов",
+    ),
+    "taskIdeasEmptyTitle": MessageLookupByLibrary.simpleMessage(
+      "Пока нет заданий",
+    ),
+    "taskIdeasHint": MessageLookupByLibrary.simpleMessage(
+      "Нажмите на идею, проверьте детали и добавьте.",
+    ),
+    "taskIdeasMoreTitle": MessageLookupByLibrary.simpleMessage("Ещё идеи"),
     "taskPuzzleSub": MessageLookupByLibrary.simpleMessage("Зарядка для ума"),
     "taskPuzzleTitle": MessageLookupByLibrary.simpleMessage(
       "Логическая головоломка",

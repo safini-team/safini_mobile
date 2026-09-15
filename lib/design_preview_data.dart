@@ -9,6 +9,7 @@ import 'package:safini/features/child/presentation/screens/profile/child_me_view
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
+import 'package:safini/features/parent/domain/models/task_idea.dart';
 import 'package:safini/features/parent/presentation/screens/family/parent_family_view.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_view.dart';
@@ -147,6 +148,26 @@ class SampleData {
         ],
       ),
     ],
+  );
+
+  /// A family's first visit: no tasks yet, so every task idea is on offer.
+  static ParentTasksData parentTasksFirstRun(S s) => ParentTasksData(
+    scopeLine: s.taskScopeLine(s.scopeEveryone, s.taskCount(0)),
+    chips: [
+      TaskScopeChip(key: 'all', label: s.scopeEveryone, hasAvatar: false),
+      const TaskScopeChip(
+        key: 'amir',
+        label: 'Amir',
+        color: Color(0xFF1A5C4A),
+      ),
+    ],
+    selectedScope: 'all',
+    laneCounts: const {TaskLane.review: 0, TaskLane.active: 0, TaskLane.done: 0},
+    lane: TaskLane.active,
+    emptyTitle: s.emptyNoActiveTasks,
+    emptyBody: s.emptyActiveBody,
+    groups: const [],
+    ideas: [for (final idea in TaskIdea.values) TaskIdeaRowData.of(idea, s)],
   );
 
   static const ParentLimitsData parentLimits = ParentLimitsData(

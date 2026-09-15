@@ -9,34 +9,40 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/task_model.dart';
+import 'package:safini/features/parent/domain/models/task_idea.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/core/utils/task_category.dart';
 
 /// Opens the create/edit task sheet. [task] == null → CREATE, otherwise EDIT.
+/// [idea] prefills a CREATE; nothing is saved until the parent taps Add.
 Future<void> showTaskSheet(
   BuildContext context, {
   required ParentTasksCubit cubit,
   required String childId,
   TaskModel? task,
+  TaskIdea? idea,
 }) {
   return showDsSheet<void>(
     context: context,
     builder: (context) => BlocProvider.value(
       value: cubit,
-      child: TaskSheet(childId: childId, task: task),
+      child: TaskSheet(childId: childId, task: task, idea: idea),
     ),
   );
 }
 
 class TaskSheet extends StatefulWidget {
-  const TaskSheet({super.key, required this.childId, this.task});
+  const TaskSheet({super.key, required this.childId, this.task, this.idea});
 
   final String childId;
 
   /// When non-null the sheet is in EDIT mode, prefilled from this task.
   final TaskModel? task;
+
+  /// The task idea a CREATE starts from. Ignored in EDIT mode.
+  final TaskIdea? idea;
 
   bool get isEdit => task != null;
 
@@ -69,6 +75,11 @@ class _TaskSheetState extends State<TaskSheet> {
   final _details = TextEditingController();
 
   String _emoji = _emojis.first;
+
+  /// The picker's row: an emoji the task or idea brought that is not one of
+  /// the ten stays first, so tapping another one does not lose it for good.
+  late final List<String> _emojiOptions;
+
   TaskCategory _category = TaskCategory.home;
   String _recurrence = 'none';
   int _recurrenceDays = 0;
@@ -109,9 +120,31 @@ class _TaskSheetState extends State<TaskSheet> {
       _recurrenceDays = task.recurrenceDays ?? 0;
       final emoji = task.metadata?['emoji'];
       if (emoji is String && emoji.trim().isNotEmpty) _emoji = emoji.trim();
+    } else if (widget.idea case final idea?) {
+      _coins = idea.coins;
+      _photoProof = idea.photoProof;
+      _category = idea.category;
+      _recurrence = TaskIdea.recurrence;
+      _emoji = idea.emoji;
     }
+    _emojiOptions = [if (!_emojis.contains(_emoji)) _emoji, ..._emojis];
 
     _title.addListener(() => setState(() {}));
+  }
+
+  bool _hasAppliedIdeaText = false;
+
+  /// The idea's words come in the parent's language, which initState cannot
+  /// look up yet.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final idea = widget.task == null ? widget.idea : null;
+    if (idea == null || _hasAppliedIdeaText) return;
+    _hasAppliedIdeaText = true;
+    final s = S.of(context);
+    _title.text = idea.title(s);
+    _details.text = idea.details(s);
   }
 
   @override
@@ -163,7 +196,10 @@ class _TaskSheetState extends State<TaskSheet> {
         xpReward: coins,
         recurrence: _recurrence,
         recurrenceDays: _recurrence == 'weekly' ? _recurrenceDays : null,
-        metadata: {'emoji': _emoji},
+        metadata: {
+          'emoji': _emoji,
+          if (widget.idea case final idea?) TaskIdea.metadataKey: idea.key,
+        },
       );
       final targetIds = _targetChildId == null
           ? _children.map((child) => child.id).toList()
@@ -185,7 +221,11 @@ class _TaskSheetState extends State<TaskSheet> {
       xpReward: coins != original.coinReward ? coins : null,
       recurrence: _recurrence != original.recurrence ? _recurrence : null,
       recurrenceDays: _recurrence == 'weekly' ? _recurrenceDays : null,
-      metadata: _emoji != originalEmoji ? {'emoji': _emoji} : null,
+      // The server replaces metadata whole, so keep what else it holds - the
+      // idea a task came from, for one.
+      metadata: _emoji != originalEmoji
+          ? {...?original.metadata, 'emoji': _emoji}
+          : null,
     );
 
     if (request.isEmpty) {
@@ -267,7 +307,7 @@ class _TaskSheetState extends State<TaskSheet> {
               const SizedBox(height: 18),
               _IconPicker(
                 emoji: _emoji,
-                options: _emojis,
+                options: _emojiOptions,
                 onSelect: (value) => setState(() => _emoji = value),
               ),
               const SizedBox(height: 14),
