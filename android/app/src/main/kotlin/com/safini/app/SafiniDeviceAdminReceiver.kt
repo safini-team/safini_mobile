@@ -13,17 +13,20 @@ import org.json.JSONObject
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Being an active device admin is what stops a child from just uninstalling
- * Safini (or clearing its data, or force-stopping it) to drop the limits. We ask
- * for no policy - no lock, wipe or password control - so the activation dialog
- * is honest and there is nothing invasive for the child or Play review to weigh.
+ * Being an active device admin blocks the silent ways off - adb/programmatic
+ * uninstall (DELETE_FAILED_DEVICE_POLICY_MANAGER) and Force stop - and forces a
+ * hands-on uninstall through a "Deactivate & uninstall" step. It does NOT prevent
+ * that step: a legacy device admin cannot block its own uninstall (only a Device
+ * or Profile owner can, via setUninstallBlocked, which a Play-installed app never
+ * is). We ask for no policy - no lock, wipe or password control - so the
+ * activation dialog is honest and there is nothing invasive for Play to weigh.
  *
- * The one thing we do with the callbacks: the moment admin is removed, push a
- * heartbeat that says so, because removing admin is the last step before an
- * uninstall and it fires while the app still works. The catch is timing: the
- * platform only strips the admin *after* onDisabled returns, so a plain
- * heartbeat here would still read `isAdminActive() == true`. We report an
- * explicit `false` and hold the broadcast open with goAsync() until it is sent.
+ * So the real value is the alert, not prevention: deactivating admin is the last
+ * step before an uninstall, and onDisabled fires while the app still works, so we
+ * push a heartbeat that says the guard is off. The catch is timing: the platform
+ * only strips the admin *after* onDisabled returns, so a plain heartbeat here
+ * would still read `isAdminActive() == true`. We report an explicit `false` and
+ * hold the broadcast open with goAsync() until it is sent.
  */
 class SafiniDeviceAdminReceiver : DeviceAdminReceiver() {
     override fun onEnabled(context: Context, intent: Intent) {
