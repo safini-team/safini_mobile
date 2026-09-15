@@ -20,8 +20,9 @@ class AppBlockState {
   final bool hasUsageAccess;
   final bool hasOverlayPermission;
 
-  /// An active device admin resists uninstall/clear-data/force-stop, so a child
-  /// cannot quietly drop the limits. Part of a complete setup.
+  /// An active device admin blocks the silent uninstall/clear-data/force-stop
+  /// paths and alerts the parent when it is removed, so a child cannot drop the
+  /// limits quietly (removal is still possible, just not silent). Part of setup.
   final bool hasDeviceAdmin;
   final bool isChecking;
   final String? errorMessage;
