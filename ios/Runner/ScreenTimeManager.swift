@@ -22,11 +22,18 @@ final class ScreenTimeManager {
 
   /// Current authorization state as a stable string for the Dart bridge.
   func authorizationStatus() -> String {
-    switch AuthorizationCenter.shared.authorizationStatus {
+    let status = AuthorizationCenter.shared.authorizationStatus
+    switch status {
     case .notDetermined: return "notDetermined"
     case .denied: return "denied"
     case .approved: return "approved"
-    default: return "unavailable"
+    default:
+      // iOS 26.4 added `.approvedWithDataAccess`, a strictly wider grant than
+      // `.approved`. Reporting it as "unavailable" left `authorized` false in
+      // Dart, so the setup gate could never become ready on a 26.4 device.
+      // Compare raw values rather than naming the case, which needs iOS 26.4.
+      return status.rawValue >= AuthorizationStatus.approved.rawValue
+        ? "approved" : "unavailable"
     }
   }
 

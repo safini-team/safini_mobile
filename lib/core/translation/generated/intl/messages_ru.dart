@@ -453,7 +453,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Лимиты требуют внимания на телефоне ребёнка.",
     ),
     "enforcementNotConfigured": MessageLookupByLibrary.simpleMessage(
-      "Настройте лимиты на Android-телефоне ребёнка.",
+      "Настройте лимиты на телефоне ребёнка.",
     ),
     "enforcementOffline": MessageLookupByLibrary.simpleMessage(
       "Устройство ребёнка не в сети или перестало отправлять данные. Проверьте телефон.",
@@ -572,8 +572,26 @@ class MessageLookup extends MessageLookupByLibrary {
       "Для каждого правила выберите соответствующее приложение в окне Apple. Выберите одно приложение, а не категорию. Чтобы сбросить выбор, родитель должен отозвать доступ Safini в Настройках.",
     ),
     "iosScreenTimeDone": MessageLookupByLibrary.simpleMessage("Готово"),
+    "iosScreenTimeErrorCanceled": MessageLookupByLibrary.simpleMessage(
+      "Запрос доступа к Экранному времени отменён.",
+    ),
+    "iosScreenTimeErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "Не удалось получить доступ к Экранному времени. Попробуйте ещё раз.",
+    ),
+    "iosScreenTimeErrorInvalidAccount": MessageLookupByLibrary.simpleMessage(
+      "Этот Apple Account не может выдать доступ к Экранному времени. Войдите под Apple Account ребёнка или попросите родителя добавить его в семейную группу Apple.",
+    ),
+    "iosScreenTimeErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "Не удалось связаться с Apple для подтверждения доступа. Проверьте соединение и повторите попытку.",
+    ),
+    "iosScreenTimeErrorRestricted": MessageLookupByLibrary.simpleMessage(
+      "Экранное время ограничено на этом устройстве. Его отключил родитель или профиль управления устройством.",
+    ),
+    "iosScreenTimeErrorUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Экранное время недоступно на этом устройстве. Включите Экранное время в Настройках и повторите попытку.",
+    ),
     "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
-      "Попросите родителя помочь на этом iPhone или iPad. Apple Account ребёнка должен входить в семейную группу Apple родителя.",
+      "Попросите родителя помочь на этом iPhone или iPad. Лучше всего, если Apple Account ребёнка входит в семейную группу Apple родителя. Если нет, Safini запросит Экранное время на этом устройстве.",
     ),
     "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
       "Связано на этом устройстве",
@@ -622,7 +640,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "keepHolding": MessageLookupByLibrary.simpleMessage("Держи…"),
     "kidComingSoonIos": MessageLookupByLibrary.simpleMessage("Скоро на iOS"),
     "kidComingSoonIosBody": MessageLookupByLibrary.simpleMessage(
-      "Пока установите Safini на Android-телефон ребёнка. Приложение для родителя уже работает на iPhone.",
+      "Установите Safini на телефон ребёнка. Приложение для родителя уже работает на iPhone.",
     ),
     "kidComingSoonIosTitle": MessageLookupByLibrary.simpleMessage(
       "Детский режим скоро появится на iPhone",
@@ -661,7 +679,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Когда дневной лимит закончится, приложение перестанет открываться и покажет экран Safini.",
     ),
     "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
-      "Для блокировки нужна настройка на Android-телефоне ребёнка. Блокировка на iOS пока недоступна.",
+      "Блокировка начнёт работать после настройки Safini на телефоне ребёнка.",
     ),
     "limitsOverlayAccess": MessageLookupByLibrary.simpleMessage(
       "Поверх других приложений",

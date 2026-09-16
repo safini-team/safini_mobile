@@ -1,3 +1,4 @@
+import FamilyControls
 import Flutter
 import UIKit
 
@@ -61,8 +62,8 @@ import UIKit
             let ns = error as NSError
             result(
               FlutterError(
-                code: Self.familyControlsCode(ns),
-                message: Self.familyControlsMessage(ns),
+                code: Self.familyControlsCode(error),
+                message: error.localizedDescription,
                 details: ["domain": ns.domain, "code": ns.code]
               )
             )
@@ -101,32 +102,33 @@ import UIKit
     }
   }
 
-  /// FamilyControlsError.Code raw values as reported on NSError.
-  private static func familyControlsCode(_ error: NSError) -> String {
-    switch error.code {
-    case 0: return "invalid_account"
-    case 1: return "restricted"
-    case 2: return "unavailable"
-    case 3: return "invalid_argument"
-    case 4: return "canceled"
-    case 5: return "network"
-    case 6: return "auth_failed"
-    default: return "authorization_failed"
+  /// A stable code for the Dart bridge, matched on the `FamilyControlsError`
+  /// case itself.
+  ///
+  /// Do not read `NSError.code` against a hand-written table. Those raw values
+  /// are only the declaration order of `FamilyControlsError`, which is
+  /// `restricted, unavailable, invalidAccountType, invalidArgument,
+  /// authorizationConflict, authorizationCanceled, networkError, ...`. The old
+  /// table began at `invalidAccountType`, so every error was reported one case
+  /// off: App Review hit `invalidAccountType` on 2026-09-15 and was shown the
+  /// "rebuild with Family Controls in the signed app" text meant for
+  /// `unavailable`.
+  ///
+  /// The message stays Apple's own `errorDescription`; Dart localizes off the
+  /// code and only falls back to this text for an unrecognized one.
+  private static func familyControlsCode(_ error: Error) -> String {
+    guard let error = error as? FamilyControlsError else {
+      return "authorization_failed"
     }
-  }
-
-  private static func familyControlsMessage(_ error: NSError) -> String {
-    switch error.code {
-    case 0:
-      return "This Apple ID cannot use Individual Screen Time auth. Use a personal Apple ID, or Family Sharing with .child."
-    case 1:
-      return "Screen Time is restricted on this device (MDM or parent controls)."
-    case 2:
-      return "Couldn't talk to the Screen Time helper. Rebuild so Family Controls is in the signed app, turn Screen Time on in Settings, delete Safini from the phone, then reinstall."
-    case 4:
-      return "Authorization was canceled."
-    default:
-      return error.localizedDescription
+    switch error {
+    case .restricted: return "restricted"
+    case .unavailable: return "unavailable"
+    case .invalidAccountType: return "invalid_account"
+    case .invalidArgument: return "invalid_argument"
+    case .authorizationConflict: return "authorization_conflict"
+    case .authorizationCanceled: return "canceled"
+    case .networkError: return "network"
+    default: return "authorization_failed"
     }
   }
 }

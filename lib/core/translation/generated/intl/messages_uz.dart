@@ -463,7 +463,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bola telefonida ilova limitlarini tekshirish kerak.",
     ),
     "enforcementNotConfigured": MessageLookupByLibrary.simpleMessage(
-      "Bolaning Android telefonida ilova limitlarini sozlang.",
+      "Bolaning telefonida ilova limitlarini sozlang.",
     ),
     "enforcementOffline": MessageLookupByLibrary.simpleMessage(
       "Bola qurilmasi internetsiz yoki ma’lumot yubormayapti. Telefonni tekshiring.",
@@ -582,8 +582,26 @@ class MessageLookup extends MessageLookupByLibrary {
       "Har bir qoida uchun Apple oynasida mos ilovani tanlang. Toifa emas, faqat bitta ilova tanlang. Tanlovni tiklash uchun ota-ona Sozlamalarda Safini ruxsatini bekor qilishi kerak.",
     ),
     "iosScreenTimeDone": MessageLookupByLibrary.simpleMessage("Tayyor"),
+    "iosScreenTimeErrorCanceled": MessageLookupByLibrary.simpleMessage(
+      "Ekran vaqtiga ruxsat so‘rovi bekor qilindi.",
+    ),
+    "iosScreenTimeErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "Ekran vaqtiga ruxsat olinmadi. Qayta urinib ko‘ring.",
+    ),
+    "iosScreenTimeErrorInvalidAccount": MessageLookupByLibrary.simpleMessage(
+      "Bu Apple Account Ekran vaqtiga ruxsat bera olmaydi. Bolaning o‘z Apple Account’i bilan kiring yoki ota-onadan uni Apple oilaviy guruhiga qo‘shishni so‘rang.",
+    ),
+    "iosScreenTimeErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "Ruxsatni tasdiqlash uchun Apple bilan bog‘lanib bo‘lmadi. Aloqani tekshirib, qayta urinib ko‘ring.",
+    ),
+    "iosScreenTimeErrorRestricted": MessageLookupByLibrary.simpleMessage(
+      "Bu qurilmada Ekran vaqti cheklangan. Uni ota-ona yoki qurilma boshqaruvi profili o‘chirgan.",
+    ),
+    "iosScreenTimeErrorUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Bu qurilmada Ekran vaqti mavjud emas. Sozlamalarda Ekran vaqtini yoqing va qayta urinib ko‘ring.",
+    ),
     "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
-      "Ota-onangizdan shu iPhone yoki iPad’da yordam so‘rang. Bolaning Apple Account’i ota-onaning Apple oilaviy guruhida bo‘lishi kerak.",
+      "Ota-onangizdan shu iPhone yoki iPad’da yordam so‘rang. Eng yaxshisi, bolaning Apple Account’i ota-onaning Apple oilaviy guruhida bo‘lsin. Agar bo‘lmasa, Safini shu qurilmaning o‘zida Ekran vaqtini so‘raydi.",
     ),
     "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
       "Shu qurilmaga bog‘langan",
@@ -636,7 +654,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "iOS uchun tez orada",
     ),
     "kidComingSoonIosBody": MessageLookupByLibrary.simpleMessage(
-      "Hozircha Safini’ni bolaning Android telefoniga oʻrnating. Ota-ona ilovasi iPhone’da allaqachon ishlaydi.",
+      "Safini’ni bolaning telefoniga oʻrnating. Ota-ona ilovasi iPhone’da allaqachon ishlaydi.",
     ),
     "kidComingSoonIosTitle": MessageLookupByLibrary.simpleMessage(
       "Bola rejimi tez orada iPhone’da ham boʻladi",
@@ -675,7 +693,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Kunlik limit tugagach, ilova ochilmay qoladi va Safini ekranini koʻrsatadi.",
     ),
     "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
-      "Bloklash uchun bolaning Android telefonida sozlash kerak. iOS bloklashi hozircha mavjud emas.",
+      "Bloklash bolaning telefonida Safini sozlangandan keyin ishlaydi.",
     ),
     "limitsOverlayAccess": MessageLookupByLibrary.simpleMessage(
       "Boshqa ilovalar ustida",

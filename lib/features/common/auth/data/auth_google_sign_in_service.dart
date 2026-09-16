@@ -92,11 +92,14 @@ class AuthGoogleSignInService {
       );
       if (e.code == GoogleSignInExceptionCode.canceled ||
           e.code == GoogleSignInExceptionCode.interrupted) {
-        // Kept for the debug log: a cancel right after picking an account on
-        // Android usually means the OAuth package name, SHA-1 or web
-        // serverClientId is wrong. The user sees nothing either way.
+        // A cancel right after picking an account usually means the OAuth
+        // package name, SHA-1 or web serverClientId is wrong on the Google
+        // side. That hint lives here rather than in the message: the user
+        // never sees a cancelled failure, and a shipped string naming another
+        // platform is what App Review flagged under 2.3.10 on 2026-09-15.
+        // The debugPrint above already carries the code and description.
         throw const AuthGoogleSignInFailure(
-          'Google sign-in was cancelled. If this happens after choosing an account, check the Android OAuth package name, SHA-1, and web serverClientId.',
+          'Google sign-in was cancelled.',
           cancelled: true,
         );
       }

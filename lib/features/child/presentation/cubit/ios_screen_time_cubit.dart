@@ -7,12 +7,17 @@ class IosScreenTimeState {
   final Map<String, dynamic> status;
   final List<Map<String, dynamic>> rules;
   final String? error;
+
+  /// The native `FamilyControlsError` code behind [error], so the UI can show
+  /// localized copy instead of Apple's English `errorDescription`.
+  final String? errorCode;
   final bool syncFailed;
   const IosScreenTimeState({
     this.busy = false,
     this.status = const {},
     this.rules = const [],
     this.error,
+    this.errorCode,
     this.syncFailed = false,
   });
   bool get authorized => status['authorization'] == 'approved';
@@ -123,6 +128,7 @@ class IosScreenTimeCubit extends Cubit<IosScreenTimeState> {
             rules: rules,
             syncFailed: true,
             error: e is ScreenTimeException ? e.message : null,
+            errorCode: e is ScreenTimeException ? e.code : null,
           ),
         );
       }
@@ -131,7 +137,18 @@ class IosScreenTimeCubit extends Cubit<IosScreenTimeState> {
 
   Future<void> authorize() async {
     await _action(() async {
-      await native.requestAuthorization(member: ScreenTimeMember.child);
+      try {
+        await native.requestAuthorization(member: ScreenTimeMember.child);
+      } on ScreenTimeException catch (e) {
+        // `.child` needs this device's Apple Account to be a child inside the
+        // parent's Family Sharing group. Anywhere else Apple rejects it with
+        // `invalidAccountType` and never shows a prompt, which dead-ends setup
+        // on a phone the family has not enrolled yet (App Review 2026-09-15).
+        // Individual authorization prompts for the same Screen Time powers on
+        // the device itself, so fall back to it rather than stopping.
+        if (e.code != 'invalid_account') rethrow;
+        await native.requestAuthorization(member: ScreenTimeMember.individual);
+      }
     });
   }
 
@@ -157,6 +174,7 @@ class IosScreenTimeCubit extends Cubit<IosScreenTimeState> {
             status: state.status,
             rules: state.rules,
             error: e is ScreenTimeException ? e.message : null,
+            errorCode: e is ScreenTimeException ? e.code : null,
             syncFailed: e is! ScreenTimeException,
           ),
         );

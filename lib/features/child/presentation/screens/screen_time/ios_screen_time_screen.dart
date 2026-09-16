@@ -98,6 +98,20 @@ class _IosScreenTimeGateState extends State<IosScreenTimeGate>
   }
 }
 
+/// Localized copy for a native Screen Time failure, keyed on the
+/// `FamilyControlsError` code the platform channel returns. Apple's own
+/// `errorDescription` is English-only and written for developers, so it is
+/// never rendered: App Review saw it verbatim inside the Uzbek UI on
+/// 2026-09-15.
+String _screenTimeError(S s, String? code) => switch (code) {
+  'restricted' => s.iosScreenTimeErrorRestricted,
+  'unavailable' => s.iosScreenTimeErrorUnavailable,
+  'invalid_account' => s.iosScreenTimeErrorInvalidAccount,
+  'canceled' => s.iosScreenTimeErrorCanceled,
+  'network' => s.iosScreenTimeErrorNetwork,
+  _ => s.iosScreenTimeErrorGeneric,
+};
+
 class IosScreenTimeScreen extends StatelessWidget {
   final bool setup;
   const IosScreenTimeScreen({super.key, this.setup = false});
@@ -195,10 +209,10 @@ class IosScreenTimeScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(s.iosScreenTimeRetry),
                   ),
-                if (state.error != null)
+                if (state.errorCode != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
-                    child: Text(state.error!),
+                    child: Text(_screenTimeError(s, state.errorCode)),
                   ),
                 TextButton(
                   onPressed: state.busy ? null : cubit.refresh,

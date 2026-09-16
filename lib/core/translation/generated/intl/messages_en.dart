@@ -438,7 +438,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "App limits need attention on the child’s phone.",
     ),
     "enforcementNotConfigured": MessageLookupByLibrary.simpleMessage(
-      "Set up app limits on the child’s Android phone.",
+      "Set up app limits on your child’s phone.",
     ),
     "enforcementOffline": MessageLookupByLibrary.simpleMessage(
       "Child device is offline or has stopped reporting. Check the phone.",
@@ -559,8 +559,26 @@ class MessageLookup extends MessageLookupByLibrary {
       "For each rule, choose its matching app in Apple’s picker. Select exactly one app, not a category. Saved links can only be reset after your parent revokes Safini access in Settings.",
     ),
     "iosScreenTimeDone": MessageLookupByLibrary.simpleMessage("Done"),
+    "iosScreenTimeErrorCanceled": MessageLookupByLibrary.simpleMessage(
+      "Screen Time access was cancelled.",
+    ),
+    "iosScreenTimeErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "Screen Time access could not be granted. Try again.",
+    ),
+    "iosScreenTimeErrorInvalidAccount": MessageLookupByLibrary.simpleMessage(
+      "This Apple Account cannot grant Screen Time access. Sign in with the child’s own Apple Account, or ask a parent to add it to Apple Family Sharing.",
+    ),
+    "iosScreenTimeErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "Could not reach Apple to confirm Screen Time access. Check your connection and try again.",
+    ),
+    "iosScreenTimeErrorRestricted": MessageLookupByLibrary.simpleMessage(
+      "Screen Time is restricted on this device. A parent or a device management profile has turned it off.",
+    ),
+    "iosScreenTimeErrorUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Screen Time is unavailable on this device. Turn Screen Time on in Settings, then try again.",
+    ),
     "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
-      "Ask your parent to help on this iPhone or iPad. The child’s Apple Account must belong to the parent’s Apple Family Sharing group.",
+      "Ask your parent to help on this iPhone or iPad. Best set up with the child’s Apple Account in the parent’s Apple Family Sharing group. If it isn’t, Safini asks for Screen Time on this device instead.",
     ),
     "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
       "Linked on this device",
@@ -613,7 +631,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Coming soon on iOS",
     ),
     "kidComingSoonIosBody": MessageLookupByLibrary.simpleMessage(
-      "For now, set Safini up on your child’s Android phone. The parent app already works on iPhone.",
+      "Set Safini up on your child’s phone. The parent app already works on iPhone.",
     ),
     "kidComingSoonIosTitle": MessageLookupByLibrary.simpleMessage(
       "Kid mode is coming to iPhone",
@@ -648,7 +666,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "When the daily limit runs out, the app stops opening and shows the Safini screen instead.",
     ),
     "limitsNotYetEnforced": MessageLookupByLibrary.simpleMessage(
-      "App blocking requires setup on the child’s Android phone. iOS blocking is not available yet.",
+      "App blocking starts once Safini is set up on your child’s phone.",
     ),
     "limitsOverlayAccess": MessageLookupByLibrary.simpleMessage(
       "Display over other apps",
