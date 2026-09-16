@@ -9,6 +9,11 @@ class Native extends ScreenTimeService {
   bool get isSupported => true;
   int installations = 0;
   ScreenTimeMember? member;
+  final List<ScreenTimeMember> authorizeCalls = [];
+
+  /// When set, `.child` authorization throws a `ScreenTimeException` with this
+  /// code, the way Apple rejects a device that is not in a Family Sharing group.
+  String? childAuthFailure;
   Map<String, dynamic> status = {
     'authorization': 'approved',
     'child_id': 'child',
@@ -36,6 +41,10 @@ class Native extends ScreenTimeService {
     ScreenTimeMember member = ScreenTimeMember.individual,
   }) async {
     this.member = member;
+    authorizeCalls.add(member);
+    if (member == ScreenTimeMember.child && childAuthFailure != null) {
+      throw ScreenTimeException(childAuthFailure!, 'rejected');
+    }
     return ScreenTimeAuthStatus.approved;
   }
 }
@@ -124,6 +133,26 @@ void main() {
       expect(native.member, ScreenTimeMember.child);
     },
   );
+  test(
+    'a device outside Family Sharing falls back to individual authorization',
+    () async {
+      native.childAuthFailure = 'invalid_account';
+      await cubit.start('child');
+      await cubit.authorize();
+      expect(native.authorizeCalls, [
+        ScreenTimeMember.child,
+        ScreenTimeMember.individual,
+      ]);
+      expect(cubit.state.errorCode, isNull);
+    },
+  );
+  test('a non-account authorization failure is surfaced, not retried', () async {
+    native.childAuthFailure = 'restricted';
+    await cubit.start('child');
+    await cubit.authorize();
+    expect(native.authorizeCalls, [ScreenTimeMember.child]);
+    expect(cubit.state.errorCode, 'restricted');
+  });
   test(
     'late policy response after sign-out cannot reinstall the old child policy',
     () async {

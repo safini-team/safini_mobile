@@ -2607,10 +2607,10 @@ class S {
     );
   }
 
-  /// `App blocking requires setup on the child’s Android phone. iOS blocking is not available yet.`
+  /// `App blocking starts once Safini is set up on your child’s phone.`
   String get limitsNotYetEnforced {
     return Intl.message(
-      'App blocking requires setup on the child’s Android phone. iOS blocking is not available yet.',
+      'App blocking starts once Safini is set up on your child’s phone.',
       name: 'limitsNotYetEnforced',
       desc: '',
       args: [],
@@ -4356,10 +4356,10 @@ class S {
     );
   }
 
-  /// `Set up app limits on the child’s Android phone.`
+  /// `Set up app limits on your child’s phone.`
   String get enforcementNotConfigured {
     return Intl.message(
-      'Set up app limits on the child’s Android phone.',
+      'Set up app limits on your child’s phone.',
       name: 'enforcementNotConfigured',
       desc: '',
       args: [],
@@ -4496,10 +4496,10 @@ class S {
     );
   }
 
-  /// `For now, set Safini up on your child’s Android phone. The parent app already works on iPhone.`
+  /// `Set Safini up on your child’s phone. The parent app already works on iPhone.`
   String get kidComingSoonIosBody {
     return Intl.message(
-      'For now, set Safini up on your child’s Android phone. The parent app already works on iPhone.',
+      'Set Safini up on your child’s phone. The parent app already works on iPhone.',
       name: 'kidComingSoonIosBody',
       desc: '',
       args: [],
@@ -4516,10 +4516,10 @@ class S {
     );
   }
 
-  /// `Ask your parent to help on this iPhone or iPad. The child’s Apple Account must belong to the parent’s Apple Family Sharing group.`
+  /// `Ask your parent to help on this iPhone or iPad. Best set up with the child’s Apple Account in the parent’s Apple Family Sharing group. If it isn’t, Safini asks for Screen Time on this device instead.`
   String get iosScreenTimeFamily {
     return Intl.message(
-      'Ask your parent to help on this iPhone or iPad. The child’s Apple Account must belong to the parent’s Apple Family Sharing group.',
+      'Ask your parent to help on this iPhone or iPad. Best set up with the child’s Apple Account in the parent’s Apple Family Sharing group. If it isn’t, Safini asks for Screen Time on this device instead.',
       name: 'iosScreenTimeFamily',
       desc: '',
       args: [],
@@ -4676,6 +4676,66 @@ class S {
     return Intl.message(
       'View actual usage in Screen Time on the child’s device.',
       name: 'iosScreenTimeLocalUsage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Screen Time is restricted on this device. A parent or a device management profile has turned it off.`
+  String get iosScreenTimeErrorRestricted {
+    return Intl.message(
+      'Screen Time is restricted on this device. A parent or a device management profile has turned it off.',
+      name: 'iosScreenTimeErrorRestricted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Screen Time is unavailable on this device. Turn Screen Time on in Settings, then try again.`
+  String get iosScreenTimeErrorUnavailable {
+    return Intl.message(
+      'Screen Time is unavailable on this device. Turn Screen Time on in Settings, then try again.',
+      name: 'iosScreenTimeErrorUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This Apple Account cannot grant Screen Time access. Sign in with the child’s own Apple Account, or ask a parent to add it to Apple Family Sharing.`
+  String get iosScreenTimeErrorInvalidAccount {
+    return Intl.message(
+      'This Apple Account cannot grant Screen Time access. Sign in with the child’s own Apple Account, or ask a parent to add it to Apple Family Sharing.',
+      name: 'iosScreenTimeErrorInvalidAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Screen Time access was cancelled.`
+  String get iosScreenTimeErrorCanceled {
+    return Intl.message(
+      'Screen Time access was cancelled.',
+      name: 'iosScreenTimeErrorCanceled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not reach Apple to confirm Screen Time access. Check your connection and try again.`
+  String get iosScreenTimeErrorNetwork {
+    return Intl.message(
+      'Could not reach Apple to confirm Screen Time access. Check your connection and try again.',
+      name: 'iosScreenTimeErrorNetwork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Screen Time access could not be granted. Try again.`
+  String get iosScreenTimeErrorGeneric {
+    return Intl.message(
+      'Screen Time access could not be granted. Try again.',
+      name: 'iosScreenTimeErrorGeneric',
       desc: '',
       args: [],
     );
