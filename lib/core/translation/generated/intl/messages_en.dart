@@ -121,12 +121,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m42(minutes) => "${minutes}m remaining";
 
   static String m43(name) =>
-      "This will remove ${name} from your family and permanently delete their account and all associated data, including tasks, coins and app settings. This cannot be undone.";
+      "This permanently deletes ${name}\'s child account and all associated data, including tasks, coins, and app settings. This cannot be undone.";
 
-  static String m44(name) => "Remove ${name}?";
+  static String m44(name) => "Remove ${name}\'s account?";
 
-  static String m45(name) =>
-      "${name} was removed. Their account and data were permanently deleted.";
+  static String m45(name) => "${name}\'s account was permanently deleted.";
 
   static String m46(name) =>
       "${name} was removed from your family. Their account was kept.";
@@ -237,6 +236,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ask for something new and your parent can add it to the store.",
     ),
     "askForThis": MessageLookupByLibrary.simpleMessage("Unlock now"),
+    "askParentToDeleteAccount": MessageLookupByLibrary.simpleMessage(
+      "If you want your account deleted, ask your parent.",
+    ),
     "askToRedo": MessageLookupByLibrary.simpleMessage("Ask to redo"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Avatar item"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar Items"),
@@ -901,7 +903,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "remaining": MessageLookupByLibrary.simpleMessage("Remaining"),
     "remainingTime": m42,
-    "removeChild": MessageLookupByLibrary.simpleMessage("Remove child"),
+    "removeChild": MessageLookupByLibrary.simpleMessage("Remove child account"),
     "removeChildConfirmBody": m43,
     "removeChildConfirmTitle": m44,
     "removeChildDeletedSuccess": m45,
@@ -912,7 +914,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "You do not have permission to remove this child.",
     ),
     "removeChildInProgress": MessageLookupByLibrary.simpleMessage(
-      "Removing child…",
+      "Removing child account…",
     ),
     "removeChildNetworkError": MessageLookupByLibrary.simpleMessage(
       "Could not connect. Check your internet connection and try again.",

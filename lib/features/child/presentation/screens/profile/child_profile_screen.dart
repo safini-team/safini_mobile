@@ -238,12 +238,14 @@ class ChildMeSettings extends StatelessWidget {
             titleStyle: AppText.rowTitleStrong,
             onTap: () => _signOut(context, s),
           ),
-          DsRow(
-            title: s.deleteAccount,
-            verticalPadding: 15,
-            titleColor: AppColors.danger,
-            titleStyle: AppText.rowTitleStrong,
-            onTap: () => showAccountDeletionFlow(context),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+            child: Text(
+              s.askParentToDeleteAccount,
+              style: AppText.bodyRegular.copyWith(
+                color: AppColors.textTertiary,
+              ),
+            ),
           ),
         ],
       ),

@@ -36,6 +36,12 @@ Future<void> showAccountDeletionFlow(BuildContext context) async {
   final router = context.router;
   final isParent = auth.state.accountType == AppConstants.accountTypeParent;
 
+  // SAF-171: child accounts must not self-delete. Parent-owned lifecycle only.
+  if (!isParent) {
+    AppSnackBar.info(context, s.askParentToDeleteAccount);
+    return;
+  }
+
   final confirmed = await showDsSheet<bool>(
     context: context,
     builder: (sheetContext) => Column(
@@ -45,9 +51,7 @@ Future<void> showAccountDeletionFlow(BuildContext context) async {
         Text(s.deleteAccountConfirmTitle, style: AppText.title3),
         const SizedBox(height: 8),
         Text(
-          isParent
-              ? s.deleteAccountParentConfirmBody
-              : s.deleteAccountChildConfirmBody,
+          s.deleteAccountParentConfirmBody,
           style: AppText.bodyRegular,
         ),
         const SizedBox(height: 22),

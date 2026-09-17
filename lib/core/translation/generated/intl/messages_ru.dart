@@ -122,12 +122,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m42(minutes) => "осталось ${minutes}м";
 
   static String m43(name) =>
-      "Ребёнок ${name} будет удалён из вашей семьи. Его аккаунт и все связанные данные, включая задания, монеты и настройки приложений, будут удалены навсегда. Это действие нельзя отменить.";
+      "Это навсегда удалит аккаунт ребёнка ${name} и все связанные данные: задания, монеты и настройки приложений. Отменить это нельзя.";
 
-  static String m44(name) => "Удалить ${name}?";
+  static String m44(name) => "Удалить аккаунт ${name}?";
 
-  static String m45(name) =>
-      "${name} удалён из семьи. Аккаунт и данные удалены навсегда.";
+  static String m45(name) => "Аккаунт ${name} навсегда удалён.";
 
   static String m46(name) => "${name} удалён из вашей семьи. Аккаунт сохранён.";
 
@@ -237,6 +236,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Попроси что-то новое - родитель добавит это в магазин.",
     ),
     "askForThis": MessageLookupByLibrary.simpleMessage("Открыть"),
+    "askParentToDeleteAccount": MessageLookupByLibrary.simpleMessage(
+      "Если вы хотите удалить аккаунт, попросите родителя.",
+    ),
     "askToRedo": MessageLookupByLibrary.simpleMessage("Переделать"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Предмет аватара"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Предметы"),
@@ -919,7 +921,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("Отклонить"),
     "remaining": MessageLookupByLibrary.simpleMessage("Осталось"),
     "remainingTime": m42,
-    "removeChild": MessageLookupByLibrary.simpleMessage("Удалить ребёнка"),
+    "removeChild": MessageLookupByLibrary.simpleMessage(
+      "Удалить аккаунт ребёнка",
+    ),
     "removeChildConfirmBody": m43,
     "removeChildConfirmTitle": m44,
     "removeChildDeletedSuccess": m45,
@@ -930,7 +934,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "У вас нет прав на удаление этого ребёнка.",
     ),
     "removeChildInProgress": MessageLookupByLibrary.simpleMessage(
-      "Удаление ребёнка…",
+      "Удаляем аккаунт ребёнка…",
     ),
     "removeChildNetworkError": MessageLookupByLibrary.simpleMessage(
       "Не удалось подключиться. Проверьте интернет и попробуйте снова.",

@@ -118,12 +118,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m42(minutes) => "${minutes} daqiqa qoldi";
 
   static String m43(name) =>
-      "${name} oilangizdan olib tashlanadi. Uning hisobi va barcha tegishli maʼlumotlari, jumladan topshiriqlar, tangalar va ilova sozlamalari butunlay oʻchiriladi. Bu amalni ortga qaytarib boʻlmaydi.";
+      "Bu ${name} bola hisobini va bog‘liq barcha ma’lumotlarni (vazifalar, tangalar, ilova sozlamalari) butunlay o‘chiradi. Orqaga qaytarib bo‘lmaydi.";
 
-  static String m44(name) => "${name} olib tashlansinmi?";
+  static String m44(name) => "${name} hisobi o‘chirilsinmi?";
 
-  static String m45(name) =>
-      "${name} oiladan olib tashlandi. Hisobi va maʼlumotlari butunlay oʻchirildi.";
+  static String m45(name) => "${name} hisobi butunlay o‘chirildi.";
 
   static String m46(name) =>
       "${name} oilangizdan olib tashlandi. Hisobi saqlab qolindi.";
@@ -238,6 +237,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Yangi narsa soʻra - ota-onang doʻkonga qoʻshadi.",
     ),
     "askForThis": MessageLookupByLibrary.simpleMessage("Ochish"),
+    "askParentToDeleteAccount": MessageLookupByLibrary.simpleMessage(
+      "Hisobingizni o‘chirmoqchi bo‘lsangiz, ota-onangizdan so‘rang.",
+    ),
     "askToRedo": MessageLookupByLibrary.simpleMessage(
       "Qayta bajarishni soʻrash",
     ),
@@ -944,7 +946,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("Rad etish"),
     "remaining": MessageLookupByLibrary.simpleMessage("Qoldi"),
     "remainingTime": m42,
-    "removeChild": MessageLookupByLibrary.simpleMessage("Bolani olib tashlash"),
+    "removeChild": MessageLookupByLibrary.simpleMessage(
+      "Bola hisobini o‘chirish",
+    ),
     "removeChildConfirmBody": m43,
     "removeChildConfirmTitle": m44,
     "removeChildDeletedSuccess": m45,
@@ -955,7 +959,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bu bolani olib tashlashga ruxsatingiz yoʻq.",
     ),
     "removeChildInProgress": MessageLookupByLibrary.simpleMessage(
-      "Bola olib tashlanmoqda…",
+      "Bola hisobi o‘chirilmoqda…",
     ),
     "removeChildNetworkError": MessageLookupByLibrary.simpleMessage(
       "Ulanib boʻlmadi. Internet aloqasini tekshirib, qayta urinib koʻring.",

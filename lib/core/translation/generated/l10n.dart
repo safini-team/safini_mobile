@@ -1831,6 +1831,16 @@ class S {
     );
   }
 
+  /// `If you want your account deleted, ask your parent.`
+  String get askParentToDeleteAccount {
+    return Intl.message(
+      'If you want your account deleted, ask your parent.',
+      name: 'askParentToDeleteAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Deleting your account…`
   String get deletingAccount {
     return Intl.message(
@@ -4771,50 +4781,50 @@ class S {
     );
   }
 
-  /// `Remove child`
+  /// `Remove child account`
   String get removeChild {
     return Intl.message(
-      'Remove child',
+      'Remove child account',
       name: 'removeChild',
       desc: '',
       args: [],
     );
   }
 
-  /// `Remove {name}?`
+  /// `Remove {name}'s account?`
   String removeChildConfirmTitle(String name) {
     return Intl.message(
-      'Remove $name?',
+      'Remove $name\'s account?',
       name: 'removeChildConfirmTitle',
       desc: '',
       args: [name],
     );
   }
 
-  /// `This will remove {name} from your family and permanently delete their account and all associated data, including tasks, coins and app settings. This cannot be undone.`
+  /// `This permanently deletes {name}'s child account and all associated data, including tasks, coins, and app settings. This cannot be undone.`
   String removeChildConfirmBody(String name) {
     return Intl.message(
-      'This will remove $name from your family and permanently delete their account and all associated data, including tasks, coins and app settings. This cannot be undone.',
+      'This permanently deletes $name\'s child account and all associated data, including tasks, coins, and app settings. This cannot be undone.',
       name: 'removeChildConfirmBody',
       desc: '',
       args: [name],
     );
   }
 
-  /// `Removing child…`
+  /// `Removing child account…`
   String get removeChildInProgress {
     return Intl.message(
-      'Removing child…',
+      'Removing child account…',
       name: 'removeChildInProgress',
       desc: '',
       args: [],
     );
   }
 
-  /// `{name} was removed. Their account and data were permanently deleted.`
+  /// `{name}'s account was permanently deleted.`
   String removeChildDeletedSuccess(String name) {
     return Intl.message(
-      '$name was removed. Their account and data were permanently deleted.',
+      '$name\'s account was permanently deleted.',
       name: 'removeChildDeletedSuccess',
       desc: '',
       args: [name],
