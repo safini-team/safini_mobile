@@ -189,9 +189,8 @@ GET /v1/children/{child_id}/screen-time-status    (parent of child, or the child
 
 **Client status:** plumbing built ahead of the endpoint — `ApiConst.childScreenTimeStatus`,
 `ScreenTimeStatus` model, `ChildAppRulesService.reportScreenTimeStatus` /
-`fetchScreenTimeStatus`, and a round-trip button on the iOS
-`ChildScreenTimeDebugScreen` (Kid · Me → DEV · Screen Time). Until this ships
-the GET returns 404, which the dev screen shows verbatim. No parent UI yet.
+`fetchScreenTimeStatus`. Kid · Me on iOS opens the real setup UI
+(`IosScreenTimeScreen`). Until this ships the GET returns 404. No parent UI yet.
 
 Linear: [SAF-154](https://linear.app/safini-team/issue/SAF-154/ios-report-screen-time-status-to-backend-so-parent-can-see-it)
 Design: `observation/ios_parent_backend_sync.md`.
