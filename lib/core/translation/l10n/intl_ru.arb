@@ -666,5 +666,45 @@
   "iosScreenTimeErrorGeneric": "Не удалось получить доступ к Экранному времени. Попробуйте ещё раз.",
   "showAllAppsCount": "Показать все приложения ({count})",
   "showFewerApps": "Свернуть",
-  "myTimeToday": "Моё время сегодня"
+  "myTimeToday": "Моё время сегодня",
+  "removeChild": "Удалить ребёнка",
+  "removeChildConfirmTitle": "Удалить {name}?",
+  "removeChildConfirmBody": "Ребёнок {name} будет удалён из вашей семьи. Его аккаунт и все связанные данные, включая задания, монеты и настройки приложений, будут удалены навсегда. Это действие нельзя отменить.",
+  "removeChildInProgress": "Удаление ребёнка…",
+  "removeChildDeletedSuccess": "{name} удалён из семьи. Аккаунт и данные удалены навсегда.",
+  "removeChildUnlinkedSuccess": "{name} удалён из вашей семьи. Аккаунт сохранён.",
+  "removeChildUnauthorized": "Сессия истекла. Войдите снова, чтобы удалить ребёнка.",
+  "removeChildForbidden": "У вас нет прав на удаление этого ребёнка.",
+  "removeChildNotFound": "Этого ребёнка больше нет в вашей семье. Список семьи обновлён.",
+  "removeChildNetworkError": "Не удалось подключиться. Проверьте интернет и попробуйте снова.",
+  "removeChildError": "Не удалось удалить ребёнка. Попробуйте снова.",
+  "removeChildRefreshError": "Ребёнок удалён, но не удалось обновить список семьи. Попробуйте обновить его ещё раз.",
+  "@removeChildConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildDeletedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildUnlinkedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

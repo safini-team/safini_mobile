@@ -4,6 +4,7 @@ import '../models/child_invite_code_model.dart';
 import '../models/child_model.dart';
 import '../models/family_model.dart';
 import '../models/parent_invite_code_model.dart';
+import '../models/unlink_child_result.dart';
 import '../repositories/i_family_repository.dart';
 import '../../../../core/utils/error/failures.dart';
 
@@ -48,4 +49,6 @@ class FamilyController {
   );
   Future<Either<Failure, void>> removeParent(String parentUserId) =>
       _repository.removeParent(parentUserId);
+  Future<Either<Failure, UnlinkChildResult>> removeChild(String childId) =>
+      _repository.removeChild(childId);
 }

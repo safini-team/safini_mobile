@@ -699,5 +699,45 @@
         "type": "int"
       }
     }
+  },
+  "removeChild": "Remove child",
+  "removeChildConfirmTitle": "Remove {name}?",
+  "removeChildConfirmBody": "This will remove {name} from your family and permanently delete their account and all associated data, including tasks, coins and app settings. This cannot be undone.",
+  "removeChildInProgress": "Removing child…",
+  "removeChildDeletedSuccess": "{name} was removed. Their account and data were permanently deleted.",
+  "removeChildUnlinkedSuccess": "{name} was removed from your family. Their account was kept.",
+  "removeChildUnauthorized": "Your session has expired. Please sign in again to remove this child.",
+  "removeChildForbidden": "You do not have permission to remove this child.",
+  "removeChildNotFound": "This child is no longer in your family. The family list has been updated.",
+  "removeChildNetworkError": "Could not connect. Check your internet connection and try again.",
+  "removeChildError": "Could not remove this child. Please try again.",
+  "removeChildRefreshError": "The child was removed, but the family list could not be refreshed. Please refresh it again.",
+  "@removeChildConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildDeletedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildUnlinkedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

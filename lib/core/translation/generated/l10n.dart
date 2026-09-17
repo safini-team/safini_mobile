@@ -4770,6 +4770,126 @@ class S {
       args: [],
     );
   }
+
+  /// `Remove child`
+  String get removeChild {
+    return Intl.message(
+      'Remove child',
+      name: 'removeChild',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove {name}?`
+  String removeChildConfirmTitle(String name) {
+    return Intl.message(
+      'Remove $name?',
+      name: 'removeChildConfirmTitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `This will remove {name} from your family and permanently delete their account and all associated data, including tasks, coins and app settings. This cannot be undone.`
+  String removeChildConfirmBody(String name) {
+    return Intl.message(
+      'This will remove $name from your family and permanently delete their account and all associated data, including tasks, coins and app settings. This cannot be undone.',
+      name: 'removeChildConfirmBody',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Removing child…`
+  String get removeChildInProgress {
+    return Intl.message(
+      'Removing child…',
+      name: 'removeChildInProgress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} was removed. Their account and data were permanently deleted.`
+  String removeChildDeletedSuccess(String name) {
+    return Intl.message(
+      '$name was removed. Their account and data were permanently deleted.',
+      name: 'removeChildDeletedSuccess',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `{name} was removed from your family. Their account was kept.`
+  String removeChildUnlinkedSuccess(String name) {
+    return Intl.message(
+      '$name was removed from your family. Their account was kept.',
+      name: 'removeChildUnlinkedSuccess',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Your session has expired. Please sign in again to remove this child.`
+  String get removeChildUnauthorized {
+    return Intl.message(
+      'Your session has expired. Please sign in again to remove this child.',
+      name: 'removeChildUnauthorized',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You do not have permission to remove this child.`
+  String get removeChildForbidden {
+    return Intl.message(
+      'You do not have permission to remove this child.',
+      name: 'removeChildForbidden',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This child is no longer in your family. The family list has been updated.`
+  String get removeChildNotFound {
+    return Intl.message(
+      'This child is no longer in your family. The family list has been updated.',
+      name: 'removeChildNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not connect. Check your internet connection and try again.`
+  String get removeChildNetworkError {
+    return Intl.message(
+      'Could not connect. Check your internet connection and try again.',
+      name: 'removeChildNetworkError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not remove this child. Please try again.`
+  String get removeChildError {
+    return Intl.message(
+      'Could not remove this child. Please try again.',
+      name: 'removeChildError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The child was removed, but the family list could not be refreshed. Please refresh it again.`
+  String get removeChildRefreshError {
+    return Intl.message(
+      'The child was removed, but the family list could not be refreshed. Please refresh it again.',
+      name: 'removeChildRefreshError',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -9,7 +9,7 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/screens/family/parent_family_view.dart';
 
 /// What the caller should do after the sheet closes.
-enum FamilySheetAction { none, editProfile, editChild, removeParent }
+enum FamilySheetAction { none, editProfile, editChild, removeParent, removeChild }
 
 /// The artboard's parent sheet: avatar, name and email, a details panel, then
 /// the invite-code button that reveals the deep-purple code panel in place.
@@ -166,18 +166,28 @@ Future<FamilySheetAction?> showChildSheet(
   BuildContext context, {
   required FamilyChildCard child,
   required Future<InviteCodeResult> Function() onCreateCode,
+  bool canRemove = true,
 }) {
   return showDsSheet<FamilySheetAction>(
     context: context,
-    builder: (context) => _ChildSheet(child: child, onCreateCode: onCreateCode),
+    builder: (context) => _ChildSheet(
+      child: child,
+      onCreateCode: onCreateCode,
+      canRemove: canRemove,
+    ),
   );
 }
 
 class _ChildSheet extends StatefulWidget {
-  const _ChildSheet({required this.child, required this.onCreateCode});
+  const _ChildSheet({
+    required this.child,
+    required this.onCreateCode,
+    required this.canRemove,
+  });
 
   final FamilyChildCard child;
   final Future<InviteCodeResult> Function() onCreateCode;
+  final bool canRemove;
 
   @override
   State<_ChildSheet> createState() => _ChildSheetState();
@@ -281,6 +291,15 @@ class _ChildSheetState extends State<_ChildSheet> {
           label: s.editName(child.name),
           onTap: () => Navigator.of(context).pop(FamilySheetAction.editChild),
         ),
+        if (widget.canRemove) ...[
+          const SizedBox(height: 4),
+          DsDestructiveButton(
+            label: s.removeChild,
+            filled: false,
+            onTap: () =>
+                Navigator.of(context).pop(FamilySheetAction.removeChild),
+          ),
+        ],
       ],
     );
   }

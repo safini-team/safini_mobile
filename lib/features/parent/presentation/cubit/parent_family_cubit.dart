@@ -360,6 +360,20 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     return capturedFailure;
   }
 
+  Future<({Failure? failure, bool childAccountDeleted})> removeChild(
+    String childId,
+  ) async {
+    final result = await _controller.removeChild(childId);
+
+    return result.fold(
+      (failure) => (failure: failure, childAccountDeleted: false),
+      (payload) => (
+        failure: null,
+        childAccountDeleted: payload.childAccountDeleted,
+      ),
+    );
+  }
+
   Future<void> loadCurrentFamily({bool refresh = false}) async {
     if (!refresh && state.family == null) {
       return;
