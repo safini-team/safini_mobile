@@ -566,5 +566,45 @@
   "iosScreenTimeErrorGeneric": "Ekran vaqtiga ruxsat olinmadi. Qayta urinib ko‘ring.",
   "showAllAppsCount": "Barcha {count} ta ilovani koʻrsatish",
   "showFewerApps": "Yigʻish",
-  "myTimeToday": "Bugungi vaqtim"
+  "myTimeToday": "Bugungi vaqtim",
+  "removeChild": "Bolani olib tashlash",
+  "removeChildConfirmTitle": "{name} olib tashlansinmi?",
+  "removeChildConfirmBody": "{name} oilangizdan olib tashlanadi. Uning hisobi va barcha tegishli maʼlumotlari, jumladan topshiriqlar, tangalar va ilova sozlamalari butunlay oʻchiriladi. Bu amalni ortga qaytarib boʻlmaydi.",
+  "removeChildInProgress": "Bola olib tashlanmoqda…",
+  "removeChildDeletedSuccess": "{name} oiladan olib tashlandi. Hisobi va maʼlumotlari butunlay oʻchirildi.",
+  "removeChildUnlinkedSuccess": "{name} oilangizdan olib tashlandi. Hisobi saqlab qolindi.",
+  "removeChildUnauthorized": "Sessiya muddati tugadi. Bolani olib tashlash uchun qayta kiring.",
+  "removeChildForbidden": "Bu bolani olib tashlashga ruxsatingiz yoʻq.",
+  "removeChildNotFound": "Bu bola endi oilangizda yoʻq. Oila roʻyxati yangilandi.",
+  "removeChildNetworkError": "Ulanib boʻlmadi. Internet aloqasini tekshirib, qayta urinib koʻring.",
+  "removeChildError": "Bolani olib tashlab boʻlmadi. Qayta urinib koʻring.",
+  "removeChildRefreshError": "Bola olib tashlandi, lekin oila roʻyxatini yangilab boʻlmadi. Uni qayta yangilang.",
+  "@removeChildConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildDeletedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@removeChildUnlinkedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -3,6 +3,7 @@ import '../models/child_invite_code_model.dart';
 import '../models/child_model.dart';
 import '../models/parent_invite_code_model.dart';
 import '../models/family_model.dart';
+import '../models/unlink_child_result.dart';
 import '../../../../core/utils/error/failures.dart';
 
 abstract class IFamilyRepository {
@@ -33,4 +34,6 @@ abstract class IFamilyRepository {
     bool clearDailyScreenTime = false,
   });
   Future<Either<Failure, void>> removeParent(String parentUserId);
+  /// DELETE /v1/families/current/children/{child_id}.
+  Future<Either<Failure, UnlinkChildResult>> removeChild(String childId);
 }

@@ -8,6 +8,7 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
@@ -308,8 +309,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
       onCreateCode: () async {
         final invite = await cubit.createChildInviteCode(card.id);
         if (invite != null) return (code: invite.inviteCode, error: null);
-        // The backend refuses a code for a child who is already connected, and
-        // there is no unlink endpoint yet, so say what the parent has to do.
+        // The backend refuses a code for a child who is already connected.
         final message = cubit.state.errorMessage;
         return (
           code: null,
@@ -317,6 +317,11 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
         );
       },
     );
+
+    if (action == FamilySheetAction.removeChild) {
+      await _removeChild(cubit, card);
+      return;
+    }
 
     if (action != FamilySheetAction.editChild) return;
     final child = cubit.state.family?.children
@@ -329,6 +334,82 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
     if (updated == true && mounted) {
       cubit.loadCurrentFamily(refresh: true);
     }
+  }
+
+  Future<void> _removeChild(
+    ParentFamilyCubit cubit,
+    FamilyChildCard card,
+  ) async {
+    final confirmed = await showDsSheet<bool>(
+      context: context,
+      builder: (context) {
+        final s = S.of(context);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              s.removeChildConfirmTitle(card.name),
+              style: AppText.title3,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              s.removeChildConfirmBody(card.name),
+              style: AppText.bodyRegular,
+            ),
+            const SizedBox(height: 22),
+            DsPrimaryButton(
+              label: s.removeChild,
+              background: AppColors.danger,
+              shadow: const [],
+              onTap: () => Navigator.of(context).pop(true),
+            ),
+            const SizedBox(height: 9),
+            DsPrimaryButton.secondary(
+              label: s.cancel,
+              onTap: () => Navigator.of(context).pop(false),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !mounted) return;
+
+    final s = S.of(context);
+    AppSnackBar.info(context, s.removeChildInProgress);
+    final outcome = await cubit.removeChild(card.id);
+    if (!mounted) return;
+    final failure = outcome.failure;
+    if (failure != null) {
+      AppSnackBar.error(context, _removeChildErrorMessage(failure, s));
+      return;
+    }
+
+    await cubit.loadCurrentFamily(refresh: true);
+    if (!mounted) return;
+    final refreshError = cubit.state.errorMessage;
+    if (refreshError != null && refreshError.isNotEmpty) {
+      AppSnackBar.error(context, s.removeChildRefreshError);
+      return;
+    }
+    AppSnackBar.success(
+      context,
+      outcome.childAccountDeleted
+          ? s.removeChildDeletedSuccess(card.name)
+          : s.removeChildUnlinkedSuccess(card.name),
+    );
+  }
+
+  String _removeChildErrorMessage(Failure failure, S s) {
+    if (failure is UnauthorizedFailure) return s.removeChildUnauthorized;
+    if (failure is NetworkFailure) return s.removeChildNetworkError;
+    if (failure is ValidationFailure || failure is NotFoundFailure) {
+      return s.removeChildNotFound;
+    }
+    if (failure.message.toLowerCase().contains('permission')) {
+      return s.removeChildForbidden;
+    }
+    return s.removeChildError;
   }
 
   Future<void> _addChild() async {

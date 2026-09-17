@@ -14,6 +14,7 @@ import 'package:safini/features/models/domain/models/child_invite_code_model.dar
 import 'package:safini/features/models/domain/models/child_model.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
+import 'package:safini/features/models/domain/models/unlink_child_result.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
 
 @Injectable(as: IFamilyRepository)
@@ -170,6 +171,28 @@ class FamilyRepositoryImpl implements IFamilyRepository {
     return response.fold(
       (failure) => Left(failure),
       (body) => Right(ChildModel.fromJson(body)),
+    );
+  }
+
+
+  @override
+  Future<Either<Failure, UnlinkChildResult>> removeChild(String childId) async {
+    final response = await _request(
+      () => _client.delete(
+        _uri('/v1/families/current/children/$childId'),
+        headers: _headers(),
+      ),
+      statusMessages: {
+        401: 'Invalid or expired token.',
+        403: 'You do not have permission to remove this child.',
+        404: 'Child not found.',
+        503: 'Service unavailable.',
+      },
+    );
+
+    return response.fold(
+      (failure) => Left(failure),
+      (body) => Right(UnlinkChildResult.fromJson(body)),
     );
   }
 
