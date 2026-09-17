@@ -60,6 +60,20 @@ class _ReviewSheetState extends State<_ReviewSheet> {
     // looked for 'photo', which never matches, so this panel never rendered.
     final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('image');
     final photoUrl = (task.submissionImageUrl ?? '').trim();
+    final noPhoto = SizedBox(
+      height: 170,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppIcons.camera(),
+          const SizedBox(height: 8),
+          Text(
+            s.photoProofAsked,
+            style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
+          ),
+        ],
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,8 +106,15 @@ class _ReviewSheetState extends State<_ReviewSheet> {
         ],
         if (wantsPhoto) ...[
           const SizedBox(height: 18),
+          // The whole photo, not a crop: a phone shot is portrait, and a
+          // fixed 170-high `cover` frame showed a strip across its middle.
+          // The frame takes the photo's own shape, up to half the screen, and
+          // anything taller is letterboxed on the fill.
           Container(
-            height: 170,
+            constraints: BoxConstraints(
+              minHeight: 170,
+              maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+            ),
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: AppColors.fill,
@@ -104,39 +125,15 @@ class _ReviewSheetState extends State<_ReviewSheet> {
               ),
             ),
             child: photoUrl.isEmpty
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AppIcons.camera(),
-                      const SizedBox(height: 8),
-                      Text(
-                        s.photoProofAsked,
-                        style: AppText.metaSm.copyWith(
-                          color: AppColors.textTertiary,
-                        ),
-                      ),
-                    ],
-                  )
+                ? noPhoto
                 : Image.network(
                     photoUrl,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     width: double.infinity,
                     // The URL expires in five minutes. A sheet left open past
                     // that shows the same panel as a task with no photo, not a
                     // broken image.
-                    errorBuilder: (context, _, _) => Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AppIcons.camera(),
-                        const SizedBox(height: 8),
-                        Text(
-                          s.photoProofAsked,
-                          style: AppText.metaSm.copyWith(
-                            color: AppColors.textTertiary,
-                          ),
-                        ),
-                      ],
-                    ),
+                    errorBuilder: (context, _, _) => noPhoto,
                   ),
           ),
         ],

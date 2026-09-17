@@ -102,6 +102,16 @@ public class EnforcementDeviceTest extends InstrumentationTestCase {
         assertEquals(30000L, reopened.used(pkg, "2026-09-07"));
         reopened.clear();
     }
+    public void testClearKeepsTheChildsLanguage() throws Exception {
+        EnforcementStore store = new EnforcementStore(context());
+        // The app sends its language as it opens, then a first pairing clears the store.
+        store.setLanguage("ru");
+        store.clear();
+        assertEquals("ru", new EnforcementStore(context()).getLanguage());
+        store.setLanguage("uz");
+        store.clear();
+        assertEquals("uz", store.getLanguage());
+    }
     public void testConfigureLocalFixture() throws Exception {
         // Explicitly opt in to the disposable API configured by the test operator.
         android.os.Bundle args = FixtureRunner.arguments;

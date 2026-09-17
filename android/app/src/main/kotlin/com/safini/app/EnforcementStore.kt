@@ -1,6 +1,7 @@
 package com.safini.app
 
 import android.content.Context
+import android.content.res.Resources
 import org.json.JSONObject
 import org.json.JSONArray
 import java.time.Instant
@@ -22,9 +23,17 @@ class EnforcementStore(context: Context) {
     var enabled: Boolean
         get() = prefs.getBoolean("enabled", false)
         set(value) { prefs.edit().putBoolean("enabled", value).commit() }
+    /** The language the child reads Safini in, for the block screen and the service notification. The app
+     *  sends it as it opens, which is before a new pairing's configure() clears the store, so clear() keeps
+     *  it: wiping it left the block screen in English on a Russian phone until Safini was reopened. */
     var language: String
-        get() = prefs.getString("language", "en")!!
+        get() = prefs.getString("language", null) ?: phoneLanguage()
         set(value) { prefs.edit().putString("language", value).apply() }
+    /** Until the app has said, follow the phone when it is set to a language Safini speaks. */
+    private fun phoneLanguage(): String {
+        val locales = Resources.getSystem().configuration.locales
+        return (0 until locales.size()).map { locales[it].language }.firstOrNull { it in LANGUAGES } ?: "en"
+    }
     /** True once the device-admin guard has been active for this pairing. Reset
      *  by clear() on a new pairing, so the heartbeat sends null until then. */
     var deviceAdminSeen: Boolean
@@ -156,12 +165,19 @@ class EnforcementStore(context: Context) {
             .putLong("cursor", cursor).putString("foreground", foreground).putBoolean("covered", covered).commit()
     }
     fun clear() {
-        prefs.edit().clear().commit()
+        // An editor applies clear() before its puts, whatever the call order.
+        val editor = prefs.edit().clear()
+        prefs.getString("language", null)?.let { editor.putString("language", it) }
+        editor.commit()
         snapshot = JSONObject()
         usage.keys().asSequence().toList().forEach { usage.remove(it) }
         device.keys().asSequence().toList().forEach { device.remove(it) }
         cursor = System.currentTimeMillis()
         foreground = null
         covered = false
+    }
+
+    private companion object {
+        val LANGUAGES = setOf("uz", "ru", "en")
     }
 }
