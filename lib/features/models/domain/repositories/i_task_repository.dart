@@ -4,14 +4,6 @@ import '../../../../core/utils/error/failures.dart';
 import '../../data/dto/task_dto.dart';
 
 abstract class ITaskRepository {
-  Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates();
-  Future<Either<Failure, List<TaskInstanceModel>>> getChildTasks(
-    String childId,
-  );
-  Future<Either<Failure, TaskInstanceModel>> submitTask(
-    String instanceId,
-    String proofUrl,
-  );
   Future<Either<Failure, TaskInstanceModel>> reviewTask(
     String instanceId,
     String status,

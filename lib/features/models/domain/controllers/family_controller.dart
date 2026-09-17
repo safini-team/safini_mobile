@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../models/child_invite_code_model.dart';
 import '../models/child_model.dart';
@@ -8,7 +7,6 @@ import '../models/unlink_child_result.dart';
 import '../repositories/i_family_repository.dart';
 import '../../../../core/utils/error/failures.dart';
 
-@lazySingleton
 class FamilyController {
   final IFamilyRepository _repository;
 

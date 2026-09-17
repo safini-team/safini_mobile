@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:injectable/injectable.dart';
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
@@ -17,7 +16,6 @@ import 'package:safini/features/models/domain/models/parent_invite_code_model.da
 import 'package:safini/features/models/domain/models/unlink_child_result.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
 
-@Injectable(as: IFamilyRepository)
 class FamilyRepositoryImpl implements IFamilyRepository {
   FamilyRepositoryImpl(this._client);
 

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../../domain/models/task_model.dart';
 import '../../domain/repositories/i_task_repository.dart';
@@ -7,31 +6,10 @@ import '../../../../core/utils/error/failures.dart';
 import '../../../../core/utils/constants/api_const.dart';
 import '../dto/task_dto.dart';
 
-@Injectable(as: ITaskRepository)
 class TaskRepositoryImpl implements ITaskRepository {
   final Dio _dio;
 
   TaskRepositoryImpl(this._dio);
-
-  @override
-  Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates() async {
-    return const Left(ServerFailure('Not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, List<TaskInstanceModel>>> getChildTasks(
-    String childId,
-  ) async {
-    return const Left(ServerFailure('Not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, TaskInstanceModel>> submitTask(
-    String instanceId,
-    String proofUrl,
-  ) async {
-    return const Left(ServerFailure('Not implemented'));
-  }
 
   @override
   Future<Either<Failure, TaskInstanceModel>> reviewTask(
