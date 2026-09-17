@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/app_icons.dart';
 import 'package:safini/core/utils/widgets/ds/ds_blur.dart';
+import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/core/utils/widgets/ds/pressable.dart';
 
 /// `@keyframes scrIn{from{opacity:0;transform:translateY(8px)}to{…}}` -
@@ -101,7 +102,11 @@ class DsScreen extends StatelessWidget {
           sliver: const SliverToBoxAdapter(child: SizedBox.shrink()),
         ),
         ...slivers,
-        SliverToBoxAdapter(child: SizedBox(height: bottomPadding)),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: bottomPadding + DsTabBar.extraHeight(context),
+          ),
+        ),
       ],
     );
 
@@ -131,7 +136,7 @@ class DsScreen extends StatelessWidget {
                     scroll,
                     Positioned(
                       right: AppSpacing.gutter,
-                      bottom: 104,
+                      bottom: 104 + DsTabBar.extraHeight(context),
                       child: floatingAction!,
                     ),
                   ],

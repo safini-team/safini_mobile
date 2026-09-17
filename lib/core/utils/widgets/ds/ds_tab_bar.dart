@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_motion.dart';
@@ -50,12 +51,28 @@ class DsTabBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   final Color background;
 
-  /// The design pads 26 under the labels; on a device that is the home
-  /// indicator's own inset, so mirror it rather than stacking both.
+  /// What the design pads under the labels.
+  static const double _artboardBottom = 26;
+
+  /// The design pads 26 under the labels. On an iPhone that is the home
+  /// indicator's own inset, a thin line drawn over the app, so mirror it
+  /// rather than stacking both. On Android the inset is the system navigation
+  /// bar - 48dp of back/home/recents buttons, or the gesture handle - and a
+  /// label inside it sits under those buttons, so the bar clears it instead.
   static double bottomPadding(BuildContext context) {
     final inset = MediaQuery.viewPaddingOf(context).bottom;
-    return inset > 0 ? math.max(inset - 8, 12) : 12;
+    if (inset <= 0) return 12;
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return math.max(inset - 8, 12);
+    }
+    return inset + 8;
   }
+
+  /// How much taller than the artboard the bar is on this device: zero on an
+  /// iPhone, the navigation bar's clearance on Android. Anything placed to
+  /// clear the bar adds this to its artboard offset.
+  static double extraHeight(BuildContext context) =>
+      math.max(0, bottomPadding(context) - _artboardBottom);
 
   /// Per the artboard's copy-pressure rule.
   static ({double label, double letterSpacing, double icon}) metricsFor(
@@ -83,10 +100,12 @@ class DsTabBar extends StatelessWidget {
                 top: BorderSide(color: Color(0x99FFFFFF)),
               ),
             ),
+            // In landscape the system navigation bar and the camera cutout
+            // move to a side; the tabs step in from them the same way.
             padding: EdgeInsets.fromLTRB(
-              10,
+              10 + MediaQuery.viewPaddingOf(context).left,
               9,
-              10,
+              10 + MediaQuery.viewPaddingOf(context).right,
               bottomPadding(context),
             ),
             child: Row(

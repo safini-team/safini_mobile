@@ -3,9 +3,11 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_motion.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/utils/widgets/ds/ds_blur.dart';
+import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 
 /// The dark capsule toast: `bottom:112px`, `rgba(23,21,28,.9)` + blur(20),
-/// a green tick, `toastIn 300ms`, gone after 2.4s.
+/// a green tick, `toastIn 300ms`, gone after 2.4s. On Android it rises with
+/// the tab bar, which grows to clear the system navigation bar.
 ///
 /// One at a time - a second call replaces the first, exactly as
 /// `flash()` does in the design (`clearTimeout(this._toast)`).
@@ -30,7 +32,7 @@ class DsToast {
       builder: (context) => Positioned(
         left: 0,
         right: 0,
-        bottom: 112,
+        bottom: 112 + DsTabBar.extraHeight(context),
         child: Material(
           type: MaterialType.transparency,
           child: IgnorePointer(
