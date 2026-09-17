@@ -93,14 +93,6 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         children: _children,
         selectedIndex: _selectedIndex,
         faceEmoji: faceEmoji,
-        // TODO(backend): no GET endpoint for steps yet (only POST /steps).
-        stepsToday: 0,
-        stepsChange: '',
-        // TODO(backend): no "lessons" concept exposed by the API yet.
-        lessonsToday: '0/0',
-        lessonsChange: '',
-        // TODO(backend): app-usage only returns today; no weekly aggregation.
-        weeklyUsage: const [0, 0, 0, 0, 0, 0, 0],
         appLimits: _appUsage.map(_toLimitMap).toList(),
         screenTime: _screenTime,
         deviceUsage: await deviceUsage,

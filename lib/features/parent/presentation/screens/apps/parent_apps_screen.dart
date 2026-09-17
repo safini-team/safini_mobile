@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/theme/app_colors.dart';
-import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
@@ -95,8 +94,7 @@ class _ParentLimitsView extends StatelessWidget {
         // "Apps on this phone" list. Rows for catalog-mapped apps are tappable
         // (add / limit / block), so the screen needs the ParentAppsCubit.
         final VoidCallback? onSeeAllApps =
-            AppConstants.childInstalledAppsShipped &&
-                state.screenTime.usageAvailable &&
+            state.screenTime.usageAvailable &&
                 selectedId != null &&
                 selectedId.isNotEmpty
             ? () => Navigator.of(context).push(
