@@ -76,9 +76,8 @@ void main() {
 
   tearDown(() => GetIt.I.reset());
 
-  testWidgets('each protection state gets its own sentence', (tester) async {
+  testWidgets('each problem state gets its own sentence', (tester) async {
     for (final entry in {
-      'active': 'App limits are running',
       'attention_required': 'App limits need attention',
       'offline': 'offline or has stopped reporting',
       'not_configured': 'Set up app limits',
@@ -93,15 +92,19 @@ void main() {
     }
   });
 
-  testWidgets('only a healthy device gets the reassuring icon', (tester) async {
+  testWidgets('a healthy device stays quiet', (tester) async {
     adapter.status = 'active';
     await pumpCard(tester, 'child-1');
-    expect(find.byIcon(Icons.verified_user_outlined), findsOneWidget);
+    expect(find.byType(ListTile), findsNothing);
+    expect(find.textContaining('App limits are running'), findsNothing);
+    expect(find.byIcon(Icons.verified_user_outlined), findsNothing);
+  });
 
+  testWidgets('problem states use the warning icon', (tester) async {
     adapter.status = 'offline';
     await pumpCard(tester, 'child-2');
-    expect(find.byIcon(Icons.verified_user_outlined), findsNothing);
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.verified_user_outlined), findsNothing);
   });
 
   testWidgets('the warning icon is yellow, the sentence is not', (
@@ -113,11 +116,6 @@ void main() {
     expect(icon.color, AppColors.warning);
     final text = tester.widget<Text>(find.textContaining('Set up app limits'));
     expect(text.style?.color, isNot(AppColors.warning));
-
-    adapter.status = 'active';
-    await pumpCard(tester, 'child-2');
-    final shield = tester.widget<Icon>(find.byIcon(Icons.verified_user_outlined));
-    expect(shield.color, AppColors.success);
   });
 
   testWidgets('a failed check says so instead of claiming everything is fine',
@@ -147,6 +145,7 @@ void main() {
     completer.complete();
     await tester.pump(const Duration(milliseconds: 50));
     expect(find.byType(ListTile), findsOneWidget);
+    expect(find.textContaining('Set up app limits'), findsOneWidget);
   });
 
   testWidgets('switching child re-reads that child, not the previous one',
@@ -158,12 +157,29 @@ void main() {
     expect(adapter.calls, greaterThan(before));
   });
 
-  testWidgets('iOS status stays compact and below the notch', (tester) async {
+  testWidgets('iOS stays quiet when Screen Time is healthy and recent',
+      (tester) async {
     adapter.ios = {
       'platform': 'ios',
       'authorization': 'approved',
       'monitoring_active': true,
       'updated_at': DateTime.now().toUtc().toIso8601String(),
+    };
+    await pumpCard(tester, 'child-ios-ok');
+    expect(find.byType(ListTile), findsNothing);
+    expect(find.text('iOS Screen Time · last reported status'), findsNothing);
+    expect(find.textContaining('Monitoring configured'), findsNothing);
+  });
+
+  testWidgets('iOS status stays compact and below the notch', (tester) async {
+    adapter.ios = {
+      'platform': 'ios',
+      'authorization': 'approved',
+      'monitoring_active': true,
+      'updated_at': DateTime.now()
+          .toUtc()
+          .subtract(const Duration(minutes: 10))
+          .toIso8601String(),
     };
 
     await tester.pumpWidget(
@@ -234,7 +250,7 @@ class _BlockingAdapter implements HttpClientAdapter {
   ) async {
     await gate;
     return ResponseBody.fromString(
-      jsonEncode({'status': 'active'}),
+      jsonEncode({'status': 'not_configured'}),
       200,
       headers: {
         Headers.contentTypeHeader: [Headers.jsonContentType],

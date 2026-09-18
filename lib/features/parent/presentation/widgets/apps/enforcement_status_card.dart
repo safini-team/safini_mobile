@@ -91,6 +91,7 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
       final active =
           _ios!['authorization'] == 'approved' &&
           _ios!['monitoring_active'] == true;
+      if (active && recent) return const SizedBox.shrink();
       final statusLine = active ? s.iosScreenTimeOn : s.iosScreenTimeOff;
       final lastSeen = _iosLastSeen(context, reported);
       return Material(
@@ -98,9 +99,7 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
         child: SafeArea(
           bottom: false,
           child: ListTile(
-            leading: Icon(
-              active && recent ? Icons.shield_outlined : Icons.info_outline,
-            ),
+            leading: const Icon(Icons.info_outline),
             title: Text(s.iosScreenTimeParent),
             subtitle: Text(
               lastSeen.isEmpty ? statusLine : '$statusLine\n$lastSeen',
@@ -110,11 +109,9 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
         ),
       );
     }
-    if (_status == null) return const SizedBox.shrink();
+    if (_status == null || _status == 'active') return const SizedBox.shrink();
     final s = S.of(context);
-    final active = _status == 'active';
     final message = switch (_status) {
-      'active' => s.enforcementActive,
       'not_configured' => s.enforcementNotConfigured,
       'attention_required' => s.enforcementAttention,
       'offline' => s.enforcementOffline,
@@ -126,9 +123,9 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
         bottom: false,
         child: ListTile(
           // Only the icon carries the state colour; the sentence stays ink.
-          leading: Icon(
-            active ? Icons.verified_user_outlined : Icons.warning_amber_rounded,
-            color: active ? AppColors.success : AppColors.warning,
+          leading: const Icon(
+            Icons.warning_amber_rounded,
+            color: AppColors.warning,
           ),
           title: Text(message),
           onTap: _load,
