@@ -714,6 +714,7 @@
   "iosScreenTimeOn": "Monitoring configured",
   "iosScreenTimeOff": "Setup needs attention",
   "iosScreenTimeLocalUsage": "View actual usage in Screen Time on the child’s device.",
+  "iosScreenTimeLocalUsageShort": "Usage on the child’s device",
   "iosScreenTimeErrorRestricted": "Screen Time is restricted on this device. A parent or a device management profile has turned it off.",
   "iosScreenTimeErrorUnavailable": "Screen Time is unavailable on this device. Turn Screen Time on in Settings, then try again.",
   "iosScreenTimeErrorInvalidAccount": "This Apple Account cannot grant Screen Time access. Sign in with the child’s own Apple Account, or ask a parent to add it to Apple Family Sharing.",

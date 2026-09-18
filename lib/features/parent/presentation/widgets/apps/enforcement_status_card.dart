@@ -91,25 +91,27 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
       final active =
           _ios!['authorization'] == 'approved' &&
           _ios!['monitoring_active'] == true;
-      final lastSeen = reported == null
-          ? ''
-          : '${MaterialLocalizations.of(context).formatShortDate(reported.toLocal())} ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(reported.toLocal()))}';
-      return ListTile(
-        leading: Icon(
-          active && recent ? Icons.shield_outlined : Icons.info_outline,
+      if (active && recent) return const SizedBox.shrink();
+      final statusLine = active ? s.iosScreenTimeOn : s.iosScreenTimeOff;
+      final lastSeen = _iosLastSeen(context, reported);
+      return Material(
+        color: Theme.of(context).colorScheme.surface,
+        child: SafeArea(
+          bottom: false,
+          child: ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(s.iosScreenTimeParent),
+            subtitle: Text(
+              lastSeen.isEmpty ? statusLine : '$statusLine\n$lastSeen',
+            ),
+            onTap: _load,
+          ),
         ),
-        title: Text(s.iosScreenTimeParent),
-        subtitle: Text(
-          '${active ? s.iosScreenTimeOn : s.iosScreenTimeOff}\n$lastSeen\n${s.iosScreenTimeLocalUsage}\n${s.iosScreenTimeSyncHint}',
-        ),
-        onTap: _load,
       );
     }
-    if (_status == null) return const SizedBox.shrink();
+    if (_status == null || _status == 'active') return const SizedBox.shrink();
     final s = S.of(context);
-    final active = _status == 'active';
     final message = switch (_status) {
-      'active' => s.enforcementActive,
       'not_configured' => s.enforcementNotConfigured,
       'attention_required' => s.enforcementAttention,
       'offline' => s.enforcementOffline,
@@ -121,9 +123,9 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
         bottom: false,
         child: ListTile(
           // Only the icon carries the state colour; the sentence stays ink.
-          leading: Icon(
-            active ? Icons.verified_user_outlined : Icons.warning_amber_rounded,
-            color: active ? AppColors.success : AppColors.warning,
+          leading: const Icon(
+            Icons.warning_amber_rounded,
+            color: AppColors.warning,
           ),
           title: Text(message),
           onTap: _load,
@@ -131,4 +133,16 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
       ),
     );
   }
+}
+
+String _iosLastSeen(BuildContext context, DateTime? reported) {
+  if (reported == null) return '';
+  final local = reported.toLocal();
+  final material = MaterialLocalizations.of(context);
+  final time = material.formatTimeOfDay(TimeOfDay.fromDateTime(local));
+  final now = DateTime.now();
+  final sameDay =
+      local.year == now.year && local.month == now.month && local.day == now.day;
+  if (sameDay) return time;
+  return '${material.formatShortDate(local)} $time';
 }

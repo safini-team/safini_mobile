@@ -612,6 +612,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "iosScreenTimeLocalUsage": MessageLookupByLibrary.simpleMessage(
       "View actual usage in Screen Time on the child’s device.",
     ),
+    "iosScreenTimeLocalUsageShort": MessageLookupByLibrary.simpleMessage(
+      "Usage on the child’s device",
+    ),
     "iosScreenTimeNoRules": MessageLookupByLibrary.simpleMessage(
       "Your parent can add app rules in Limits.",
     ),

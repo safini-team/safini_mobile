@@ -334,7 +334,7 @@ class _ScreenTimeCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       !data.usageAvailable
-                          ? s.iosScreenTimeLocalUsage
+                          ? s.iosScreenTimeLocalUsageShort
                           : data.limitMinutes > 0
                           ? s.kidHasLeftToday(
                               data.kidName,

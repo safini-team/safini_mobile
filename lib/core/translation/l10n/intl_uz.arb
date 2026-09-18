@@ -588,6 +588,7 @@
   "iosScreenTimeOn": "Nazorat sozlangan",
   "iosScreenTimeOff": "Sozlamalarni tekshiring",
   "iosScreenTimeLocalUsage": "Haqiqiy foydalanishni bolaning qurilmasidagi Ekran vaqti bo‘limida ko‘ring.",
+  "iosScreenTimeLocalUsageShort": "Foydalanish · bolaning qurilmasida",
   "iosScreenTimeErrorRestricted": "Bu qurilmada Ekran vaqti cheklangan. Uni ota-ona yoki qurilma boshqaruvi profili o‘chirgan.",
   "iosScreenTimeErrorUnavailable": "Bu qurilmada Ekran vaqti mavjud emas. Sozlamalarda Ekran vaqtini yoqing va qayta urinib ko‘ring.",
   "iosScreenTimeErrorInvalidAccount": "Bu Apple Account Ekran vaqtiga ruxsat bera olmaydi. Bolaning o‘z Apple Account’i bilan kiring yoki ota-onadan uni Apple oilaviy guruhiga qo‘shishni so‘rang.",
