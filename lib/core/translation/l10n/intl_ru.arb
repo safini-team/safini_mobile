@@ -688,7 +688,7 @@
   "iosScreenTimeOn": "Контроль настроен",
   "iosScreenTimeOff": "Проверьте настройку",
   "iosScreenTimeLocalUsage": "Фактическое использование доступно в разделе «Экранное время» на устройстве ребёнка.",
-  "iosScreenTimeLocalUsageShort": "Использование — на устройстве ребёнка",
+  "iosScreenTimeLocalUsageShort": "Использование · на устройстве ребёнка",
   "iosScreenTimeErrorRestricted": "Экранное время ограничено на этом устройстве. Его отключил родитель или профиль управления устройством.",
   "iosScreenTimeErrorUnavailable": "Экранное время недоступно на этом устройстве. Включите Экранное время в Настройках и повторите попытку.",
   "iosScreenTimeErrorInvalidAccount": "Этот Apple Account не может выдать доступ к Экранному времени. Войдите под Apple Account ребёнка или попросите родителя добавить его в семейную группу Apple.",
