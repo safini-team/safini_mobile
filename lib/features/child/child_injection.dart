@@ -11,14 +11,11 @@ import 'package:safini/features/child/data/services/screen_time_service.dart';
 import 'package:safini/features/child/domain/controllers/child_controller.dart';
 import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_cubit.dart';
-import 'package:safini/features/child/presentation/cubit/child_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
-import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
-import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart'
     as safini_profile;
 
@@ -52,8 +49,6 @@ void registerChildDependencies(GetIt sl) {
 
   sl.registerLazySingleton<CoinsCubit>(() => CoinsCubit());
 
-  sl.registerFactory<ChildCubit>(() => ChildCubit(sl<ChildController>()));
-  sl.registerFactory<ChildHomeCubit>(() => ChildHomeCubit());
   sl.registerFactory<ChildAppBlockCubit>(
     () => ChildAppBlockCubit(
       sl<AppBlockService>(),
@@ -66,14 +61,6 @@ void registerChildDependencies(GetIt sl) {
       sl<CoinsCubit>(),
       sl<safini_profile.ProfileController>(),
       sl<IChildRepository>(),
-    ),
-  );
-  sl.registerFactory<ProfileCubit>(
-    () => ProfileCubit(
-      sl<ChildController>(),
-      sl<ProfileRepository>(),
-      sl<CoinsCubit>(),
-      sl<Dio>(),
     ),
   );
   sl.registerFactory<AvatarCubit>(

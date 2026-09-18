@@ -24,7 +24,6 @@ import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_installed_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/core/network/authenticated_http_client.dart';
 
 void registerParentDependencies(GetIt sl) {
@@ -55,7 +54,6 @@ void registerParentDependencies(GetIt sl) {
   sl.registerFactory<ParentCubit>(
     () => ParentCubit(sl<ParentController>(), Supabase.instance.client),
   );
-  sl.registerFactory<ParentHomeCubit>(() => ParentHomeCubit());
   sl.registerLazySingleton<IParentAppUsageRepository>(
     () => ParentAppUsageRepositoryImpl(sl<AuthenticatedHttpClient>()),
   );

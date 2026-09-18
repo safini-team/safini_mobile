@@ -13,7 +13,6 @@ import 'package:safini/features/common/profile/data/datasources/local/profile_lo
 import 'package:safini/features/common/profile/data/datasources/remote/profile_remote_datasource.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
-import 'package:safini/features/common/profile/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/models/data/repositories/child_repository_impl.dart'
     as models_child;
 import 'package:safini/features/models/domain/controllers/child_controller.dart'
@@ -85,5 +84,4 @@ void registerCommonDependencies(GetIt sl) {
   sl.registerFactory<ProfileController>(
     () => ProfileController(sl<ProfileRepository>()),
   );
-  sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl<ProfileController>()));
 }

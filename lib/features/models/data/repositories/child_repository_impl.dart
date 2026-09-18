@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
@@ -11,31 +10,10 @@ import '../../domain/models/child_model.dart';
 import '../../domain/repositories/i_child_repository.dart';
 import '../../../../core/utils/error/failures.dart';
 
-@Injectable(as: IChildRepository)
 class ChildRepositoryImpl implements IChildRepository {
   ChildRepositoryImpl(this._client);
 
   final AuthenticatedHttpClient _client;
-
-  @override
-  Future<Either<Failure, ChildModel>> createChild(
-    String nickname,
-    int age,
-    String gender,
-  ) async {
-    return const Left(ServerFailure('Not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, ChildModel>> updateChild(
-    String childId, {
-    String? nickname,
-    int? age,
-    String? gender,
-    AvatarStateModel? avatarState,
-  }) async {
-    return const Left(ServerFailure('Not implemented'));
-  }
 
   @override
   Future<Either<Failure, ChildModel>> claimChild(String inviteCode) async {
