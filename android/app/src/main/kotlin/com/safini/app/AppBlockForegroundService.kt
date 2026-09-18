@@ -282,7 +282,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         val pending = PendingIntent.getActivity(this, 0, packageManager.getLaunchIntentForPackage(packageName), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = Notification.Builder(this, "safini_limits").setContentTitle("Safini")
             .setContentText(text("Keeping your app limits", "Контроль времени приложений", "Ilova vaqtini nazorat qilish"))
-            .setSmallIcon(applicationInfo.icon).setOngoing(true).setContentIntent(pending).build()
+            .setSmallIcon(R.drawable.ic_stat_safini).setColor(getColor(R.color.safini_pine)).setOngoing(true).setContentIntent(pending).build()
         if (Build.VERSION.SDK_INT >= 34) startForeground(4711, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
         else startForeground(4711, notification)
     }

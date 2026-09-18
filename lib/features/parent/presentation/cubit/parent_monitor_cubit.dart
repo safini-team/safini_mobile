@@ -57,16 +57,19 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     return family.children.where((c) => c.id.isNotEmpty).toList();
   }
 
-  Future<void> loadMonitorData() async {
+  /// [childId] switches to that child, e.g. the one a tapped push is about.
+  Future<void> loadMonitorData({String? childId}) async {
     emit(const ParentMonitorLoading());
 
     // Always refetch the family. The coin balance and the streak on the card
     // come from the child rows in it, so skipping this when a family was
     // already loaded left a pull-to-refresh showing the balance from app
     // start, while the usage below it updated.
-    final selectedId = _children.length > _selectedIndex
-        ? _children[_selectedIndex].id
-        : null;
+    final selectedId =
+        childId ??
+        (_children.length > _selectedIndex
+            ? _children[_selectedIndex].id
+            : null);
     await _familyCubit.loadCurrentFamily(refresh: true);
 
     _children = _childrenFromFamily(_familyCubit.state.family);

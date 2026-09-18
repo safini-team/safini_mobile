@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
@@ -28,7 +33,7 @@ class ChildTasksScreen extends StatelessWidget {
         listenWhen: (prev, curr) =>
             prev.selectedIndex != curr.selectedIndex && curr.selectedIndex == 1,
         listener: (ctx, _) => ctx.read<TasksCubit>().loadTasks(),
-        child: const _ChildTasksScreen(),
+        child: const _TasksPushTarget(child: _ChildTasksScreen()),
       ),
     );
   }
@@ -96,37 +101,103 @@ class _ChildTasksScreen extends StatelessWidget {
     TaskCategory.logic => s.catLogic,
   };
 
-  void _openTask(BuildContext context, TasksState state, String taskId) {
-    final task = state.tasks.where((t) => t.id == taskId).firstOrNull;
-    if (task == null) return;
-    final cubit = context.read<TasksCubit>();
+  void _openTask(BuildContext context, TasksState state, String taskId) =>
+      _openChildTask(context, state, taskId);
+}
 
-    TaskDetailDialog.show(
-      context,
-      QuestModel(
-        id: task.id,
-        title: task.title,
-        subtitle: task.subtitle,
-        icon: task.icon,
-        iconColor: task.iconColor,
-        iconBackground: task.iconBackground,
-        emoji: task.emoji,
-        isCompleted: task.isCompleted,
-        coins: task.coins,
-        xp: task.xp,
-        proofMode: task.proofMode,
-        status: task.status,
-        voiceInstructionUrl: task.voiceInstructionUrl,
-        voiceInstructionDurationMs: task.voiceInstructionDurationMs,
+void _openChildTask(BuildContext context, TasksState state, String taskId) {
+  final task = state.tasks.where((t) => t.id == taskId).firstOrNull;
+  if (task == null) return;
+  final cubit = context.read<TasksCubit>();
+
+  TaskDetailDialog.show(
+    context,
+    QuestModel(
+      id: task.id,
+      title: task.title,
+      subtitle: task.subtitle,
+      icon: task.icon,
+      iconColor: task.iconColor,
+      iconBackground: task.iconBackground,
+      emoji: task.emoji,
+      isCompleted: task.isCompleted,
+      coins: task.coins,
+      xp: task.xp,
+      proofMode: task.proofMode,
+      status: task.status,
+      voiceInstructionUrl: task.voiceInstructionUrl,
+      voiceInstructionDurationMs: task.voiceInstructionDurationMs,
+    ),
+    onSubmit: task.isCompleted || task.isSubmitted
+        ? null
+        : (note, imageObjectKey) => cubit.submitTask(
+            task.id,
+            note: note,
+            imageObjectKey: imageObjectKey,
+          ),
+    onUploadPhoto: (path) => cubit.uploadPhoto(task.id, path),
+  );
+}
+
+/// Opens the task a tapped push is about ("sent back", "new task") once the
+/// list has it, and refetches when a task push arrives with the app open.
+class _TasksPushTarget extends StatefulWidget {
+  const _TasksPushTarget({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_TasksPushTarget> createState() => _TasksPushTargetState();
+}
+
+class _TasksPushTargetState extends State<_TasksPushTarget> {
+  StreamSubscription<PushTarget>? _deepLinks;
+  String? _taskId;
+
+  @override
+  void initState() {
+    super.initState();
+    _taskId = getIt<PushDeepLinks>().take(PushDestination.childTasks)?.taskId;
+    _deepLinks = getIt<PushDeepLinks>().stream
+        .where((target) => target.destination == PushDestination.childTasks)
+        .listen((_) {
+          final target = getIt<PushDeepLinks>().take(
+            PushDestination.childTasks,
+          );
+          if (target == null || !mounted) return;
+          _taskId = target.taskId;
+          context.read<TasksCubit>().loadTasks();
+        });
+  }
+
+  @override
+  void dispose() {
+    _deepLinks?.cancel();
+    super.dispose();
+  }
+
+  void _openWhenLoaded(BuildContext context, TasksState state) {
+    final taskId = _taskId;
+    if (taskId == null || state.isLoading) return;
+    _taskId = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _openChildTask(this.context, state, taskId);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OnPush(
+      types: const {
+        PushType.taskApproved,
+        PushType.taskRejected,
+        PushType.tasksAssigned,
+      },
+      onPush: (_) => context.read<TasksCubit>().loadTasks(),
+      child: BlocListener<TasksCubit, TasksState>(
+        listener: _openWhenLoaded,
+        child: widget.child,
       ),
-      onSubmit: task.isCompleted || task.isSubmitted
-          ? null
-          : (note, imageObjectKey) => cubit.submitTask(
-              task.id,
-              note: note,
-              imageObjectKey: imageObjectKey,
-            ),
-      onUploadPhoto: (path) => cubit.uploadPhoto(task.id, path),
     );
   }
 }

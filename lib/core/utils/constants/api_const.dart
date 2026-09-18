@@ -7,9 +7,13 @@ class ApiConst {
   static String get baseUrl => SupabaseConfig.apiBaseUrl;
   static const String me = '/v1/me';
 
-  /// PUT/DELETE/GET - this parent handset's push token, so protection alerts
-  /// reach them while the app is closed (SAF-164).
+  /// PUT/DELETE/GET - this handset's push token, parent or child, so
+  /// notifications reach whoever is signed in while the app is closed.
   static const String pushDevices = '/v1/me/push-devices';
+
+  /// GET/PATCH - the Alerts switches on parent Settings.
+  static const String notificationPreferences =
+      '/v1/me/notification-preferences';
   static const String currentFamily = '/v1/families/current';
   static const String children = '/v1/families/current/children';
 

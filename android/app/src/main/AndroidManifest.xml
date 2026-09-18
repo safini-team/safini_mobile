@@ -60,13 +60,20 @@
             </intent-filter>
         </activity>
 
-        <!-- Channel the protection alerts are posted to. Created in
-             MainActivity so it exists before the first notification arrives;
-             this meta-data is the fallback for messages that arrive while the
-             app has never been opened. -->
+        <!-- Every push names its channel; MainActivity creates them all
+             (PushNotifications.kt). This is the fallback for a push that
+             arrives before the app has ever been opened. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="safini_protection"/>
+        <!-- FCM draws background pushes itself; without these it uses the
+             launcher icon, which the status bar renders as a white square. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_safini"/>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/safini_pine"/>
 
         <!-- Foreground service that polls the foreground app and draws the block
              overlay when a limit/manual block applies. -->

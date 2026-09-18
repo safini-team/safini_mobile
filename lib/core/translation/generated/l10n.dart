@@ -3077,6 +3077,111 @@ class S {
     return Intl.message('App', name: 'sectionApp', desc: '', args: []);
   }
 
+  /// `Alerts`
+  String get sectionAlerts {
+    return Intl.message('Alerts', name: 'sectionAlerts', desc: '', args: []);
+  }
+
+  /// `New submissions`
+  String get alertSubmissionsTitle {
+    return Intl.message(
+      'New submissions',
+      name: 'alertSubmissionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Push as soon as a task is sent`
+  String get alertSubmissionsSubtitle {
+    return Intl.message(
+      'Push as soon as a task is sent',
+      name: 'alertSubmissionsSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limit reached`
+  String get alertLimitsTitle {
+    return Intl.message(
+      'Limit reached',
+      name: 'alertLimitsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When a kid runs out of time`
+  String get alertLimitsSubtitle {
+    return Intl.message(
+      'When a kid runs out of time',
+      name: 'alertLimitsSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weekly digest`
+  String get alertDigestTitle {
+    return Intl.message(
+      'Weekly digest',
+      name: 'alertDigestTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sunday evening summary`
+  String get alertDigestSubtitle {
+    return Intl.message(
+      'Sunday evening summary',
+      name: 'alertDigestSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Alerts about protection on a kid's phone are always on.`
+  String get alertsAlwaysOn {
+    return Intl.message(
+      'Alerts about protection on a kid\'s phone are always on.',
+      name: 'alertsAlwaysOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications are off for Safini`
+  String get notificationsOffTitle {
+    return Intl.message(
+      'Notifications are off for Safini',
+      name: 'notificationsOffTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn them on in the phone's settings to get these alerts.`
+  String get notificationsOffBody {
+    return Intl.message(
+      'Turn them on in the phone\'s settings to get these alerts.',
+      name: 'notificationsOffBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't save that. Check the connection and try again.`
+  String get alertSaveFailed {
+    return Intl.message(
+      'Couldn\'t save that. Check the connection and try again.',
+      name: 'alertSaveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Who are we setting up?`
   String get whoAreWeSettingUp {
     return Intl.message(

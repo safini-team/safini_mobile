@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
@@ -10,8 +8,8 @@ import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/core/di/injection.dart';
-import 'package:safini/core/notifications/parent_push_service.dart';
-import 'package:safini/core/notifications/push_deep_links.dart';
+import 'package:safini/core/notifications/push_event.dart';
+import 'package:safini/core/notifications/push_shell.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
@@ -23,10 +21,6 @@ import 'package:safini/features/parent/presentation/screens/apps/parent_apps_scr
 import 'package:safini/features/parent/presentation/screens/family/parent_family_screen.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
-/// Index of [ParentAppsScreen] in [ParentMainScreen._screens]; a protection
-/// alert opens straight to it.
-const int _appsTabIndex = 2;
-
 class ParentMainScreen extends StatefulWidget {
   const ParentMainScreen({super.key});
 
@@ -37,43 +31,55 @@ class ParentMainScreen extends StatefulWidget {
     ParentFamilyScreen(),
   ];
 
+  /// Which tab a tapped push opens, by its index in [_screens].
+  static int? tabFor(PushDestination destination) => switch (destination) {
+    PushDestination.parentToday => 0,
+    PushDestination.parentTasks => 1,
+    PushDestination.parentLimits => 2,
+    PushDestination.parentFamily => 3,
+    _ => null,
+  };
+
   @override
   State<ParentMainScreen> createState() => _ParentMainScreenState();
 }
 
 class _ParentMainScreenState extends State<ParentMainScreen>
     with WidgetsBindingObserver {
-  late final ParentHomeCubit _home = ParentHomeCubit(
-    initialIndex: getIt<PushDeepLinks>().hasPending ? _appsTabIndex : 0,
+  late final PushShell _push = PushShell(
+    tabFor: ParentMainScreen.tabFor,
+    selectTab: (index) => _home.selectTab(index),
+    // The Family tab only needs to be shown; it refreshes on its own.
+    consumedHere: const {PushDestination.parentFamily},
   );
-  StreamSubscription<String>? _deepLinks;
+  late final ParentHomeCubit _home = ParentHomeCubit(
+    initialIndex: _push.initialTab(0),
+  );
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // The parent surface is what registers for alerts. The child app never
-    // asks for notification permission it has no use for.
-    if (getIt.isRegistered<ParentPushService>()) {
-      unawaited(getIt<ParentPushService>().start());
-    }
-    _deepLinks = getIt<PushDeepLinks>().stream.listen((_) {
-      _home.selectTab(_appsTabIndex);
-    });
+    _push.attach();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Registers on first build and again whenever the app language changes,
+    // because that is the language the next push is written in.
+    _push.register(Localizations.localeOf(context).languageCode);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed &&
-        getIt.isRegistered<ParentPushService>()) {
-      unawaited(getIt<ParentPushService>().start());
-    }
+    if (state == AppLifecycleState.resumed) _push.resumed();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _deepLinks?.cancel();
+    _push.dispose();
     _home.close();
     super.dispose();
   }

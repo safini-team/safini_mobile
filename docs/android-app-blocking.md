@@ -94,7 +94,7 @@ snapshot does not carry. iOS shields are SAF-155. `testConfigureLocalFixture` ta
   one-minute budget exhaustion; 100-coin purchase unlocks with one ledger charge;
   purchased time exhausts offline; offline purchase reports failure without charging.
   Real FCM delivery and signed-in parent navigation are recorded in
-  [parent push verification](parent-push-alerts.md).
+  [push notification verification](push-notifications.md).
 - API: full suite against migrated disposable Postgres, including pairing access,
   scope isolation, duplicate purchase retries, changed prices, manual blocking,
   historical reports and permission heartbeat transitions.

@@ -1,23 +1,30 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/foreground_notifications.dart';
+import 'package:safini/core/notifications/notification_preferences.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/app_version_label.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/language_sheet.dart';
+import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/common/auth/presentation/account_deletion_flow.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-/// Parent · Settings, pushed from My family.
-///
-/// The artboard's "Alerts" block (three push toggles) is not here: there is no
-/// notification-preference endpoint yet, and switches that persist nowhere are
-/// worse than an honest gap. Everything else follows the artboard.
+/// Parent · Settings, pushed from My family. Follows the artboard, including
+/// the Alerts block, whose switches are stored per account on the server.
 class ParentSettingsScreen extends StatelessWidget {
   const ParentSettingsScreen({super.key});
 
@@ -60,6 +67,7 @@ class ParentSettingsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const _AlertsSection(),
                   DsOverline(s.sectionApp, top: 26),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -170,5 +178,106 @@ class ParentSettingsScreen extends StatelessWidget {
     );
 
     if (confirmed == true) await auth.signOut();
+  }
+}
+
+/// New submissions, Limit reached and Weekly digest, as on the artboard. When
+/// the phone itself blocks Safini's notifications the switches cannot do
+/// anything, so a row above them says so and opens the system setting.
+class _AlertsSection extends StatefulWidget {
+  const _AlertsSection();
+
+  @override
+  State<_AlertsSection> createState() => _AlertsSectionState();
+}
+
+class _AlertsSectionState extends State<_AlertsSection> {
+  late final AlertsCubit _cubit = AlertsCubit(
+    NotificationPreferencesService(getIt<Dio>()),
+  )..load();
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  Future<void> _openSystemSettings() async {
+    if (!kIsWeb && Platform.isIOS) {
+      await launchUrl(Uri.parse('app-settings:'));
+    } else {
+      await const ForegroundNotifications().openSettings();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+
+    return OnAppResume(
+      // Back from system settings with notifications turned on.
+      onResume: _cubit.checkSystem,
+      child: BlocConsumer<AlertsCubit, AlertsState>(
+        bloc: _cubit,
+        listenWhen: (_, state) => state.saveFailed,
+        listener: (context, _) => AppSnackBar.error(context, s.alertSaveFailed),
+        builder: (context, state) {
+          Widget toggle(AlertSwitch key, String title, String subtitle) => DsRow(
+            title: title,
+            subtitle: subtitle,
+            verticalPadding: 14,
+            trailing: DsSwitch(
+              value: state.preferences[key],
+              onChanged: state.loaded
+                  ? (value) => _cubit.toggle(key, value)
+                  : null,
+            ),
+          );
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              DsOverline(s.sectionAlerts, top: 26),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.gutter,
+                ),
+                child: DsGroup(
+                  radius: AppRadius.card,
+                  shadow: AppShadows.flat,
+                  children: [
+                    if (state.systemEnabled == false)
+                      DsRow(
+                        onTap: _openSystemSettings,
+                        title: s.notificationsOffTitle,
+                        subtitle: s.notificationsOffBody,
+                        titleColor: AppColors.danger,
+                        verticalPadding: 14,
+                        trailing: AppIcons.chevronRight(),
+                      ),
+                    toggle(
+                      AlertSwitch.taskSubmissions,
+                      s.alertSubmissionsTitle,
+                      s.alertSubmissionsSubtitle,
+                    ),
+                    toggle(
+                      AlertSwitch.limitReached,
+                      s.alertLimitsTitle,
+                      s.alertLimitsSubtitle,
+                    ),
+                    toggle(
+                      AlertSwitch.weeklyDigest,
+                      s.alertDigestTitle,
+                      s.alertDigestSubtitle,
+                    ),
+                  ],
+                ),
+              ),
+              DsFootnote(s.alertsAlwaysOn, top: 10),
+            ],
+          );
+        },
+      ),
+    );
   }
 }

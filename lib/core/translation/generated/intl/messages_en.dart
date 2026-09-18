@@ -207,6 +207,26 @@ class MessageLookup extends MessageLookupByLibrary {
       "Age must be between 0 and 18.",
     ),
     "ageRequired": MessageLookupByLibrary.simpleMessage("Age is required."),
+    "alertDigestSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Sunday evening summary",
+    ),
+    "alertDigestTitle": MessageLookupByLibrary.simpleMessage("Weekly digest"),
+    "alertLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "When a kid runs out of time",
+    ),
+    "alertLimitsTitle": MessageLookupByLibrary.simpleMessage("Limit reached"),
+    "alertSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t save that. Check the connection and try again.",
+    ),
+    "alertSubmissionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Push as soon as a task is sent",
+    ),
+    "alertSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
+      "New submissions",
+    ),
+    "alertsAlwaysOn": MessageLookupByLibrary.simpleMessage(
+      "Alerts about protection on a kid\'s phone are always on.",
+    ),
     "allCaughtUp": MessageLookupByLibrary.simpleMessage("All caught up"),
     "allDoneToday": MessageLookupByLibrary.simpleMessage("All done today"),
     "allDoneTodayBody": MessageLookupByLibrary.simpleMessage(
@@ -813,6 +833,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Nothing in the store yet.",
     ),
     "nothingLeft": MessageLookupByLibrary.simpleMessage("Nothing left"),
+    "notificationsOffBody": MessageLookupByLibrary.simpleMessage(
+      "Turn them on in the phone\'s settings to get these alerts.",
+    ),
+    "notificationsOffTitle": MessageLookupByLibrary.simpleMessage(
+      "Notifications are off for Safini",
+    ),
     "ofTotal": m37,
     "offMeansAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Off means it is always allowed",
@@ -985,6 +1011,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Across every controlled app. Off means per-app limits only.",
     ),
     "sectionAccount": MessageLookupByLibrary.simpleMessage("Account"),
+    "sectionAlerts": MessageLookupByLibrary.simpleMessage("Alerts"),
     "sectionApp": MessageLookupByLibrary.simpleMessage("App"),
     "seeAllApps": MessageLookupByLibrary.simpleMessage(
       "See all apps on this phone",
