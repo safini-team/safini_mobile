@@ -52,7 +52,14 @@ class TaskItem {
   /// the child was never asked for the photo.
   final String? proofMode;
 
+  /// Signed URL for the parent's voice instruction. Autoplay is off.
+  final String? voiceInstructionUrl;
+  final int? voiceInstructionDurationMs;
+
   bool get needsPhoto => (proofMode ?? '').toLowerCase().contains('image');
+
+  bool get hasVoiceInstruction =>
+      (voiceInstructionUrl ?? '').trim().isNotEmpty;
 
   bool get isSubmitted {
     final s = status.toLowerCase();
@@ -81,6 +88,8 @@ class TaskItem {
     required this.xp,
     this.emoji,
     this.proofMode,
+    this.voiceInstructionUrl,
+    this.voiceInstructionDurationMs,
     this.isCompleted = false,
     this.status = 'available',
   });
@@ -98,6 +107,8 @@ class TaskItem {
       coins: coins,
       xp: xp,
       proofMode: proofMode,
+      voiceInstructionUrl: voiceInstructionUrl,
+      voiceInstructionDurationMs: voiceInstructionDurationMs,
       isCompleted: isCompleted ?? this.isCompleted,
       status: status ?? this.status,
     );

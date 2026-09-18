@@ -77,6 +77,8 @@ class TasksCubit extends Cubit<TasksState> {
       proofMode: task.proofMode,
       isCompleted: task.isCompleted,
       status: task.status,
+      voiceInstructionUrl: task.voiceInstructionUrl,
+      voiceInstructionDurationMs: task.voiceInstructionDurationMs,
     );
   }
 

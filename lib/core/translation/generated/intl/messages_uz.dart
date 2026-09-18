@@ -157,19 +157,21 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m61(time) => "Bugun ${time}";
 
-  static String m62(count) =>
+  static String m62(seconds) => "${seconds} s qoldi";
+
+  static String m63(count) =>
       "${Intl.plural(count, other: '${count} ta kutmoqda')}";
 
-  static String m63(name) => "${name} telefoni kutilmoqda…";
+  static String m64(name) => "${name} telefoni kutilmoqda…";
 
-  static String m64(name, coins) => "${name} · ${coins}";
+  static String m65(name, coins) => "${name} · ${coins}";
 
-  static String m65(age) => "${Intl.plural(age, other: '${age} yosh')}";
+  static String m66(age) => "${Intl.plural(age, other: '${age} yosh')}";
 
-  static String m66(count) =>
+  static String m67(count) =>
       "${Intl.plural(count, other: 'Sizga yana ${count} tanga kerak.')}";
 
-  static String m67(name) => "${name} (siz)";
+  static String m68(name) => "${name} (siz)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -746,6 +748,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "markItDone": MessageLookupByLibrary.simpleMessage(
       "Bajarildi deb belgilash",
     ),
+    "micPermissionDenied": MessageLookupByLibrary.simpleMessage(
+      "Mikrofon o‘chiq. Ovozli ko‘rsatma yozish uchun uni Sozlamalarda yoqing.",
+    ),
     "minuteCount": m30,
     "minutes": MessageLookupByLibrary.simpleMessage("Daqiqalar"),
     "minutesLeftShort": m31,
@@ -875,12 +880,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "parentSubtitle": MessageLookupByLibrary.simpleMessage(
       "Kuzat va ragʻbatlantir",
     ),
+    "parentVoiceInstruction": MessageLookupByLibrary.simpleMessage(
+      "Ota-onangizning ovozi",
+    ),
     "parents": MessageLookupByLibrary.simpleMessage("Ota-onalar"),
     "passwordHint": MessageLookupByLibrary.simpleMessage("Parolni kiriting"),
     "passwordLabel": MessageLookupByLibrary.simpleMessage("Parol"),
     "passwordRequired": MessageLookupByLibrary.simpleMessage(
       "Parolni kiriting",
     ),
+    "pauseVoice": MessageLookupByLibrary.simpleMessage("Pauza"),
     "pendingApproval": MessageLookupByLibrary.simpleMessage(
       "Tasdiqlash kutilmoqda",
     ),
@@ -900,6 +909,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pillCheck": MessageLookupByLibrary.simpleMessage("Tekshir"),
     "pillPaid": MessageLookupByLibrary.simpleMessage("Toʻlangan"),
     "pillWaiting": MessageLookupByLibrary.simpleMessage("Kutmoqda"),
+    "playVoice": MessageLookupByLibrary.simpleMessage("Tinglash"),
     "priceLabel": MessageLookupByLibrary.simpleMessage("Narx"),
     "priceUnit": m40,
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Maxfiylik siyosati"),
@@ -933,6 +943,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Kod bilan qayta ulash",
     ),
+    "recordVoiceInstruction": MessageLookupByLibrary.simpleMessage(
+      "Ovozli ko‘rsatma yozish",
+    ),
+    "recordingVoice": MessageLookupByLibrary.simpleMessage("Yozilmoqda"),
     "redeemExplainer": m41,
     "reject": MessageLookupByLibrary.simpleMessage("Rad etish"),
     "remaining": MessageLookupByLibrary.simpleMessage("Qoldi"),
@@ -974,12 +988,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Ota-ona chiqarilsinmi?",
     ),
+    "removeVoice": MessageLookupByLibrary.simpleMessage("Olib tashlash"),
     "repeatDaily": MessageLookupByLibrary.simpleMessage("Har kuni"),
     "repeatDailyShort": MessageLookupByLibrary.simpleMessage("Har kuni"),
     "repeatLabel": MessageLookupByLibrary.simpleMessage("Takrorlash"),
     "repeatOnce": MessageLookupByLibrary.simpleMessage("Bir marta"),
     "repeatWeekly": MessageLookupByLibrary.simpleMessage("Tanlangan kunlar"),
     "repeatWeeklyShort": MessageLookupByLibrary.simpleMessage("Haftalik"),
+    "rerecordVoice": MessageLookupByLibrary.simpleMessage("Qayta yozish"),
     "retakePhoto": MessageLookupByLibrary.simpleMessage("Qayta olish"),
     "retry": MessageLookupByLibrary.simpleMessage("Qayta urinish"),
     "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
@@ -1060,6 +1076,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "kechagiga nisbatan +12%",
     ),
     "stepsToday": MessageLookupByLibrary.simpleMessage("Bugungi qadamlar"),
+    "stopRecording": MessageLookupByLibrary.simpleMessage("To‘xtatish"),
     "store": MessageLookupByLibrary.simpleMessage("Doʻkon"),
     "storeAppTimeTab": MessageLookupByLibrary.simpleMessage("Ilova vaqti"),
     "storeAvatarTab": MessageLookupByLibrary.simpleMessage("Avatar"),
@@ -1222,11 +1239,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "usedTodayShort": m61,
     "uzbek": MessageLookupByLibrary.simpleMessage("Oʻzbek"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("Bola sifatida koʻrish"),
-    "waitingCount": m62,
+    "voiceAttachFailed": MessageLookupByLibrary.simpleMessage(
+      "Ovozli eslatmani biriktirib bo‘lmadi. Qayta urinib ko‘ring.",
+    ),
+    "voiceInstructionLabel": MessageLookupByLibrary.simpleMessage(
+      "Ovozli ko‘rsatma",
+    ),
+    "voicePlaybackFailed": MessageLookupByLibrary.simpleMessage(
+      "Ovozli eslatmani ijro etib bo‘lmadi.",
+    ),
+    "voiceSecondsLeft": m62,
+    "waitingCount": m63,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Ota-ona tekshirishini kutmoqdamiz",
     ),
-    "waitingForPhone": m63,
+    "waitingForPhone": m64,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Kiyish"),
     "wed": MessageLookupByLibrary.simpleMessage("CHOR"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Ju"),
@@ -1247,10 +1274,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "whoSection": MessageLookupByLibrary.simpleMessage("Kimga"),
     "wornLabel": MessageLookupByLibrary.simpleMessage("Kiyilgan"),
-    "worthCoins": m64,
-    "yearsOld": m65,
-    "youNeedMoreCoins": m66,
-    "youSuffix": m67,
+    "worthCoins": m65,
+    "yearsOld": m66,
+    "youNeedMoreCoins": m67,
+    "youSuffix": m68,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Hisobingiz"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Avataring"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("FARZANDLARINGIZ"),

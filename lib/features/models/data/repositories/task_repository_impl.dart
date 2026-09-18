@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../../domain/models/task_model.dart';
+import '../../domain/models/task_voice.dart';
 import '../../domain/repositories/i_task_repository.dart';
 import '../../../../core/utils/error/failures.dart';
 import '../../../../core/utils/constants/api_const.dart';
@@ -11,7 +13,13 @@ import '../dto/task_dto.dart';
 class TaskRepositoryImpl implements ITaskRepository {
   final Dio _dio;
 
-  TaskRepositoryImpl(this._dio);
+  /// Storage uploads go out on a bare client: the signed URL carries its own
+  /// token, and dio would attach our API bearer to a request that is not
+  /// going to our API.
+  final http.Client _uploadClient;
+
+  TaskRepositoryImpl(this._dio, {http.Client? uploadClient})
+    : _uploadClient = uploadClient ?? http.Client();
 
   @override
   Future<Either<Failure, List<TaskTemplateModel>>> getTaskTemplates() async {
@@ -153,6 +161,138 @@ class TaskRepositoryImpl implements ITaskRepository {
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
+  }
+
+  @override
+  Future<Either<Failure, TaskVoiceUpload>> createVoiceUploadUrl({
+    required String childId,
+    required String taskId,
+    required String extension,
+  }) async {
+    try {
+      final response = await _dio.post(
+        ApiConst.taskVoiceUploadUrl(childId),
+        data: {'task_id': taskId, 'extension': extension},
+      );
+      final raw = response.data;
+      if (raw is! Map) {
+        return const Left(ServerFailure('Unexpected upload response.'));
+      }
+      final upload = TaskVoiceUpload.fromJson(
+        raw.map((k, v) => MapEntry(k.toString(), v)),
+      );
+      if (!upload.isUsable) {
+        return const Left(ServerFailure('Unexpected upload response.'));
+      }
+      return Right(upload);
+    } on DioException catch (e) {
+      return Left(
+        _mapDioError(
+          e,
+          defaultMessage: 'Unable to prepare the voice upload.',
+          notFoundMessage: 'Task not found.',
+          conflictMessage: 'Voice instructions are not available yet.',
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> uploadVoiceBytes({
+    required TaskVoiceUpload upload,
+    required List<int> bytes,
+    required String mime,
+  }) async {
+    if (bytes.length > upload.maxBytes) {
+      return const Left(ValidationFailure('That recording is too large.'));
+    }
+
+    late final http.Response response;
+    try {
+      response = await _uploadClient.put(
+        Uri.parse(upload.uploadUrl),
+        headers: {'Content-Type': mime},
+        body: bytes,
+      );
+    } on http.ClientException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      return const Left(ServerFailure('Could not upload the voice note.'));
+    }
+    return const Right(null);
+  }
+
+  @override
+  Future<Either<Failure, TaskModel>> attachVoiceInstruction({
+    required String taskId,
+    required String objectKey,
+    required int durationMs,
+    required String mime,
+  }) async {
+    try {
+      final response = await _dio.post(
+        ApiConst.taskVoice(taskId),
+        data: {
+          'object_key': objectKey,
+          'duration_ms': durationMs,
+          'mime': mime,
+        },
+      );
+      return Right(_taskFromResponse(response.data, taskId));
+    } on DioException catch (e) {
+      return Left(
+        _mapDioError(
+          e,
+          defaultMessage: 'Unable to attach the voice note.',
+          notFoundMessage: 'Task not found.',
+          conflictMessage: 'Approved tasks can\'t be edited.',
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, TaskModel>> removeVoiceInstruction(
+    String taskId,
+  ) async {
+    try {
+      final response = await _dio.delete(ApiConst.taskVoice(taskId));
+      return Right(_taskFromResponse(response.data, taskId));
+    } on DioException catch (e) {
+      return Left(
+        _mapDioError(
+          e,
+          defaultMessage: 'Unable to remove the voice note.',
+          notFoundMessage: 'Task not found.',
+          conflictMessage: 'Approved tasks can\'t be edited.',
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  TaskModel _taskFromResponse(dynamic raw, String fallbackId) {
+    if (raw is Map) {
+      final map = raw is Map<String, dynamic>
+          ? raw
+          : raw.map((k, v) => MapEntry(k.toString(), v));
+      return TaskDto.fromJson(map).toDomain();
+    }
+    return TaskModel(
+      id: fallbackId,
+      title: '',
+      coinReward: 0,
+      xpReward: 0,
+    );
   }
 
   Failure _mapDioError(

@@ -200,6 +200,13 @@ class ParentTaskInstanceModel {
   /// The note the parent left when approving/rejecting the task.
   final String? reviewNote;
 
+  /// Short-lived signed URL for the parent's voice instruction. Present in
+  /// any status, unlike the proof photo which is only signed while in review.
+  final String? voiceInstructionUrl;
+  final String? voiceInstructionObjectKey;
+  final int? voiceInstructionDurationMs;
+  final String? voiceInstructionMime;
+
   const ParentTaskInstanceModel({
     required this.id,
     required this.status,
@@ -221,6 +228,10 @@ class ParentTaskInstanceModel {
     this.submissionNote,
     this.submissionImageUrl,
     this.reviewNote,
+    this.voiceInstructionUrl,
+    this.voiceInstructionObjectKey,
+    this.voiceInstructionDurationMs,
+    this.voiceInstructionMime,
   });
 
   factory ParentTaskInstanceModel.fromJson(Map<String, dynamic> json) {
@@ -277,6 +288,22 @@ class ParentTaskInstanceModel {
         'reviewNote',
         'parent_note',
       ]),
+      voiceInstructionUrl: _nullableStringValue(json, [
+        'voice_instruction_url',
+        'voiceInstructionUrl',
+      ]),
+      voiceInstructionObjectKey: _nullableStringValue(json, [
+        'voice_instruction_object_key',
+        'voiceInstructionObjectKey',
+      ]),
+      voiceInstructionDurationMs: _intValue(json, [
+        'voice_instruction_duration_ms',
+        'voiceInstructionDurationMs',
+      ]),
+      voiceInstructionMime: _nullableStringValue(json, [
+        'voice_instruction_mime',
+        'voiceInstructionMime',
+      ]),
     );
   }
 
@@ -309,6 +336,12 @@ class ParentTaskInstanceModel {
   /// tasks are locked (the backend rejects edits with 409).
   bool get isEditable => !isCompleted;
 
+  bool get hasVoiceInstruction {
+    final url = voiceInstructionUrl?.trim() ?? '';
+    final key = voiceInstructionObjectKey?.trim() ?? '';
+    return url.isNotEmpty || key.isNotEmpty;
+  }
+
   /// Build a [TaskModel] for prefilling the edit sheet and diffing the PATCH.
   TaskModel toTaskModel() {
     return TaskModel(
@@ -328,6 +361,10 @@ class ParentTaskInstanceModel {
       dueOn: dueOn,
       recurrence: recurrence,
       recurrenceDays: recurrenceDays,
+      voiceInstructionUrl: voiceInstructionUrl,
+      voiceInstructionObjectKey: voiceInstructionObjectKey,
+      voiceInstructionDurationMs: voiceInstructionDurationMs,
+      voiceInstructionMime: voiceInstructionMime,
       status: status,
     );
   }

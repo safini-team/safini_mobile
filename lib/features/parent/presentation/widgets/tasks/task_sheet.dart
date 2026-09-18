@@ -9,10 +9,12 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/task_model.dart';
+import 'package:safini/features/models/domain/models/task_voice.dart';
 import 'package:safini/features/parent/domain/models/task_idea.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
+import 'package:safini/features/parent/presentation/widgets/tasks/task_voice_recorder.dart';
 import 'package:safini/core/utils/task_category.dart';
 
 /// Opens the create/edit task sheet. [task] == null → CREATE, otherwise EDIT.
@@ -34,7 +36,14 @@ Future<void> showTaskSheet(
 }
 
 class TaskSheet extends StatefulWidget {
-  const TaskSheet({super.key, required this.childId, this.task, this.idea});
+  const TaskSheet({
+    super.key,
+    required this.childId,
+    this.task,
+    this.idea,
+    this.voiceCapture,
+    this.voicePlayback,
+  });
 
   final String childId;
 
@@ -43,6 +52,10 @@ class TaskSheet extends StatefulWidget {
 
   /// The task idea a CREATE starts from. Ignored in EDIT mode.
   final TaskIdea? idea;
+
+  /// Injected in tests so the sheet never opens the microphone plugin.
+  final TaskVoiceCapture? voiceCapture;
+  final TaskVoicePlayback? voicePlayback;
 
   bool get isEdit => task != null;
 
@@ -86,6 +99,12 @@ class _TaskSheetState extends State<TaskSheet> {
   String? _recurrenceError;
   int _coins = 15;
   bool _photoProof = true;
+  TaskVoiceSave _voiceSave = TaskVoiceSave.unchanged;
+  bool _voiceBusy = false;
+
+  /// Set when create succeeded but attaching the voice note failed, so Save
+  /// retries attach instead of creating a second task.
+  String? _createdTaskId;
 
   List<ChildSummaryModel> _children = const [];
 
@@ -183,11 +202,30 @@ class _TaskSheetState extends State<TaskSheet> {
     final coins = _coins.clamp(0, 100000);
     final cubit = context.read<ParentTasksCubit>();
     final original = widget.task;
+    final keepingExistingVoice =
+        original?.hasVoiceInstruction == true &&
+        !_voiceSave.remove &&
+        _voiceSave.attach == null;
+    final hasVoice = _voiceSave.attach != null || keepingExistingVoice;
+    final description = descriptionForTaskSave(
+      title: title,
+      details: details,
+      hasVoice: hasVoice,
+    );
 
     if (original == null) {
+      if (_createdTaskId != null) {
+        await cubit.updateTask(
+          _createdTaskId!,
+          const TaskUpdateRequestDto(),
+          childId: _targetChildId ?? widget.childId,
+          voice: _voiceSave,
+        );
+        return;
+      }
       final request = TaskCreateRequestDto(
         title: title,
-        description: details.isEmpty ? title : details,
+        description: description,
         category: _category.key,
         taskType: 'custom',
         proofMode: _proofMode,
@@ -207,15 +245,20 @@ class _TaskSheetState extends State<TaskSheet> {
       await cubit.createTaskForChildren(
         targetIds.isEmpty ? [widget.childId] : targetIds,
         request,
+        voice: _voiceSave,
       );
       return;
     }
 
     // EDIT - diff against the original and send only what changed.
     final originalEmoji = original.metadata?['emoji'];
+    final nextDescription = description ?? '';
+    final originalDescription = original.description ?? '';
     final request = TaskUpdateRequestDto(
       title: title != original.title ? title : null,
-      description: details != (original.description ?? '') ? details : null,
+      description: nextDescription != originalDescription
+          ? nextDescription
+          : null,
       category: _category.key != original.category ? _category.key : null,
       coinReward: coins != original.coinReward ? coins : null,
       xpReward: coins != original.coinReward ? coins : null,
@@ -228,11 +271,16 @@ class _TaskSheetState extends State<TaskSheet> {
           : null,
     );
 
-    if (request.isEmpty) {
+    if (request.isEmpty && !_voiceSave.hasWork) {
       Navigator.of(context).pop();
       return;
     }
-    await cubit.updateTask(original.id, request);
+    await cubit.updateTask(
+      original.id,
+      request,
+      childId: original.childId ?? widget.childId,
+      voice: _voiceSave,
+    );
   }
 
   Future<void> _confirmDelete() async {
@@ -276,12 +324,20 @@ class _TaskSheetState extends State<TaskSheet> {
         if (state is ParentTaskSaved || state is ParentTaskDeleted) {
           Navigator.of(context).pop();
         } else if (state is ParentTaskActionError) {
+          if (state.createdTaskId != null) {
+            _createdTaskId = state.createdTaskId;
+          }
           // A conflict (already-approved task) closes the sheet and the list
           // screen shows why; anything else stays so the parent can retry.
           if (state.isConflict) {
             Navigator.of(context).pop();
           } else if (!state.isUnauthorized) {
-            AppSnackBar.error(context, state.message);
+            AppSnackBar.error(
+              context,
+              state.createdTaskId != null
+                  ? S.of(context).voiceAttachFailed
+                  : state.message,
+            );
           }
         }
       },
@@ -321,6 +377,15 @@ class _TaskSheetState extends State<TaskSheet> {
                 ),
                 onMore: () => setState(() => _coins += _coinStep),
                 onPhotoProof: (value) => setState(() => _photoProof = value),
+              ),
+              const SizedBox(height: 14),
+              TaskVoiceRecorderPanel(
+                existingUrl: widget.task?.voiceInstructionUrl,
+                existingDurationMs: widget.task?.voiceInstructionDurationMs,
+                capture: widget.voiceCapture,
+                playback: widget.voicePlayback,
+                onBusy: (busy) => setState(() => _voiceBusy = busy),
+                onChanged: (value) => setState(() => _voiceSave = value),
               ),
               const SizedBox(height: 20),
               DsOverlineText(s.createTaskCategoryTitle),
@@ -441,7 +506,7 @@ class _TaskSheetState extends State<TaskSheet> {
                     : targetName == null
                     ? s.addToEveryonesList
                     : s.addToList(targetName),
-                enabled: _canSubmit,
+                enabled: _canSubmit && !_voiceBusy,
                 busy: busy,
                 onTap: _submit,
               ),

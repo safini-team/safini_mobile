@@ -21,6 +21,9 @@ class ApiConst {
   static String submitTask(String taskId) => '/v1/tasks/$taskId/submit';
   static String taskProofUploadUrl(String childId) =>
       '/v1/children/$childId/task-proofs/upload-url';
+  static String taskVoiceUploadUrl(String childId) =>
+      '/v1/children/$childId/task-voice/upload-url';
+  static String taskVoice(String taskId) => '/v1/tasks/$taskId/voice';
   static String reviewTask(String taskId) => '/v1/tasks/$taskId/review';
   static String childDashboard(String childId) =>
       '/v1/children/$childId/dashboard';

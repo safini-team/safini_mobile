@@ -51,6 +51,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Safini uses the camera so you can photograph a finished task for your parent to check.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Safini uses the microphone so a parent can record a short voice instruction on a task.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

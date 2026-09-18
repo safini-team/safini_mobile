@@ -90,16 +90,21 @@ class ParentTaskReviewed extends ParentTasksState {
 }
 
 /// Any create/update/delete failure. [isConflict] is a 409 (approved task).
+///
+/// [createdTaskId] is set when the task row was created but the voice note
+/// did not attach, so the sheet can retry attach instead of creating again.
 class ParentTaskActionError extends ParentTasksState {
   final ParentTasksLoaded base;
   final String message;
   final bool isConflict;
   final bool isUnauthorized;
+  final String? createdTaskId;
 
   const ParentTaskActionError({
     required this.base,
     required this.message,
     this.isConflict = false,
     this.isUnauthorized = false,
+    this.createdTaskId,
   });
 }

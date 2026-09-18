@@ -4271,6 +4271,111 @@ class S {
     );
   }
 
+  /// `Record a voice instruction`
+  String get recordVoiceInstruction {
+    return Intl.message(
+      'Record a voice instruction',
+      name: 'recordVoiceInstruction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recording`
+  String get recordingVoice {
+    return Intl.message(
+      'Recording',
+      name: 'recordingVoice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{seconds}s left`
+  String voiceSecondsLeft(int seconds) {
+    return Intl.message(
+      '${seconds}s left',
+      name: 'voiceSecondsLeft',
+      desc: '',
+      args: [seconds],
+    );
+  }
+
+  /// `Stop`
+  String get stopRecording {
+    return Intl.message('Stop', name: 'stopRecording', desc: '', args: []);
+  }
+
+  /// `Play`
+  String get playVoice {
+    return Intl.message('Play', name: 'playVoice', desc: '', args: []);
+  }
+
+  /// `Pause`
+  String get pauseVoice {
+    return Intl.message('Pause', name: 'pauseVoice', desc: '', args: []);
+  }
+
+  /// `Re-record`
+  String get rerecordVoice {
+    return Intl.message('Re-record', name: 'rerecordVoice', desc: '', args: []);
+  }
+
+  /// `Remove`
+  String get removeVoice {
+    return Intl.message('Remove', name: 'removeVoice', desc: '', args: []);
+  }
+
+  /// `Microphone is off. Turn it on in Settings to record a voice instruction.`
+  String get micPermissionDenied {
+    return Intl.message(
+      'Microphone is off. Turn it on in Settings to record a voice instruction.',
+      name: 'micPermissionDenied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not attach the voice note. Try again.`
+  String get voiceAttachFailed {
+    return Intl.message(
+      'Could not attach the voice note. Try again.',
+      name: 'voiceAttachFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not play the voice note.`
+  String get voicePlaybackFailed {
+    return Intl.message(
+      'Could not play the voice note.',
+      name: 'voicePlaybackFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Voice from your parent`
+  String get parentVoiceInstruction {
+    return Intl.message(
+      'Voice from your parent',
+      name: 'parentVoiceInstruction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Voice instruction`
+  String get voiceInstructionLabel {
+    return Intl.message(
+      'Voice instruction',
+      name: 'voiceInstructionLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Take a photo`
   String get takePhoto {
     return Intl.message('Take a photo', name: 'takePhoto', desc: '', args: []);

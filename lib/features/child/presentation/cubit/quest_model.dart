@@ -24,7 +24,14 @@ class QuestModel {
   /// and refuses to send without it.
   final String? proofMode;
 
+  /// Signed URL for the parent's voice instruction. Autoplay is off.
+  final String? voiceInstructionUrl;
+  final int? voiceInstructionDurationMs;
+
   bool get needsPhoto => (proofMode ?? '').toLowerCase().contains('image');
+
+  bool get hasVoiceInstruction =>
+      (voiceInstructionUrl ?? '').trim().isNotEmpty;
 
   bool get isSubmitted {
     final s = status.toLowerCase();
@@ -51,6 +58,8 @@ class QuestModel {
     this.emoji,
     this.reviewNote,
     this.proofMode,
+    this.voiceInstructionUrl,
+    this.voiceInstructionDurationMs,
     this.isCompleted = false,
     this.coins = 0,
     this.xp = 0,
@@ -68,6 +77,8 @@ class QuestModel {
       emoji: emoji,
       reviewNote: reviewNote,
       proofMode: proofMode,
+      voiceInstructionUrl: voiceInstructionUrl,
+      voiceInstructionDurationMs: voiceInstructionDurationMs,
       isCompleted: isCompleted ?? this.isCompleted,
       coins: coins,
       xp: xp,

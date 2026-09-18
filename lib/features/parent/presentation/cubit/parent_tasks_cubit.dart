@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/controllers/task_controller.dart';
+import 'package:safini/features/models/domain/models/task_voice.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -153,7 +154,11 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     );
   }
 
-  Future<void> createTask(String childId, TaskCreateRequestDto request) async {
+  Future<void> createTask(
+    String childId,
+    TaskCreateRequestDto request, {
+    TaskVoiceSave voice = TaskVoiceSave.unchanged,
+  }) async {
     final current = _loaded;
     if (current == null) return;
 
@@ -163,6 +168,18 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     await result.fold(
       (failure) async => emit(_actionError(current, failure)),
       (created) async {
+        final attached = await _applyVoice(
+          childId: childId,
+          taskId: created.id,
+          voice: voice,
+        );
+        if (attached != null) {
+          emit(
+            _actionError(current, attached, createdTaskId: created.id),
+          );
+          await _reload();
+          return;
+        }
         emit(ParentTaskSaved(current, wasCreate: true));
         await _reload();
       },
@@ -173,25 +190,46 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
   /// Emits one Saving/Saved cycle and reloads once at the end.
   Future<void> createTaskForChildren(
     List<String> childIds,
-    TaskCreateRequestDto request,
-  ) async {
+    TaskCreateRequestDto request, {
+    TaskVoiceSave voice = TaskVoiceSave.unchanged,
+  }) async {
     final current = _loaded;
     if (current == null || childIds.isEmpty) return;
 
     if (childIds.length == 1) {
-      return createTask(childIds.first, request);
+      return createTask(childIds.first, request, voice: voice);
     }
 
     emit(ParentTaskSaving(current));
 
     Failure? firstFailure;
+    String? createdTaskId;
     for (final childId in childIds) {
       final result = await _taskController.createTask(childId, request);
-      result.fold((failure) => firstFailure ??= failure, (_) {});
+      await result.fold(
+        (failure) async => firstFailure ??= failure,
+        (created) async {
+          createdTaskId ??= created.id;
+          final attached = await _applyVoice(
+            childId: childId,
+            taskId: created.id,
+            voice: voice,
+          );
+          firstFailure ??= attached;
+        },
+      );
+      if (firstFailure != null && createdTaskId == null) break;
     }
 
     if (firstFailure != null) {
-      emit(_actionError(current, firstFailure!));
+      emit(
+        _actionError(
+          current,
+          firstFailure!,
+          createdTaskId: createdTaskId,
+        ),
+      );
+      if (createdTaskId != null) await _reload();
       return;
     }
 
@@ -199,20 +237,39 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     await _reload();
   }
 
-  Future<void> updateTask(String taskId, TaskUpdateRequestDto request) async {
+  Future<void> updateTask(
+    String taskId,
+    TaskUpdateRequestDto request, {
+    String? childId,
+    TaskVoiceSave voice = TaskVoiceSave.unchanged,
+  }) async {
     final current = _loaded;
     if (current == null) return;
 
     emit(ParentTaskSaving(current));
 
-    final result = await _taskController.updateTask(taskId, request);
-    await result.fold(
-      (failure) async => emit(_actionError(current, failure)),
-      (updated) async {
-        emit(ParentTaskSaved(current, wasCreate: false));
-        await _reload();
-      },
+    if (!request.isEmpty) {
+      final result = await _taskController.updateTask(taskId, request);
+      final failed = result.fold<Failure?>((failure) => failure, (_) => null);
+      if (failed != null) {
+        emit(_actionError(current, failed));
+        return;
+      }
+    }
+
+    final ownerChildId = childId ?? current.childId;
+    final attached = await _applyVoice(
+      childId: ownerChildId,
+      taskId: taskId,
+      voice: voice,
     );
+    if (attached != null) {
+      emit(_actionError(current, attached));
+      return;
+    }
+
+    emit(ParentTaskSaved(current, wasCreate: false));
+    await _reload();
   }
 
   Future<void> deleteTask(String taskId) async {
@@ -231,13 +288,38 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     );
   }
 
-  ParentTaskActionError _actionError(ParentTasksLoaded base, Failure failure) {
+  ParentTaskActionError _actionError(
+    ParentTasksLoaded base,
+    Failure failure, {
+    String? createdTaskId,
+  }) {
     return ParentTaskActionError(
       base: base,
       message: failure.message,
       isConflict: failure is ConflictFailure,
       isUnauthorized: failure is UnauthorizedFailure,
+      createdTaskId: createdTaskId,
     );
+  }
+
+  /// Returns the failure if voice work was requested and did not land.
+  Future<Failure?> _applyVoice({
+    required String childId,
+    required String taskId,
+    required TaskVoiceSave voice,
+  }) async {
+    if (voice.remove) {
+      final result = await _taskController.removeVoiceInstruction(taskId);
+      return result.fold((failure) => failure, (_) => null);
+    }
+    final draft = voice.attach;
+    if (draft == null) return null;
+    final result = await _taskController.attachVoiceFromFile(
+      childId: childId,
+      taskId: taskId,
+      draft: draft,
+    );
+    return result.fold((failure) => failure, (_) => null);
   }
 
   ParentTasksError _errorFromFailure(Failure failure) {

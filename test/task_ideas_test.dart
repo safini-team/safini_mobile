@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:safini/design_preview_data.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/task_model.dart';
+import 'package:safini/features/models/domain/models/task_voice.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/domain/models/task_idea.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -47,6 +49,7 @@ class _Family extends Fake implements ParentFamilyCubit {
 class _Tasks extends Fake implements ParentTasksCubit {
   final created = <TaskCreateRequestDto>[];
   final updated = <TaskUpdateRequestDto>[];
+  final voices = <TaskVoiceSave>[];
   final _states = StreamController<ParentTasksState>.broadcast();
 
   @override
@@ -59,12 +62,23 @@ class _Tasks extends Fake implements ParentTasksCubit {
   @override
   Future<void> createTaskForChildren(
     List<String> childIds,
-    TaskCreateRequestDto request,
-  ) async => created.add(request);
+    TaskCreateRequestDto request, {
+    TaskVoiceSave voice = TaskVoiceSave.unchanged,
+  }) async {
+    created.add(request);
+    voices.add(voice);
+  }
 
   @override
-  Future<void> updateTask(String taskId, TaskUpdateRequestDto request) async =>
-      updated.add(request);
+  Future<void> updateTask(
+    String taskId,
+    TaskUpdateRequestDto request, {
+    String? childId,
+    TaskVoiceSave voice = TaskVoiceSave.unchanged,
+  }) async {
+    updated.add(request);
+    voices.add(voice);
+  }
 }
 
 Widget _host(Widget child, {String locale = 'en'}) => MaterialApp(
@@ -85,6 +99,8 @@ Future<_Tasks> _pumpSheet(
   TaskIdea? idea,
   TaskModel? task,
   String locale = 'en',
+  TaskVoiceCapture? voiceCapture,
+  TaskVoicePlayback? voicePlayback,
 }) async {
   tester.view
     ..physicalSize = const Size(402, 1400) * 3
@@ -101,7 +117,13 @@ Future<_Tasks> _pumpSheet(
         ],
         child: Scaffold(
           body: SingleChildScrollView(
-            child: TaskSheet(childId: 'amir', idea: idea, task: task),
+            child: TaskSheet(
+              childId: 'amir',
+              idea: idea,
+              task: task,
+              voiceCapture: voiceCapture,
+              voicePlayback: voicePlayback,
+            ),
           ),
         ),
       ),
@@ -387,5 +409,101 @@ void main() {
         'idea': 'brush-teeth',
       });
     });
+
+    testWidgets('the sheet offers a voice instruction control', (tester) async {
+      await _pumpSheet(tester);
+      expect(find.text('Record a voice instruction'), findsOneWidget);
+    });
+
+    testWidgets('a voice-only task omits the text description', (tester) async {
+      final capture = _GrantedCapture();
+      final playback = _SilentPlayback();
+      final tasks = await _pumpSheet(
+        tester,
+        voiceCapture: capture,
+        voicePlayback: playback,
+      );
+
+      await tester.enterText(find.byType(TextField).first, 'Clean your room');
+      await tester.pump();
+      await tester.tap(find.text('Record a voice instruction'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.text('Stop'));
+      await tester.pump();
+
+      await tester.tap(find.text("Add to Amir's list"));
+      await tester.pump();
+
+      expect(tasks.created, hasLength(1));
+      expect(tasks.created.single.toJson().containsKey('description'), isFalse);
+      expect(tasks.voices.single.attach, isNotNull);
+      expect(tasks.voices.single.attach!.durationMs, greaterThanOrEqualTo(400));
+    });
+
+    testWidgets('a denied microphone is explained, not silent', (tester) async {
+      await _pumpSheet(tester, voiceCapture: _DeniedCapture());
+      await tester.tap(find.text('Record a voice instruction'));
+      await tester.pump();
+      expect(
+        find.text(
+          'Microphone is off. Turn it on in Settings to record a voice instruction.',
+        ),
+        findsOneWidget,
+      );
+    });
   });
+}
+
+class _GrantedCapture implements TaskVoiceCapture {
+  String? path;
+
+  @override
+  Future<bool> hasMicPermission() async => true;
+
+  @override
+  Future<void> startRecording(String path) async {
+    this.path = path;
+    await File(path).writeAsBytes(const [1, 2, 3, 4]);
+  }
+
+  @override
+  Future<String?> stopRecording() async => path;
+
+  @override
+  Future<void> dispose() async {}
+}
+
+class _DeniedCapture implements TaskVoiceCapture {
+  @override
+  Future<bool> hasMicPermission() async => false;
+
+  @override
+  Future<void> startRecording(String path) async {}
+
+  @override
+  Future<String?> stopRecording() async => null;
+
+  @override
+  Future<void> dispose() async {}
+}
+
+class _SilentPlayback implements TaskVoicePlayback {
+  @override
+  Stream<bool> get playing => const Stream.empty();
+
+  @override
+  Future<void> playFile(String path) async {}
+
+  @override
+  Future<void> playUrl(String url) async {}
+
+  @override
+  Future<void> pause() async {}
+
+  @override
+  Future<void> stop() async {}
+
+  @override
+  Future<void> dispose() async {}
 }

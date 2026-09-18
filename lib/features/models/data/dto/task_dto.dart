@@ -16,6 +16,10 @@ class TaskDto {
   final String? targetUnit;
   final Map<String, dynamic>? metadata;
   final String? dueOn;
+  final String? voiceInstructionUrl;
+  final String? voiceInstructionObjectKey;
+  final int? voiceInstructionDurationMs;
+  final String? voiceInstructionMime;
   final String? status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -36,6 +40,10 @@ class TaskDto {
     this.targetUnit,
     this.metadata,
     this.dueOn,
+    this.voiceInstructionUrl,
+    this.voiceInstructionObjectKey,
+    this.voiceInstructionDurationMs,
+    this.voiceInstructionMime,
     this.status,
     this.createdAt,
     this.updatedAt,
@@ -58,6 +66,13 @@ class TaskDto {
       targetUnit: json['target_unit'] as String?,
       metadata: json['metadata'] as Map<String, dynamic>?,
       dueOn: json['due_on'] as String?,
+      voiceInstructionUrl: json['voice_instruction_url'] as String?,
+      voiceInstructionObjectKey:
+          json['voice_instruction_object_key'] as String?,
+      voiceInstructionDurationMs: json['voice_instruction_duration_ms'] is num
+          ? (json['voice_instruction_duration_ms'] as num).toInt()
+          : null,
+      voiceInstructionMime: json['voice_instruction_mime'] as String?,
       status: json['status'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'] as String)
@@ -85,6 +100,10 @@ class TaskDto {
       targetUnit: targetUnit,
       metadata: metadata,
       dueOn: dueOn,
+      voiceInstructionUrl: voiceInstructionUrl,
+      voiceInstructionObjectKey: voiceInstructionObjectKey,
+      voiceInstructionDurationMs: voiceInstructionDurationMs,
+      voiceInstructionMime: voiceInstructionMime,
       status: status,
       createdAt: createdAt,
       updatedAt: updatedAt,

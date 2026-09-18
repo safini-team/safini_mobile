@@ -62,6 +62,13 @@ class TaskModel {
   final String recurrence;
   final int? recurrenceDays;
 
+  /// Short-lived signed playback URL. Present when the parent attached a
+  /// voice instruction; the child player uses this, never the object key.
+  final String? voiceInstructionUrl;
+  final String? voiceInstructionObjectKey;
+  final int? voiceInstructionDurationMs;
+  final String? voiceInstructionMime;
+
   final String? status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -84,10 +91,20 @@ class TaskModel {
     this.dueOn,
     this.recurrence = 'none',
     this.recurrenceDays,
+    this.voiceInstructionUrl,
+    this.voiceInstructionObjectKey,
+    this.voiceInstructionDurationMs,
+    this.voiceInstructionMime,
     this.status,
     this.createdAt,
     this.updatedAt,
   });
+
+  bool get hasVoiceInstruction {
+    final url = voiceInstructionUrl?.trim() ?? '';
+    final key = voiceInstructionObjectKey?.trim() ?? '';
+    return url.isNotEmpty || key.isNotEmpty;
+  }
 }
 
 class TaskInstanceModel {

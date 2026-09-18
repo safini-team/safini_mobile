@@ -106,7 +106,7 @@ class _ChildTasksScreen extends StatelessWidget {
       QuestModel(
         id: task.id,
         title: task.title,
-        subtitle: task.localizedSubtitle(S.of(context)),
+        subtitle: task.subtitle,
         icon: task.icon,
         iconColor: task.iconColor,
         iconBackground: task.iconBackground,
@@ -116,6 +116,8 @@ class _ChildTasksScreen extends StatelessWidget {
         xp: task.xp,
         proofMode: task.proofMode,
         status: task.status,
+        voiceInstructionUrl: task.voiceInstructionUrl,
+        voiceInstructionDurationMs: task.voiceInstructionDurationMs,
       ),
       onSubmit: task.isCompleted || task.isSubmitted
           ? null

@@ -162,20 +162,22 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m61(time) => "${time} сегодня";
 
-  static String m62(count) =>
+  static String m62(seconds) => "Осталось ${seconds} с";
+
+  static String m63(count) =>
       "${Intl.plural(count, one: '${count} ожидает', few: '${count} ожидают', many: '${count} ожидают', other: '${count} ожидают')}";
 
-  static String m63(name) => "Ждём телефон ${name}…";
+  static String m64(name) => "Ждём телефон ${name}…";
 
-  static String m64(name, coins) => "${name} · ${coins}";
+  static String m65(name, coins) => "${name} · ${coins}";
 
-  static String m65(age) =>
+  static String m66(age) =>
       "${Intl.plural(age, one: '${age} год', few: '${age} года', many: '${age} лет', other: '${age} лет')}";
 
-  static String m66(count) =>
+  static String m67(count) =>
       "${Intl.plural(count, one: 'Нужна ещё ${count} монета.', few: 'Нужно ещё ${count} монеты.', many: 'Нужно ещё ${count} монет.', other: 'Нужно ещё ${count} монет.')}";
 
-  static String m67(name) => "${name} (вы)";
+  static String m68(name) => "${name} (вы)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -730,6 +732,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Приостановить приложение, включая купленное время.",
     ),
     "markItDone": MessageLookupByLibrary.simpleMessage("Отметить выполненным"),
+    "micPermissionDenied": MessageLookupByLibrary.simpleMessage(
+      "Микрофон выключен. Включите его в Настройках, чтобы записать голосовую инструкцию.",
+    ),
     "minuteCount": m30,
     "minutes": MessageLookupByLibrary.simpleMessage("Минуты"),
     "minutesLeftShort": m31,
@@ -861,10 +866,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "parentSubtitle": MessageLookupByLibrary.simpleMessage(
       "Контролируй и награждай",
     ),
+    "parentVoiceInstruction": MessageLookupByLibrary.simpleMessage(
+      "Голос родителя",
+    ),
     "parents": MessageLookupByLibrary.simpleMessage("Родители"),
     "passwordHint": MessageLookupByLibrary.simpleMessage("Введите пароль"),
     "passwordLabel": MessageLookupByLibrary.simpleMessage("Пароль"),
     "passwordRequired": MessageLookupByLibrary.simpleMessage("Введите пароль"),
+    "pauseVoice": MessageLookupByLibrary.simpleMessage("Пауза"),
     "pendingApproval": MessageLookupByLibrary.simpleMessage("Ожидают проверки"),
     "percentToNextLevel": m39,
     "photoProofAsked": MessageLookupByLibrary.simpleMessage(
@@ -882,6 +891,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pillCheck": MessageLookupByLibrary.simpleMessage("Проверить"),
     "pillPaid": MessageLookupByLibrary.simpleMessage("Оплачено"),
     "pillWaiting": MessageLookupByLibrary.simpleMessage("Ждёт"),
+    "playVoice": MessageLookupByLibrary.simpleMessage("Слушать"),
     "priceLabel": MessageLookupByLibrary.simpleMessage("Цена"),
     "priceUnit": m40,
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
@@ -909,6 +919,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Связать заново по коду",
     ),
+    "recordVoiceInstruction": MessageLookupByLibrary.simpleMessage(
+      "Записать голосовую инструкцию",
+    ),
+    "recordingVoice": MessageLookupByLibrary.simpleMessage("Запись"),
     "redeemExplainer": m41,
     "reject": MessageLookupByLibrary.simpleMessage("Отклонить"),
     "remaining": MessageLookupByLibrary.simpleMessage("Осталось"),
@@ -948,12 +962,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Удалить родителя?",
     ),
+    "removeVoice": MessageLookupByLibrary.simpleMessage("Удалить"),
     "repeatDaily": MessageLookupByLibrary.simpleMessage("Каждый день"),
     "repeatDailyShort": MessageLookupByLibrary.simpleMessage("Ежедневно"),
     "repeatLabel": MessageLookupByLibrary.simpleMessage("Повтор"),
     "repeatOnce": MessageLookupByLibrary.simpleMessage("Один раз"),
     "repeatWeekly": MessageLookupByLibrary.simpleMessage("По дням"),
     "repeatWeeklyShort": MessageLookupByLibrary.simpleMessage("Еженедельно"),
+    "rerecordVoice": MessageLookupByLibrary.simpleMessage("Записать заново"),
     "retakePhoto": MessageLookupByLibrary.simpleMessage("Переснять"),
     "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
     "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
@@ -1030,6 +1046,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "+12% по сравнению со вчера",
     ),
     "stepsToday": MessageLookupByLibrary.simpleMessage("Шагов сегодня"),
+    "stopRecording": MessageLookupByLibrary.simpleMessage("Стоп"),
     "store": MessageLookupByLibrary.simpleMessage("Магазин"),
     "storeAppTimeTab": MessageLookupByLibrary.simpleMessage(
       "Время в приложениях",
@@ -1186,11 +1203,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "usedTodayShort": m61,
     "uzbek": MessageLookupByLibrary.simpleMessage("Узбекский"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("Войти как ребенок"),
-    "waitingCount": m62,
+    "voiceAttachFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось прикрепить голосовую заметку. Попробуйте ещё раз.",
+    ),
+    "voiceInstructionLabel": MessageLookupByLibrary.simpleMessage(
+      "Голосовая инструкция",
+    ),
+    "voicePlaybackFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось воспроизвести голосовую заметку.",
+    ),
+    "voiceSecondsLeft": m62,
+    "waitingCount": m63,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Ждём проверки родителя",
     ),
-    "waitingForPhone": m63,
+    "waitingForPhone": m64,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Надеть"),
     "wed": MessageLookupByLibrary.simpleMessage("СР"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Пт"),
@@ -1209,10 +1236,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "whoSection": MessageLookupByLibrary.simpleMessage("Кому"),
     "wornLabel": MessageLookupByLibrary.simpleMessage("Надето"),
-    "worthCoins": m64,
-    "yearsOld": m65,
-    "youNeedMoreCoins": m66,
-    "youSuffix": m67,
+    "worthCoins": m65,
+    "yearsOld": m66,
+    "youNeedMoreCoins": m67,
+    "youSuffix": m68,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Ваш аккаунт"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Твой аватар"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("ВАШИ ДЕТИ"),

@@ -103,6 +103,8 @@ class QuestCubit extends Cubit<QuestState> {
       coins: task.rewardCoins ?? 0,
       xp: task.xpReward ?? 0,
       status: task.status,
+      voiceInstructionUrl: task.voiceInstructionUrl,
+      voiceInstructionDurationMs: task.voiceInstructionDurationMs,
     );
   }
 

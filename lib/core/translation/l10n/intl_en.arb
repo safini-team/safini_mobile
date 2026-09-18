@@ -642,6 +642,26 @@
   "retakePhoto": "Retake",
   "photoUploadFailed": "Could not upload the photo. Try again.",
   "photoRequired": "This task needs a photo.",
+  "recordVoiceInstruction": "Record a voice instruction",
+  "recordingVoice": "Recording",
+  "voiceSecondsLeft": "{seconds}s left",
+  "@voiceSecondsLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stopRecording": "Stop",
+  "playVoice": "Play",
+  "pauseVoice": "Pause",
+  "rerecordVoice": "Re-record",
+  "removeVoice": "Remove",
+  "micPermissionDenied": "Microphone is off. Turn it on in Settings to record a voice instruction.",
+  "voiceAttachFailed": "Could not attach the voice note. Try again.",
+  "voicePlaybackFailed": "Could not play the voice note.",
+  "parentVoiceInstruction": "Voice from your parent",
+  "voiceInstructionLabel": "Voice instruction",
   "takePhoto": "Take a photo",
   "chooseFromLibrary": "Choose from library",
   "minutesPerPurchase": "Minutes per purchase",

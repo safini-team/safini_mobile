@@ -8,6 +8,8 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
+import 'package:safini/features/child/presentation/widgets/task_voice_player.dart';
+import 'package:safini/features/models/domain/models/task_voice.dart';
 
 /// The child's task sheet from the artboard: icon, title, coins, the detail
 /// copy, an optional note for the parent, then press-and-hold to send.
@@ -26,6 +28,7 @@ class TaskDetailDialog extends StatefulWidget {
     this.onSubmit,
     this.onUploadPhoto,
     this.imagePicker,
+    this.voicePlayback,
   });
 
   final QuestModel quest;
@@ -42,12 +45,16 @@ class TaskDetailDialog extends StatefulWidget {
   /// Injected in tests; the real one talks to the camera.
   final ImagePicker? imagePicker;
 
+  /// Injected in tests so the sheet never opens the audio plugin.
+  final TaskVoicePlayback? voicePlayback;
+
   static Future<void> show(
     BuildContext context,
     QuestModel quest, {
     Future<String?> Function(String? note, String? imageObjectKey)? onSubmit,
     Future<String?> Function(String filePath)? onUploadPhoto,
     ImagePicker? imagePicker,
+    TaskVoicePlayback? voicePlayback,
   }) {
     return showDsSheet<void>(
       context: context,
@@ -56,6 +63,7 @@ class TaskDetailDialog extends StatefulWidget {
         onSubmit: onSubmit,
         onUploadPhoto: onUploadPhoto,
         imagePicker: imagePicker,
+        voicePlayback: voicePlayback,
       ),
     );
   }
@@ -161,7 +169,10 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
     final s = S.of(context);
     final quest = widget.quest;
     final subtitle = quest.localizedSubtitle(s);
+    final customText = quest.subtitle.trim();
     final canSubmit = widget.onSubmit != null;
+    final hasVoice = quest.hasVoiceInstruction;
+    final showTextBelowVoice = hasVoice && customText.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -187,7 +198,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                     quest.title,
                     style: AppText.title4.copyWith(height: 1.18),
                   ),
-                  if (subtitle.isNotEmpty) ...[
+                  if (!hasVoice && subtitle.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(subtitle, style: AppText.meta.copyWith(fontSize: 14)),
                   ],
@@ -203,6 +214,24 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
             ),
           ],
         ),
+        if (hasVoice) ...[
+          const SizedBox(height: 18),
+          TaskVoicePlayer(
+            url: quest.voiceInstructionUrl,
+            durationMs: quest.voiceInstructionDurationMs,
+            playback: widget.voicePlayback,
+          ),
+          if (showTextBelowVoice) ...[
+            const SizedBox(height: 12),
+            Text(
+              customText,
+              style: AppText.body.copyWith(
+                fontWeight: FontWeight.w400,
+                height: 1.45,
+              ),
+            ),
+          ],
+        ],
         if (quest.reviewNote != null && quest.reviewNote!.isNotEmpty) ...[
           const SizedBox(height: 18),
           DsSheetPanel(
