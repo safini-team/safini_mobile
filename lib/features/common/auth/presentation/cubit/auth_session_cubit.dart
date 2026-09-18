@@ -201,14 +201,20 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
       // A failed refresh is not a user sign-out. Keep the persisted Supabase
       // session and allow retry when connectivity/auth availability recovers.
       final sessionStillAvailable = _tokens.hasSession;
+      if (!sessionStillAvailable) {
+        // Nothing left to retry with: the account itself is gone, which is what
+        // a parent removing a child looks like on the child's handset. Sign out
+        // rather than sit on the error, because [signOut] is the only thing
+        // that stops the native blocking service and drops device admin.
+        await signOut();
+        return;
+      }
       emit(
         state.copyWith(
           status: AuthSessionStatus.profileError,
-          errorMessage: sessionStillAvailable
-              ? 'Could not refresh your session. Please try again.'
-              : 'This session is no longer available. Please sign in again.',
-          canRetry: sessionStillAvailable,
-          isUnauthorized: sessionStillAvailable,
+          errorMessage: 'Could not refresh your session. Please try again.',
+          canRetry: true,
+          isUnauthorized: true,
         ),
       );
     } on NetworkException catch (e) {

@@ -33,11 +33,12 @@ Future<void> openPrivacyPolicy(BuildContext context) async {
 Future<void> showAccountDeletionFlow(BuildContext context) async {
   final s = S.of(context);
   final auth = context.read<AuthSessionCubit>();
-  final router = context.router;
-  final isParent = auth.state.accountType == AppConstants.accountTypeParent;
 
-  // SAF-171: child accounts must not self-delete. Parent-owned lifecycle only.
-  if (!isParent) {
+  // SAF-171: a child account is deleted by its parent, never by itself. The
+  // server owns that rule; this is the copy for it. Gate on a positive child
+  // identity: `accountType` stays null until `GET /v1/me` reports a role, and
+  // a parent who created their family in this session still carries that null.
+  if (auth.state.accountType == AppConstants.accountTypeChild) {
     AppSnackBar.info(context, s.askParentToDeleteAccount);
     return;
   }
@@ -71,6 +72,7 @@ Future<void> showAccountDeletionFlow(BuildContext context) async {
   );
   if (confirmed != true || !context.mounted) return;
 
+  final router = context.router;
   final navigator = Navigator.of(context, rootNavigator: true);
   final progressRoute = DialogRoute<void>(
     context: context,
@@ -96,10 +98,6 @@ Future<void> showAccountDeletionFlow(BuildContext context) async {
 
   try {
     await getIt<AccountDeletionService>().deleteAccount();
-    if (progressRoute.isActive) navigator.removeRoute(progressRoute);
-    await auth.signOut();
-    if (!context.mounted) return;
-    router.replaceAll([const NamedRoute('login')]);
   } on AccountDeletionException catch (error) {
     if (progressRoute.isActive) navigator.removeRoute(progressRoute);
     if (!context.mounted) return;
@@ -107,9 +105,22 @@ Future<void> showAccountDeletionFlow(BuildContext context) async {
       context,
       error.isRetryable ? s.deleteAccountRetry : s.deleteAccountFailed,
     );
+    return;
   } catch (_) {
     if (progressRoute.isActive) navigator.removeRoute(progressRoute);
     if (!context.mounted) return;
     AppSnackBar.error(context, s.deleteAccountRetry);
+    return;
   }
+
+  // The account is gone from here on. A failure while tearing the session down
+  // is not something the user can retry, so it must not surface as one.
+  if (progressRoute.isActive) navigator.removeRoute(progressRoute);
+  try {
+    await auth.signOut();
+  } catch (error) {
+    debugPrint('Sign-out after account deletion failed: $error');
+  }
+  if (!context.mounted) return;
+  router.replaceAll([const NamedRoute('login')]);
 }

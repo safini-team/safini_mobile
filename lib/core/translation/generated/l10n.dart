@@ -1801,31 +1801,11 @@ class S {
     );
   }
 
-  /// `Are you sure you want to delete your account? This action cannot be undone.`
-  String get deleteAccountConfirmBody {
-    return Intl.message(
-      'Are you sure you want to delete your account? This action cannot be undone.',
-      name: 'deleteAccountConfirmBody',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Your account and personal data will be permanently deleted. If you are the only parent, the family and all child activity will also be deleted. This cannot be undone.`
   String get deleteAccountParentConfirmBody {
     return Intl.message(
       'Your account and personal data will be permanently deleted. If you are the only parent, the family and all child activity will also be deleted. This cannot be undone.',
       name: 'deleteAccountParentConfirmBody',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Your account, child profile, tasks, rewards, proof photos, and activity will be permanently deleted. This cannot be undone.`
-  String get deleteAccountChildConfirmBody {
-    return Intl.message(
-      'Your account, child profile, tasks, rewards, proof photos, and activity will be permanently deleted. This cannot be undone.',
-      name: 'deleteAccountChildConfirmBody',
       desc: '',
       args: [],
     );
@@ -4831,30 +4811,20 @@ class S {
     );
   }
 
-  /// `{name} was removed from your family. Their account was kept.`
-  String removeChildUnlinkedSuccess(String name) {
-    return Intl.message(
-      '$name was removed from your family. Their account was kept.',
-      name: 'removeChildUnlinkedSuccess',
-      desc: '',
-      args: [name],
-    );
-  }
-
-  /// `Your session has expired. Please sign in again to remove this child.`
+  /// `Your session has expired. Please sign in again to delete this child account.`
   String get removeChildUnauthorized {
     return Intl.message(
-      'Your session has expired. Please sign in again to remove this child.',
+      'Your session has expired. Please sign in again to delete this child account.',
       name: 'removeChildUnauthorized',
       desc: '',
       args: [],
     );
   }
 
-  /// `You do not have permission to remove this child.`
+  /// `You do not have permission to delete this child account.`
   String get removeChildForbidden {
     return Intl.message(
-      'You do not have permission to remove this child.',
+      'You do not have permission to delete this child account.',
       name: 'removeChildForbidden',
       desc: '',
       args: [],
@@ -4881,20 +4851,20 @@ class S {
     );
   }
 
-  /// `Could not remove this child. Please try again.`
+  /// `Could not delete this child account. Please try again.`
   String get removeChildError {
     return Intl.message(
-      'Could not remove this child. Please try again.',
+      'Could not delete this child account. Please try again.',
       name: 'removeChildError',
       desc: '',
       args: [],
     );
   }
 
-  /// `The child was removed, but the family list could not be refreshed. Please refresh it again.`
+  /// `The child account was deleted, but the family list could not be refreshed. Please refresh it again.`
   String get removeChildRefreshError {
     return Intl.message(
-      'The child was removed, but the family list could not be refreshed. Please refresh it again.',
+      'The child account was deleted, but the family list could not be refreshed. Please refresh it again.',
       name: 'removeChildRefreshError',
       desc: '',
       args: [],

@@ -318,10 +318,8 @@
   "inviteChildOrRefresh": "Пригласите ребенка или обновите страницу.",
   "deleteAccount": "Удалить аккаунт",
   "deleteAccountConfirmTitle": "Удалить аккаунт?",
-  "deleteAccountConfirmBody": "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
   "deleteAccountParentConfirmBody": "Ваш аккаунт и персональные данные будут удалены навсегда. Если вы единственный родитель, семья и вся активность детей также будут удалены. Это действие нельзя отменить.",
-  "deleteAccountChildConfirmBody": "Ваш аккаунт, профиль ребёнка, задания, награды, фотографии-подтверждения и активность будут удалены навсегда. Это действие нельзя отменить.",
-  "askParentToDeleteAccount": "Если вы хотите удалить аккаунт, попросите родителя.",
+  "askParentToDeleteAccount": "Если хочешь удалить аккаунт, попроси родителя.",
   "deletingAccount": "Удаляем аккаунт…",
   "deleteAccountRetry": "Удаление аккаунта временно недоступно. Попробуйте ещё раз.",
   "deleteAccountFailed": "Сессия недействительна. Войдите снова, прежде чем удалять аккаунт.",
@@ -669,17 +667,16 @@
   "showFewerApps": "Свернуть",
   "myTimeToday": "Моё время сегодня",
   "removeChild": "Удалить аккаунт ребёнка",
-  "removeChildConfirmTitle": "Удалить аккаунт {name}?",
-  "removeChildConfirmBody": "Это навсегда удалит аккаунт ребёнка {name} и все связанные данные: задания, монеты и настройки приложений. Отменить это нельзя.",
+  "removeChildConfirmTitle": "Удалить аккаунт ребёнка «{name}»?",
+  "removeChildConfirmBody": "Это навсегда удалит аккаунт ребёнка «{name}» и все связанные данные: задания, монеты и настройки приложений. Отменить это нельзя.",
   "removeChildInProgress": "Удаляем аккаунт ребёнка…",
-  "removeChildDeletedSuccess": "Аккаунт {name} навсегда удалён.",
-  "removeChildUnlinkedSuccess": "{name} удалён из вашей семьи. Аккаунт сохранён.",
-  "removeChildUnauthorized": "Сессия истекла. Войдите снова, чтобы удалить ребёнка.",
-  "removeChildForbidden": "У вас нет прав на удаление этого ребёнка.",
+  "removeChildDeletedSuccess": "Аккаунт ребёнка «{name}» навсегда удалён.",
+  "removeChildUnauthorized": "Сессия истекла. Войдите снова, чтобы удалить аккаунт ребёнка.",
+  "removeChildForbidden": "У вас нет прав на удаление этого аккаунта.",
   "removeChildNotFound": "Этого ребёнка больше нет в вашей семье. Список семьи обновлён.",
   "removeChildNetworkError": "Не удалось подключиться. Проверьте интернет и попробуйте снова.",
-  "removeChildError": "Не удалось удалить ребёнка. Попробуйте снова.",
-  "removeChildRefreshError": "Ребёнок удалён, но не удалось обновить список семьи. Попробуйте обновить его ещё раз.",
+  "removeChildError": "Не удалось удалить аккаунт ребёнка. Попробуйте снова.",
+  "removeChildRefreshError": "Аккаунт ребёнка удалён, но не удалось обновить список семьи. Попробуйте обновить его ещё раз.",
   "@removeChildConfirmTitle": {
     "placeholders": {
       "name": {
@@ -695,13 +692,6 @@
     }
   },
   "@removeChildDeletedSuccess": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@removeChildUnlinkedSuccess": {
     "placeholders": {
       "name": {
         "type": "String"
