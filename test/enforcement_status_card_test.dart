@@ -20,6 +20,7 @@ class _StatusAdapter implements HttpClientAdapter {
   String? status;
   int code = 200;
   int calls = 0;
+  Map<String, dynamic>? ios;
 
   @override
   Future<ResponseBody> fetch(
@@ -33,8 +34,11 @@ class _StatusAdapter implements HttpClientAdapter {
         Headers.contentTypeHeader: [Headers.jsonContentType],
       });
     }
+    final body = options.path.contains('screen-time-status') && ios != null
+        ? ios!
+        : {'status': status};
     return ResponseBody.fromString(
-      jsonEncode({'status': status}),
+      jsonEncode(body),
       200,
       headers: {
         Headers.contentTypeHeader: [Headers.jsonContentType],
@@ -152,6 +156,69 @@ void main() {
     final before = adapter.calls;
     await pumpCard(tester, 'child-2');
     expect(adapter.calls, greaterThan(before));
+  });
+
+  testWidgets('iOS status stays compact and below the notch', (tester) async {
+    adapter.ios = {
+      'platform': 'ios',
+      'authorization': 'approved',
+      'monitoring_active': true,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    };
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [S.delegate],
+        supportedLocales: S.delegate.supportedLocales,
+        locale: const Locale('en'),
+        builder: (context, child) {
+          final mq = MediaQuery.of(context);
+          return MediaQuery(
+            data: mq.copyWith(
+              padding: mq.padding.copyWith(top: 47),
+              viewPadding: mq.viewPadding.copyWith(top: 47),
+            ),
+            child: child!,
+          );
+        },
+        home: const Scaffold(body: EnforcementStatusCard(childId: 'child-ios')),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.text('iOS Screen Time · last reported status'), findsOneWidget);
+    expect(find.text('Monitoring configured'), findsOneWidget);
+    expect(
+      find.textContaining('View actual usage in Screen Time'),
+      findsNothing,
+    );
+    expect(
+      find.textContaining(
+        'Open Safini on this device to receive new parent rules',
+      ),
+      findsNothing,
+    );
+    expect(
+      tester.getTopLeft(find.byType(ListTile)).dy,
+      greaterThanOrEqualTo(47),
+    );
+  });
+
+  testWidgets('iOS setup that needs attention is one short line',
+      (tester) async {
+    adapter.ios = {
+      'platform': 'ios',
+      'authorization': 'denied',
+      'monitoring_active': false,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    };
+    await pumpCard(tester, 'child-ios-off');
+    expect(find.text('Setup needs attention'), findsOneWidget);
+    expect(
+      find.textContaining('View actual usage in Screen Time'),
+      findsNothing,
+    );
   });
 }
 

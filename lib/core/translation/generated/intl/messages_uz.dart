@@ -637,6 +637,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "iosScreenTimeLocalUsage": MessageLookupByLibrary.simpleMessage(
       "Haqiqiy foydalanishni bolaning qurilmasidagi Ekran vaqti bo‘limida ko‘ring.",
     ),
+    "iosScreenTimeLocalUsageShort": MessageLookupByLibrary.simpleMessage(
+      "Foydalanish — bolaning qurilmasida",
+    ),
     "iosScreenTimeNoRules": MessageLookupByLibrary.simpleMessage(
       "Ota-onangiz Cheklovlar bo‘limida ilova qoidalarini qo‘shishi mumkin.",
     ),

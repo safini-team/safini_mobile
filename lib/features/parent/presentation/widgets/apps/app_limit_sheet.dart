@@ -131,7 +131,7 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
                   Text(
                     widget.app.usageAvailable
                         ? s.usedTodayShort(formatHm(s, widget.app.usedMinutes))
-                        : s.iosScreenTimeLocalUsage,
+                        : s.iosScreenTimeLocalUsageShort,
                     style: AppText.meta.copyWith(fontSize: 14),
                   ),
                 ],

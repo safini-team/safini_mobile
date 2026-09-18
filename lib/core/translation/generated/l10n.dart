@@ -4881,6 +4881,16 @@ class S {
     );
   }
 
+  /// `Usage on the child’s device`
+  String get iosScreenTimeLocalUsageShort {
+    return Intl.message(
+      'Usage on the child’s device',
+      name: 'iosScreenTimeLocalUsageShort',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Screen Time is restricted on this device. A parent or a device management profile has turned it off.`
   String get iosScreenTimeErrorRestricted {
     return Intl.message(

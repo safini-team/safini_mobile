@@ -365,7 +365,7 @@ class _AllowancePanel extends StatelessWidget {
                 child: Text(
                   data.usageAvailable
                       ? s.timeUsed(formatHm(s, data.usedMinutes))
-                      : s.iosScreenTimeLocalUsage,
+                      : s.iosScreenTimeLocalUsageShort,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppText.metaSm.copyWith(
@@ -413,7 +413,7 @@ class _AppRow extends StatelessWidget {
       title: app.name,
       subtitle: usageAvailable
           ? app.subtitle(S.of(context))
-          : S.of(context).iosScreenTimeLocalUsage,
+          : S.of(context).iosScreenTimeLocalUsageShort,
       subtitleStyle: AppText.metaSm.copyWith(
         color: app.isOver ? AppColors.dangerDeep : AppColors.textSecondary,
       ),

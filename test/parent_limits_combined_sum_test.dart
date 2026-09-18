@@ -253,4 +253,37 @@ void main() {
       expect(find.text('No limits set'), findsOneWidget);
     });
   });
+
+  testWidgets('iOS without usage minutes uses a one-line caption', (
+    tester,
+  ) async {
+    await _pumpLimits(
+      tester,
+      ParentLimitsData(
+        usageAvailable: false,
+        kids: const [
+          LimitsKid(id: 'c1', name: 'Amir', color: Color(0xFF1A5C4A)),
+        ],
+        selectedKidId: 'c1',
+        kidName: 'Amir',
+        apps: [
+          LimitsApp(
+            usageAvailable: false,
+            slug: 'youtube-kids',
+            name: 'YouTube',
+            emoji: '📺',
+            usedMinutes: 38,
+            limitMinutes: 60,
+            isLimited: true,
+            canRedeem: true,
+          ),
+        ],
+      ),
+    );
+    expect(find.textContaining('Usage on the'), findsWidgets);
+    expect(
+      find.textContaining('View actual usage in Screen Time'),
+      findsNothing,
+    );
+  });
 }

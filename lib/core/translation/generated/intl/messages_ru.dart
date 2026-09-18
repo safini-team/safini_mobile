@@ -625,6 +625,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "iosScreenTimeLocalUsage": MessageLookupByLibrary.simpleMessage(
       "Фактическое использование доступно в разделе «Экранное время» на устройстве ребёнка.",
     ),
+    "iosScreenTimeLocalUsageShort": MessageLookupByLibrary.simpleMessage(
+      "Использование — на устройстве ребёнка",
+    ),
     "iosScreenTimeNoRules": MessageLookupByLibrary.simpleMessage(
       "Родитель может добавить правила в разделе «Лимиты».",
     ),
