@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/config/platform_support.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/features/common/auth/presentation/pages/child_coming_soon_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/create_family_page.dart';
 import 'package:safini/features/common/auth/presentation/pages/enter_invite_code_page.dart';
@@ -112,7 +113,9 @@ class AppRouter {
   static String? protectionRouteFor(Uri uri) {
     final childId = PushDeepLinks.parseChildId(uri);
     if (childId == null) return null;
-    getIt<PushDeepLinks>().open(childId);
+    getIt<PushDeepLinks>().open(
+      PushTarget(PushDestination.parentLimits, childId: childId),
+    );
     return '/';
   }
 

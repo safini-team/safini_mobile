@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/app/app_router.dart';
 import 'package:safini/core/app_icons/app_icon_cache.dart';
 import 'package:safini/core/network/dio_network.dart';
-import 'package:safini/core/notifications/parent_push_service.dart';
+import 'package:safini/core/notifications/push_service.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/child/child_injection.dart';
@@ -81,9 +81,9 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
   // Only registered when Firebase actually came up. Everything that uses it
   // checks isRegistered first, so a build without the config files behaves
   // exactly as it did before push existed.
-  if (firebaseReady && !getIt.isRegistered<ParentPushService>()) {
-    getIt.registerLazySingleton<ParentPushService>(
-      () => ParentPushService(
+  if (firebaseReady && !getIt.isRegistered<PushService>()) {
+    getIt.registerLazySingleton<PushService>(
+      () => PushService(
         getIt<Dio>(),
         FirebaseMessaging.instance,
         getIt<PushDeepLinks>(),

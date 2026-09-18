@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
@@ -23,7 +28,13 @@ class ParentMonitorScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => getIt<ParentMonitorCubit>()..loadMonitorData(),
+          // A tapped weekly digest opens on the child it summarises.
+          create: (context) => getIt<ParentMonitorCubit>()
+            ..loadMonitorData(
+              childId: getIt<PushDeepLinks>()
+                  .take(PushDestination.parentToday)
+                  ?.childId,
+            ),
         ),
         // The tasks cubit comes from the shell: a second instance here meant
         // an approval on the Tasks tab never reached this card, and the tab
@@ -43,7 +54,17 @@ class _ParentMonitorView extends StatelessWidget {
       builder: (context) => OnAppResume(
         // Coins, streak and screen time all move while the parent is away.
         onResume: () => context.read<ParentMonitorCubit>().loadMonitorData(),
-        child: _buildContent(context),
+        // ...and when a push says a limit ran out or protection changed.
+        child: OnPush(
+          types: const {
+            PushType.appLimitReached,
+            PushType.screenTimeReached,
+            PushType.protectionAlert,
+            PushType.childConnected,
+          },
+          onPush: (_) => context.read<ParentMonitorCubit>().loadMonitorData(),
+          child: _TodayPushTarget(child: _buildContent(context)),
+        ),
       ),
     );
   }
@@ -222,4 +243,44 @@ class _ParentMonitorView extends StatelessWidget {
       apps: state.screenTime.usageAvailable ? apps : [],
     );
   }
+}
+
+/// Switches Today to the child a digest tapped while the tab is open is about.
+class _TodayPushTarget extends StatefulWidget {
+  const _TodayPushTarget({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_TodayPushTarget> createState() => _TodayPushTargetState();
+}
+
+class _TodayPushTargetState extends State<_TodayPushTarget> {
+  StreamSubscription<PushTarget>? _deepLinks;
+
+  @override
+  void initState() {
+    super.initState();
+    _deepLinks = getIt<PushDeepLinks>().stream
+        .where((target) => target.destination == PushDestination.parentToday)
+        .listen((_) {
+          final target = getIt<PushDeepLinks>().take(
+            PushDestination.parentToday,
+          );
+          if (target != null && mounted) {
+            context.read<ParentMonitorCubit>().loadMonitorData(
+              childId: target.childId,
+            );
+          }
+        });
+  }
+
+  @override
+  void dispose() {
+    _deepLinks?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

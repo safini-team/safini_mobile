@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="protection_channel_name">Himoya ogohlantirishlari</string>
+    <string name="notification_channel_tasks">Vazifalar</string>
+    <string name="notification_channel_screen_time">Ekran vaqti</string>
+    <string name="notification_channel_family">Oila</string>
+    <string name="notification_channel_reminders">Eslatmalar va natijalar</string>
 
     <string name="block_resting_title">%1$s dam olyapti</string>
     <string name="block_resting_body">Bugungi vaqting tugadi. Ilova ertaga yana uygʻonadi.</string>

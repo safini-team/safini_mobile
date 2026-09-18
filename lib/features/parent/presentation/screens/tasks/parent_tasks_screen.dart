@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/on_app_resume.dart';
@@ -39,6 +43,42 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   /// on most days.
   bool _laneChosenByUser = false;
 
+  /// A "sent for review" push that was tapped: its review sheet opens as soon
+  /// as a list that has it arrives.
+  String? _pushedTaskId;
+  StreamSubscription<PushTarget>? _deepLinks;
+
+  @override
+  void initState() {
+    super.initState();
+    final pending = getIt<PushDeepLinks>().take(PushDestination.parentTasks);
+    if (pending != null) _showPushed(pending);
+    _deepLinks = getIt<PushDeepLinks>().stream
+        .where((target) => target.destination == PushDestination.parentTasks)
+        .listen((_) {
+          final target = getIt<PushDeepLinks>().take(
+            PushDestination.parentTasks,
+          );
+          if (target == null || !mounted) return;
+          setState(() => _showPushed(target));
+          unawaited(_reload());
+        });
+  }
+
+  @override
+  void dispose() {
+    _deepLinks?.cancel();
+    super.dispose();
+  }
+
+  /// Opens on the child the push is about, in "To review".
+  void _showPushed(PushTarget target) {
+    _scope = target.childId ?? _allScope;
+    _lane = TaskLane.review;
+    _laneChosenByUser = true;
+    _pushedTaskId = target.taskId;
+  }
+
   /// Always the whole family. One list for the Tasks tab, the tab badge and
   /// the Today card means an approval anywhere is visible everywhere; the kid
   /// chips filter what is already here instead of refetching.
@@ -62,7 +102,12 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       listener: (_, _) => unawaited(_reload()),
       child: OnAppResume(
         onResume: () => unawaited(_reload()),
-        child: _buildContent(context, s),
+        // The tab badge and the list move the moment a child sends a task.
+        child: OnPush(
+          types: const {PushType.taskSubmitted},
+          onPush: (_) => unawaited(_reload()),
+          child: _buildContent(context, s),
+        ),
       ),
     );
   }
@@ -108,6 +153,17 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   }
 
   void _onState(BuildContext context, ParentTasksState state, S s) {
+    if (state is ParentTasksLoaded && _pushedTaskId != null) {
+      final taskId = _pushedTaskId!;
+      _pushedTaskId = null;
+      final task = state.tasks.where((t) => t.id == taskId).firstOrNull;
+      // Already reviewed by the other parent: the list says so, no sheet.
+      if (task != null && task.isPendingApproval) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _openTask(this.context, state, taskId);
+        });
+      }
+    }
     if ((state is ParentTasksError && state.isUnauthorized) ||
         (state is ParentTaskActionError && state.isUnauthorized)) {
       final message = state is ParentTasksError
