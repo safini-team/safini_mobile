@@ -103,30 +103,33 @@ class _TaskVoicePlayerState extends State<TaskVoicePlayer> {
             children: [
               Pressable(
                 onTap: _toggle,
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryTint,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    _playing
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
-                    color: AppColors.primary,
-                    size: 28,
-                  ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryTint,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _playing
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        color: AppColors.primary,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      _playing ? s.pauseVoice : s.playVoice,
+                      style: AppText.rowTitleLg,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  _playing ? s.pauseVoice : s.playVoice,
-                  style: AppText.rowTitleLg,
-                ),
-              ),
+              const Spacer(),
               Text(
                 formatVoiceClock(duration),
                 style: AppText.meta.copyWith(fontWeight: FontWeight.w600).nums,

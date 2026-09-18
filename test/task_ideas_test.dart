@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -428,6 +427,8 @@ void main() {
       await tester.pump();
       await tester.tap(find.text('Record a voice instruction'));
       await tester.pump();
+      await tester.pump();
+      expect(find.text('Stop'), findsOneWidget);
       await tester.pump(const Duration(seconds: 1));
       await tester.tap(find.text('Stop'));
       await tester.pump();
@@ -464,7 +465,6 @@ class _GrantedCapture implements TaskVoiceCapture {
   @override
   Future<void> startRecording(String path) async {
     this.path = path;
-    await File(path).writeAsBytes(const [1, 2, 3, 4]);
   }
 
   @override

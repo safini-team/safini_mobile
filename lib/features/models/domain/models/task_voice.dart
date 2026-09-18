@@ -1,8 +1,8 @@
-/// Parent voice instructions on a task (SAF-172).
-///
-/// The API never sees the bytes. It signs an upload slot, the device PUTs
-/// straight to Storage, then the parent attaches the object key. Task lists
-/// mint a short-lived signed playback URL.
+// Parent voice instructions on a task (SAF-172).
+//
+// The API never sees the bytes. It signs an upload slot, the device PUTs
+// straight to Storage, then the parent attaches the object key. Task lists
+// mint a short-lived signed playback URL.
 
 /// 60 seconds, matching `MAX_DURATION_MS` on the API.
 const int voiceMaxDurationMs = 60 * 1000;
