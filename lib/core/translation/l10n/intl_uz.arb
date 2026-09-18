@@ -218,9 +218,8 @@
   "inviteChildOrRefresh": "Farzandni taklif qiling yoki oila aʼzosi ulangach yangilang.",
   "deleteAccount": "Hisobni oʻchirish",
   "deleteAccountConfirmTitle": "Hisob oʻchirilsinmi?",
-  "deleteAccountConfirmBody": "Hisobingizni oʻchirmoqchimisiz? Bu amalni ortga qaytarib boʻlmaydi.",
   "deleteAccountParentConfirmBody": "Hisobingiz va shaxsiy maʼlumotlaringiz butunlay oʻchiriladi. Agar siz yagona ota-ona boʻlsangiz, oila va farzandlarning barcha faoliyati ham oʻchiriladi. Bu amalni ortga qaytarib boʻlmaydi.",
-  "deleteAccountChildConfirmBody": "Hisobingiz, farzand profili, vazifalar, mukofotlar, tasdiqlovchi suratlar va faoliyat butunlay oʻchiriladi. Bu amalni ortga qaytarib boʻlmaydi.",
+  "askParentToDeleteAccount": "Hisobingni oʻchirmoqchi boʻlsang, ota-onangdan soʻra.",
   "deletingAccount": "Hisob oʻchirilmoqda…",
   "deleteAccountRetry": "Hisobni oʻchirish vaqtincha ishlamayapti. Qayta urinib koʻring.",
   "deleteAccountFailed": "Seans yaroqsiz. Hisobni oʻchirishdan oldin qayta kiring.",
@@ -567,18 +566,17 @@
   "showAllAppsCount": "Barcha {count} ta ilovani koʻrsatish",
   "showFewerApps": "Yigʻish",
   "myTimeToday": "Bugungi vaqtim",
-  "removeChild": "Bolani olib tashlash",
-  "removeChildConfirmTitle": "{name} olib tashlansinmi?",
-  "removeChildConfirmBody": "{name} oilangizdan olib tashlanadi. Uning hisobi va barcha tegishli maʼlumotlari, jumladan topshiriqlar, tangalar va ilova sozlamalari butunlay oʻchiriladi. Bu amalni ortga qaytarib boʻlmaydi.",
-  "removeChildInProgress": "Bola olib tashlanmoqda…",
-  "removeChildDeletedSuccess": "{name} oiladan olib tashlandi. Hisobi va maʼlumotlari butunlay oʻchirildi.",
-  "removeChildUnlinkedSuccess": "{name} oilangizdan olib tashlandi. Hisobi saqlab qolindi.",
-  "removeChildUnauthorized": "Sessiya muddati tugadi. Bolani olib tashlash uchun qayta kiring.",
-  "removeChildForbidden": "Bu bolani olib tashlashga ruxsatingiz yoʻq.",
+  "removeChild": "Bola hisobini oʻchirish",
+  "removeChildConfirmTitle": "{name}ning hisobi oʻchirilsinmi?",
+  "removeChildConfirmBody": "Bu {name}ning hisobini va unga bogʻliq barcha maʼlumotlarni, jumladan topshiriqlar, tangalar va ilova sozlamalarini butunlay oʻchiradi. Buni ortga qaytarib boʻlmaydi.",
+  "removeChildInProgress": "Bola hisobi oʻchirilmoqda…",
+  "removeChildDeletedSuccess": "{name}ning hisobi butunlay oʻchirildi.",
+  "removeChildUnauthorized": "Sessiya muddati tugadi. Bola hisobini oʻchirish uchun qayta kiring.",
+  "removeChildForbidden": "Bu hisobni oʻchirishga ruxsatingiz yoʻq.",
   "removeChildNotFound": "Bu bola endi oilangizda yoʻq. Oila roʻyxati yangilandi.",
   "removeChildNetworkError": "Ulanib boʻlmadi. Internet aloqasini tekshirib, qayta urinib koʻring.",
-  "removeChildError": "Bolani olib tashlab boʻlmadi. Qayta urinib koʻring.",
-  "removeChildRefreshError": "Bola olib tashlandi, lekin oila roʻyxatini yangilab boʻlmadi. Uni qayta yangilang.",
+  "removeChildError": "Bola hisobini oʻchirib boʻlmadi. Qayta urinib koʻring.",
+  "removeChildRefreshError": "Bola hisobi oʻchirildi, lekin oila roʻyxatini yangilab boʻlmadi. Uni qayta yangilang.",
   "@removeChildConfirmTitle": {
     "placeholders": {
       "name": {
@@ -594,13 +592,6 @@
     }
   },
   "@removeChildDeletedSuccess": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@removeChildUnlinkedSuccess": {
     "placeholders": {
       "name": {
         "type": "String"

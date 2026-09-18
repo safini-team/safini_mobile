@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/controllers/family_controller.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
@@ -432,6 +435,13 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
       (family) async {
         await _saveFamily(family);
         await _persistStage(ParentFamilyStage.dashboard);
+        // The server derives `account_type` from the family, so the session
+        // that signed in before this family existed still reports null. Only
+        // the onboarding flows land here, and the parent shell reads the role
+        // (account deletion, for one), so refresh it in the background.
+        if (getIt.isRegistered<AuthSessionCubit>()) {
+          unawaited(getIt<AuthSessionCubit>().retryFetchProfile());
+        }
         emit(
           state.copyWith(
             stage: ParentFamilyStage.dashboard,

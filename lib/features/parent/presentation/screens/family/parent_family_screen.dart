@@ -392,12 +392,11 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
       AppSnackBar.error(context, s.removeChildRefreshError);
       return;
     }
-    AppSnackBar.success(
-      context,
-      outcome.childAccountDeleted
-          ? s.removeChildDeletedSuccess(card.name)
-          : s.removeChildUnlinkedSuccess(card.name),
-    );
+    // One family per child, so the API always deletes the account here
+    // (`child_account_deleted` is documented as always true). The confirm sheet
+    // promises exactly that, and a second "account was kept" outcome would
+    // contradict it.
+    AppSnackBar.success(context, s.removeChildDeletedSuccess(card.name));
   }
 
   String _removeChildErrorMessage(Failure failure, S s) {

@@ -170,7 +170,8 @@ class _ChildMeScreen extends StatelessWidget {
   }
 }
 
-/// Language + sign out for the child, appended under the Me screen.
+/// The settings card appended under the child Me screen, and the footnote that
+/// explains why account deletion is not one of its rows.
 class ChildMeSettings extends StatelessWidget {
   const ChildMeSettings({super.key});
 
@@ -178,75 +179,80 @@ class ChildMeSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
-      child: DsGroup(
-        radius: AppRadius.card,
-        shadow: AppShadows.flat,
-        children: [
-          // DEV-only: verify the device can enumerate its installed apps.
-          // Hidden in release builds (kDebugMode).
-          if (kDebugMode)
-            DsRow(
-              title: 'DEV · Installed apps',
-              subtitle: 'Check app enumeration on this device',
-              verticalPadding: 15,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ChildAppsDebugScreen()),
-              ),
-              trailing: AppIcons.chevronRight(),
-            ),
-          if (getIt<ScreenTimeService>().isSupported)
-            DsRow(
-              title: s.screenTime,
-              subtitle: s.iosScreenTimeReport,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const IosScreenTimeScreen()),
-              ),
-              trailing: AppIcons.chevronRight(),
-            ),
-          DsRow(
-            title: s.changeLanguage,
-            verticalPadding: 15,
-            onTap: () => showLanguageSheet(context),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LanguageLabel(
-                  code: Localizations.localeOf(context).languageCode,
-                  style: AppText.body.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textTertiary,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
+          child: DsGroup(
+            radius: AppRadius.card,
+            shadow: AppShadows.flat,
+            children: [
+              // DEV-only: verify the device can enumerate its installed apps.
+              // Hidden in release builds (kDebugMode).
+              if (kDebugMode)
+                DsRow(
+                  title: 'DEV · Installed apps',
+                  subtitle: 'Check app enumeration on this device',
+                  verticalPadding: 15,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const ChildAppsDebugScreen(),
+                    ),
                   ),
+                  trailing: AppIcons.chevronRight(),
                 ),
-                const SizedBox(width: 8),
-                AppIcons.chevronRight(),
-              ],
-            ),
+              if (getIt<ScreenTimeService>().isSupported)
+                DsRow(
+                  title: s.screenTime,
+                  subtitle: s.iosScreenTimeReport,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const IosScreenTimeScreen(),
+                    ),
+                  ),
+                  trailing: AppIcons.chevronRight(),
+                ),
+              DsRow(
+                title: s.changeLanguage,
+                verticalPadding: 15,
+                onTap: () => showLanguageSheet(context),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    LanguageLabel(
+                      code: Localizations.localeOf(context).languageCode,
+                      style: AppText.body.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    AppIcons.chevronRight(),
+                  ],
+                ),
+              ),
+              DsRow(
+                title: s.privacyPolicy,
+                subtitle: s.privacyPolicySubtitle,
+                verticalPadding: 15,
+                onTap: () => openPrivacyPolicy(context),
+                trailing: AppIcons.chevronRight(),
+              ),
+              DsRow(
+                title: s.logout,
+                verticalPadding: 15,
+                titleColor: AppColors.danger,
+                titleStyle: AppText.rowTitleStrong,
+                onTap: () => _signOut(context, s),
+              ),
+            ],
           ),
-          DsRow(
-            title: s.privacyPolicy,
-            subtitle: s.privacyPolicySubtitle,
-            verticalPadding: 15,
-            onTap: () => openPrivacyPolicy(context),
-            trailing: AppIcons.chevronRight(),
-          ),
-          DsRow(
-            title: s.logout,
-            verticalPadding: 15,
-            titleColor: AppColors.danger,
-            titleStyle: AppText.rowTitleStrong,
-            onTap: () => _signOut(context, s),
-          ),
-          DsRow(
-            title: s.deleteAccount,
-            verticalPadding: 15,
-            titleColor: AppColors.danger,
-            titleStyle: AppText.rowTitleStrong,
-            onTap: () => showAccountDeletionFlow(context),
-          ),
-        ],
-      ),
+        ),
+        // Outside the group: a footnote under the card, not a row inside it.
+        DsFootnote(s.askParentToDeleteAccount),
+      ],
     );
   }
 

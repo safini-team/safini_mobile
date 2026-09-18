@@ -73,6 +73,21 @@ class _UnauthorizedMeService extends UserMeService {
   }
 }
 
+/// What a deleted account looks like from here: the refresh that follows the
+/// 401 fails for good, so Supabase drops the session before the exception
+/// surfaces.
+class _SessionLostMeService extends UserMeService {
+  _SessionLostMeService(this._tokens) : super(AuthenticatedHttpClient(_tokens));
+
+  final _FakeTokens _tokens;
+
+  @override
+  Future<MeResponse> fetchMe() async {
+    _tokens.hasSession = false;
+    throw const UnauthorizedException('Account no longer exists');
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -167,5 +182,28 @@ void main() {
     expect(cubit.state.status, AuthSessionStatus.profileError);
     expect(cubit.state.canRetry, isTrue);
     expect(cubit.state.isUnauthorized, isTrue);
+  });
+
+  test('a 401 with no session left signs out instead of waiting', () async {
+    // A parent deleting a child leaves the child's handset here. Sitting on the
+    // error would keep the native blocking service and device admin running,
+    // because only sign-out takes them down.
+    final googleAuth = _FakeGoogleAuth();
+    final tokens = _FakeTokens()
+      ..hasSession = true
+      ..currentAccessToken = 'deleted-account-token';
+    final cubit = AuthSessionCubit(
+      googleAuth,
+      _FakeAppleAuth(),
+      _FakeEmailAuth(),
+      _SessionLostMeService(tokens),
+      tokens,
+    );
+    addTearDown(cubit.close);
+
+    await cubit.checkExistingSession();
+
+    expect(googleAuth.signOutCalled, isTrue);
+    expect(cubit.state.status, AuthSessionStatus.unauthenticated);
   });
 }

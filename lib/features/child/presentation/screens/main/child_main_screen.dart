@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,8 @@ import 'package:safini/features/child/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
 import 'package:safini/features/child/presentation/screens/blocking/child_app_block_gate.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/child/presentation/screens/home/child_home_screen.dart';
@@ -52,14 +55,24 @@ class ChildMainScreen extends StatelessWidget {
         BlocProvider(create: (_) => getIt<RewardStoreCubit>()),
         BlocProvider(create: (_) => getIt<ChildAppBlockCubit>()..start()),
       ],
-      child: BlocBuilder<LocaleCubit, Locale?>(
-        builder: (context, locale) {
-          return Localizations.override(
-            context: context,
-            locale: locale,
-            child: const ChildAppBlockGate(child: _ChildMainView()),
-          );
+      // A child account can be deleted by its parent while this shell is open.
+      // The session then ends under the child's feet, same as the parent shell
+      // (parent_main_screen.dart), so leave for the login screen.
+      child: BlocListener<AuthSessionCubit, AuthSessionState>(
+        listener: (context, state) {
+          if (state.status == AuthSessionStatus.unauthenticated) {
+            context.router.replaceAll([const NamedRoute('login')]);
+          }
         },
+        child: BlocBuilder<LocaleCubit, Locale?>(
+          builder: (context, locale) {
+            return Localizations.override(
+              context: context,
+              locale: locale,
+              child: const ChildAppBlockGate(child: _ChildMainView()),
+            );
+          },
+        ),
       ),
     );
   }
