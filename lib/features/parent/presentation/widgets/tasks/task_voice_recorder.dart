@@ -173,6 +173,9 @@ class _TaskVoiceRecorderPanelState extends State<TaskVoiceRecorderPanel> {
 
   Future<void> _rerecord() async {
     _clearLocal();
+    // The old take's file is gone; if the mic then fails to start, Save must
+    // not try to upload it.
+    widget.onChanged(TaskVoiceSave.unchanged);
     await _start();
   }
 
