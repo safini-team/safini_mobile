@@ -69,10 +69,7 @@
     }
   },
   "steps": "Steps",
-  "stepsToday": "Steps Today",
-  "stepsChangeText": "+12% vs yesterday",
   "lessons": "Lessons",
-  "lessonsChangeText": "+1 today",
   "appLimits": "App Limits",
   "appLimitsSubtitle": "Set daily screen time limits",
   "manageAll": "Manage All",
@@ -194,14 +191,6 @@
     }
   },
   "timeCoins": "Time Coins",
-  "weeklyScreenTime": "Weekly Screen Time",
-  "mon": "MON",
-  "tue": "TUE",
-  "wed": "WED",
-  "thu": "THU",
-  "fri": "FRI",
-  "sat": "SAT",
-  "sun": "SUN",
   "usedLimit": "{used} used / {limit} limit",
   "@usedLimit": {
     "placeholders": {

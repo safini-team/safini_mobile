@@ -502,7 +502,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Безопасное экранное время для умных детей 🌟",
     ),
     "free": MessageLookupByLibrary.simpleMessage("БЕСПЛАТНО"),
-    "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
     "genderBoy": MessageLookupByLibrary.simpleMessage("Мальчик"),
     "genderGirl": MessageLookupByLibrary.simpleMessage("Девочка"),
     "genderOptional": MessageLookupByLibrary.simpleMessage(
@@ -668,7 +667,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "laneDone": MessageLookupByLibrary.simpleMessage("Готово"),
     "laneToReview": MessageLookupByLibrary.simpleMessage("На проверку"),
     "lessons": MessageLookupByLibrary.simpleMessage("Уроки"),
-    "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 сегодня"),
     "levelHero": m27,
     "levelShort": MessageLookupByLibrary.simpleMessage("Уровень"),
     "levelValue": m28,
@@ -744,7 +742,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Минут за покупку",
     ),
     "minutesRemainingLong": m33,
-    "mon": MessageLookupByLibrary.simpleMessage("ПН"),
     "monitor": MessageLookupByLibrary.simpleMessage("Мониторинг"),
     "moreCoinsNeeded": m34,
     "mostOfItIn": m35,
@@ -982,7 +979,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Как вы будете использовать Safini?",
     ),
     "russian": MessageLookupByLibrary.simpleMessage("Русский"),
-    "sat": MessageLookupByLibrary.simpleMessage("СБ"),
     "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Сохранить изменения"),
     "saveForName": m47,
@@ -1031,10 +1027,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Шаг 2 из 2 - код действует 24 часа.",
     ),
     "steps": MessageLookupByLibrary.simpleMessage("Шаги"),
-    "stepsChangeText": MessageLookupByLibrary.simpleMessage(
-      "+12% по сравнению со вчера",
-    ),
-    "stepsToday": MessageLookupByLibrary.simpleMessage("Шагов сегодня"),
     "store": MessageLookupByLibrary.simpleMessage("Магазин"),
     "storeAppTimeTab": MessageLookupByLibrary.simpleMessage(
       "Время в приложениях",
@@ -1044,7 +1036,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Твои монеты, твой выбор",
     ),
     "streakText": MessageLookupByLibrary.simpleMessage("Подряд"),
-    "sun": MessageLookupByLibrary.simpleMessage("ВС"),
     "supabaseConfigMissing": MessageLookupByLibrary.simpleMessage(
       "Не заданы URL или anon-ключ Supabase. Укажите SUPABASE_URL и SUPABASE_ANON_KEY при запуске.",
     ),
@@ -1147,7 +1138,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пусть установят Safini, войдут и введут этот код.",
     ),
     "thisWeek": MessageLookupByLibrary.simpleMessage("На этой неделе"),
-    "thu": MessageLookupByLibrary.simpleMessage("ЧТ"),
     "timeCoins": MessageLookupByLibrary.simpleMessage("Монеты времени"),
     "timeLeft": m54,
     "timeUsed": m55,
@@ -1167,7 +1157,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "toGo": m56,
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Сегодняшние задания"),
     "tryAgain": MessageLookupByLibrary.simpleMessage("Повторить"),
-    "tue": MessageLookupByLibrary.simpleMessage("ВТ"),
     "typeCodeFromOtherParent": MessageLookupByLibrary.simpleMessage(
       "Введите код от второго родителя",
     ),
@@ -1197,7 +1186,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waitingForPhone": m64,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Надеть"),
-    "wed": MessageLookupByLibrary.simpleMessage("СР"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Пт"),
     "weekdayMon": MessageLookupByLibrary.simpleMessage("Пн"),
     "weekdaySat": MessageLookupByLibrary.simpleMessage("Сб"),
@@ -1205,9 +1193,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "weekdayThu": MessageLookupByLibrary.simpleMessage("Чт"),
     "weekdayTue": MessageLookupByLibrary.simpleMessage("Вт"),
     "weekdayWed": MessageLookupByLibrary.simpleMessage("Ср"),
-    "weeklyScreenTime": MessageLookupByLibrary.simpleMessage(
-      "Экранное время за неделю",
-    ),
     "whereTheTimeWent": MessageLookupByLibrary.simpleMessage("Куда ушло время"),
     "whoAreWeSettingUp": MessageLookupByLibrary.simpleMessage(
       "Кого настраиваем?",

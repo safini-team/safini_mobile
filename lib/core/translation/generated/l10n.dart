@@ -413,34 +413,9 @@ class S {
     return Intl.message('Steps', name: 'steps', desc: '', args: []);
   }
 
-  /// `Steps Today`
-  String get stepsToday {
-    return Intl.message('Steps Today', name: 'stepsToday', desc: '', args: []);
-  }
-
-  /// `+12% vs yesterday`
-  String get stepsChangeText {
-    return Intl.message(
-      '+12% vs yesterday',
-      name: 'stepsChangeText',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Lessons`
   String get lessons {
     return Intl.message('Lessons', name: 'lessons', desc: '', args: []);
-  }
-
-  /// `+1 today`
-  String get lessonsChangeText {
-    return Intl.message(
-      '+1 today',
-      name: 'lessonsChangeText',
-      desc: '',
-      args: [],
-    );
   }
 
   /// `App Limits`
@@ -1052,51 +1027,6 @@ class S {
   /// `Time Coins`
   String get timeCoins {
     return Intl.message('Time Coins', name: 'timeCoins', desc: '', args: []);
-  }
-
-  /// `Weekly Screen Time`
-  String get weeklyScreenTime {
-    return Intl.message(
-      'Weekly Screen Time',
-      name: 'weeklyScreenTime',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `MON`
-  String get mon {
-    return Intl.message('MON', name: 'mon', desc: '', args: []);
-  }
-
-  /// `TUE`
-  String get tue {
-    return Intl.message('TUE', name: 'tue', desc: '', args: []);
-  }
-
-  /// `WED`
-  String get wed {
-    return Intl.message('WED', name: 'wed', desc: '', args: []);
-  }
-
-  /// `THU`
-  String get thu {
-    return Intl.message('THU', name: 'thu', desc: '', args: []);
-  }
-
-  /// `FRI`
-  String get fri {
-    return Intl.message('FRI', name: 'fri', desc: '', args: []);
-  }
-
-  /// `SAT`
-  String get sat {
-    return Intl.message('SAT', name: 'sat', desc: '', args: []);
-  }
-
-  /// `SUN`
-  String get sun {
-    return Intl.message('SUN', name: 'sun', desc: '', args: []);
   }
 
   /// `{used} used / {limit} limit`

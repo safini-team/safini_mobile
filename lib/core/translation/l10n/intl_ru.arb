@@ -69,10 +69,7 @@
     }
   },
   "steps": "Шаги",
-  "stepsToday": "Шагов сегодня",
-  "stepsChangeText": "+12% по сравнению со вчера",
   "lessons": "Уроки",
-  "lessonsChangeText": "+1 сегодня",
   "appLimits": "Лимиты приложений",
   "appLimitsSubtitle": "Установите дневные лимиты экранного времени",
   "manageAll": "Управлять всем",
@@ -194,14 +191,6 @@
     }
   },
   "timeCoins": "Монеты времени",
-  "weeklyScreenTime": "Экранное время за неделю",
-  "mon": "ПН",
-  "tue": "ВТ",
-  "wed": "СР",
-  "thu": "ЧТ",
-  "fri": "ПТ",
-  "sat": "СБ",
-  "sun": "ВС",
   "usedLimit": "{used} исп. / {limit} лимит",
   "@usedLimit": {
     "placeholders": {
