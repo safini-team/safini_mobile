@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
 import '../models/task_model.dart';
+import '../models/task_voice.dart';
 import '../repositories/i_task_repository.dart';
 import '../../../../core/utils/error/failures.dart';
 import '../../data/dto/task_dto.dart';
@@ -41,4 +44,48 @@ class TaskController {
 
   Future<Either<Failure, bool>> deleteTask(String taskId) =>
       _repository.deleteTask(taskId);
+
+  /// Create the task first, then this: sign a slot, PUT the bytes, attach.
+  Future<Either<Failure, TaskModel>> attachVoiceFromFile({
+    required String childId,
+    required String taskId,
+    required TaskVoiceDraft draft,
+  }) async {
+    if (!draft.isAttachable) {
+      return const Left(
+        ValidationFailure('That recording is too short or the wrong type.'),
+      );
+    }
+
+    final slot = await _repository.createVoiceUploadUrl(
+      childId: childId,
+      taskId: taskId,
+      extension: draft.extension,
+    );
+    return slot.fold((failure) => Left(failure), (upload) async {
+      late final List<int> bytes;
+      try {
+        bytes = await File(draft.filePath).readAsBytes();
+      } catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+      final put = await _repository.uploadVoiceBytes(
+        upload: upload,
+        bytes: bytes,
+        mime: draft.mime,
+      );
+      return put.fold(
+        (failure) => Left(failure),
+        (_) => _repository.attachVoiceInstruction(
+          taskId: taskId,
+          objectKey: upload.objectKey,
+          durationMs: draft.durationMs,
+          mime: draft.mime,
+        ),
+      );
+    });
+  }
+
+  Future<Either<Failure, TaskModel>> removeVoiceInstruction(String taskId) =>
+      _repository.removeVoiceInstruction(taskId);
 }

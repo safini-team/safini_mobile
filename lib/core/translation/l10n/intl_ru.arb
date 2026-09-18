@@ -627,6 +627,26 @@
   "retakePhoto": "Переснять",
   "photoUploadFailed": "Не удалось загрузить фото. Попробуйте ещё раз.",
   "photoRequired": "Для этого задания нужно фото.",
+  "recordVoiceInstruction": "Записать голосовую инструкцию",
+  "recordingVoice": "Запись",
+  "voiceSecondsLeft": "Осталось {seconds} с",
+  "@voiceSecondsLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stopRecording": "Стоп",
+  "playVoice": "Слушать",
+  "pauseVoice": "Пауза",
+  "rerecordVoice": "Записать заново",
+  "removeVoice": "Удалить",
+  "micPermissionDenied": "Микрофон выключен. Включите его в Настройках, чтобы записать голосовую инструкцию.",
+  "voiceAttachFailed": "Не удалось прикрепить голосовую заметку. Попробуйте ещё раз.",
+  "voicePlaybackFailed": "Не удалось воспроизвести голосовую заметку.",
+  "parentVoiceInstruction": "Голос родителя",
+  "voiceInstructionLabel": "Голосовая инструкция",
   "takePhoto": "Сделать фото",
   "chooseFromLibrary": "Выбрать из галереи",
   "minutesPerPurchase": "Минут за покупку",

@@ -527,6 +527,26 @@
   "retakePhoto": "Qayta olish",
   "photoUploadFailed": "Fotoni yuklab boʻlmadi. Qayta urinib koʻring.",
   "photoRequired": "Bu vazifa uchun foto kerak.",
+  "recordVoiceInstruction": "Ovozli ko‘rsatma yozish",
+  "recordingVoice": "Yozilmoqda",
+  "voiceSecondsLeft": "{seconds} s qoldi",
+  "@voiceSecondsLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stopRecording": "To‘xtatish",
+  "playVoice": "Tinglash",
+  "pauseVoice": "Pauza",
+  "rerecordVoice": "Qayta yozish",
+  "removeVoice": "Olib tashlash",
+  "micPermissionDenied": "Mikrofon o‘chiq. Ovozli ko‘rsatma yozish uchun uni Sozlamalarda yoqing.",
+  "voiceAttachFailed": "Ovozli eslatmani biriktirib bo‘lmadi. Qayta urinib ko‘ring.",
+  "voicePlaybackFailed": "Ovozli eslatmani ijro etib bo‘lmadi.",
+  "parentVoiceInstruction": "Ota-onangizning ovozi",
+  "voiceInstructionLabel": "Ovozli ko‘rsatma",
   "takePhoto": "Foto olish",
   "chooseFromLibrary": "Galereyadan tanlash",
   "minutesPerPurchase": "Har xarid uchun daqiqa",

@@ -161,20 +161,22 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m61(time) => "${time} today";
 
-  static String m62(count) =>
+  static String m62(seconds) => "${seconds}s left";
+
+  static String m63(count) =>
       "${Intl.plural(count, one: '1 waiting', other: '${count} waiting')}";
 
-  static String m63(name) => "Waiting for ${name}\'s phone…";
+  static String m64(name) => "Waiting for ${name}\'s phone…";
 
-  static String m64(name, coins) => "${name} · worth ${coins}";
+  static String m65(name, coins) => "${name} · worth ${coins}";
 
-  static String m65(age) =>
+  static String m66(age) =>
       "${Intl.plural(age, one: '1 year old', other: '${age} years old')}";
 
-  static String m66(count) =>
+  static String m67(count) =>
       "${Intl.plural(count, one: 'You need 1 more coin.', other: 'You need ${count} more coins.')}";
 
-  static String m67(name) => "${name} (you)";
+  static String m68(name) => "${name} (you)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -733,6 +735,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Pause this app, including purchased time.",
     ),
     "markItDone": MessageLookupByLibrary.simpleMessage("Mark it done"),
+    "micPermissionDenied": MessageLookupByLibrary.simpleMessage(
+      "Microphone is off. Turn it on in Settings to record a voice instruction.",
+    ),
     "minuteCount": m30,
     "minutes": MessageLookupByLibrary.simpleMessage("Minutes"),
     "minutesLeftShort": m31,
@@ -866,12 +871,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your parent reviews them next. Coins land after that.",
     ),
     "parentSubtitle": MessageLookupByLibrary.simpleMessage("Monitor & reward"),
+    "parentVoiceInstruction": MessageLookupByLibrary.simpleMessage(
+      "Voice from your parent",
+    ),
     "parents": MessageLookupByLibrary.simpleMessage("Parents"),
     "passwordHint": MessageLookupByLibrary.simpleMessage("Enter password"),
     "passwordLabel": MessageLookupByLibrary.simpleMessage("Password"),
     "passwordRequired": MessageLookupByLibrary.simpleMessage(
       "Enter your password",
     ),
+    "pauseVoice": MessageLookupByLibrary.simpleMessage("Pause"),
     "pendingApproval": MessageLookupByLibrary.simpleMessage("Pending Approval"),
     "percentToNextLevel": m39,
     "photoProofAsked": MessageLookupByLibrary.simpleMessage(
@@ -889,6 +898,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pillCheck": MessageLookupByLibrary.simpleMessage("Check"),
     "pillPaid": MessageLookupByLibrary.simpleMessage("Paid"),
     "pillWaiting": MessageLookupByLibrary.simpleMessage("Waiting"),
+    "playVoice": MessageLookupByLibrary.simpleMessage("Play"),
     "priceLabel": MessageLookupByLibrary.simpleMessage("Price"),
     "priceUnit": m40,
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
@@ -916,6 +926,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Re-connect with a code",
     ),
+    "recordVoiceInstruction": MessageLookupByLibrary.simpleMessage(
+      "Record a voice instruction",
+    ),
+    "recordingVoice": MessageLookupByLibrary.simpleMessage("Recording"),
     "redeemExplainer": m41,
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "remaining": MessageLookupByLibrary.simpleMessage("Remaining"),
@@ -955,12 +969,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Remove Parent?",
     ),
+    "removeVoice": MessageLookupByLibrary.simpleMessage("Remove"),
     "repeatDaily": MessageLookupByLibrary.simpleMessage("Every day"),
     "repeatDailyShort": MessageLookupByLibrary.simpleMessage("Daily"),
     "repeatLabel": MessageLookupByLibrary.simpleMessage("Repeat"),
     "repeatOnce": MessageLookupByLibrary.simpleMessage("Once"),
     "repeatWeekly": MessageLookupByLibrary.simpleMessage("Some days"),
     "repeatWeeklyShort": MessageLookupByLibrary.simpleMessage("Weekly"),
+    "rerecordVoice": MessageLookupByLibrary.simpleMessage("Re-record"),
     "retakePhoto": MessageLookupByLibrary.simpleMessage("Retake"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
@@ -1038,6 +1054,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "+12% vs yesterday",
     ),
     "stepsToday": MessageLookupByLibrary.simpleMessage("Steps Today"),
+    "stopRecording": MessageLookupByLibrary.simpleMessage("Stop"),
     "store": MessageLookupByLibrary.simpleMessage("Store"),
     "storeAppTimeTab": MessageLookupByLibrary.simpleMessage("App time"),
     "storeAvatarTab": MessageLookupByLibrary.simpleMessage("Avatar"),
@@ -1178,11 +1195,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "usedTodayShort": m61,
     "uzbek": MessageLookupByLibrary.simpleMessage("Uzbek"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("View as Kid"),
-    "waitingCount": m62,
+    "voiceAttachFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not attach the voice note. Try again.",
+    ),
+    "voiceInstructionLabel": MessageLookupByLibrary.simpleMessage(
+      "Voice instruction",
+    ),
+    "voicePlaybackFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not play the voice note.",
+    ),
+    "voiceSecondsLeft": m62,
+    "waitingCount": m63,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Waiting for your parent to check it",
     ),
-    "waitingForPhone": m63,
+    "waitingForPhone": m64,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Wear"),
     "wed": MessageLookupByLibrary.simpleMessage("WED"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Fri"),
@@ -1203,10 +1230,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "whoSection": MessageLookupByLibrary.simpleMessage("Who"),
     "wornLabel": MessageLookupByLibrary.simpleMessage("On"),
-    "worthCoins": m64,
-    "yearsOld": m65,
-    "youNeedMoreCoins": m66,
-    "youSuffix": m67,
+    "worthCoins": m65,
+    "yearsOld": m66,
+    "youNeedMoreCoins": m67,
+    "youSuffix": m68,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Your account"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Your avatar"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("YOUR CHILDREN"),

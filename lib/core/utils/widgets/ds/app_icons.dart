@@ -140,6 +140,18 @@ class AppIcons {
     color: color,
   );
 
+  static Widget mic({
+    double size = 22,
+    Color color = AppColors.textTertiary,
+  }) => _svg(
+    '<rect x="9" y="3.5" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.7"/>'
+        '<path d="M6.5 11.5a5.5 5.5 0 0011 0M12 17v3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+    width: 24,
+    height: 24,
+    size: size,
+    color: color,
+  );
+
   /// Streak flame - the one filled glyph in the set.
   static Widget flame({double size = 14, Color color = AppColors.coin}) => _svg(
     '<path d="M6 1c2.5 2.5 4.5 4 4.5 7A4.5 4.5 0 016 12.5 4.5 4.5 0 011.5 8C1.5 5.5 3 3.5 6 1z" fill="currentColor"/>',

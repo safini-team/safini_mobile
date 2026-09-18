@@ -32,6 +32,8 @@ dependencies:
   shared_preferences: ^2.5.3
   gotrue: ^2.19.0
   image_picker: ^1.1.2
+  record: ^6.1.2
+  audioplayers: ^6.5.1
   url_launcher: ^6.3.2
   firebase_core: ^4.1.1
   firebase_messaging: ^16.0.2

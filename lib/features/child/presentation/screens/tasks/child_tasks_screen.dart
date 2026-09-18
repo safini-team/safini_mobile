@@ -115,7 +115,7 @@ void _openChildTask(BuildContext context, TasksState state, String taskId) {
     QuestModel(
       id: task.id,
       title: task.title,
-      subtitle: task.localizedSubtitle(S.of(context)),
+      subtitle: task.subtitle,
       icon: task.icon,
       iconColor: task.iconColor,
       iconBackground: task.iconBackground,
@@ -125,6 +125,8 @@ void _openChildTask(BuildContext context, TasksState state, String taskId) {
       xp: task.xp,
       proofMode: task.proofMode,
       status: task.status,
+      voiceInstructionUrl: task.voiceInstructionUrl,
+      voiceInstructionDurationMs: task.voiceInstructionDurationMs,
     ),
     onSubmit: task.isCompleted || task.isSubmitted
         ? null
