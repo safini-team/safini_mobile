@@ -103,8 +103,8 @@ class _TaskSheetState extends State<TaskSheet> {
   bool _voiceBusy = false;
 
   /// Set when create succeeded but attaching the voice note failed, so Save
-  /// retries attach instead of creating a second task.
-  String? _createdTaskId;
+  /// retries the attach on those tasks instead of creating them again.
+  List<TaskVoiceTarget> _pendingVoice = const [];
 
   List<ChildSummaryModel> _children = const [];
 
@@ -214,13 +214,8 @@ class _TaskSheetState extends State<TaskSheet> {
     );
 
     if (original == null) {
-      if (_createdTaskId != null) {
-        await cubit.updateTask(
-          _createdTaskId!,
-          const TaskUpdateRequestDto(),
-          childId: _targetChildId ?? widget.childId,
-          voice: _voiceSave,
-        );
+      if (_pendingVoice.isNotEmpty) {
+        await cubit.retryVoice(_pendingVoice, voice: _voiceSave);
         return;
       }
       final request = TaskCreateRequestDto(
@@ -324,8 +319,8 @@ class _TaskSheetState extends State<TaskSheet> {
         if (state is ParentTaskSaved || state is ParentTaskDeleted) {
           Navigator.of(context).pop();
         } else if (state is ParentTaskActionError) {
-          if (state.createdTaskId != null) {
-            _createdTaskId = state.createdTaskId;
+          if (state.pendingVoice.isNotEmpty) {
+            _pendingVoice = state.pendingVoice;
           }
           // A conflict (already-approved task) closes the sheet and the list
           // screen shows why; anything else stays so the parent can retry.
@@ -334,7 +329,7 @@ class _TaskSheetState extends State<TaskSheet> {
           } else if (!state.isUnauthorized) {
             AppSnackBar.error(
               context,
-              state.createdTaskId != null
+              state.pendingVoice.isNotEmpty
                   ? S.of(context).voiceAttachFailed
                   : state.message,
             );

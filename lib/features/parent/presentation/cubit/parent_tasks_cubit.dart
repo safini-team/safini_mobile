@@ -175,7 +175,11 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
         );
         if (attached != null) {
           emit(
-            _actionError(current, attached, createdTaskId: created.id),
+            _actionError(
+              current,
+              attached,
+              pendingVoice: [(childId: childId, taskId: created.id)],
+            ),
           );
           await _reload();
           return;
@@ -202,34 +206,75 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
 
     emit(ParentTaskSaving(current));
 
-    Failure? firstFailure;
-    String? createdTaskId;
+    Failure? createFailure;
+    Failure? voiceFailure;
+    final pendingVoice = <TaskVoiceTarget>[];
     for (final childId in childIds) {
       final result = await _taskController.createTask(childId, request);
-      await result.fold(
-        (failure) async => firstFailure ??= failure,
-        (created) async {
-          createdTaskId ??= created.id;
-          final attached = await _applyVoice(
-            childId: childId,
-            taskId: created.id,
-            voice: voice,
-          );
-          firstFailure ??= attached;
-        },
+      final taskId = result.fold<String?>((failure) {
+        createFailure ??= failure;
+        return null;
+      }, (created) => created.id);
+      if (taskId == null) continue;
+
+      final attached = await _applyVoice(
+        childId: childId,
+        taskId: taskId,
+        voice: voice,
       );
-      if (firstFailure != null && createdTaskId == null) break;
+      if (attached != null) {
+        voiceFailure ??= attached;
+        pendingVoice.add((childId: childId, taskId: taskId));
+      }
+    }
+
+    // A create that failed outright is retried as a whole, as before voice
+    // notes existed.
+    if (createFailure != null) {
+      emit(_actionError(current, createFailure!));
+      return;
+    }
+
+    if (voiceFailure != null) {
+      emit(
+        _actionError(current, voiceFailure, pendingVoice: pendingVoice),
+      );
+      await _reload();
+      return;
+    }
+
+    emit(ParentTaskSaved(current, wasCreate: true));
+    await _reload();
+  }
+
+  /// Retries only the voice attach for tasks that were created but whose note
+  /// did not land, each against its own child, so Save never creates them
+  /// twice.
+  Future<void> retryVoice(
+    List<TaskVoiceTarget> targets, {
+    required TaskVoiceSave voice,
+  }) async {
+    final current = _loaded;
+    if (current == null || targets.isEmpty) return;
+
+    emit(ParentTaskSaving(current));
+
+    Failure? firstFailure;
+    final stillPending = <TaskVoiceTarget>[];
+    for (final target in targets) {
+      final failure = await _applyVoice(
+        childId: target.childId,
+        taskId: target.taskId,
+        voice: voice,
+      );
+      if (failure != null) {
+        firstFailure ??= failure;
+        stillPending.add(target);
+      }
     }
 
     if (firstFailure != null) {
-      emit(
-        _actionError(
-          current,
-          firstFailure!,
-          createdTaskId: createdTaskId,
-        ),
-      );
-      if (createdTaskId != null) await _reload();
+      emit(_actionError(current, firstFailure, pendingVoice: stillPending));
       return;
     }
 
@@ -291,14 +336,14 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
   ParentTaskActionError _actionError(
     ParentTasksLoaded base,
     Failure failure, {
-    String? createdTaskId,
+    List<TaskVoiceTarget> pendingVoice = const [],
   }) {
     return ParentTaskActionError(
       base: base,
       message: failure.message,
       isConflict: failure is ConflictFailure,
       isUnauthorized: failure is UnauthorizedFailure,
-      createdTaskId: createdTaskId,
+      pendingVoice: pendingVoice,
     );
   }
 

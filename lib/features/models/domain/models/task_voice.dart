@@ -86,6 +86,10 @@ class TaskVoiceDraft {
       voiceAllowedExtensions.contains(extension);
 }
 
+/// A task that was created but whose voice note did not attach yet. Save
+/// retries the attach on exactly these instead of creating the task again.
+typedef TaskVoiceTarget = ({String childId, String taskId});
+
 /// What the parent decided about the voice note on Save.
 ///
 /// [unchanged] is a no-op. [clear] DELETEs an existing note. [file] uploads

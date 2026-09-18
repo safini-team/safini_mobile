@@ -1,3 +1,4 @@
+import 'package:safini/features/models/domain/models/task_voice.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 
 abstract class ParentTasksState {
@@ -91,20 +92,21 @@ class ParentTaskReviewed extends ParentTasksState {
 
 /// Any create/update/delete failure. [isConflict] is a 409 (approved task).
 ///
-/// [createdTaskId] is set when the task row was created but the voice note
-/// did not attach, so the sheet can retry attach instead of creating again.
+/// [pendingVoice] lists the tasks that were created but whose voice note did
+/// not attach, one per child, so the sheet retries only those attaches
+/// instead of creating the tasks again.
 class ParentTaskActionError extends ParentTasksState {
   final ParentTasksLoaded base;
   final String message;
   final bool isConflict;
   final bool isUnauthorized;
-  final String? createdTaskId;
+  final List<TaskVoiceTarget> pendingVoice;
 
   const ParentTaskActionError({
     required this.base,
     required this.message,
     this.isConflict = false,
     this.isUnauthorized = false,
-    this.createdTaskId,
+    this.pendingVoice = const [],
   });
 }
