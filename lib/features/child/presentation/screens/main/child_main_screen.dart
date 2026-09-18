@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/push_event.dart';
+import 'package:safini/core/notifications/push_shell.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/utils/widgets/ds/app_icons.dart';
 import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
@@ -34,6 +36,13 @@ class ChildMainScreen extends StatelessWidget {
     ChildRewardStoreScreen(),
     ChildProfileScreen(),
   ];
+
+  /// Which tab a tapped push opens, by its index in [_screens].
+  static int? tabFor(PushDestination destination) => switch (destination) {
+    PushDestination.childToday => 0,
+    PushDestination.childTasks => 1,
+    _ => null,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +78,11 @@ class ChildMainScreen extends StatelessWidget {
             return Localizations.override(
               context: context,
               locale: locale,
-              child: const ChildAppBlockGate(child: _ChildMainView()),
+              // Outside the gate: a child still setting up app limits should
+              // already hear about the tasks their parent is adding.
+              child: const _ChildPushBridge(
+                child: ChildAppBlockGate(child: _ChildMainView()),
+              ),
             );
           },
         ),
@@ -122,4 +135,54 @@ class _ChildMainView extends StatelessWidget {
       },
     );
   }
+}
+
+/// Registers the child's phone for pushes and opens the tab a tapped one is
+/// about. The Tasks tab takes a task id itself, to open that task.
+class _ChildPushBridge extends StatefulWidget {
+  const _ChildPushBridge({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_ChildPushBridge> createState() => _ChildPushBridgeState();
+}
+
+class _ChildPushBridgeState extends State<_ChildPushBridge>
+    with WidgetsBindingObserver {
+  late final PushShell _push = PushShell(
+    tabFor: ChildMainScreen.tabFor,
+    selectTab: (index) => context.read<ChildHomeCubit>().selectTab(index),
+    consumedHere: const {PushDestination.childToday},
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    final tab = _push.initialTab(-1);
+    if (tab >= 0) context.read<ChildHomeCubit>().selectTab(tab);
+    _push.attach();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _push.register(Localizations.localeOf(context).languageCode);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _push.resumed();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _push.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

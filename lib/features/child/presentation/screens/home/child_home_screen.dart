@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
@@ -54,7 +56,18 @@ class ChildHomeScreen extends StatelessWidget {
           listener: (ctx, _) => _refresh(ctx),
           child: OnAppResume(
             onResume: () => _refresh(context),
-            child: const _ChildTodayScreen(),
+            // An approval pays coins and moves the streak while Today is
+            // on screen; the banner and the balance must agree.
+            child: OnPush(
+              types: const {
+                PushType.taskApproved,
+                PushType.taskRejected,
+                PushType.tasksAssigned,
+                PushType.streakReminder,
+              },
+              onPush: (_) => _refresh(context),
+              child: const _ChildTodayScreen(),
+            ),
           ),
         ),
       ),

@@ -204,6 +204,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "ageRequired": MessageLookupByLibrary.simpleMessage(
       "Yosh kiritilishi shart.",
     ),
+    "alertDigestSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Yakshanba kechqurun xulosa",
+    ),
+    "alertDigestTitle": MessageLookupByLibrary.simpleMessage(
+      "Haftalik natijalar",
+    ),
+    "alertLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Farzandning vaqti tugaganda",
+    ),
+    "alertLimitsTitle": MessageLookupByLibrary.simpleMessage("Limit tugadi"),
+    "alertSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Saqlab boʻlmadi. Internetni tekshirib, qayta urinib koʻring.",
+    ),
+    "alertSubmissionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Farzand vazifani yuborishi bilan",
+    ),
+    "alertSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Tekshiruvga yuborilgan vazifalar",
+    ),
+    "alertsAlwaysOn": MessageLookupByLibrary.simpleMessage(
+      "Farzand telefonidagi himoya haqidagi ogohlantirishlar doim yoqilgan.",
+    ),
     "allCaughtUp": MessageLookupByLibrary.simpleMessage("Hammasi tekshirildi"),
     "allDoneToday": MessageLookupByLibrary.simpleMessage(
       "Bugungi ishlar bajarildi",
@@ -839,6 +861,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Doʻkon hozircha boʻsh.",
     ),
     "nothingLeft": MessageLookupByLibrary.simpleMessage("Hech narsa qolmadi"),
+    "notificationsOffBody": MessageLookupByLibrary.simpleMessage(
+      "Bu ogohlantirishlarni olish uchun ularni telefon sozlamalarida yoqing.",
+    ),
+    "notificationsOffTitle": MessageLookupByLibrary.simpleMessage(
+      "Safini bildirishnomalari oʻchiq",
+    ),
     "ofTotal": m37,
     "offMeansAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Oʻchiq boʻlsa - doim ochiq",
@@ -1018,6 +1046,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Barcha ilovalar birgalikda. Oʻchiq boʻlsa, faqat ilova limitlari.",
     ),
     "sectionAccount": MessageLookupByLibrary.simpleMessage("Hisob"),
+    "sectionAlerts": MessageLookupByLibrary.simpleMessage("Ogohlantirishlar"),
     "sectionApp": MessageLookupByLibrary.simpleMessage("Ilova"),
     "seeAllApps": MessageLookupByLibrary.simpleMessage(
       "Telefondagi barcha ilovalar",

@@ -204,6 +204,26 @@ class MessageLookup extends MessageLookupByLibrary {
       "Возраст должен быть от 0 до 18.",
     ),
     "ageRequired": MessageLookupByLibrary.simpleMessage("Укажите возраст."),
+    "alertDigestSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Сводка в воскресенье вечером",
+    ),
+    "alertDigestTitle": MessageLookupByLibrary.simpleMessage("Итоги недели"),
+    "alertLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Когда у ребёнка закончилось время",
+    ),
+    "alertLimitsTitle": MessageLookupByLibrary.simpleMessage("Лимит исчерпан"),
+    "alertSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось сохранить. Проверьте интернет и попробуйте ещё раз.",
+    ),
+    "alertSubmissionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Сразу, как ребёнок отправил задание",
+    ),
+    "alertSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Задания на проверку",
+    ),
+    "alertsAlwaysOn": MessageLookupByLibrary.simpleMessage(
+      "Оповещения о защите на телефоне ребёнка приходят всегда.",
+    ),
     "allCaughtUp": MessageLookupByLibrary.simpleMessage("Всё проверено"),
     "allDoneToday": MessageLookupByLibrary.simpleMessage(
       "На сегодня всё сделано",
@@ -825,6 +845,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "В магазине пока пусто.",
     ),
     "nothingLeft": MessageLookupByLibrary.simpleMessage("Ничего не осталось"),
+    "notificationsOffBody": MessageLookupByLibrary.simpleMessage(
+      "Включите их в настройках телефона, чтобы получать эти оповещения.",
+    ),
+    "notificationsOffTitle": MessageLookupByLibrary.simpleMessage(
+      "Уведомления Safini выключены",
+    ),
     "ofTotal": m37,
     "offMeansAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Выключено - доступно всегда",
@@ -992,6 +1018,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "На все приложения вместе. Если выключено, только лимиты приложений.",
     ),
     "sectionAccount": MessageLookupByLibrary.simpleMessage("Аккаунт"),
+    "sectionAlerts": MessageLookupByLibrary.simpleMessage("Оповещения"),
     "sectionApp": MessageLookupByLibrary.simpleMessage("Приложение"),
     "seeAllApps": MessageLookupByLibrary.simpleMessage(
       "Все приложения на телефоне",

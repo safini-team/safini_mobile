@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="protection_channel_name">Protection alerts</string>
+    <string name="notification_channel_tasks">Tasks</string>
+    <string name="notification_channel_screen_time">Screen time</string>
+    <string name="notification_channel_family">Family</string>
+    <string name="notification_channel_reminders">Reminders and summaries</string>
 
     <!-- Block takeover drawn by AppBlockForegroundService. %1$s is the blocked app's name. -->
     <string name="block_resting_title">%1$s is resting</string>

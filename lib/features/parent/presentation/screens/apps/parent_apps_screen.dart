@@ -4,7 +4,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/on_push.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
@@ -26,19 +28,27 @@ class ParentAppsScreen extends StatefulWidget {
 
 class _ParentAppsScreenState extends State<ParentAppsScreen> {
   late final ParentAppsCubit _cubit = getIt<ParentAppsCubit>()
-    // A protection alert names the child it is about, so open on that child
-    // rather than whoever was selected last.
-    ..loadAppLimits(childId: getIt<PushDeepLinks>().takeChildId());
-  StreamSubscription<String>? _deepLinks;
+    // A protection or limit push names the child it is about, so open on that
+    // child rather than whoever was selected last.
+    ..loadAppLimits(
+      childId: getIt<PushDeepLinks>()
+          .take(PushDestination.parentLimits)
+          ?.childId,
+    );
+  StreamSubscription<PushTarget>? _deepLinks;
 
   @override
   void initState() {
     super.initState();
-    // Covers an alert tapped while this tab is already built.
-    _deepLinks = getIt<PushDeepLinks>().stream.listen((childId) {
-      getIt<PushDeepLinks>().takeChildId();
-      _cubit.selectChild(childId);
-    });
+    // Covers a push tapped while this tab is already built.
+    _deepLinks = getIt<PushDeepLinks>().stream
+        .where((target) => target.destination == PushDestination.parentLimits)
+        .listen((_) {
+          final childId = getIt<PushDeepLinks>()
+              .take(PushDestination.parentLimits)
+              ?.childId;
+          if (childId != null) _cubit.selectChild(childId);
+        });
   }
 
   @override
@@ -50,7 +60,21 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(value: _cubit, child: const _ParentLimitsView());
+    return BlocProvider.value(
+      value: _cubit,
+      // Minutes used and what is locked just changed on the child's phone.
+      child: OnPush(
+        types: const {
+          PushType.appLimitReached,
+          PushType.screenTimeReached,
+          PushType.protectionAlert,
+        },
+        onPush: (event) {
+          if (event.childId == _cubit.childId) _cubit.loadAppLimits();
+        },
+        child: const _ParentLimitsView(),
+      ),
+    );
   }
 }
 

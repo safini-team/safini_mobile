@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:safini/core/app/locale_cubit.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
@@ -37,7 +39,14 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
       builder: (context, locale) => Localizations.override(
         context: context,
         locale: locale,
-        child: Builder(builder: _buildScreen),
+        // A child signing in or a second parent joining changes this list.
+        child: OnPush(
+          types: const {PushType.childConnected, PushType.parentJoined},
+          onPush: (_) => context.read<ParentFamilyCubit>().loadCurrentFamily(
+            refresh: true,
+          ),
+          child: Builder(builder: _buildScreen),
+        ),
       ),
     );
   }

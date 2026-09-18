@@ -1,33 +1,43 @@
 import 'dart:async';
 
-/// A protection alert the parent tapped, on its way to the Apps tab.
+import 'package:safini/core/notifications/push_event.dart';
+
+/// A push the user tapped, on its way to the screen it is about.
 ///
-/// The link can arrive three ways - a cold start from a notification, a tap
-/// while the app is backgrounded, or an `adb`/browser VIEW intent - so it is
-/// held here rather than being handed straight to a screen that may not exist
-/// yet. [pendingChildId] survives until a screen consumes it; [stream] covers
-/// the case where the Apps tab is already on screen.
+/// A tap can arrive three ways - a cold start from a notification, a tap
+/// while the app is backgrounded or open, or an `adb`/browser VIEW intent - so
+/// it is held here rather than handed straight to a screen that may not exist
+/// yet. [pending] survives until the screen for its destination takes it;
+/// [stream] covers a shell that is already on screen.
 class PushDeepLinks {
-  final StreamController<String> _controller =
-      StreamController<String>.broadcast();
+  final StreamController<PushTarget> _controller =
+      StreamController<PushTarget>.broadcast();
 
-  String? _pendingChildId;
+  PushTarget? _pending;
 
-  Stream<String> get stream => _controller.stream;
+  Stream<PushTarget> get stream => _controller.stream;
 
-  bool get hasPending => _pendingChildId != null;
+  PushTarget? get pending => _pending;
 
-  void open(String childId) {
-    _pendingChildId = childId;
-    _controller.add(childId);
+  bool get hasPending => _pending != null;
+
+  void open(PushTarget target) {
+    _pending = target;
+    _controller.add(target);
   }
 
-  /// Returns the pending child id once, then forgets it.
-  String? takeChildId() {
-    final childId = _pendingChildId;
-    _pendingChildId = null;
-    return childId;
+  /// The pending target, once, if it is for [destination]. A target for
+  /// another screen stays pending for that screen.
+  PushTarget? take(PushDestination destination) {
+    final target = _pending;
+    if (target == null || target.destination != destination) return null;
+    _pending = null;
+    return target;
   }
+
+  /// Forget whatever is pending, e.g. on sign-out or a tap meant for the
+  /// other kind of account.
+  void clear() => _pending = null;
 
   /// `safini://children/<child id>/protection`, and nothing else.
   ///

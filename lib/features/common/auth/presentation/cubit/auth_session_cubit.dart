@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/network/auth_token_provider.dart';
-import 'package:safini/core/notifications/parent_push_service.dart';
+import 'package:safini/core/notifications/push_service.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/common/auth/data/auth_apple_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
@@ -276,8 +276,8 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
     }
     // Before the session is cleared: revoking needs a usable bearer token, and
     // the next parent on this handset must not inherit these alerts.
-    if (getIt.isRegistered<ParentPushService>()) {
-      await getIt<ParentPushService>().revoke();
+    if (getIt.isRegistered<PushService>()) {
+      await getIt<PushService>().revoke();
     }
     await _clearFamilyState();
     await _clearAuthState();

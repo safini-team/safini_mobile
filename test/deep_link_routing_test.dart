@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:safini/core/app/app_router.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
+import 'package:safini/core/notifications/push_event.dart';
 
 void main() {
   late PushDeepLinks links;
@@ -20,7 +21,10 @@ void main() {
       Uri.parse('safini://children/child-7/protection'),
     );
     expect(route, '/');
-    expect(links.takeChildId(), 'child-7');
+    expect(
+      links.take(PushDestination.parentLimits),
+      const PushTarget(PushDestination.parentLimits, childId: 'child-7'),
+    );
   });
 
   test('other links are left for their own handlers', () {

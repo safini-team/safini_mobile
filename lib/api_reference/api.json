@@ -176,7 +176,7 @@
           "profiles"
         ],
         "summary": "Delete My Account",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Permanently deletes the authenticated Safini account and its associated personal data.\n\n**Frontend note:** Require an explicit destructive confirmation before calling this endpoint. A child account deletion removes its claimed child profile and activity. A parent in a shared family leaves the family; deleting the last parent removes the family and its child data. A successful response invalidates the Supabase account, so route directly to sign-in.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Permanently deletes the authenticated Safini account and its associated personal data.\n\n**Frontend note:** Require an explicit destructive confirmation before calling this endpoint. Parent accounts only: a child account belongs to its family and is removed by a parent through `DELETE /v1/families/current/children/{child_id}`, so a child caller gets `403`. A parent in a shared family leaves the family; deleting the last parent removes the family and its child data. A successful response invalidates the Supabase account, so route directly to sign-in.",
         "operationId": "delete_my_account_v1_me_delete",
         "responses": {
           "204": {
@@ -198,6 +198,16 @@
               "application/json": {
                 "example": {
                   "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
                 }
               }
             }
@@ -313,7 +323,7 @@
           "push"
         ],
         "summary": "Listing",
-        "description": "Auth: parent's Supabase bearer token. Business requirement: let a parent see which of their devices can receive alerts. Frontend note: tokens are never returned, only platform, locale and timestamps.",
+        "description": "Auth: the Supabase bearer token of any signed-in account. Business requirement: show which of this account's handsets can receive notifications. Frontend note: tokens are never returned, only platform, locale and timestamps.",
         "operationId": "listing_v1_me_push_devices_get",
         "responses": {
           "200": {
@@ -354,7 +364,7 @@
           "push"
         ],
         "summary": "Register",
-        "description": "Auth: parent's Supabase bearer token. Business requirement: deliver protection alerts when the parent app is closed. Frontend note: send the current FCM token on every launch and on token refresh; iOS uses the same FCM token, not a raw APNs token. Registering a token that another account used moves it to this account.",
+        "description": "Auth: the Supabase bearer token of any signed-in account, parent or child. Business requirement: deliver notifications while the app is closed. Frontend note: send the current FCM token on every launch, on token refresh and when the app language changes, because notification text is rendered in `locale`. iOS uses the same FCM token, not a raw APNs token. Registering a token that another account used moves it to this account.",
         "operationId": "register_v1_me_push_devices_put",
         "requestBody": {
           "content": {
@@ -415,7 +425,7 @@
           "push"
         ],
         "summary": "Revoke",
-        "description": "Auth: parent's Supabase bearer token. Business requirement: stop alerts on sign-out or when notifications are turned off. Frontend note: send the token in the request body; a token registered to another account is left alone and `revoked` comes back false.",
+        "description": "Auth: the Supabase bearer token of the account that registered the token. Business requirement: stop notifications on sign-out or when notifications are turned off. Frontend note: send the token in the request body; a token registered to another account is left alone and `revoked` comes back false.",
         "operationId": "revoke_v1_me_push_devices_delete",
         "requestBody": {
           "content": {
@@ -450,6 +460,124 @@
               "application/json": {
                 "example": {
                   "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/me/notification-preferences": {
+      "get": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Get Notification Preferences",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Backs the Alerts switches on the parent Settings screen.\n\n**Frontend note:** An account that never changed anything gets the defaults: submissions and limits on, the weekly digest off. Protection alerts, task reviews for children and family changes are always sent and have no switch.",
+        "operationId": "get_notification_preferences_v1_me_notification_preferences_get",
+        "responses": {
+          "200": {
+            "description": "Current switches.",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
+                  "task_submissions": true,
+                  "limit_reached": true,
+                  "weekly_digest": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Update Notification Preferences",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent choose which notifications reach their phones.\n\n**Frontend note:** Send only the switches that changed; the response has all of them. The choice is per account, so it applies to every handset the parent is signed in on, and it also stops notifications that were already queued.",
+        "operationId": "update_notification_preferences_v1_me_notification_preferences_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPreferencesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Switches saved.",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
+                  "task_submissions": true,
+                  "limit_reached": true,
+                  "weekly_digest": true
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
                 }
               }
             }
@@ -6266,6 +6394,52 @@
               "package_name": "com.google.android.dialer"
             }
           ]
+        }
+      },
+      "NotificationPreferencesRequest": {
+        "properties": {
+          "task_submissions": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Submissions",
+            "description": "Push when a child sends a task for review."
+          },
+          "limit_reached": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Reached",
+            "description": "Push when a child runs out of time on an app or for the day."
+          },
+          "weekly_digest": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekly Digest",
+            "description": "Sunday evening summary of each child's week."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "NotificationPreferencesRequest",
+        "example": {
+          "weekly_digest": true
         }
       },
       "ParentTaskSuggestionRequest": {

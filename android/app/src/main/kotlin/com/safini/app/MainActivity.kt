@@ -1,7 +1,5 @@
 package com.safini.app
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.admin.DevicePolicyManager
 import android.content.Intent
 import android.net.Uri
@@ -18,7 +16,30 @@ import java.util.concurrent.Executors
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        createProtectionChannel()
+        // Before the first push can arrive; the manifest names the protection
+        // channel as FCM's fallback for anything posted earlier.
+        PushNotifications.createChannels(this)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.safini.app/notifications")
+            .setMethodCallHandler { call, result ->
+                try {
+                    when (call.method) {
+                        "show" -> {
+                            PushNotifications.show(
+                                this,
+                                call.argument<String>("messageId")!!,
+                                call.argument<String>("title") ?: "",
+                                call.argument<String>("body") ?: "",
+                                call.argument<String>("channelId"),
+                                call.argument<String>("tag"),
+                            )
+                            result.success(null)
+                        }
+                        "enabled" -> result.success(PushNotifications.enabled(this))
+                        "openSettings" -> { PushNotifications.openSettings(this); result.success(null) }
+                        else -> result.notImplemented()
+                    }
+                } catch (e: Exception) { result.error("notifications", e.message, null) }
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.safini.app/app_block")
             .setMethodCallHandler { call, result ->
                 try {
@@ -108,20 +129,6 @@ class MainActivity : FlutterActivity() {
             if (error == null) result.success(null) else result.error("sync", error.message, null)
         } else if (attempt < 30) Handler(Looper.getMainLooper()).postDelayed({ syncWhenStarted(result, attempt+1) },100)
         else result.error("service", "Unable to start app limits.", null)
-    }
-
-    /// Protection alerts are posted here. Importance is HIGH because a parent
-    /// losing app limits is the one thing this app must not deliver silently.
-    private fun createProtectionChannel() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-        val manager = getSystemService(NotificationManager::class.java) ?: return
-        manager.createNotificationChannel(
-            NotificationChannel(
-                "safini_protection",
-                getString(R.string.protection_channel_name),
-                NotificationManager.IMPORTANCE_HIGH,
-            )
-        )
     }
 
     /** Icons take a second or two for a full phone; never on the UI thread. */

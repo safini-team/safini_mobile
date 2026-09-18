@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="protection_channel_name">Оповещения защиты</string>
+    <string name="notification_channel_tasks">Задания</string>
+    <string name="notification_channel_screen_time">Экранное время</string>
+    <string name="notification_channel_family">Семья</string>
+    <string name="notification_channel_reminders">Напоминания и итоги</string>
 
     <string name="block_resting_title">%1$s отдыхает</string>
     <string name="block_resting_body">Время на сегодня закончилось. Завтра приложение снова проснётся.</string>
