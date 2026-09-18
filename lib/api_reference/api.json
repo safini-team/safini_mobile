@@ -2810,6 +2810,400 @@
         }
       }
     },
+    "/v1/children/{child_id}/task-voice/upload-url": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Create Task Voice Upload URL",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Issues a short-lived URL a parent uploads a voice instruction to, so the child can play it back on the task.\n\n**Frontend note:** Create the task first, then call this, PUT the audio to `upload_url`, then POST the returned `object_key` with `duration_ms` and `mime` to `/v1/tasks/{task_id}/voice`. Parent-only. Max 60 seconds and 10 MB. The URL is valid for 15 minutes.",
+        "operationId": "create_task_voice_upload_url_v1_children__child_id__task_voice_upload_url_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceUploadUrlRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload URL issued.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Create Task Voice Upload Url V1 Children  Child Id  Task Voice Upload Url Post"
+                },
+                "example": {
+                  "object_key": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0/9f1c5b4e-6a2b-4a4f-9a0e-2a9d1e7a3b11/6c0b9f6e-6f1e-4a54-9b0e-7d2c8f1a9e42.m4a",
+                  "upload_url": "https://project.supabase.co/storage/v1/object/upload/sign/task-voice/...",
+                  "token": "eyJhbGciOi...",
+                  "expires_in_seconds": 900,
+                  "max_bytes": 10485760,
+                  "max_duration_ms": 60000
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tasks/{task_id}/voice": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Attach Task Voice Instruction",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent attach, or replace, the voice instruction on a task that has not been approved yet.\n\n**Frontend note:** Send the `object_key` from the upload-url response plus the recording's `duration_ms` (max 60000) and `mime`. The response includes a short-lived `voice_instruction_url` for playback. Replacing a note deletes the previous object when nothing else still uses it.",
+        "operationId": "attach_task_voice_instruction_v1_tasks__task_id__voice_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceInstructionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Voice instruction attached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Attach Task Voice Instruction V1 Tasks  Task Id  Voice Post"
+                },
+                "example": {
+                  "id": "9f3f7985-70a5-4e4c-a5dc-f3d0a3d88111",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "source": "custom",
+                  "task_type": "custom",
+                  "title": "Read for 20 mins",
+                  "description": "Independent reading before bedtime.",
+                  "category": "learn",
+                  "proof_mode": "text_image",
+                  "verification_mode": "parent_approval",
+                  "coin_reward": 15,
+                  "xp_reward": 20,
+                  "target_value": 20,
+                  "target_unit": "minutes",
+                  "metadata": {
+                    "difficulty": "easy"
+                  },
+                  "due_on": "2026-06-10",
+                  "status": "available",
+                  "voice_instruction_url": "https://project.supabase.co/storage/v1/object/sign/task-voice/...",
+                  "voice_instruction_object_key": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0/9f1c5b4e-6a2b-4a4f-9a0e-2a9d1e7a3b11/6c0b9f6e-6f1e-4a54-9b0e-7d2c8f1a9e42.m4a",
+                  "voice_instruction_duration_ms": 12500,
+                  "voice_instruction_mime": "audio/mp4",
+                  "created_at": "2026-06-10T12:00:00Z",
+                  "updated_at": "2026-06-10T12:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Remove Task Voice Instruction",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent remove the voice instruction from a task that has not been approved yet.\n\n**Frontend note:** Idempotent: removing a task that has no voice note still returns the task. The Storage object is deleted only when no other task still references it (recurring clones share the key).",
+        "operationId": "remove_task_voice_instruction_v1_tasks__task_id__voice_delete",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Voice instruction removed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Remove Task Voice Instruction V1 Tasks  Task Id  Voice Delete"
+                },
+                "example": {
+                  "id": "9f3f7985-70a5-4e4c-a5dc-f3d0a3d88111",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "source": "custom",
+                  "task_type": "custom",
+                  "title": "Read for 20 mins",
+                  "description": "Independent reading before bedtime.",
+                  "category": "learn",
+                  "proof_mode": "text_image",
+                  "verification_mode": "parent_approval",
+                  "coin_reward": 15,
+                  "xp_reward": 20,
+                  "target_value": 20,
+                  "target_unit": "minutes",
+                  "metadata": {
+                    "difficulty": "easy"
+                  },
+                  "due_on": "2026-06-10",
+                  "status": "available",
+                  "created_at": "2026-06-10T12:00:00Z",
+                  "updated_at": "2026-06-10T12:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/tasks/{task_id}/submit": {
       "post": {
         "tags": [
@@ -7484,6 +7878,79 @@
         ],
         "title": "ValidationError"
       },
+      "VoiceInstructionRequest": {
+        "properties": {
+          "object_key": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Object Key",
+            "description": "Storage object key returned by the voice upload-url endpoint."
+          },
+          "duration_ms": {
+            "type": "integer",
+            "maximum": 60000.0,
+            "minimum": 1.0,
+            "title": "Duration Ms",
+            "description": "Length of the recording in milliseconds. Max 60000 (60 seconds)."
+          },
+          "mime": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Mime",
+            "description": "MIME type of the uploaded recording, for example `audio/mp4`."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "object_key",
+          "duration_ms",
+          "mime"
+        ],
+        "title": "VoiceInstructionRequest",
+        "example": {
+          "duration_ms": 12500,
+          "mime": "audio/mp4",
+          "object_key": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0/9f1c5b4e-6a2b-4a4f-9a0e-2a9d1e7a3b11/6c0b9f6e-6f1e-4a54-9b0e-7d2c8f1a9e42.m4a"
+        }
+      },
+      "VoiceUploadUrlRequest": {
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task Id",
+            "description": "Task the voice instruction will be attached to."
+          },
+          "extension": {
+            "type": "string",
+            "enum": [
+              "m4a",
+              "aac",
+              "mp3",
+              "wav",
+              "webm",
+              "ogg",
+              "mp4",
+              "3gp"
+            ],
+            "title": "Extension",
+            "description": "File extension of the recording about to be uploaded."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "task_id",
+          "extension"
+        ],
+        "title": "VoiceUploadUrlRequest",
+        "example": {
+          "extension": "m4a",
+          "task_id": "9f1c5b4e-6a2b-4a4f-9a0e-2a9d1e7a3b11"
+        }
+      },
       "WaitingListJoinRequest": {
         "properties": {
           "email": {
@@ -7550,7 +8017,7 @@
     },
     {
       "name": "tasks",
-      "description": "Per-day child tasks, proof submission, review, and steps reporting."
+      "description": "Per-day child tasks, parent voice instructions, proof submission, review, and steps reporting."
     },
     {
       "name": "apps",
