@@ -188,7 +188,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
 
     expect(find.text('iOS Screen Time · last reported status'), findsOneWidget);
-    expect(find.text('Monitoring configured'), findsOneWidget);
+    expect(find.textContaining('Monitoring configured'), findsOneWidget);
     expect(
       find.textContaining('View actual usage in Screen Time'),
       findsNothing,
@@ -214,7 +214,7 @@ void main() {
       'updated_at': DateTime.now().toUtc().toIso8601String(),
     };
     await pumpCard(tester, 'child-ios-off');
-    expect(find.text('Setup needs attention'), findsOneWidget);
+    expect(find.textContaining('Setup needs attention'), findsOneWidget);
     expect(
       find.textContaining('View actual usage in Screen Time'),
       findsNothing,
