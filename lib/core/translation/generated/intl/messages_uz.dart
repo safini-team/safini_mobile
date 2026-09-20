@@ -179,6 +179,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "activeTasks": MessageLookupByLibrary.simpleMessage("Faol topshiriqlar"),
     "addAChild": MessageLookupByLibrary.simpleMessage("Farzand qoʻshish"),
     "addAnApp": MessageLookupByLibrary.simpleMessage("Ilova qoʻshish"),
+    "addAnAppLimit": MessageLookupByLibrary.simpleMessage(
+      "Ilovaga limit qoʻshish",
+    ),
     "addAnotherApp": MessageLookupByLibrary.simpleMessage(
       "Yana ilova qoʻshish",
     ),
@@ -266,6 +269,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Avatar buyumi"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar buyumlari"),
+    "backToSignIn": MessageLookupByLibrary.simpleMessage("Kirishga qaytish"),
     "badgeCoins": m6,
     "badgeTasksDone": m7,
     "badges": MessageLookupByLibrary.simpleMessage("Nishonlar"),
@@ -315,6 +319,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseFromLibrary": MessageLookupByLibrary.simpleMessage(
       "Galereyadan tanlash",
     ),
+    "chooseTaskBody": MessageLookupByLibrary.simpleMessage(
+      "Tayyor vazifani tanlang yoki oʻzingiznikini yarating.",
+    ),
+    "chooseTaskTitle": MessageLookupByLibrary.simpleMessage("Vazifa yaratish"),
     "chooseYourRole": MessageLookupByLibrary.simpleMessage(
       "Rolingizni tanlang",
     ),
@@ -574,8 +582,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ilovalar hali sinxronlanmagan",
     ),
     "installedAppsLastSynced": m22,
+    "installedAppsLimited": MessageLookupByLibrary.simpleMessage(
+      "Limit qoʻyilgan",
+    ),
+    "installedAppsNoMatch": MessageLookupByLibrary.simpleMessage(
+      "Qidiruvga mos ilova topilmadi.",
+    ),
     "installedAppsNotControllable": MessageLookupByLibrary.simpleMessage(
       "Safini bu ilovani hali cheklay olmaydi.",
+    ),
+    "installedAppsSearchHint": MessageLookupByLibrary.simpleMessage(
+      "Ilovalarni qidirish",
     ),
     "installedAppsSetLimit": MessageLookupByLibrary.simpleMessage(
       "Kunlik limit qoʻyish",
@@ -805,6 +822,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tarmoq xatosi. Ulanishni tekshiring.",
     ),
     "newBtn": MessageLookupByLibrary.simpleMessage("Yangi"),
+    "newCustomTask": MessageLookupByLibrary.simpleMessage(
+      "Yangi maxsus vazifa",
+    ),
     "newSubmissionsLandHere": MessageLookupByLibrary.simpleMessage(
       "Yangi topshiriqlar shu yerda chiqadi.",
     ),
@@ -1169,17 +1189,83 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskIdeaDuolingoTitle": MessageLookupByLibrary.simpleMessage(
       "Duolingoda bitta dars oʻtish",
     ),
-    "taskIdeaNapDetails": MessageLookupByLibrary.simpleMessage(
-      "Kunduzi 2 soat uxla, telefonni esa chetga qoʻy.",
+    "taskIdeaExerciseDetails": MessageLookupByLibrary.simpleMessage(
+      "Uyda yoki tashqarida kamida 20 daqiqa faol harakat qil.",
     ),
-    "taskIdeaNapTitle": MessageLookupByLibrary.simpleMessage(
-      "Kunduzi 2 soat uxlash",
+    "taskIdeaExerciseTitle": MessageLookupByLibrary.simpleMessage(
+      "20 daqiqa mashq qilish",
     ),
-    "taskIdeaStepsDetails": MessageLookupByLibrary.simpleMessage(
-      "Telefon yoki soatdagi qadam hisoblagichda 5 000 qadamga yet.",
+    "taskIdeaFeedPetDetails": MessageLookupByLibrary.simpleMessage(
+      "Uy hayvoniga kerakli ovqat va toza suv ber.",
     ),
-    "taskIdeaStepsTitle": MessageLookupByLibrary.simpleMessage(
-      "5 000 qadam yurish",
+    "taskIdeaFeedPetTitle": MessageLookupByLibrary.simpleMessage(
+      "Uy hayvonini boqish",
+    ),
+    "taskIdeaHomeworkDetails": MessageLookupByLibrary.simpleMessage(
+      "Keyingi oʻquv kuniga berilgan uy vazifalarini tugat.",
+    ),
+    "taskIdeaHomeworkTitle": MessageLookupByLibrary.simpleMessage(
+      "Uy vazifasini bajarish",
+    ),
+    "taskIdeaMakeBedDetails": MessageLookupByLibrary.simpleMessage(
+      "Uyqudan turgach toʻshagingni tartibli yigʻ va rasmini yubor.",
+    ),
+    "taskIdeaMakeBedTitle": MessageLookupByLibrary.simpleMessage(
+      "Toʻshakni yigʻish",
+    ),
+    "taskIdeaPackSchoolBagDetails": MessageLookupByLibrary.simpleMessage(
+      "Keyingi oʻquv kuni uchun kitob va anjomlarni joyla.",
+    ),
+    "taskIdeaPackSchoolBagTitle": MessageLookupByLibrary.simpleMessage(
+      "Maktab sumkasini tayyorlash",
+    ),
+    "taskIdeaPracticeInstrumentDetails": MessageLookupByLibrary.simpleMessage(
+      "Musiqa asbobini diqqat bilan kamida 20 daqiqa mashq qil.",
+    ),
+    "taskIdeaPracticeInstrumentTitle": MessageLookupByLibrary.simpleMessage(
+      "Musiqa asbobini mashq qilish",
+    ),
+    "taskIdeaPutAwayLaundryDetails": MessageLookupByLibrary.simpleMessage(
+      "Toza kiyimlaringni taxla va tegishli tortmalarga joyla.",
+    ),
+    "taskIdeaPutAwayLaundryTitle": MessageLookupByLibrary.simpleMessage(
+      "Toza kiyimlarni joylash",
+    ),
+    "taskIdeaPutAwayToysDetails": MessageLookupByLibrary.simpleMessage(
+      "Barcha oʻyinchoqlarni qutisi yoki javoniga joyla.",
+    ),
+    "taskIdeaPutAwayToysTitle": MessageLookupByLibrary.simpleMessage(
+      "Oʻyinchoqlarni yigʻish",
+    ),
+    "taskIdeaRead20Details": MessageLookupByLibrary.simpleMessage(
+      "Boshqa ilovaga chalgʻimasdan kamida 20 daqiqa kitob oʻqi.",
+    ),
+    "taskIdeaRead20Title": MessageLookupByLibrary.simpleMessage(
+      "20 daqiqa kitob oʻqish",
+    ),
+    "taskIdeaSetTableDetails": MessageLookupByLibrary.simpleMessage(
+      "Oilaviy ovqat uchun likopcha, piyola va anjomlarni qoʻy.",
+    ),
+    "taskIdeaSetTableTitle": MessageLookupByLibrary.simpleMessage(
+      "Dasturxon yozish",
+    ),
+    "taskIdeaSolvePuzzleDetails": MessageLookupByLibrary.simpleMessage(
+      "Yoshingga mos bitta boshqotirma, topishmoq yoki shaxmat masalasini yech.",
+    ),
+    "taskIdeaSolvePuzzleTitle": MessageLookupByLibrary.simpleMessage(
+      "Boshqotirma yechish",
+    ),
+    "taskIdeaTidyRoomDetails": MessageLookupByLibrary.simpleMessage(
+      "Buyumlarni joyiga qoʻy va polni ochiq qoldir.",
+    ),
+    "taskIdeaTidyRoomTitle": MessageLookupByLibrary.simpleMessage(
+      "Xonani yigʻishtirish",
+    ),
+    "taskIdeaWaterPlantsDetails": MessageLookupByLibrary.simpleMessage(
+      "Oʻsimliklarni tekshir va suv keraklarini sugʻor.",
+    ),
+    "taskIdeaWaterPlantsTitle": MessageLookupByLibrary.simpleMessage(
+      "Oʻsimliklarni sugʻorish",
     ),
     "taskIdeasEmptyTitle": MessageLookupByLibrary.simpleMessage(
       "Hozircha vazifa yoʻq",
@@ -1209,6 +1295,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskSubmittedForReview": MessageLookupByLibrary.simpleMessage(
       "Ota-onangga yuborildi",
     ),
+    "taskTemplatesTitle": MessageLookupByLibrary.simpleMessage("Shablonlar"),
     "taskTitleHint": MessageLookupByLibrary.simpleMessage("Gullarni sugʻorish"),
     "taskUpdatedMessage": MessageLookupByLibrary.simpleMessage(
       "Topshiriq yangilandi!",

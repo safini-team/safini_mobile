@@ -730,6 +730,16 @@ class S {
     return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
   }
 
+  /// `Back to sign in`
+  String get backToSignIn {
+    return Intl.message(
+      'Back to sign in',
+      name: 'backToSignIn',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `OK`
   String get ok {
     return Intl.message('OK', name: 'ok', desc: '', args: []);
@@ -2452,6 +2462,166 @@ class S {
     );
   }
 
+  /// `Create a task`
+  String get chooseTaskTitle {
+    return Intl.message(
+      'Create a task',
+      name: 'chooseTaskTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start with a ready-made routine or create your own.`
+  String get chooseTaskBody {
+    return Intl.message(
+      'Start with a ready-made routine or create your own.',
+      name: 'chooseTaskBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New custom task`
+  String get newCustomTask {
+    return Intl.message(
+      'New custom task',
+      name: 'newCustomTask',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Templates`
+  String get taskTemplatesTitle {
+    return Intl.message(
+      'Templates',
+      name: 'taskTemplatesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Make the bed`
+  String get taskIdeaMakeBedTitle {
+    return Intl.message(
+      'Make the bed',
+      name: 'taskIdeaMakeBedTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Make your bed neatly after getting up and send a photo.`
+  String get taskIdeaMakeBedDetails {
+    return Intl.message(
+      'Make your bed neatly after getting up and send a photo.',
+      name: 'taskIdeaMakeBedDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tidy your room`
+  String get taskIdeaTidyRoomTitle {
+    return Intl.message(
+      'Tidy your room',
+      name: 'taskIdeaTidyRoomTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Put things back in their places and leave the floor clear.`
+  String get taskIdeaTidyRoomDetails {
+    return Intl.message(
+      'Put things back in their places and leave the floor clear.',
+      name: 'taskIdeaTidyRoomDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Put away your toys`
+  String get taskIdeaPutAwayToysTitle {
+    return Intl.message(
+      'Put away your toys',
+      name: 'taskIdeaPutAwayToysTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Put every toy back in its box or on its shelf.`
+  String get taskIdeaPutAwayToysDetails {
+    return Intl.message(
+      'Put every toy back in its box or on its shelf.',
+      name: 'taskIdeaPutAwayToysDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish your homework`
+  String get taskIdeaHomeworkTitle {
+    return Intl.message(
+      'Finish your homework',
+      name: 'taskIdeaHomeworkTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Complete the homework due for the next school day.`
+  String get taskIdeaHomeworkDetails {
+    return Intl.message(
+      'Complete the homework due for the next school day.',
+      name: 'taskIdeaHomeworkDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pack your school bag`
+  String get taskIdeaPackSchoolBagTitle {
+    return Intl.message(
+      'Pack your school bag',
+      name: 'taskIdeaPackSchoolBagTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pack the books and supplies needed for the next school day.`
+  String get taskIdeaPackSchoolBagDetails {
+    return Intl.message(
+      'Pack the books and supplies needed for the next school day.',
+      name: 'taskIdeaPackSchoolBagDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Read for 20 minutes`
+  String get taskIdeaRead20Title {
+    return Intl.message(
+      'Read for 20 minutes',
+      name: 'taskIdeaRead20Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Read a book for at least 20 minutes without using another app.`
+  String get taskIdeaRead20Details {
+    return Intl.message(
+      'Read a book for at least 20 minutes without using another app.',
+      name: 'taskIdeaRead20Details',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Complete a Duolingo lesson`
   String get taskIdeaDuolingoTitle {
     return Intl.message(
@@ -2472,46 +2642,6 @@ class S {
     );
   }
 
-  /// `Walk 5,000 steps`
-  String get taskIdeaStepsTitle {
-    return Intl.message(
-      'Walk 5,000 steps',
-      name: 'taskIdeaStepsTitle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Get to 5,000 steps on the step counter of your phone or watch.`
-  String get taskIdeaStepsDetails {
-    return Intl.message(
-      'Get to 5,000 steps on the step counter of your phone or watch.',
-      name: 'taskIdeaStepsDetails',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Nap for 2 hours`
-  String get taskIdeaNapTitle {
-    return Intl.message(
-      'Nap for 2 hours',
-      name: 'taskIdeaNapTitle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Sleep for 2 hours during the day, with the phone put away.`
-  String get taskIdeaNapDetails {
-    return Intl.message(
-      'Sleep for 2 hours during the day, with the phone put away.',
-      name: 'taskIdeaNapDetails',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Brush teeth in the morning`
   String get taskIdeaBrushTeethTitle {
     return Intl.message(
@@ -2527,6 +2657,146 @@ class S {
     return Intl.message(
       'Brush for two minutes after you wake up, then send a photo.',
       name: 'taskIdeaBrushTeethDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Practice an instrument`
+  String get taskIdeaPracticeInstrumentTitle {
+    return Intl.message(
+      'Practice an instrument',
+      name: 'taskIdeaPracticeInstrumentTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Practice your instrument with focus for at least 20 minutes.`
+  String get taskIdeaPracticeInstrumentDetails {
+    return Intl.message(
+      'Practice your instrument with focus for at least 20 minutes.',
+      name: 'taskIdeaPracticeInstrumentDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Solve a puzzle`
+  String get taskIdeaSolvePuzzleTitle {
+    return Intl.message(
+      'Solve a puzzle',
+      name: 'taskIdeaSolvePuzzleTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish one age-appropriate puzzle, riddle, or chess exercise.`
+  String get taskIdeaSolvePuzzleDetails {
+    return Intl.message(
+      'Finish one age-appropriate puzzle, riddle, or chess exercise.',
+      name: 'taskIdeaSolvePuzzleDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exercise for 20 minutes`
+  String get taskIdeaExerciseTitle {
+    return Intl.message(
+      'Exercise for 20 minutes',
+      name: 'taskIdeaExerciseTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Move actively for at least 20 minutes indoors or outside.`
+  String get taskIdeaExerciseDetails {
+    return Intl.message(
+      'Move actively for at least 20 minutes indoors or outside.',
+      name: 'taskIdeaExerciseDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feed the pet`
+  String get taskIdeaFeedPetTitle {
+    return Intl.message(
+      'Feed the pet',
+      name: 'taskIdeaFeedPetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Give the pet the right food and fresh water.`
+  String get taskIdeaFeedPetDetails {
+    return Intl.message(
+      'Give the pet the right food and fresh water.',
+      name: 'taskIdeaFeedPetDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Water the plants`
+  String get taskIdeaWaterPlantsTitle {
+    return Intl.message(
+      'Water the plants',
+      name: 'taskIdeaWaterPlantsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check the plants and water the ones that need it.`
+  String get taskIdeaWaterPlantsDetails {
+    return Intl.message(
+      'Check the plants and water the ones that need it.',
+      name: 'taskIdeaWaterPlantsDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set the table`
+  String get taskIdeaSetTableTitle {
+    return Intl.message(
+      'Set the table',
+      name: 'taskIdeaSetTableTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Put out the plates, cups, and cutlery for the family meal.`
+  String get taskIdeaSetTableDetails {
+    return Intl.message(
+      'Put out the plates, cups, and cutlery for the family meal.',
+      name: 'taskIdeaSetTableDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Put away clean laundry`
+  String get taskIdeaPutAwayLaundryTitle {
+    return Intl.message(
+      'Put away clean laundry',
+      name: 'taskIdeaPutAwayLaundryTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fold your clean clothes and put them in the right drawers.`
+  String get taskIdeaPutAwayLaundryDetails {
+    return Intl.message(
+      'Fold your clean clothes and put them in the right drawers.',
+      name: 'taskIdeaPutAwayLaundryDetails',
       desc: '',
       args: [],
     );
@@ -2585,6 +2855,16 @@ class S {
   /// `Add an app`
   String get addAnApp {
     return Intl.message('Add an app', name: 'addAnApp', desc: '', args: []);
+  }
+
+  /// `Add an app limit`
+  String get addAnAppLimit {
+    return Intl.message(
+      'Add an app limit',
+      name: 'addAnAppLimit',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `When the daily limit runs out, the app stops opening and shows the Safini screen instead.`
@@ -2685,6 +2965,36 @@ class S {
     return Intl.message(
       'Tap an app you recognise to set a limit or block it.',
       name: 'installedAppsTapHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search installed apps`
+  String get installedAppsSearchHint {
+    return Intl.message(
+      'Search installed apps',
+      name: 'installedAppsSearchHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No installed apps match your search.`
+  String get installedAppsNoMatch {
+    return Intl.message(
+      'No installed apps match your search.',
+      name: 'installedAppsNoMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limited`
+  String get installedAppsLimited {
+    return Intl.message(
+      'Limited',
+      name: 'installedAppsLimited',
       desc: '',
       args: [],
     );

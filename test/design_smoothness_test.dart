@@ -136,7 +136,6 @@ void main() {
               onSelectLane: (_) {},
               onOpenTask: (_) {},
               onNewTask: () {},
-              onOpenIdea: (_) {},
             ),
             locale: locale,
             device: device,

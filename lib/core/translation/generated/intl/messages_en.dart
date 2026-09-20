@@ -184,6 +184,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "activeTasks": MessageLookupByLibrary.simpleMessage("Active Tasks"),
     "addAChild": MessageLookupByLibrary.simpleMessage("Add a child"),
     "addAnApp": MessageLookupByLibrary.simpleMessage("Add an app"),
+    "addAnAppLimit": MessageLookupByLibrary.simpleMessage("Add an app limit"),
     "addAnotherApp": MessageLookupByLibrary.simpleMessage("Add Another App"),
     "addAnotherChild": MessageLookupByLibrary.simpleMessage(
       "Add Another Child",
@@ -261,6 +262,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "askToRedo": MessageLookupByLibrary.simpleMessage("Ask to redo"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Avatar item"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar Items"),
+    "backToSignIn": MessageLookupByLibrary.simpleMessage("Back to sign in"),
     "badgeCoins": m6,
     "badgeTasksDone": m7,
     "badges": MessageLookupByLibrary.simpleMessage("Badges"),
@@ -306,6 +308,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseFromLibrary": MessageLookupByLibrary.simpleMessage(
       "Choose from library",
     ),
+    "chooseTaskBody": MessageLookupByLibrary.simpleMessage(
+      "Start with a ready-made routine or create your own.",
+    ),
+    "chooseTaskTitle": MessageLookupByLibrary.simpleMessage("Create a task"),
     "chooseYourRole": MessageLookupByLibrary.simpleMessage("Choose Your Role"),
     "cleanTheRoom": MessageLookupByLibrary.simpleMessage("Clean the room"),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
@@ -551,8 +557,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "No apps synced yet",
     ),
     "installedAppsLastSynced": m22,
+    "installedAppsLimited": MessageLookupByLibrary.simpleMessage("Limited"),
+    "installedAppsNoMatch": MessageLookupByLibrary.simpleMessage(
+      "No installed apps match your search.",
+    ),
     "installedAppsNotControllable": MessageLookupByLibrary.simpleMessage(
       "Safini can\'t limit this app yet.",
+    ),
+    "installedAppsSearchHint": MessageLookupByLibrary.simpleMessage(
+      "Search installed apps",
     ),
     "installedAppsSetLimit": MessageLookupByLibrary.simpleMessage(
       "Set a daily limit",
@@ -774,6 +787,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Network error. Check your connection.",
     ),
     "newBtn": MessageLookupByLibrary.simpleMessage("New"),
+    "newCustomTask": MessageLookupByLibrary.simpleMessage("New custom task"),
     "newSubmissionsLandHere": MessageLookupByLibrary.simpleMessage(
       "New submissions land here.",
     ),
@@ -1112,15 +1126,83 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskIdeaDuolingoTitle": MessageLookupByLibrary.simpleMessage(
       "Complete a Duolingo lesson",
     ),
-    "taskIdeaNapDetails": MessageLookupByLibrary.simpleMessage(
-      "Sleep for 2 hours during the day, with the phone put away.",
+    "taskIdeaExerciseDetails": MessageLookupByLibrary.simpleMessage(
+      "Move actively for at least 20 minutes indoors or outside.",
     ),
-    "taskIdeaNapTitle": MessageLookupByLibrary.simpleMessage("Nap for 2 hours"),
-    "taskIdeaStepsDetails": MessageLookupByLibrary.simpleMessage(
-      "Get to 5,000 steps on the step counter of your phone or watch.",
+    "taskIdeaExerciseTitle": MessageLookupByLibrary.simpleMessage(
+      "Exercise for 20 minutes",
     ),
-    "taskIdeaStepsTitle": MessageLookupByLibrary.simpleMessage(
-      "Walk 5,000 steps",
+    "taskIdeaFeedPetDetails": MessageLookupByLibrary.simpleMessage(
+      "Give the pet the right food and fresh water.",
+    ),
+    "taskIdeaFeedPetTitle": MessageLookupByLibrary.simpleMessage(
+      "Feed the pet",
+    ),
+    "taskIdeaHomeworkDetails": MessageLookupByLibrary.simpleMessage(
+      "Complete the homework due for the next school day.",
+    ),
+    "taskIdeaHomeworkTitle": MessageLookupByLibrary.simpleMessage(
+      "Finish your homework",
+    ),
+    "taskIdeaMakeBedDetails": MessageLookupByLibrary.simpleMessage(
+      "Make your bed neatly after getting up and send a photo.",
+    ),
+    "taskIdeaMakeBedTitle": MessageLookupByLibrary.simpleMessage(
+      "Make the bed",
+    ),
+    "taskIdeaPackSchoolBagDetails": MessageLookupByLibrary.simpleMessage(
+      "Pack the books and supplies needed for the next school day.",
+    ),
+    "taskIdeaPackSchoolBagTitle": MessageLookupByLibrary.simpleMessage(
+      "Pack your school bag",
+    ),
+    "taskIdeaPracticeInstrumentDetails": MessageLookupByLibrary.simpleMessage(
+      "Practice your instrument with focus for at least 20 minutes.",
+    ),
+    "taskIdeaPracticeInstrumentTitle": MessageLookupByLibrary.simpleMessage(
+      "Practice an instrument",
+    ),
+    "taskIdeaPutAwayLaundryDetails": MessageLookupByLibrary.simpleMessage(
+      "Fold your clean clothes and put them in the right drawers.",
+    ),
+    "taskIdeaPutAwayLaundryTitle": MessageLookupByLibrary.simpleMessage(
+      "Put away clean laundry",
+    ),
+    "taskIdeaPutAwayToysDetails": MessageLookupByLibrary.simpleMessage(
+      "Put every toy back in its box or on its shelf.",
+    ),
+    "taskIdeaPutAwayToysTitle": MessageLookupByLibrary.simpleMessage(
+      "Put away your toys",
+    ),
+    "taskIdeaRead20Details": MessageLookupByLibrary.simpleMessage(
+      "Read a book for at least 20 minutes without using another app.",
+    ),
+    "taskIdeaRead20Title": MessageLookupByLibrary.simpleMessage(
+      "Read for 20 minutes",
+    ),
+    "taskIdeaSetTableDetails": MessageLookupByLibrary.simpleMessage(
+      "Put out the plates, cups, and cutlery for the family meal.",
+    ),
+    "taskIdeaSetTableTitle": MessageLookupByLibrary.simpleMessage(
+      "Set the table",
+    ),
+    "taskIdeaSolvePuzzleDetails": MessageLookupByLibrary.simpleMessage(
+      "Finish one age-appropriate puzzle, riddle, or chess exercise.",
+    ),
+    "taskIdeaSolvePuzzleTitle": MessageLookupByLibrary.simpleMessage(
+      "Solve a puzzle",
+    ),
+    "taskIdeaTidyRoomDetails": MessageLookupByLibrary.simpleMessage(
+      "Put things back in their places and leave the floor clear.",
+    ),
+    "taskIdeaTidyRoomTitle": MessageLookupByLibrary.simpleMessage(
+      "Tidy your room",
+    ),
+    "taskIdeaWaterPlantsDetails": MessageLookupByLibrary.simpleMessage(
+      "Check the plants and water the ones that need it.",
+    ),
+    "taskIdeaWaterPlantsTitle": MessageLookupByLibrary.simpleMessage(
+      "Water the plants",
     ),
     "taskIdeasEmptyTitle": MessageLookupByLibrary.simpleMessage("No tasks yet"),
     "taskIdeasHint": MessageLookupByLibrary.simpleMessage(
@@ -1144,6 +1226,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskSubmittedForReview": MessageLookupByLibrary.simpleMessage(
       "Sent to your parent",
     ),
+    "taskTemplatesTitle": MessageLookupByLibrary.simpleMessage("Templates"),
     "taskTitleHint": MessageLookupByLibrary.simpleMessage("Water the plants"),
     "taskUpdatedMessage": MessageLookupByLibrary.simpleMessage("Task updated!"),
     "tasks": MessageLookupByLibrary.simpleMessage("Tasks"),

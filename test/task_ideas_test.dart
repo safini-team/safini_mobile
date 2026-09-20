@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/theme/app_theme.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/task_category.dart';
+import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/design_preview_data.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
@@ -136,62 +137,29 @@ Future<_Tasks> _pumpSheet(
 String _field(WidgetTester tester, int index) =>
     tester.widget<TextField>(find.byType(TextField).at(index)).controller!.text;
 
-Widget _view(ParentTasksData data, {ValueChanged<TaskIdea>? onOpenIdea}) =>
-    ParentTasksView(
-      data: data,
-      onSelectScope: (_) {},
-      onSelectLane: (_) {},
-      onOpenTask: (_) {},
-      onNewTask: () {},
-      onOpenIdea: onOpenIdea ?? (_) {},
-    );
+Widget _view(ParentTasksData data) => ParentTasksView(
+  data: data,
+  onSelectScope: (_) {},
+  onSelectLane: (_) {},
+  onOpenTask: (_) {},
+  onNewTask: () {},
+);
 
 void main() {
   group('which ideas are on offer', () {
-    test('all four, in order, on an empty list', () {
-      expect(TaskIdea.offeredAlongside(const []), [
-        TaskIdea.duolingo,
-        TaskIdea.steps,
-        TaskIdea.nap,
-        TaskIdea.brushTeeth,
-      ]);
+    test('all 15 templates are available', () {
+      expect(TaskIdea.offeredAlongside(const []), TaskIdea.values);
+      expect(TaskIdea.values, hasLength(15));
     });
 
-    test('the rest, while every task came from an idea', () {
-      // A daily idea comes back each day as an instance with the same metadata.
-      final offered = TaskIdea.offeredAlongside([
-        _fromIdea(TaskIdea.brushTeeth),
-        _fromIdea(TaskIdea.brushTeeth),
-        _fromIdea(TaskIdea.steps),
-      ]);
-      expect(offered, [TaskIdea.duolingo, TaskIdea.nap]);
-    });
-
-    test('none once the parent has made a task of their own', () {
+    test('existing and custom tasks do not hide templates', () {
       expect(
         TaskIdea.offeredAlongside([
           _fromIdea(TaskIdea.brushTeeth),
           {'emoji': '🧹'},
-        ]),
-        isEmpty,
-      );
-    });
-
-    test('none next to the tasks the API used to create', () {
-      // The old starter tasks carry `{"source": "seed"}` and no emoji.
-      expect(
-        TaskIdea.offeredAlongside([
-          {'source': 'seed'},
           null,
         ]),
-        isEmpty,
-      );
-    });
-
-    test('none once all four are on the list', () {
-      expect(
-        TaskIdea.offeredAlongside(TaskIdea.values.map(_fromIdea)),
-        isEmpty,
+        TaskIdea.values,
       );
     });
 
@@ -205,114 +173,70 @@ void main() {
     });
   });
 
-  test('every idea repeats daily and only brushing teeth needs a photo', () {
-    expect(TaskIdea.recurrence, 'daily');
-    expect(TaskIdea.values.where((idea) => idea.photoProof), [
-      TaskIdea.brushTeeth,
-    ]);
+  test('templates carry schedule and proof defaults', () {
+    expect(TaskIdea.brushTeeth.recurrence, 'daily');
+    expect(TaskIdea.homework.recurrence, 'weekly');
+    expect(TaskIdea.homework.recurrenceDays, TaskIdea.weekdays);
+    expect(TaskIdea.waterPlants.recurrenceDays, TaskIdea.mondayThursday);
+    expect(
+      TaskIdea.values.where((idea) => idea.photoProof),
+      contains(TaskIdea.brushTeeth),
+    );
     expect(TaskIdea.brushTeeth.coins, 10);
     expect(TaskIdea.brushTeeth.category, TaskCategory.health);
   });
 
   group('the Tasks list', () {
-    testWidgets('an empty list shows the ideas instead of the empty card', (
+    testWidgets('templates are not embedded in the normal task list', (
       tester,
     ) async {
-      TaskIdea? opened;
       await tester.pumpWidget(
         _host(
           Builder(
-            builder: (context) => _view(
-              SampleData.parentTasksFirstRun(S.of(context)),
-              onOpenIdea: (idea) => opened = idea,
+            builder: (context) =>
+                _view(SampleData.parentTasksFirstRun(S.of(context))),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.text('New Task'), findsOneWidget);
+      expect(find.text('Complete a Duolingo lesson'), findsNothing);
+    });
+  });
+
+  testWidgets('New Task opens custom creation and all templates', (
+    tester,
+  ) async {
+    final tasks = _Tasks();
+    await tester.pumpWidget(
+      _host(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<ParentFamilyCubit>.value(value: _Family()),
+            BlocProvider<ParentTasksCubit>.value(value: tasks),
+          ],
+          child: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () =>
+                    showNewTaskChooser(context, cubit: tasks, childId: 'amir'),
+                child: const Text('Open'),
+              ),
             ),
           ),
         ),
-      );
-      await tester.pump(const Duration(milliseconds: 400));
+      ),
+    );
 
-      expect(find.text('No tasks yet'), findsOneWidget);
-      expect(find.text('No active tasks'), findsNothing);
-      expect(find.text('Complete a Duolingo lesson'), findsOneWidget);
-      expect(find.text('Walk 5,000 steps'), findsOneWidget);
-      expect(find.text('Nap for 2 hours'), findsOneWidget);
-      expect(find.text('Brush teeth in the morning'), findsOneWidget);
-      expect(find.text('Daily · Needs photo proof'), findsOneWidget);
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Brush teeth in the morning'));
-      expect(opened, TaskIdea.brushTeeth);
-    });
-
-    testWidgets('the rest stay under the active tasks as "More ideas"', (
-      tester,
-    ) async {
-      ParentTasksData withTeeth(S s, TaskLane lane) => ParentTasksData(
-        scopeLine: '',
-        chips: const [],
-        selectedScope: 'all',
-        laneCounts: const {
-          TaskLane.review: 0,
-          TaskLane.active: 1,
-          TaskLane.done: 0,
-        },
-        lane: lane,
-        emptyTitle: s.emptyNothingPaidYet,
-        emptyBody: s.emptyDoneBody,
-        groups: lane == TaskLane.active
-            ? [
-                TaskGroupData(
-                  name: 'Amir',
-                  color: Colors.green,
-                  summary: '',
-                  rows: [
-                    TaskRowData(
-                      id: 't1',
-                      title: TaskIdea.brushTeeth.title(s),
-                      meta: '',
-                      emoji: TaskIdea.brushTeeth.emoji,
-                      lane: TaskLane.active,
-                      coins: 10,
-                      childName: 'Amir',
-                    ),
-                  ],
-                ),
-              ]
-            : const [],
-        ideas: [
-          for (final idea in TaskIdea.offeredAlongside([
-            _fromIdea(TaskIdea.brushTeeth),
-          ]))
-            TaskIdeaRowData.of(idea, s),
-        ],
-      );
-
-      await tester.pumpWidget(
-        _host(
-          Builder(
-            builder: (context) =>
-                _view(withTeeth(S.of(context), TaskLane.active)),
-          ),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 400));
-      expect(find.text('More ideas'), findsOneWidget);
-      expect(find.text('No tasks yet'), findsNothing);
-      expect(find.text('Complete a Duolingo lesson'), findsOneWidget);
-      // Once on the list, and not offered again.
-      expect(find.text('Brush teeth in the morning'), findsOneWidget);
-
-      await tester.pumpWidget(
-        _host(
-          Builder(
-            builder: (context) =>
-                _view(withTeeth(S.of(context), TaskLane.done)),
-          ),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 400));
-      expect(find.text('More ideas'), findsNothing);
-      expect(find.text('Nothing paid yet'), findsOneWidget);
-    });
+    expect(find.text('Create a task'), findsOneWidget);
+    expect(find.text('New custom task'), findsOneWidget);
+    expect(find.text('Make the bed'), findsOneWidget);
+    expect(find.text('Put away clean laundry'), findsOneWidget);
+    expect(find.byType(DsRow), findsNWidgets(15));
   });
 
   group('the New Task sheet', () {
@@ -354,14 +278,16 @@ void main() {
     });
 
     testWidgets('an idea without a photo sends no proof', (tester) async {
-      final tasks = await _pumpSheet(tester, idea: TaskIdea.steps);
+      final tasks = await _pumpSheet(tester, idea: TaskIdea.exercise);
       await tester.tap(find.text("Add to Amir's list"));
       await tester.pump();
 
       final json = tasks.created.single.toJson();
       expect(json['proof_mode'], 'none');
       expect(json['coin_reward'], 20);
-      expect(json['metadata'], {'emoji': '👟', 'idea': 'steps'});
+      expect(json['recurrence'], 'weekly');
+      expect(json['recurrence_days'], TaskIdea.mondayWednesdayFriday);
+      expect(json['metadata'], {'emoji': '🏃', 'idea': 'exercise'});
     });
 
     testWidgets('a blank New Task stays blank and names no idea', (

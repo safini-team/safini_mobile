@@ -24,8 +24,8 @@ import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet
 /// Parent · list of the apps installed on a child's device.
 ///
 /// The child device enumerates its apps natively and uploads them; this screen
-/// reads that snapshot back. Every row opens the add / limit / block flow on
-/// the shared `ParentAppsCubit` (provided by the Limits screen), under the
+/// reads that snapshot back. Every controllable row opens the add or edit flow
+/// on the shared `ParentAppsCubit` (provided by the Limits screen), under the
 /// slug the API names for that app (`InstalledApp.ruleSlug`). Phone, Messages
 /// and Settings are listed as always allowed and offer no limit. Pushed from
 /// the Limits screen.
@@ -62,7 +62,7 @@ class _ParentInstalledAppsView extends StatelessWidget {
       body: Column(
         children: [
           DsNavBar(
-            title: s.installedAppsTitle,
+            title: s.addAnAppLimit,
             backLabel: s.tabLimits,
             onBack: () => Navigator.of(context).pop(),
           ),
@@ -105,7 +105,7 @@ class _ParentInstalledAppsView extends StatelessWidget {
   }
 }
 
-class _AppsList extends StatelessWidget {
+class _AppsList extends StatefulWidget {
   const _AppsList({
     required this.apps,
     required this.childName,
@@ -117,9 +117,23 @@ class _AppsList extends StatelessWidget {
   final DateTime? updatedAt;
 
   @override
+  State<_AppsList> createState() => _AppsListState();
+}
+
+class _AppsListState extends State<_AppsList> {
+  String _query = '';
+
+  @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final syncedAt = updatedAt;
+    final syncedAt = widget.updatedAt;
+    final cubit = context.read<ParentAppsCubit>();
+    final filtered = widget.apps.where((app) {
+      final query = _query.trim().toLowerCase();
+      if (query.isEmpty) return true;
+      return app.appName.toLowerCase().contains(query) ||
+          app.packageName.toLowerCase().contains(query);
+    }).toList();
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(
@@ -135,7 +149,7 @@ class _AppsList extends StatelessWidget {
             0,
           ),
           child: Text(
-            s.installedAppsSubtitle(childName),
+            s.installedAppsSubtitle(widget.childName),
             style: AppText.subtitle,
           ),
         ),
@@ -166,27 +180,62 @@ class _AppsList extends StatelessWidget {
             style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
           ),
         ),
-        DsOverline(s.installedAppsCount(apps.length)),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.gutter,
+            14,
+            AppSpacing.gutter,
+            0,
+          ),
+          child: TextField(
+            key: const ValueKey('installed-app-search'),
+            onChanged: (value) => setState(() => _query = value),
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              hintText: s.installedAppsSearchHint,
+              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+              filled: true,
+              fillColor: AppColors.fill,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.button),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 13),
+            ),
+          ),
+        ),
+        DsOverline(s.installedAppsCount(filtered.length)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
-          child: DsGroup(
-            children: [
-              for (final app in apps)
-                _InstalledAppRow(
-                  app: app,
-                  slug: app.ruleSlug,
-                  onTap: () => _handleTap(context, app),
+          child: filtered.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 28),
+                  child: Text(
+                    s.installedAppsNoMatch,
+                    textAlign: TextAlign.center,
+                    style: AppText.meta,
+                  ),
+                )
+              : DsGroup(
+                  children: [
+                    for (final app in filtered)
+                      _InstalledAppRow(
+                        app: app,
+                        slug: app.ruleSlug,
+                        configured:
+                            app.ruleSlug != null &&
+                            cubit.ruleForSlug(app.ruleSlug!) != null,
+                        onTap: () => _handleTap(context, app),
+                      ),
+                  ],
                 ),
-            ],
-          ),
         ),
       ],
     );
   }
 
-  /// Opens the add / limit / block flow. Only an API from before every app had
-  /// a slug leaves one without, and then Safini can't limit it yet.
-  void _handleTap(BuildContext context, InstalledApp app) {
+  /// Opens an existing rule or a draft that is persisted only when saved.
+  Future<void> _handleTap(BuildContext context, InstalledApp app) async {
     final s = S.of(context);
     if (app.alwaysAllowed) {
       AppSnackBar.info(context, s.installedAppsAlwaysAllowedInfo);
@@ -203,84 +252,34 @@ class _AppsList extends StatelessWidget {
     final label = app.appName.isEmpty ? app.packageName : app.appName;
 
     if (existing != null) {
-      showAppLimitSheet(
+      await showAppLimitSheet(
         context,
         cubit: cubit,
         app: _limitsAppFor(existing, label, app.iconUrl),
-        childName: childName,
+        childName: widget.childName,
       );
       return;
     }
 
-    showDsSheet<void>(
-      context: context,
-      builder: (sheetContext) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(s.installedAppsAddTitle(label), style: AppText.title3),
-          const SizedBox(height: 8),
-          Text(s.installedAppsAddBody, style: AppText.bodyRegular),
-          const SizedBox(height: 22),
-          DsPrimaryButton(
-            label: s.installedAppsSetLimit,
-            onTap: () {
-              Navigator.of(sheetContext).pop();
-              _addRule(context, cubit, slug, label, app.iconUrl, block: false);
-            },
-          ),
-          const SizedBox(height: 10),
-          DsPrimaryButton.secondary(
-            label: s.installedAppsBlockCompletely,
-            onTap: () {
-              Navigator.of(sheetContext).pop();
-              _addRule(context, cubit, slug, label, app.iconUrl, block: true);
-            },
-          ),
-        ],
+    await showAppLimitSheet(
+      context,
+      cubit: cubit,
+      app: LimitsApp(
+        slug: slug,
+        name: label,
+        emoji: AppData.getEmojiForApp(label),
+        usedMinutes: 0,
+        limitMinutes: 60,
+        isLimited: true,
+        canRedeem: true,
+        redeemCoinCost: 100,
+        redeemRewardMinutes: 30,
+        iconUrl: app.iconUrl,
       ),
+      childName: widget.childName,
+      isNew: true,
     );
-  }
-
-  Future<void> _addRule(
-    BuildContext context,
-    ParentAppsCubit cubit,
-    String slug,
-    String label,
-    String? iconUrl, {
-    required bool block,
-  }) async {
-    final error = await cubit.addApp(
-      slug: slug,
-      name: label,
-      dailyLimitMinutes: 60,
-      redeemCoinCost: 100,
-      redeemRewardMinutes: 30,
-      isBlocked: block,
-      isLimited: true,
-      canRedeem: !block,
-    );
-    if (!context.mounted) return;
-
-    final s = S.of(context);
-    if (error != null) {
-      AppSnackBar.error(context, error);
-      return;
-    }
-    if (block) {
-      AppSnackBar.success(context, s.installedAppsBlockedSnack(label));
-      return;
-    }
-    // Limit added with a default — open the sheet so the parent can tune it.
-    final rule = cubit.ruleForSlug(slug);
-    if (rule != null) {
-      showAppLimitSheet(
-        context,
-        cubit: cubit,
-        app: _limitsAppFor(rule, label, iconUrl),
-        childName: childName,
-      );
-    }
+    if (mounted) setState(() {});
   }
 
   LimitsApp _limitsAppFor(
@@ -310,11 +309,13 @@ class _InstalledAppRow extends StatelessWidget {
     required this.app,
     required this.slug,
     required this.onTap,
+    required this.configured,
   });
 
   final InstalledApp app;
   final String? slug;
   final VoidCallback onTap;
+  final bool configured;
 
   @override
   Widget build(BuildContext context) {
@@ -335,10 +336,22 @@ class _InstalledAppRow extends StatelessWidget {
               style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
             )
           : slug != null
-          ? const Icon(
-              Icons.chevron_right_rounded,
-              size: 20,
-              color: AppColors.textTertiary,
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (configured) ...[
+                  Text(
+                    S.of(context).installedAppsLimited,
+                    style: AppText.metaSm.copyWith(color: AppColors.primary),
+                  ),
+                  const SizedBox(width: 4),
+                ],
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: AppColors.textTertiary,
+                ),
+              ],
             )
           : null,
       onTap: onTap,

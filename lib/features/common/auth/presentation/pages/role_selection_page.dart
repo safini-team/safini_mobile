@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/pages/child_coming_soon_page.dart';
 
 /// The Welcome artboard: two doors, no account wall on the kid side.
@@ -29,58 +30,69 @@ class RoleSelectionPage extends StatelessWidget {
   Widget _build(BuildContext context) {
     final s = S.of(context);
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      body: DsScreenEntrance(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(28, 22, 28, 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Fini alone - 'Safini' is set in the Text just below.
-                      Image.asset(
-                        'assets/logo/safini-mascot.png',
-                        width: 96,
-                        height: 96,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(height: 18),
-                      const Text('Safini', style: AppText.display),
-                      const SizedBox(height: 18),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 290),
-                        child: Text(s.tagline, style: AppText.lede),
-                      ),
-                    ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _backToSignIn(context);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        body: DsScreenEntrance(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(28, 22, 28, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Fini alone - 'Safini' is set in the Text just below.
+                        Image.asset(
+                          'assets/logo/safini-mascot.png',
+                          width: 96,
+                          height: 96,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(height: 18),
+                        const Text('Safini', style: AppText.display),
+                        const SizedBox(height: 18),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 290),
+                          child: Text(s.tagline, style: AppText.lede),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                DsChoiceCard(
-                  filled: true,
-                  title: s.imAParent,
-                  subtitle: s.parentSubtitle,
-                  onTap: () =>
-                      context.router.push(const NamedRoute('familyDecision')),
-                ),
-                const SizedBox(height: 10),
-                DsChoiceCard(
-                  key: const ValueKey('role-kid'),
-                  title: s.imAKid,
-                  subtitle: isChildModeAvailable
-                      ? s.kidSubtitle
-                      : s.kidComingSoonIos,
-                  onTap: isChildModeAvailable
-                      ? () => context.router.push(
-                          const NamedRoute('enterInviteCode'),
-                        )
-                      : () => _showKidComingSoon(context, s),
-                ),
-              ],
+                  DsChoiceCard(
+                    filled: true,
+                    title: s.imAParent,
+                    subtitle: s.parentSubtitle,
+                    onTap: () =>
+                        context.router.push(const NamedRoute('familyDecision')),
+                  ),
+                  const SizedBox(height: 10),
+                  DsChoiceCard(
+                    key: const ValueKey('role-kid'),
+                    title: s.imAKid,
+                    subtitle: isChildModeAvailable
+                        ? s.kidSubtitle
+                        : s.kidComingSoonIos,
+                    onTap: isChildModeAvailable
+                        ? () => context.router.push(
+                            const NamedRoute('enterInviteCode'),
+                          )
+                        : () => _showKidComingSoon(context, s),
+                  ),
+                  const SizedBox(height: 10),
+                  DsPrimaryButton.secondary(
+                    label: s.backToSignIn,
+                    onTap: () => _backToSignIn(context),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -88,8 +100,13 @@ class RoleSelectionPage extends StatelessWidget {
     );
   }
 
-  /// iOS cannot block apps yet, so the kid door explains instead of starting
-  /// a claim that would end on a home screen enforcing nothing.
+  Future<void> _backToSignIn(BuildContext context) async {
+    final router = context.router;
+    await context.read<AuthSessionCubit>().signOut();
+    router.replaceAll([const NamedRoute('login')]);
+  }
+
+  /// Fallback explanation for builds where child mode is disabled.
   Future<void> _showKidComingSoon(BuildContext context, S s) {
     return showDsSheet<void>(
       context: context,

@@ -185,6 +185,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "activeTasks": MessageLookupByLibrary.simpleMessage("Активные задания"),
     "addAChild": MessageLookupByLibrary.simpleMessage("Добавить ребёнка"),
     "addAnApp": MessageLookupByLibrary.simpleMessage("Добавить приложение"),
+    "addAnAppLimit": MessageLookupByLibrary.simpleMessage(
+      "Добавить лимит приложения",
+    ),
     "addAnotherApp": MessageLookupByLibrary.simpleMessage(
       "Добавить приложение",
     ),
@@ -262,6 +265,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "askToRedo": MessageLookupByLibrary.simpleMessage("Переделать"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Предмет аватара"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Предметы"),
+    "backToSignIn": MessageLookupByLibrary.simpleMessage("Вернуться ко входу"),
     "badgeCoins": m6,
     "badgeTasksDone": m7,
     "badges": MessageLookupByLibrary.simpleMessage("Значки"),
@@ -309,6 +313,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseFromLibrary": MessageLookupByLibrary.simpleMessage(
       "Выбрать из галереи",
     ),
+    "chooseTaskBody": MessageLookupByLibrary.simpleMessage(
+      "Выберите готовое задание или создайте своё.",
+    ),
+    "chooseTaskTitle": MessageLookupByLibrary.simpleMessage("Создать задание"),
     "chooseYourRole": MessageLookupByLibrary.simpleMessage("Выберите роль"),
     "cleanTheRoom": MessageLookupByLibrary.simpleMessage("Убраться в комнате"),
     "close": MessageLookupByLibrary.simpleMessage("Закрыть"),
@@ -564,8 +572,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Приложения ещё не синхронизированы",
     ),
     "installedAppsLastSynced": m22,
+    "installedAppsLimited": MessageLookupByLibrary.simpleMessage("Есть лимит"),
+    "installedAppsNoMatch": MessageLookupByLibrary.simpleMessage(
+      "По вашему запросу приложений не найдено.",
+    ),
     "installedAppsNotControllable": MessageLookupByLibrary.simpleMessage(
       "Safini пока не может ограничить это приложение.",
+    ),
+    "installedAppsSearchHint": MessageLookupByLibrary.simpleMessage(
+      "Найти приложение",
     ),
     "installedAppsSetLimit": MessageLookupByLibrary.simpleMessage(
       "Задать дневной лимит",
@@ -787,6 +802,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ошибка сети. Проверьте подключение.",
     ),
     "newBtn": MessageLookupByLibrary.simpleMessage("Новое"),
+    "newCustomTask": MessageLookupByLibrary.simpleMessage("Новое своё задание"),
     "newSubmissionsLandHere": MessageLookupByLibrary.simpleMessage(
       "Новые заявки появятся здесь.",
     ),
@@ -1137,17 +1153,83 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskIdeaDuolingoTitle": MessageLookupByLibrary.simpleMessage(
       "Пройти урок в Duolingo",
     ),
-    "taskIdeaNapDetails": MessageLookupByLibrary.simpleMessage(
-      "Поспи днём 2 часа, а телефон отложи.",
+    "taskIdeaExerciseDetails": MessageLookupByLibrary.simpleMessage(
+      "Активно подвигайся дома или на улице не меньше 20 минут.",
     ),
-    "taskIdeaNapTitle": MessageLookupByLibrary.simpleMessage(
-      "Поспать днём 2 часа",
+    "taskIdeaExerciseTitle": MessageLookupByLibrary.simpleMessage(
+      "Позаниматься 20 минут",
     ),
-    "taskIdeaStepsDetails": MessageLookupByLibrary.simpleMessage(
-      "Набери 5 000 шагов по шагомеру в телефоне или часах.",
+    "taskIdeaFeedPetDetails": MessageLookupByLibrary.simpleMessage(
+      "Дай питомцу подходящий корм и свежую воду.",
     ),
-    "taskIdeaStepsTitle": MessageLookupByLibrary.simpleMessage(
-      "Пройти 5 000 шагов",
+    "taskIdeaFeedPetTitle": MessageLookupByLibrary.simpleMessage(
+      "Покормить питомца",
+    ),
+    "taskIdeaHomeworkDetails": MessageLookupByLibrary.simpleMessage(
+      "Выполни задания, которые задали на следующий учебный день.",
+    ),
+    "taskIdeaHomeworkTitle": MessageLookupByLibrary.simpleMessage(
+      "Сделать домашнее задание",
+    ),
+    "taskIdeaMakeBedDetails": MessageLookupByLibrary.simpleMessage(
+      "Аккуратно заправь кровать после подъёма и пришли фото.",
+    ),
+    "taskIdeaMakeBedTitle": MessageLookupByLibrary.simpleMessage(
+      "Заправить кровать",
+    ),
+    "taskIdeaPackSchoolBagDetails": MessageLookupByLibrary.simpleMessage(
+      "Собери книги и принадлежности на следующий учебный день.",
+    ),
+    "taskIdeaPackSchoolBagTitle": MessageLookupByLibrary.simpleMessage(
+      "Собрать школьный рюкзак",
+    ),
+    "taskIdeaPracticeInstrumentDetails": MessageLookupByLibrary.simpleMessage(
+      "Позанимайся на музыкальном инструменте не меньше 20 минут.",
+    ),
+    "taskIdeaPracticeInstrumentTitle": MessageLookupByLibrary.simpleMessage(
+      "Позаниматься на инструменте",
+    ),
+    "taskIdeaPutAwayLaundryDetails": MessageLookupByLibrary.simpleMessage(
+      "Сложи чистую одежду и убери её в нужные ящики.",
+    ),
+    "taskIdeaPutAwayLaundryTitle": MessageLookupByLibrary.simpleMessage(
+      "Убрать чистую одежду",
+    ),
+    "taskIdeaPutAwayToysDetails": MessageLookupByLibrary.simpleMessage(
+      "Убери все игрушки в коробки или на полки.",
+    ),
+    "taskIdeaPutAwayToysTitle": MessageLookupByLibrary.simpleMessage(
+      "Убрать игрушки",
+    ),
+    "taskIdeaRead20Details": MessageLookupByLibrary.simpleMessage(
+      "Почитай книгу не меньше 20 минут, не отвлекаясь на приложения.",
+    ),
+    "taskIdeaRead20Title": MessageLookupByLibrary.simpleMessage(
+      "Читать 20 минут",
+    ),
+    "taskIdeaSetTableDetails": MessageLookupByLibrary.simpleMessage(
+      "Поставь тарелки, чашки и приборы для семейной еды.",
+    ),
+    "taskIdeaSetTableTitle": MessageLookupByLibrary.simpleMessage(
+      "Накрыть на стол",
+    ),
+    "taskIdeaSolvePuzzleDetails": MessageLookupByLibrary.simpleMessage(
+      "Реши одну подходящую по возрасту головоломку, загадку или шахматную задачу.",
+    ),
+    "taskIdeaSolvePuzzleTitle": MessageLookupByLibrary.simpleMessage(
+      "Решить головоломку",
+    ),
+    "taskIdeaTidyRoomDetails": MessageLookupByLibrary.simpleMessage(
+      "Разложи вещи по местам и освободи пол.",
+    ),
+    "taskIdeaTidyRoomTitle": MessageLookupByLibrary.simpleMessage(
+      "Убрать в комнате",
+    ),
+    "taskIdeaWaterPlantsDetails": MessageLookupByLibrary.simpleMessage(
+      "Проверь растения и полей те, которым нужна вода.",
+    ),
+    "taskIdeaWaterPlantsTitle": MessageLookupByLibrary.simpleMessage(
+      "Полить растения",
     ),
     "taskIdeasEmptyTitle": MessageLookupByLibrary.simpleMessage(
       "Пока нет заданий",
@@ -1175,6 +1257,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "taskSubmittedForReview": MessageLookupByLibrary.simpleMessage(
       "Отправлено родителю",
     ),
+    "taskTemplatesTitle": MessageLookupByLibrary.simpleMessage("Шаблоны"),
     "taskTitleHint": MessageLookupByLibrary.simpleMessage("Полить цветы"),
     "taskUpdatedMessage": MessageLookupByLibrary.simpleMessage(
       "Задание обновлено!",

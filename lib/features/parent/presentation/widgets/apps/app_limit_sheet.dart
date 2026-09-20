@@ -26,11 +26,16 @@ Future<void> showAppLimitSheet(
   required ParentAppsCubit cubit,
   required LimitsApp app,
   required String childName,
+  bool isNew = false,
 }) {
   return showDsSheet<void>(
     context: context,
-    builder: (context) =>
-        _AppLimitSheet(cubit: cubit, app: app, childName: childName),
+    builder: (context) => _AppLimitSheet(
+      cubit: cubit,
+      app: app,
+      childName: childName,
+      isNew: isNew,
+    ),
   );
 }
 
@@ -39,11 +44,13 @@ class _AppLimitSheet extends StatefulWidget {
     required this.cubit,
     required this.app,
     required this.childName,
+    required this.isNew,
   });
 
   final ParentAppsCubit cubit;
   final LimitsApp app;
   final String childName;
+  final bool isNew;
 
   @override
   State<_AppLimitSheet> createState() => _AppLimitSheetState();
@@ -70,6 +77,7 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
     final messengerContext = context;
 
     final unchanged =
+        !widget.isNew &&
         _isBlocked == widget.app.isBlocked &&
         _isLimited == widget.app.isLimited &&
         _canRedeem == widget.app.canRedeem &&
@@ -79,15 +87,26 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
     if (!unchanged) {
       // One PUT for the whole rule rather than one per field: the endpoint
       // replaces it wholesale anyway, and two calls could half-apply.
-      final error = await widget.cubit.updateRule(
-        widget.app.slug,
-        dailyLimitMinutes: _limit,
-        isBlocked: _isBlocked,
-        isLimited: _isLimited,
-        canRedeem: _canRedeem,
-        redeemCoinCost: _cost,
-        redeemRewardMinutes: _reward,
-      );
+      final error = widget.isNew
+          ? await widget.cubit.addApp(
+              slug: widget.app.slug,
+              name: widget.app.name,
+              dailyLimitMinutes: _limit,
+              isBlocked: _isBlocked,
+              isLimited: _isLimited,
+              canRedeem: _canRedeem,
+              redeemCoinCost: _cost,
+              redeemRewardMinutes: _reward,
+            )
+          : await widget.cubit.updateRule(
+              widget.app.slug,
+              dailyLimitMinutes: _limit,
+              isBlocked: _isBlocked,
+              isLimited: _isLimited,
+              canRedeem: _canRedeem,
+              redeemCoinCost: _cost,
+              redeemRewardMinutes: _reward,
+            );
       if (error != null) {
         if (mounted) AppSnackBar.error(context, error);
         return;

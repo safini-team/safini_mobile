@@ -141,25 +141,20 @@ class ParentLimitsView extends StatelessWidget {
     required this.data,
     required this.onSelectKid,
     required this.onOpenApp,
-    required this.onAddApp,
+    this.onAddApp,
     this.onSetCap,
     this.onRefresh,
-    this.onSeeAllApps,
   });
 
   final ParentLimitsData data;
   final ValueChanged<String> onSelectKid;
   final ValueChanged<LimitsApp> onOpenApp;
-  final VoidCallback onAddApp;
+  final VoidCallback? onAddApp;
 
   /// Null minutes removes the cap. Absent entirely in the design preview,
   /// where the panel renders read-only.
   final ValueChanged<int?>? onSetCap;
   final Future<void> Function()? onRefresh;
-
-  /// Opens the read-only list of every app installed on the child's device.
-  /// Null hides the entry point (feature-flagged / no child selected).
-  final VoidCallback? onSeeAllApps;
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +239,7 @@ class ParentLimitsView extends StatelessWidget {
                         app: app,
                         onTap: () => onOpenApp(app),
                       ),
-                    _AddAppRow(onTap: onAddApp),
+                    if (onAddApp != null) _AddAppRow(onTap: onAddApp!),
                   ],
                 ),
                 DsFootnote(s.limitsFootnote),
@@ -253,32 +248,6 @@ class ParentLimitsView extends StatelessWidget {
             ),
           ),
         ),
-        if (onSeeAllApps != null)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.gutter,
-                14,
-                AppSpacing.gutter,
-                0,
-              ),
-              child: DsGroup(
-                children: [
-                  DsRow(
-                    onTap: onSeeAllApps,
-                    title: s.seeAllApps,
-                    leading: const DsEmojiTile(
-                      emoji: '📱',
-                      size: 36,
-                      radius: AppRadius.sm,
-                      fontSize: 18,
-                    ),
-                    trailing: AppIcons.chevronRight(),
-                  ),
-                ],
-              ),
-            ),
-          ),
       ],
     );
   }
@@ -455,7 +424,7 @@ class _AddAppRow extends StatelessWidget {
             const SizedBox(width: 13),
             Expanded(
               child: Text(
-                S.of(context).addAnApp,
+                S.of(context).addAnAppLimit,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppText.rowTitleStrong.copyWith(
