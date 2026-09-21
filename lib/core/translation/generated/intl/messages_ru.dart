@@ -61,7 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m16(count) =>
       "${Intl.plural(count, one: 'Награда: ${count} монета', few: 'Награда: ${count} монеты', many: 'Награда: ${count} монет', other: 'Награда: ${count} монет')}";
 
-  static String m17(name) => "${name} · все приложения вместе";
+  static String m17(name) => "${name} · дневной лимит";
 
   static String m18(time) => "Дневной лимит · ${time}";
 
@@ -82,8 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m26(name) => "Все приложения на телефоне ${name}";
 
-  static String m27(name, time) =>
-      "У ${name} осталось ${time} на все приложения";
+  static String m27(name, time) => "${name}: осталось ${time} на сегодня";
 
   static String m28(name, time) => "${name} использовал ${time} сегодня";
 

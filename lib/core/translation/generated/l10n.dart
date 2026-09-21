@@ -2181,10 +2181,10 @@ class S {
     return Intl.message('Screen time', name: 'screenTime', desc: '', args: []);
   }
 
-  /// `{name} has {time} left across all apps`
+  /// `{name} has {time} left today`
   String kidHasLeftToday(Object name, Object time) {
     return Intl.message(
-      '$name has $time left across all apps',
+      '$name has $time left today',
       name: 'kidHasLeftToday',
       desc: '',
       args: [name, time],
@@ -2832,10 +2832,10 @@ class S {
     );
   }
 
-  /// `{name} · all apps combined`
+  /// `{name} · daily allowance`
   String dailyAllowanceFor(Object name) {
     return Intl.message(
-      '$name · all apps combined',
+      '$name · daily allowance',
       name: 'dailyAllowanceFor',
       desc: '',
       args: [name],

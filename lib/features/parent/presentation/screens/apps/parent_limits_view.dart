@@ -197,6 +197,7 @@ class ParentLimitsView extends StatelessWidget {
               usedMinutes: data.usedMinutes,
               remainingMinutes: data.remainingMinutes,
               usageAvailable: data.usageAvailable,
+              kidName: data.kidName,
               configurationAvailable: data.configurationAvailable,
               nextResetAt: data.nextResetAt,
               onSave: onSetCap,

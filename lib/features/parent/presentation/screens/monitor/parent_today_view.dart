@@ -300,6 +300,8 @@ class _ScreenTimeCard extends StatelessWidget {
             usedMinutes: data.usedMinutes,
             remainingMinutes: data.remainingMinutes,
             usageAvailable: data.usageAvailable,
+            kidName: data.kidName,
+            topApp: data.topApp,
             configurationAvailable: data.configurationAvailable,
             nextResetAt: data.nextResetAt,
           ),

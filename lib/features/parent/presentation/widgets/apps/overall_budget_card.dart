@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
-    show formatHm;
+    show formatHm, formatHmTight;
 
-/// Both tabs render the same server snapshot. Unknown usage is never zero.
+const int _defaultBudgetMinutes = 240;
+const int _budgetStepMinutes = 30;
+const int _maximumBudgetMinutes = 1440;
+
+/// The compact Today presentation: progress first, then one clear status.
 class OverallBudgetSummary extends StatelessWidget {
   const OverallBudgetSummary({
     super.key,
@@ -15,17 +19,20 @@ class OverallBudgetSummary extends StatelessWidget {
     required this.usedMinutes,
     required this.remainingMinutes,
     required this.usageAvailable,
+    required this.kidName,
+    required this.topApp,
     this.configurationAvailable = true,
     this.nextResetAt,
-    this.showTitle = true,
   });
+
   final int? limitMinutes;
   final int usedMinutes;
   final int? remainingMinutes;
   final bool usageAvailable;
   final bool configurationAvailable;
+  final String kidName;
+  final String topApp;
   final DateTime? nextResetAt;
-  final bool showTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -33,278 +40,258 @@ class OverallBudgetSummary extends StatelessWidget {
     if (!configurationAvailable) {
       return Text(s.budgetUnavailable, style: AppText.meta);
     }
-    final limit = limitMinutes;
+
+    final limit = limitMinutes ?? _defaultBudgetMinutes;
+    final remaining = remainingMinutes ?? (limit - usedMinutes).clamp(0, limit);
+    final progress = limit == 0 ? 1.0 : (usedMinutes / limit).clamp(0.0, 1.0);
     final reset = nextResetAt;
-    final paused =
-        limit == 0 ||
-        (limit != null && usageAvailable && remainingMinutes == 0);
     final resetLabel = reset == null
         ? null
-        : DateFormat.yMMMd(
+        : DateFormat.Hm(
             Localizations.localeOf(context).toLanguageTag(),
-          ).add_Hm().format(reset.toLocal());
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+          ).format(reset.toLocal());
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (showTitle) ...[
-          Text(s.overallDailyBudget, style: AppText.overline),
-          const SizedBox(height: 8),
-        ],
-        Text(
-          limit == null
-              ? s.noOverallDailyBudget
-              : limit == 0
-              ? s.budgetNoFreeTime
-              : formatHm(s, limit),
-          style: AppText.headline,
+        DsProgressRing(
+          progress: progress,
+          size: 112,
+          radius: 46,
+          strokeWidth: 11,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                usageAvailable ? formatHmTight(s, usedMinutes) : '—',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                  color: AppColors.ink,
+                  fontFeatures: AppText.tabular,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(s.ofTotal(formatHmTight(s, limit)), style: AppText.micro),
+            ],
+          ),
         ),
-        const SizedBox(height: 8),
-        Text(s.budgetScope, style: AppText.meta),
-        const SizedBox(height: 14),
-        if (usageAvailable) ...[
-          _BudgetValue(
-            label: s.budgetUsedToday,
-            value: formatHm(s, usedMinutes),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(s.screenTime.toUpperCase(), style: AppText.overline),
+              const SizedBox(height: 7),
+              Text(
+                !usageAvailable
+                    ? s.budgetUsageUnknown
+                    : remaining == 0
+                    ? s.budgetNoFreeTime
+                    : s.kidHasLeftToday(kidName, formatHm(s, remaining)),
+                style: AppText.headline.copyWith(fontSize: 17, height: 1.28),
+              ),
+              const SizedBox(height: 5),
+              if (topApp.isNotEmpty)
+                Text(s.mostOfItIn(topApp), style: AppText.meta),
+              if (remaining == 0 && resetLabel != null) ...[
+                const SizedBox(height: 5),
+                Text(s.budgetPausedUntil(resetLabel), style: AppText.meta),
+              ],
+            ],
           ),
-          if (limit != null && remainingMinutes != null)
-            _BudgetValue(
-              label: s.budgetRemaining,
-              value: formatHm(s, remainingMinutes!),
-            ),
-        ] else
-          Text(s.budgetUsageUnknown, style: AppText.meta),
-        if (paused) ...[
-          const SizedBox(height: 10),
-          Text(
-            resetLabel == null
-                ? s.budgetPaused
-                : s.budgetPausedUntil(resetLabel),
-            style: AppText.meta,
-          ),
-        ] else if (limit != null && resetLabel != null) ...[
-          const SizedBox(height: 8),
-          Text(s.budgetResetAt(resetLabel), style: AppText.meta),
-        ],
+        ),
       ],
     );
   }
 }
 
-class _BudgetValue extends StatelessWidget {
-  const _BudgetValue({required this.label, required this.value});
-  final String label;
-  final String value;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 3),
-    child: Row(
-      children: [
-        Expanded(child: Text(label, style: AppText.meta)),
-        const SizedBox(width: 12),
-        Text(value, style: AppText.rowTitleStrong),
-      ],
-    ),
-  );
-}
-
-class OverallBudgetCard extends StatelessWidget {
+/// The Limits control follows the iOS card pattern: value, stepper, progress.
+/// A missing legacy budget starts at four hours on the control; the first
+/// adjustment persists the chosen value through the existing API.
+class OverallBudgetCard extends StatefulWidget {
   const OverallBudgetCard({
     super.key,
     required this.limitMinutes,
     required this.usedMinutes,
     required this.remainingMinutes,
     required this.usageAvailable,
+    required this.kidName,
     this.configurationAvailable = true,
     this.nextResetAt,
     this.onSave,
   });
+
   final int? limitMinutes;
   final int usedMinutes;
   final int? remainingMinutes;
   final bool usageAvailable;
   final bool configurationAvailable;
+  final String kidName;
   final DateTime? nextResetAt;
   final Future<String?> Function(int?)? onSave;
 
-  Future<void> _edit(BuildContext context, bool enabled) => showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (_) => _BudgetEditor(
-      initialMinutes: limitMinutes ?? 60,
-      enabled: enabled,
-      onSave: onSave!,
-    ),
-  );
-
   @override
-  Widget build(BuildContext context) => DsCard(
-    padding: const EdgeInsets.all(20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (onSave != null && configurationAvailable) ...[
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  S.of(context).overallDailyBudget,
-                  style: AppText.overline,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Material(
-                type: MaterialType.transparency,
-                child: Semantics(
-                  label: S.of(context).overallDailyBudget,
-                  child: Switch.adaptive(
-                    value: limitMinutes != null,
-                    onChanged: (enabled) => _edit(context, enabled),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-        ],
-        OverallBudgetSummary(
-          showTitle: onSave == null || !configurationAvailable,
-          limitMinutes: limitMinutes,
-          usedMinutes: usedMinutes,
-          remainingMinutes: remainingMinutes,
-          usageAvailable: usageAvailable,
-          configurationAvailable: configurationAvailable,
-          nextResetAt: nextResetAt,
-        ),
-        if (onSave != null &&
-            configurationAvailable &&
-            limitMinutes != null) ...[
-          const SizedBox(height: 12),
-          DsInlineButton(
-            label: S.of(context).edit,
-            onTap: () => _edit(context, true),
-          ),
-        ],
-      ],
-    ),
-  );
+  State<OverallBudgetCard> createState() => _OverallBudgetCardState();
 }
 
-class _BudgetEditor extends StatefulWidget {
-  const _BudgetEditor({
-    required this.initialMinutes,
-    required this.enabled,
-    required this.onSave,
-  });
-  final int initialMinutes;
-  final bool enabled;
-  final Future<String?> Function(int?) onSave;
-  @override
-  State<_BudgetEditor> createState() => _BudgetEditorState();
-}
-
-class _BudgetEditorState extends State<_BudgetEditor> {
-  late final _minutes = TextEditingController(text: '${widget.initialMinutes}');
-  late bool _enabled = widget.enabled;
-  final _form = GlobalKey<FormState>();
+class _OverallBudgetCardState extends State<OverallBudgetCard> {
   bool _saving = false;
   String? _error;
+  late int _displayLimit;
+
+  int get _limit => _displayLimit;
+
   @override
-  void dispose() {
-    _minutes.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _displayLimit = widget.limitMinutes ?? _defaultBudgetMinutes;
   }
 
-  Future<void> _save() async {
-    if (!_form.currentState!.validate()) return;
+  @override
+  void didUpdateWidget(covariant OverallBudgetCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.limitMinutes != oldWidget.limitMinutes) {
+      _displayLimit = widget.limitMinutes ?? _defaultBudgetMinutes;
+    }
+  }
+
+  Future<void> _change(int delta) async {
+    final save = widget.onSave;
+    if (save == null || _saving) return;
+    final next = (_limit + delta).clamp(0, _maximumBudgetMinutes);
+    if (next == _limit && widget.limitMinutes != null) return;
+
     setState(() {
       _saving = true;
       _error = null;
     });
-    final error = await widget.onSave(
-      _enabled ? int.parse(_minutes.text) : null,
-    );
+    final error = await save(next);
     if (!mounted) return;
-    if (error == null) {
-      Navigator.of(context).pop();
-      return;
-    }
     setState(() {
       _saving = false;
       _error = error;
+      if (error == null) _displayLimit = next;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    return PopScope(
-      canPop: !_saving,
-      child: AlertDialog(
-        title: Text(s.overallDailyBudget),
-        content: SingleChildScrollView(
-          child: Form(
-            key: _form,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(s.budgetEnabled),
-                  value: _enabled,
-                  onChanged: _saving
-                      ? null
-                      : (value) => setState(() => _enabled = value),
-                ),
-                if (_enabled) ...[
-                  TextFormField(
-                    controller: _minutes,
-                    enabled: !_saving,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(labelText: s.minutes),
-                    validator: (value) {
-                      final minutes = int.tryParse(value ?? '');
-                      return minutes == null || minutes < 0 || minutes > 1440
-                          ? s.budgetMinutesError
-                          : null;
-                    },
+    if (!widget.configurationAvailable) {
+      return DsCard(child: Text(s.budgetUnavailable, style: AppText.meta));
+    }
+
+    final limit = _limit;
+    final remaining =
+        widget.remainingMinutes ?? (limit - widget.usedMinutes).clamp(0, limit);
+    final progress = limit == 0
+        ? 1.0
+        : (widget.usedMinutes / limit).clamp(0.0, 1.0);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DsCard.deep(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          s.dailyAllowanceFor(widget.kidName).toUpperCase(),
+                          style: AppText.overline.copyWith(
+                            color: const Color(0xA6FFFFFF),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 180),
+                          child: Text(
+                            formatHm(s, limit),
+                            key: ValueKey(limit),
+                            style: AppText.title2.copyWith(
+                              fontSize: 34,
+                              letterSpacing: -0.8,
+                              color: AppColors.textOnPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(s.budgetMinutesHint),
-                ],
-                const SizedBox(height: 16),
-                Text(_enabled ? s.budgetExplanation : s.budgetOffExplanation),
-                if (_error != null) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    _error!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
+                  const SizedBox(width: 12),
+                  Opacity(
+                    opacity: _saving ? 0.55 : 1,
+                    child: DsStepper.onDeep(
+                      onLess: _saving || limit == 0
+                          ? null
+                          : () => _change(-_budgetStepMinutes),
+                      onMore: _saving || limit == _maximumBudgetMinutes
+                          ? null
+                          : () => _change(_budgetStepMinutes),
                     ),
                   ),
                 ],
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+              if (widget.usageAvailable) ...[
+                DsProgressBar(
+                  progress: progress,
+                  height: 8,
+                  trackColor: const Color(0x29FFFFFF),
+                  color: AppColors.primaryPale,
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        s.timeUsed(formatHm(s, widget.usedMinutes)),
+                        style: AppText.meta.copyWith(
+                          color: const Color(0xC7FFFFFF),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      s.timeLeft(formatHm(s, remaining)),
+                      style: AppText.meta.copyWith(
+                        color: const Color(0xC7FFFFFF),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else
+                Text(
+                  s.budgetUsageUnknown,
+                  style: AppText.meta.copyWith(color: const Color(0xC7FFFFFF)),
+                ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: _saving ? null : () => Navigator.of(context).pop(),
-            child: Text(s.cancel),
-          ),
-          FilledButton(
-            onPressed: _saving ? null : _save,
-            child: _saving
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(s.save),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(s.budgetExplanation, style: AppText.meta),
+        ),
+        if (_error != null) ...[
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              _error!,
+              style: AppText.meta.copyWith(color: AppColors.danger),
+            ),
           ),
         ],
-      ),
+      ],
     );
   }
 }

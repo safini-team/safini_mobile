@@ -61,7 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m16(count) =>
       "${Intl.plural(count, one: '${count} coin reward', other: '${count} coins reward')}";
 
-  static String m17(name) => "${name} · all apps combined";
+  static String m17(name) => "${name} · daily allowance";
 
   static String m18(time) => "Daily limit · ${time}";
 
@@ -83,7 +83,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m26(name) => "Everything installed on ${name}\'s phone";
 
-  static String m27(name, time) => "${name} has ${time} left across all apps";
+  static String m27(name, time) => "${name} has ${time} left today";
 
   static String m28(name, time) => "${name} used ${time} today";
 

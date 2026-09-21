@@ -67,8 +67,7 @@ void main() {
       tester,
       _data(apps: [_app('Chrome', limit: 60), _app('Gmail', limit: 45)]),
     );
-    expect(find.text('Off'), findsOneWidget);
-    expect(find.text('Remaining'), findsNothing);
+    expect(find.text('4 h'), findsOneWidget);
     expect(find.text('1 h 45 m'), findsNothing);
   });
 

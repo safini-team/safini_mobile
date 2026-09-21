@@ -57,7 +57,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m16(count) =>
       "${Intl.plural(count, one: '${count} tanga mukofot', other: '${count} tanga mukofot')}";
 
-  static String m17(name) => "${name} · barcha ilovalar birgalikda";
+  static String m17(name) => "${name} · kunlik limit";
 
   static String m18(time) => "Kunlik limit · ${time}";
 
@@ -79,8 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m26(name) => "${name}ning telefonidagi barcha ilovalar";
 
-  static String m27(name, time) =>
-      "${name} uchun barcha ilovalarga ${time} qoldi";
+  static String m27(name, time) => "${name} uchun bugun ${time} qoldi";
 
   static String m28(name, time) => "${name} bugun ${time} ishlatdi";
 
