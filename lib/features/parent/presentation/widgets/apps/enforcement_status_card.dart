@@ -54,7 +54,17 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
           '/v1/children/$id/screen-time-status',
         );
         if (!mounted || widget.childId != id) return;
-        setState(() => _ios = ios.data?["platform"] == "ios" ? ios.data : null);
+        final iosData = ios.data?["platform"] == "ios" ? ios.data : null;
+        final installedAppsUpdatedAt = iosData == null
+            ? null
+            : await _installedAppsUpdatedAt(id);
+        if (!mounted || widget.childId != id) return;
+        setState(() {
+          _ios = _isCurrentIosDevice(iosData, installedAppsUpdatedAt)
+              ? iosData
+              : null;
+          if (_ios != null) _status = null;
+        });
         if (_ios != null) return;
       } on DioException catch (_) {
         /* Android and pre-migration API fallback. */
@@ -71,6 +81,20 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
       }
     } finally {
       _loading = false;
+    }
+  }
+
+  /// A child can sign into Safini on a different phone. Both status records
+  /// remain on the server, so the most recent device report decides which
+  /// platform the parent should see.
+  Future<DateTime?> _installedAppsUpdatedAt(String childId) async {
+    try {
+      final response = await getIt<Dio>().get<Map<String, dynamic>>(
+        '/v1/children/$childId/installed-apps',
+      );
+      return DateTime.tryParse(response.data?['updated_at']?.toString() ?? '');
+    } catch (_) {
+      return null;
     }
   }
 
@@ -135,6 +159,17 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
   }
 }
 
+bool _isCurrentIosDevice(
+  Map<String, dynamic>? ios,
+  DateTime? installedAppsUpdatedAt,
+) {
+  if (ios == null) return false;
+  if (installedAppsUpdatedAt == null) return true;
+  final iosUpdatedAt = DateTime.tryParse(ios['updated_at']?.toString() ?? '');
+  if (iosUpdatedAt == null) return false;
+  return !installedAppsUpdatedAt.isAfter(iosUpdatedAt);
+}
+
 String _iosLastSeen(BuildContext context, DateTime? reported) {
   if (reported == null) return '';
   final local = reported.toLocal();
@@ -142,7 +177,9 @@ String _iosLastSeen(BuildContext context, DateTime? reported) {
   final time = material.formatTimeOfDay(TimeOfDay.fromDateTime(local));
   final now = DateTime.now();
   final sameDay =
-      local.year == now.year && local.month == now.month && local.day == now.day;
+      local.year == now.year &&
+      local.month == now.month &&
+      local.day == now.day;
   if (sameDay) return time;
   return '${material.formatShortDate(local)} $time';
 }

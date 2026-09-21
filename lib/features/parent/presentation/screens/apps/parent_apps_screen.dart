@@ -16,7 +16,6 @@ import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_installed_apps_screen.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
-import 'package:safini/features/parent/presentation/widgets/apps/add_app_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet.dart';
 
 class ParentAppsScreen extends StatefulWidget {
@@ -116,11 +115,10 @@ class _ParentLimitsView extends StatelessWidget {
             .where((child) => child.id == selectedId)
             .firstOrNull;
 
-        // "Apps on this phone" list. Rows for catalog-mapped apps are tappable
-        // (add / limit / block), so the screen needs the ParentAppsCubit.
-        final VoidCallback? onSeeAllApps =
+        // Every installed app with a rule slug is tappable (add / edit / block),
+        // so the pushed screen keeps this ParentAppsCubit alive.
+        final VoidCallback? onAddApp =
             AppConstants.childInstalledAppsShipped &&
-                state.screenTime.usageAvailable &&
                 selectedId != null &&
                 selectedId.isNotEmpty
             ? () => Navigator.of(context).push(
@@ -186,9 +184,8 @@ class _ParentLimitsView extends StatelessWidget {
                   app: app,
                   childName: selected?.nickname ?? '',
                 ),
-                onAddApp: () => showAddAppSheet(context, cubit: cubit),
+                onAddApp: onAddApp,
                 onRefresh: () => cubit.loadAppLimits(),
-                onSeeAllApps: onSeeAllApps,
               ),
             ),
           ],

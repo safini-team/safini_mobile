@@ -21,6 +21,7 @@ class _StatusAdapter implements HttpClientAdapter {
   int code = 200;
   int calls = 0;
   Map<String, dynamic>? ios;
+  DateTime? installedAppsUpdatedAt;
 
   @override
   Future<ResponseBody> fetch(
@@ -30,12 +31,21 @@ class _StatusAdapter implements HttpClientAdapter {
   ) async {
     calls++;
     if (code != 200) {
-      return ResponseBody.fromString('{"detail":"nope"}', code, headers: {
-        Headers.contentTypeHeader: [Headers.jsonContentType],
-      });
+      return ResponseBody.fromString(
+        '{"detail":"nope"}',
+        code,
+        headers: {
+          Headers.contentTypeHeader: [Headers.jsonContentType],
+        },
+      );
     }
     final body = options.path.contains('screen-time-status') && ios != null
         ? ios!
+        : options.path.contains('installed-apps')
+        ? {
+            'apps': <dynamic>[],
+            'updated_at': installedAppsUpdatedAt?.toIso8601String(),
+          }
         : {'status': status};
     return ResponseBody.fromString(
       jsonEncode(body),
@@ -118,14 +128,17 @@ void main() {
     expect(text.style?.color, isNot(AppColors.warning));
   });
 
-  testWidgets('a failed check says so instead of claiming everything is fine',
-      (tester) async {
+  testWidgets('a failed check says so instead of claiming everything is fine', (
+    tester,
+  ) async {
     adapter.code = 500;
     await pumpCard(tester, 'child-1');
     expect(find.textContaining('Could not check protection'), findsOneWidget);
   });
 
-  testWidgets('nothing is shown until the first answer arrives', (tester) async {
+  testWidgets('nothing is shown until the first answer arrives', (
+    tester,
+  ) async {
     final completer = Completer<void>();
     final slow = Dio(BaseOptions(baseUrl: 'https://api.example.test'))
       ..httpClientAdapter = _BlockingAdapter(completer.future);
@@ -148,8 +161,9 @@ void main() {
     expect(find.textContaining('Set up app limits'), findsOneWidget);
   });
 
-  testWidgets('switching child re-reads that child, not the previous one',
-      (tester) async {
+  testWidgets('switching child re-reads that child, not the previous one', (
+    tester,
+  ) async {
     adapter.status = 'active';
     await pumpCard(tester, 'child-1');
     final before = adapter.calls;
@@ -157,8 +171,9 @@ void main() {
     expect(adapter.calls, greaterThan(before));
   });
 
-  testWidgets('iOS stays quiet when Screen Time is healthy and recent',
-      (tester) async {
+  testWidgets('iOS stays quiet when Screen Time is healthy and recent', (
+    tester,
+  ) async {
     adapter.ios = {
       'platform': 'ios',
       'authorization': 'approved',
@@ -221,8 +236,9 @@ void main() {
     );
   });
 
-  testWidgets('iOS setup that needs attention is one short line',
-      (tester) async {
+  testWidgets('iOS setup that needs attention is one short line', (
+    tester,
+  ) async {
     adapter.ios = {
       'platform': 'ios',
       'authorization': 'denied',
@@ -234,6 +250,27 @@ void main() {
     expect(
       find.textContaining('View actual usage in Screen Time'),
       findsNothing,
+    );
+  });
+
+  testWidgets('a newer Android report suppresses historical iOS status', (
+    tester,
+  ) async {
+    adapter.status = 'offline';
+    adapter.ios = {
+      'platform': 'ios',
+      'authorization': 'denied',
+      'monitoring_active': false,
+      'updated_at': DateTime.utc(2026, 9, 16, 17),
+    };
+    adapter.installedAppsUpdatedAt = DateTime.utc(2026, 9, 20, 17);
+
+    await pumpCard(tester, 'child-now-android');
+
+    expect(find.text('iOS Screen Time · last reported status'), findsNothing);
+    expect(
+      find.textContaining('offline or has stopped reporting'),
+      findsOneWidget,
     );
   });
 }

@@ -9,7 +9,6 @@ import 'package:safini/features/child/presentation/screens/profile/child_me_view
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
-import 'package:safini/features/parent/domain/models/task_idea.dart';
 import 'package:safini/features/parent/presentation/screens/family/parent_family_view.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_view.dart';
@@ -167,7 +166,6 @@ class SampleData {
     emptyTitle: s.emptyNoActiveTasks,
     emptyBody: s.emptyActiveBody,
     groups: const [],
-    ideas: [for (final idea in TaskIdea.values) TaskIdeaRowData.of(idea, s)],
   );
 
   static const ParentLimitsData parentLimits = ParentLimitsData(

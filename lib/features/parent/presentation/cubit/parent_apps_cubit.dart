@@ -3,9 +3,6 @@ import 'package:safini/features/parent/domain/models/child_app_usage_model.dart'
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
-import 'package:dartz/dartz.dart';
-import 'package:safini/core/utils/error/failures.dart';
-import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
 class ParentAppsCubit extends Cubit<ParentAppsState> {
@@ -107,10 +104,6 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   /// Creates (upserts) an app rule for the selected child via
   /// PUT /children/{id}/app-rules/{slug}, then refreshes the list.
   /// Returns an error message on failure, or null on success.
-  /// The controlled-app catalog from `GET /v1/apps`.
-  Future<Either<Failure, List<CatalogAppModel>>> loadCatalog() =>
-      _appUsageRepo.fetchCatalog();
-
   Future<String?> addApp({
     required String slug,
     required String name,

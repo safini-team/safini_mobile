@@ -1,9 +1,20 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
 
 void main() {
+  test('Russian installed-app count uses an unambiguous total label', () async {
+    final s = await S.load(const Locale('ru'));
+
+    expect(s.installedAppsCount(1), 'Всего приложений: 1');
+    expect(s.installedAppsCount(2), 'Всего приложений: 2');
+    expect(s.installedAppsCount(5), 'Всего приложений: 5');
+    expect(s.installedAppsCount(21), 'Всего приложений: 21');
+  });
+
   test('parses the app list and the upload timestamp', () {
     final snapshot = InstalledAppsSnapshot.fromJson({
       'apps': [
@@ -43,9 +54,14 @@ void main() {
         {
           'package_name': 'com.google.android.youtube',
           'app_name': 'YouTube',
-          'icon_url': '/v1/children/c1/installed-apps/com.google.android.youtube/icon?v=ab',
+          'icon_url':
+              '/v1/children/c1/installed-apps/com.google.android.youtube/icon?v=ab',
         },
-        {'package_name': 'com.no.icon', 'app_name': 'No Icon', 'icon_url': null},
+        {
+          'package_name': 'com.no.icon',
+          'app_name': 'No Icon',
+          'icon_url': null,
+        },
       ],
       'updated_at': '2026-09-13T12:00:00Z',
     });
@@ -130,9 +146,9 @@ void main() {
       'icon_sha256': 'ab' * 32,
     });
     expect(app.toJson(withIcon: true)['icon_png'], 'AQID');
-    expect(
-      const InstalledApp(packageName: 'com.a', appName: 'A').toJson(),
-      {'package_name': 'com.a', 'app_name': 'A'},
-    );
+    expect(const InstalledApp(packageName: 'com.a', appName: 'A').toJson(), {
+      'package_name': 'com.a',
+      'app_name': 'A',
+    });
   });
 }

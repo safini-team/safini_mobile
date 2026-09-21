@@ -183,7 +183,6 @@ void main() {
             onSelectLane: (_) {},
             onOpenTask: (_) {},
             onNewTask: () {},
-            onOpenIdea: (_) {},
           ),
           locale: locale,
           screen: 'Parent Tasks, first run',

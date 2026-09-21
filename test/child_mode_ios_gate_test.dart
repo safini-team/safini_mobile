@@ -44,6 +44,7 @@ void main() {
     expect(isChildModeAvailable, isTrue);
     await _pumpRoles(tester);
     expect(find.text('Earn coins & play'), findsOneWidget);
+    expect(find.text('Back to sign in'), findsOneWidget);
     expect(find.text('Coming soon on iOS'), findsNothing);
     debugDefaultTargetPlatformOverride = null;
   });

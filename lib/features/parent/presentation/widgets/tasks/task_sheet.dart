@@ -17,6 +17,66 @@ import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dar
 import 'package:safini/features/parent/presentation/widgets/tasks/task_voice_recorder.dart';
 import 'package:safini/core/utils/task_category.dart';
 
+enum _NewTaskChoice { custom }
+
+/// Lets the parent choose a localized template or start with a blank task.
+/// Nothing is saved until the following editor is submitted.
+Future<void> showNewTaskChooser(
+  BuildContext context, {
+  required ParentTasksCubit cubit,
+  required String childId,
+}) async {
+  final choice = await showDsSheet<Object>(
+    context: context,
+    builder: (sheetContext) {
+      final s = S.of(sheetContext);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(s.chooseTaskTitle, style: AppText.title3),
+          const SizedBox(height: 6),
+          Text(s.chooseTaskBody, style: AppText.bodyRegular),
+          const SizedBox(height: 18),
+          DsPrimaryButton.secondary(
+            label: s.newCustomTask,
+            icon: const Icon(Icons.edit_rounded, size: 19),
+            onTap: () => Navigator.of(sheetContext).pop(_NewTaskChoice.custom),
+          ),
+          const SizedBox(height: 22),
+          DsOverlineText(s.taskTemplatesTitle),
+          const SizedBox(height: 10),
+          DsGroup(
+            children: [
+              for (final idea in TaskIdea.values)
+                DsRow(
+                  onTap: () => Navigator.of(sheetContext).pop(idea),
+                  title: idea.title(s),
+                  subtitle: [
+                    idea.recurrence == 'weekly'
+                        ? s.repeatWeeklyShort
+                        : s.repeatDailyShort,
+                    s.coinCountShort(idea.coins),
+                    if (idea.photoProof) s.needsPhotoProof,
+                  ].join(' · '),
+                  leading: DsEmojiTile(emoji: idea.emoji, size: 36),
+                  trailing: AppIcons.chevronRight(),
+                ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+  if (!context.mounted || choice == null) return;
+  await showTaskSheet(
+    context,
+    cubit: cubit,
+    childId: childId,
+    idea: choice is TaskIdea ? choice : null,
+  );
+}
+
 /// Opens the create/edit task sheet. [task] == null → CREATE, otherwise EDIT.
 /// [idea] prefills a CREATE; nothing is saved until the parent taps Add.
 Future<void> showTaskSheet(
@@ -143,7 +203,8 @@ class _TaskSheetState extends State<TaskSheet> {
       _coins = idea.coins;
       _photoProof = idea.photoProof;
       _category = idea.category;
-      _recurrence = TaskIdea.recurrence;
+      _recurrence = idea.recurrence;
+      _recurrenceDays = idea.recurrenceDays ?? 0;
       _emoji = idea.emoji;
     }
     _emojiOptions = [if (!_emojis.contains(_emoji)) _emoji, ..._emojis];
@@ -488,8 +549,7 @@ class _TaskSheetState extends State<TaskSheet> {
                         color: AppColors.kidColor(child.id),
                         avatarSize: 26,
                         selected: _targetChildId == child.id,
-                        onTap: () =>
-                            setState(() => _targetChildId = child.id),
+                        onTap: () => setState(() => _targetChildId = child.id),
                       ),
                   ],
                 ),
@@ -570,15 +630,10 @@ class _IconPicker extends StatelessWidget {
                         height: 34,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: selected
-                              ? AppColors.surface
-                              : AppColors.fill,
+                          color: selected ? AppColors.surface : AppColors.fill,
                           borderRadius: BorderRadius.circular(AppRadius.sm),
                           border: selected
-                              ? Border.all(
-                                  color: AppColors.primary,
-                                  width: 2,
-                                )
+                              ? Border.all(color: AppColors.primary, width: 2)
                               : null,
                         ),
                         child: Text(
@@ -666,9 +721,9 @@ class _FieldPanel extends StatelessWidget {
                 Expanded(
                   child: Text(
                     S.of(context).coinCountShort(coins),
-                    style: AppText.rowTitleLg.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ).nums,
+                    style: AppText.rowTitleLg
+                        .copyWith(fontWeight: FontWeight.w600)
+                        .nums,
                   ),
                 ),
                 DsStepper.onPanel(onLess: onLess, onMore: onMore),
