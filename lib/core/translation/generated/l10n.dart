@@ -540,6 +540,26 @@ class S {
     return Intl.message('Daily Limit', name: 'dailyLimit', desc: '', args: []);
   }
 
+  /// `Daily limit · {time}`
+  String dailyLimitValue(Object time) {
+    return Intl.message(
+      'Daily limit · $time',
+      name: 'dailyLimitValue',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `No daily limit`
+  String get noDailyLimit {
+    return Intl.message(
+      'No daily limit',
+      name: 'noDailyLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{minutes}m remaining`
   String remainingTime(String minutes) {
     return Intl.message(

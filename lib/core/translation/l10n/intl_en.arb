@@ -93,6 +93,8 @@
   "doHomework": "Do homework",
   "kidsEarnTimeCoins": "Kids earn Time Coins to unlock extra minutes for these apps.",
   "dailyLimit": "Daily Limit",
+  "dailyLimitValue": "Daily limit · {time}",
+  "noDailyLimit": "No daily limit",
   "remainingTime": "{minutes}m remaining",
   "@remainingTime": {
     "placeholders": {

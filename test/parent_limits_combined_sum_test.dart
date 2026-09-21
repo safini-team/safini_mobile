@@ -254,7 +254,7 @@ void main() {
     });
   });
 
-  testWidgets('iOS without usage minutes uses a one-line caption', (
+  testWidgets('rows show the daily allowance when usage stays on the child', (
     tester,
   ) async {
     await _pumpLimits(
@@ -280,7 +280,9 @@ void main() {
         ],
       ),
     );
-    expect(find.textContaining('Usage on the'), findsWidgets);
+    expect(find.text('Daily limit · 1 h'), findsOneWidget);
+    // The overall card still explains where actual usage can be viewed.
+    expect(find.textContaining('Usage on the'), findsOneWidget);
     expect(
       find.textContaining('View actual usage in Screen Time'),
       findsNothing,

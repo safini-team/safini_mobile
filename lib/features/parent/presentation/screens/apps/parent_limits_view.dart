@@ -377,12 +377,11 @@ class _AppRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return DsRow(
       onTap: onTap,
       title: app.name,
-      subtitle: usageAvailable
-          ? app.subtitle(S.of(context))
-          : S.of(context).iosScreenTimeLocalUsageShort,
+      subtitle: usageAvailable ? app.subtitle(s) : _dailyAllowance(s),
       subtitleStyle: AppText.metaSm.copyWith(
         color: app.isOver ? AppColors.dangerDeep : AppColors.textSecondary,
       ),
@@ -395,6 +394,12 @@ class _AppRow extends StatelessWidget {
       ),
       trailing: AppIcons.chevronRight(),
     );
+  }
+
+  String _dailyAllowance(S s) {
+    if (app.isBlocked) return s.blockCompletely;
+    if (!app.isLimited) return s.noDailyLimit;
+    return s.dailyLimitValue(formatHm(s, app.limitMinutes));
   }
 }
 

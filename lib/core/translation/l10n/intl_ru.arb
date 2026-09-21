@@ -93,6 +93,8 @@
   "doHomework": "Сделать уроки",
   "kidsEarnTimeCoins": "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
   "dailyLimit": "Дневной лимит",
+  "dailyLimitValue": "Дневной лимит · {time}",
+  "noDailyLimit": "Без дневного лимита",
   "remainingTime": "осталось {minutes}м",
   "@remainingTime": {
     "placeholders": {
@@ -441,7 +443,7 @@
   "seeAllApps": "Все приложения на телефоне",
   "installedAppsTitle": "Установленные приложения",
   "installedAppsSubtitle": "Все приложения на телефоне {name}",
-  "installedAppsCount": "{count, plural, =0{Нет приложений} =1{1 приложение} other{Приложений: {count}}}",
+  "installedAppsCount": "{count, plural, =0{Нет приложений} one{{count} приложение} few{{count} приложения} many{{count} приложений} other{{count} приложения}}",
   "installedAppsEmptyTitle": "Приложения ещё не синхронизированы",
   "installedAppsEmptyBody": "Когда {name} откроет Safini на своём телефоне, установленные приложения появятся здесь.",
   "installedAppsLastSynced": "Синхронизировано: {date}",

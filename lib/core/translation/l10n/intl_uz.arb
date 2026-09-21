@@ -65,6 +65,8 @@
   "doHomework": "Uy vazifasini bajar",
   "kidsEarnTimeCoins": "Bolalar bu ilovalarda qoʻshimcha daqiqalar ochish uchun Vaqt tangalarini ishlab topadi.",
   "dailyLimit": "Kunlik cheklov",
+  "dailyLimitValue": "Kunlik limit · {time}",
+  "noDailyLimit": "Kunlik limit yoʻq",
   "remainingTime": "{minutes} daqiqa qoldi",
   "addAnotherApp": "Yana ilova qoʻshish",
   "tasksAndRewards": "Topshiriqlar va mukofotlar",
