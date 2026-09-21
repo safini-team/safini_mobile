@@ -1,4 +1,3 @@
-import 'package:safini/features/parent/presentation/widgets/apps/enforcement_status_card.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -9,8 +8,10 @@ import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
-import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/features/parent/data/app_data.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
+import 'package:safini/features/parent/presentation/widgets/apps/enforcement_status_card.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
@@ -30,9 +31,9 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
     // A protection or limit push names the child it is about, so open on that
     // child rather than whoever was selected last.
     ..loadAppLimits(
-      childId: getIt<PushDeepLinks>()
-          .take(PushDestination.parentLimits)
-          ?.childId,
+      childId:
+          getIt<PushDeepLinks>().take(PushDestination.parentLimits)?.childId ??
+          context.read<ParentHomeCubit>().state.selectedChildId,
     );
   StreamSubscription<PushTarget>? _deepLinks;
 
@@ -46,7 +47,10 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
           final childId = getIt<PushDeepLinks>()
               .take(PushDestination.parentLimits)
               ?.childId;
-          if (childId != null) _cubit.selectChild(childId);
+          if (childId != null && mounted) {
+            context.read<ParentHomeCubit>().selectChild(childId);
+            _cubit.selectChild(childId);
+          }
         });
   }
 
@@ -62,16 +66,24 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
     return BlocProvider.value(
       value: _cubit,
       // Minutes used and what is locked just changed on the child's phone.
-      child: OnPush(
-        types: const {
-          PushType.appLimitReached,
-          PushType.screenTimeReached,
-          PushType.protectionAlert,
-        },
-        onPush: (event) {
-          if (event.childId == _cubit.childId) _cubit.loadAppLimits();
-        },
-        child: const _ParentLimitsView(),
+      child: BlocListener<ParentHomeCubit, ParentHomeState>(
+        listenWhen: (previous, current) =>
+            current.selectedIndex == 2 &&
+            (previous.selectedIndex != 2 ||
+                previous.selectedChildId != current.selectedChildId),
+        listener: (context, home) =>
+            _cubit.loadAppLimits(childId: home.selectedChildId),
+        child: OnPush(
+          types: const {
+            PushType.appLimitReached,
+            PushType.screenTimeReached,
+            PushType.protectionAlert,
+          },
+          onPush: (event) {
+            if (event.childId == _cubit.childId) _cubit.loadAppLimits();
+          },
+          child: const _ParentLimitsView(),
+        ),
       ),
     );
   }
@@ -79,17 +91,6 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
 
 class _ParentLimitsView extends StatelessWidget {
   const _ParentLimitsView();
-
-  Future<void> _setCap(
-    BuildContext context,
-    ParentAppsCubit cubit,
-    int? minutes,
-  ) async {
-    final error = await cubit.setScreenTimeCap(minutes);
-    if (error != null && context.mounted) {
-      AppSnackBar.error(context, error);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,6 +164,8 @@ class _ParentLimitsView extends StatelessWidget {
               child: ParentLimitsView(
                 data: ParentLimitsData(
                   usageAvailable: state.screenTime.usageAvailable,
+                  configurationAvailable:
+                      state.screenTime.configurationAvailable != false,
                   kids: [
                     for (final child in children)
                       LimitsKid(
@@ -175,9 +178,14 @@ class _ParentLimitsView extends StatelessWidget {
                   kidName: selected?.nickname ?? '',
                   apps: apps,
                   capMinutes: state.screenTime.limitMinutes,
+                  usedMinutes: state.screenTime.usedMinutes,
+                  remainingMinutes: state.screenTime.remainingMinutes,
+                  nextResetAt: state.screenTime.nextResetAt,
                 ),
-                onSelectKid: cubit.selectChild,
-                onSetCap: (minutes) => _setCap(context, cubit, minutes),
+                onSelectKid: (id) {
+                  context.read<ParentHomeCubit>().selectChild(id);
+                },
+                onSetCap: selectedId == null ? null : cubit.setScreenTimeCap,
                 onOpenApp: (app) => showAppLimitSheet(
                   context,
                   cubit: cubit,

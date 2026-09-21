@@ -34,7 +34,8 @@ class ParentTasksScreen extends StatefulWidget {
 }
 
 class _ParentTasksScreenState extends State<ParentTasksScreen> {
-  String _scope = _allScope;
+  String get _scope =>
+      context.read<ParentHomeCubit>().state.selectedChildId ?? _allScope;
   TaskLane _lane = TaskLane.review;
 
   /// Until the parent picks a lane themselves, the screen opens on whichever
@@ -72,7 +73,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
 
   /// Opens on the child the push is about, in "To review".
   void _showPushed(PushTarget target) {
-    _scope = target.childId ?? _allScope;
+    context.read<ParentHomeCubit>().selectChild(target.childId);
     _lane = TaskLane.review;
     _laneChosenByUser = true;
     _pushedTaskId = target.taskId;
@@ -85,11 +86,16 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
 
   void _selectScope(String scope) {
     if (scope == _scope) return;
-    setState(() => _scope = scope);
+    setState(
+      () => context.read<ParentHomeCubit>().selectChild(
+        scope == _allScope ? null : scope,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ParentHomeCubit>();
     final s = S.of(context);
 
     // The list is fetched once and the cubit lives for the whole session, so a

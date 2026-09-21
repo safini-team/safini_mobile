@@ -362,7 +362,7 @@
   "profileUpdated": "Сохранено",
   "storeSubtitle": "Твои монеты, твой выбор",
   "screenTime": "Экранное время",
-  "kidHasLeftToday": "У {name} осталось {time} на все приложения",
+  "kidHasLeftToday": "{name}: осталось {time} на сегодня",
   "kidUsedToday": "{name} использовал {time} сегодня",
   "mostOfItIn": "Больше всего - в {app}",
   "statTasksDone": "Заданий",
@@ -431,7 +431,7 @@
   "taskIdeaPutAwayLaundryTitle": "Убрать чистую одежду",
   "taskIdeaPutAwayLaundryDetails": "Сложи чистую одежду и убери её в нужные ящики.",
   "limitsSubtitle": "Телефон {name} · сегодня",
-  "dailyAllowanceFor": "{name} · все приложения вместе",
+  "dailyAllowanceFor": "{name} · дневной лимит",
   "noLimitsSet": "Лимиты не заданы",
   "timeUsed": "{time} использовано",
   "timeLeft": "{time} осталось",
@@ -762,5 +762,25 @@
         "type": "String"
       }
     }
-  }
+  },
+  "overallDailyBudget": "Общий дневной лимит",
+  "noOverallDailyBudget": "Выключен",
+  "budgetScope": "Для приложений под управлением Safini",
+  "budgetUsedToday": "Использовано сегодня",
+  "budgetRemaining": "Осталось",
+  "budgetExplanation": "Когда общий лимит закончится, приложения под управлением Safini будут заблокированы. Отдельные лимиты приложений тоже действуют. Телефон, Сообщения и приложения без правил Safini останутся доступны.",
+  "howDailyLimitWorks": "Как работает дневной лимит",
+  "dailyLimitSharedMeaning": "Один общий лимит действует для всех приложений под управлением Safini.",
+  "dailyLimitAppRuleMeaning": "Собственный лимит приложения может заблокировать его раньше.",
+  "dailyLimitAvailableMeaning": "Телефон, Сообщения и приложения без правил Safini остаются доступны.",
+  "budgetOffExplanation": "Действуют только лимиты отдельных приложений. Использованное сегодня время сохраняется.",
+  "budgetNoFreeTime": "Нет бесплатного времени",
+  "budgetPaused": "Приложения заблокированы до обновления дневного лимита.",
+  "budgetResetAt": "Обновится: {time}",
+  "budgetMinutesHint": "0 минут блокирует приложения под управлением Safini.",
+  "budgetMinutesError": "Введите целое число от 0 до 1440.",
+  "budgetUsageUnknown": "Использование видно на устройстве ребёнка.",
+  "budgetUnavailable": "Данные об общем лимите недоступны. Потяните вниз, чтобы обновить.",
+  "budgetEnabled": "Включён",
+  "budgetPausedUntil": "Приложения заблокированы до {time}."
 }

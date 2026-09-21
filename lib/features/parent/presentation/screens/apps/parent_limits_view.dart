@@ -6,7 +6,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/screen_time_cap.dart';
+import 'package:safini/features/parent/presentation/widgets/apps/overall_budget_card.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
@@ -79,13 +79,18 @@ class LimitsApp {
 
 class ParentLimitsData {
   final bool usageAvailable;
+  final bool configurationAvailable;
   const ParentLimitsData({
     this.usageAvailable = true,
+    this.configurationAvailable = true,
     required this.kids,
     required this.selectedKidId,
     required this.kidName,
     required this.apps,
     this.capMinutes,
+    this.usedMinutes = 0,
+    this.remainingMinutes,
+    this.nextResetAt,
   });
 
   final List<LimitsKid> kids;
@@ -99,42 +104,12 @@ class ParentLimitsData {
 
   bool get hasCap => capMinutes != null;
 
-  int get usedMinutes => apps.fold(0, (sum, app) => sum + app.usedMinutes);
-
-  /// The sum of the per-app limits. Shown only when there is no cap, and
-  /// labelled as the sum it is - nothing spends from this figure.
-  ///
-  /// A blocked app adds nothing: its rule still carries a daily limit, but the
-  /// child gets none of it. Neither does an app with no limit. A limited app at
-  /// zero adds its zero - no free time is still a limit.
-  int get combinedLimitMinutes => apps.fold(
-    0,
-    (sum, app) =>
-        sum + (app.isLimited && !app.isBlocked ? app.limitMinutes : 0),
-  );
-
-  /// Is any app blocked or limited, a limit of zero included. Only without one
-  /// is "no limits set" true; blocked apps adding up to zero are not that.
-  bool get hasAppLimits => apps.any((app) => app.isBlocked || app.isLimited);
-
-  /// What the panel counts down: the real cap when set, else the sum.
-  int get allowanceMinutes => capMinutes ?? combinedLimitMinutes;
-
-  int get leftMinutes => allowanceMinutes <= 0
-      ? 0
-      : (allowanceMinutes - usedMinutes).clamp(0, allowanceMinutes);
-
-  double get progress => allowanceMinutes <= 0
-      ? 0
-      : (usedMinutes / allowanceMinutes).clamp(0.0, 1.0);
+  final int usedMinutes;
+  final int? remainingMinutes;
+  final DateTime? nextResetAt;
 }
 
-/// Parent · Limits: kid chips, the deep-purple allowance panel, then the app
-/// list.
-///
-/// The panel's −/+ stepper from the artboard is wired now that the child row
-/// carries `daily_screen_time_minutes`. Its bottom rung is "no cap", so the
-/// same control that sets the budget is the one that removes it.
+/// Optional shared budget above independent per-app rules.
 class ParentLimitsView extends StatelessWidget {
   const ParentLimitsView({
     super.key,
@@ -153,7 +128,7 @@ class ParentLimitsView extends StatelessWidget {
 
   /// Null minutes removes the cap. Absent entirely in the design preview,
   /// where the panel renders read-only.
-  final ValueChanged<int?>? onSetCap;
+  final Future<String?> Function(int?)? onSetCap;
   final Future<void> Function()? onRefresh;
 
   @override
@@ -204,7 +179,7 @@ class ParentLimitsView extends StatelessWidget {
               children: [
                 Text(s.tabLimits, style: AppText.largeTitle),
                 const SizedBox(height: 4),
-                Text(s.limitsSubtitle(data.kidName), style: AppText.subtitle),
+                Text(s.dateToday, style: AppText.subtitle),
               ],
             ),
           ),
@@ -217,14 +192,19 @@ class ParentLimitsView extends StatelessWidget {
               AppSpacing.gutter,
               0,
             ),
-            child: _AllowancePanel(data: data, onSetCap: onSetCap),
+            child: OverallBudgetCard(
+              limitMinutes: data.capMinutes,
+              usedMinutes: data.usedMinutes,
+              remainingMinutes: data.remainingMinutes,
+              usageAvailable: data.usageAvailable,
+              configurationAvailable: data.configurationAvailable,
+              nextResetAt: data.nextResetAt,
+              onSave: onSetCap,
+            ),
           ),
         ),
-        if (onSetCap != null)
-          SliverToBoxAdapter(child: DsFootnote(s.screenTimeCapHint, top: 10)),
-        SliverToBoxAdapter(
-          child: DsOverline(s.kidsApps(data.kidName), top: 28),
-        ),
+
+        SliverToBoxAdapter(child: DsOverline(s.apps, top: 28)),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
@@ -249,117 +229,6 @@ class ParentLimitsView extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _AllowancePanel extends StatelessWidget {
-  const _AllowancePanel({required this.data, this.onSetCap});
-
-  final ParentLimitsData data;
-  final ValueChanged<int?>? onSetCap;
-
-  /// With a cap: the cap. Without: the old sum, and the label says so.
-  ///
-  /// A sum of zero from blocked or zero-limit apps reads "0 m", the same as a
-  /// cap of zero does. "No limits set" is kept for when nothing is limited.
-  String _headline(S s) {
-    if (data.hasCap) return formatHm(s, data.capMinutes!);
-    return data.hasAppLimits
-        ? formatHm(s, data.combinedLimitMinutes)
-        : s.noLimitsSet;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    final overline = data.hasCap
-        ? s.screenTimeCap
-        : s.dailyAllowanceFor(data.kidName);
-
-    return DsCard.deep(
-      radius: AppRadius.feature,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  overline.toUpperCase(),
-                  style: AppText.overline.copyWith(
-                    color: const Color(0x80FFFFFF),
-                  ),
-                ),
-              ),
-              if (onSetCap != null) ...[
-                const SizedBox(width: 12),
-                DsStepper.onDeep(
-                  onLess: () => onSetCap!(screenTimeCapDown(data.capMinutes)),
-                  onMore: () => onSetCap!(
-                    screenTimeCapUp(
-                      data.capMinutes,
-                      combinedMinutes: data.combinedLimitMinutes,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _headline(s),
-            style: AppText.title2
-                .copyWith(
-                  letterSpacing: -0.64,
-                  color: AppColors.textOnPrimary,
-                  fontSize: 32,
-                )
-                .nums,
-          ),
-          const SizedBox(height: 18),
-          if (data.usageAvailable)
-            DsProgressBar(
-              progress: data.progress,
-              height: 8,
-              trackColor: const Color(0x29FFFFFF),
-              color: AppColors.primaryBar,
-            ),
-          const SizedBox(height: 9),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  data.usageAvailable
-                      ? s.timeUsed(formatHm(s, data.usedMinutes))
-                      : s.iosScreenTimeLocalUsageShort,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.metaSm.copyWith(
-                    color: const Color(0xB3FFFFFF),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Flexible(
-                child: Text(
-                  !data.usageAvailable || data.allowanceMinutes <= 0
-                      ? ''
-                      : s.timeLeft(formatHm(s, data.leftMinutes)),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.right,
-                  style: AppText.metaSm.copyWith(
-                    color: const Color(0xB3FFFFFF),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

@@ -10,6 +10,8 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   final IParentAppUsageRepository _appUsageRepo;
 
   String? _childId;
+  int _loadGeneration = 0;
+  bool _savingCap = false;
   List<ChildAppUsageModel> _appUsage = const [];
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
 
@@ -20,6 +22,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   String? get childId => _childId;
 
   Future<void> loadAppLimits({String? childId}) async {
+    final generation = ++_loadGeneration;
     emit(const ParentAppsLoading());
 
     final cached = _familyCubit.state.family;
@@ -31,6 +34,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       await _familyCubit.loadCurrentFamily(refresh: true);
     }
 
+    if (isClosed || generation != _loadGeneration) return;
     final children =
         _familyCubit.state.family?.children.where((c) => c.id.isNotEmpty) ??
         const [];
@@ -46,6 +50,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     }
 
     final result = await _appUsageRepo.fetchAppUsage(_childId!);
+    if (isClosed || generation != _loadGeneration) return;
     result.fold(
       // Degrade to an empty list so the screen still renders (tip + add button).
       (_) => emit(const ParentAppsLoaded(appLimits: [])),
@@ -75,30 +80,23 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     final childId = _childId;
     if (childId == null) return null;
 
-    final previous = _screenTime;
-    _screenTime = ScreenTimeModel(
-      usageAvailable: previous.usageAvailable,
-      limitMinutes: minutes,
-      usedMinutes: previous.usedMinutes,
-      remainingMinutes: minutes == null
-          ? null
-          : (minutes - previous.usedMinutes).clamp(0, minutes),
-    );
-    _emitLoaded();
-
-    final failure = await _familyCubit.updateChild(
-      childId,
-      dailyScreenTimeMinutes: minutes,
-      clearDailyScreenTime: minutes == null,
-    );
-    if (failure != null) {
-      _screenTime = previous;
-      _emitLoaded();
-      return failure.message;
+    if (_savingCap) return 'A budget change is already being saved.';
+    _savingCap = true;
+    try {
+      final failure = await _familyCubit.updateChild(
+        childId,
+        dailyScreenTimeMinutes: minutes,
+        clearDailyScreenTime: minutes == null,
+      );
+      if (failure != null) return failure.message;
+      // Do not fabricate remaining time or overwrite another child's snapshot.
+      if (!isClosed && _childId == childId) {
+        await loadAppLimits(childId: childId);
+      }
+      return null;
+    } finally {
+      _savingCap = false;
     }
-
-    await loadAppLimits();
-    return null;
   }
 
   /// Creates (upserts) an app rule for the selected child via

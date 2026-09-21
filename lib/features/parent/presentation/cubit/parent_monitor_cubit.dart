@@ -18,6 +18,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
   List<ChildSummaryModel> _children = const [];
   int _selectedIndex = 0;
+  int _loadGeneration = 0;
   List<ChildAppUsageModel> _appUsage = const [];
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
 
@@ -29,13 +30,19 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
        super(const ParentMonitorInitial()) {
     _familySub = _familyCubit.stream.listen((familyState) {
       if (familyState.family == null) return;
+      final selectedId = _children.elementAtOrNull(_selectedIndex)?.id;
       _children = _childrenFromFamily(familyState.family);
       if (_children.isEmpty) {
         emit(const ParentMonitorNoChild());
         return;
       }
       if (state is ParentMonitorLoaded) {
-        if (_selectedIndex >= _children.length) _selectedIndex = 0;
+        final index = _children.indexWhere((child) => child.id == selectedId);
+        if (index == -1) {
+          unawaited(loadMonitorData());
+          return;
+        }
+        _selectedIndex = index;
         emit(
           (state as ParentMonitorLoaded).copyWith(
             children: _children,
@@ -59,6 +66,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
   /// [childId] switches to that child, e.g. the one a tapped push is about.
   Future<void> loadMonitorData({String? childId}) async {
+    final generation = ++_loadGeneration;
     emit(const ParentMonitorLoading());
 
     // Always refetch the family. The coin balance and the streak on the card
@@ -72,6 +80,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
             : null);
     await _familyCubit.loadCurrentFamily(refresh: true);
 
+    if (isClosed || generation != _loadGeneration) return;
     _children = _childrenFromFamily(_familyCubit.state.family);
     // Keep looking at the same child across a refresh; only fall back to the
     // first one when that child is gone.
@@ -88,9 +97,12 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     _screenTime = ScreenTimeModel.none;
     final deviceUsage = _fetchDeviceUsage(child.id);
     final result = await _appUsageRepo.fetchAppUsage(child.id);
+    if (isClosed || generation != _loadGeneration) return;
     result.fold(_clearUsage, _takeUsage);
     final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(child.id);
 
+    final deviceSnapshot = await deviceUsage;
+    if (isClosed || generation != _loadGeneration) return;
     emit(
       ParentMonitorLoaded(
         children: _children,
@@ -106,7 +118,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         weeklyUsage: const [0, 0, 0, 0, 0, 0, 0],
         appLimits: _appUsage.map(_toLimitMap).toList(),
         screenTime: _screenTime,
-        deviceUsage: await deviceUsage,
+        deviceUsage: deviceSnapshot,
       ),
     );
   }
@@ -122,43 +134,8 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
   /// Called when the parent swipes the progress card to another child.
   Future<void> selectChild(int index) async {
-    final current = state;
-    if (current is! ParentMonitorLoaded) return;
-    if (index < 0 || index >= _children.length || index == _selectedIndex) {
-      return;
-    }
-
-    _selectedIndex = index;
-    _appUsage = const [];
-    _screenTime = ScreenTimeModel.none;
-    // Update the selection immediately; clear limits/face while the child loads.
-    emit(
-      current.copyWith(
-        selectedIndex: index,
-        appLimits: const [],
-        screenTime: ScreenTimeModel.none,
-        clearDeviceUsage: true,
-        clearFaceEmoji: true,
-      ),
-    );
-
-    final deviceUsage = _fetchDeviceUsage(_children[index].id);
-    final result = await _appUsageRepo.fetchAppUsage(_children[index].id);
-    result.fold(_clearUsage, _takeUsage);
-    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(
-      _children[index].id,
-    );
-
-    if (state is ParentMonitorLoaded && _selectedIndex == index) {
-      emit(
-        (state as ParentMonitorLoaded).copyWith(
-          appLimits: _appUsage.map(_toLimitMap).toList(),
-          screenTime: _screenTime,
-          deviceUsage: await deviceUsage,
-          faceEmoji: faceEmoji,
-        ),
-      );
-    }
+    if (index < 0 || index >= _children.length) return;
+    await loadMonitorData(childId: _children[index].id);
   }
 
   void _clearUsage(Object _) {
@@ -202,21 +179,21 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
       ..[index] = _appUsage[index].copyWith(isLimited: isLimited);
     emit(current.copyWith(appLimits: _appUsage.map(_toLimitMap).toList()));
 
-    final result = await _appUsageRepo.updateAppRule(child.id, _appUsage[index]);
-
-    result.fold(
-      (_) {
-        // Revert on failure.
-        _appUsage = previous;
-        if (state is ParentMonitorLoaded) {
-          emit(
-            (state as ParentMonitorLoaded).copyWith(
-              appLimits: _appUsage.map(_toLimitMap).toList(),
-            ),
-          );
-        }
-      },
-      (_) {},
+    final result = await _appUsageRepo.updateAppRule(
+      child.id,
+      _appUsage[index],
     );
+
+    result.fold((_) {
+      // Revert on failure.
+      _appUsage = previous;
+      if (state is ParentMonitorLoaded) {
+        emit(
+          (state as ParentMonitorLoaded).copyWith(
+            appLimits: _appUsage.map(_toLimitMap).toList(),
+          ),
+        );
+      }
+    }, (_) {});
   }
 }

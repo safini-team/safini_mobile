@@ -2181,10 +2181,10 @@ class S {
     return Intl.message('Screen time', name: 'screenTime', desc: '', args: []);
   }
 
-  /// `{name} has {time} left across all apps`
+  /// `{name} has {time} left today`
   String kidHasLeftToday(Object name, Object time) {
     return Intl.message(
-      '$name has $time left across all apps',
+      '$name has $time left today',
       name: 'kidHasLeftToday',
       desc: '',
       args: [name, time],
@@ -2832,10 +2832,10 @@ class S {
     );
   }
 
-  /// `{name} · all apps combined`
+  /// `{name} · daily allowance`
   String dailyAllowanceFor(Object name) {
     return Intl.message(
-      '$name · all apps combined',
+      '$name · daily allowance',
       name: 'dailyAllowanceFor',
       desc: '',
       args: [name],
@@ -5418,6 +5418,201 @@ class S {
       name: 'removeChildRefreshError',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Overall daily budget`
+  String get overallDailyBudget {
+    return Intl.message(
+      'Overall daily budget',
+      name: 'overallDailyBudget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off`
+  String get noOverallDailyBudget {
+    return Intl.message(
+      'Off',
+      name: 'noOverallDailyBudget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For apps managed by Safini`
+  String get budgetScope {
+    return Intl.message(
+      'For apps managed by Safini',
+      name: 'budgetScope',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Used today`
+  String get budgetUsedToday {
+    return Intl.message(
+      'Used today',
+      name: 'budgetUsedToday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remaining`
+  String get budgetRemaining {
+    return Intl.message(
+      'Remaining',
+      name: 'budgetRemaining',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When the budget runs out, managed apps pause. Individual app limits still apply. Phone, Messages and apps without Safini rules stay available.`
+  String get budgetExplanation {
+    return Intl.message(
+      'When the budget runs out, managed apps pause. Individual app limits still apply. Phone, Messages and apps without Safini rules stay available.',
+      name: 'budgetExplanation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How daily limit works`
+  String get howDailyLimitWorks {
+    return Intl.message(
+      'How daily limit works',
+      name: 'howDailyLimitWorks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One shared allowance covers all apps managed by Safini.`
+  String get dailyLimitSharedMeaning {
+    return Intl.message(
+      'One shared allowance covers all apps managed by Safini.',
+      name: 'dailyLimitSharedMeaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An app’s own limit can stop it sooner.`
+  String get dailyLimitAppRuleMeaning {
+    return Intl.message(
+      'An app’s own limit can stop it sooner.',
+      name: 'dailyLimitAppRuleMeaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone, Messages and apps without Safini rules stay available.`
+  String get dailyLimitAvailableMeaning {
+    return Intl.message(
+      'Phone, Messages and apps without Safini rules stay available.',
+      name: 'dailyLimitAvailableMeaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Only individual app limits apply. Today’s usage is kept.`
+  String get budgetOffExplanation {
+    return Intl.message(
+      'Only individual app limits apply. Today’s usage is kept.',
+      name: 'budgetOffExplanation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No free time`
+  String get budgetNoFreeTime {
+    return Intl.message(
+      'No free time',
+      name: 'budgetNoFreeTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Managed apps are paused until the daily reset.`
+  String get budgetPaused {
+    return Intl.message(
+      'Managed apps are paused until the daily reset.',
+      name: 'budgetPaused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resets: {time}`
+  String budgetResetAt(Object time) {
+    return Intl.message(
+      'Resets: $time',
+      name: 'budgetResetAt',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `0 minutes pauses managed apps.`
+  String get budgetMinutesHint {
+    return Intl.message(
+      '0 minutes pauses managed apps.',
+      name: 'budgetMinutesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a whole number from 0 to 1440.`
+  String get budgetMinutesError {
+    return Intl.message(
+      'Enter a whole number from 0 to 1440.',
+      name: 'budgetMinutesError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Usage is shown on your child’s device.`
+  String get budgetUsageUnknown {
+    return Intl.message(
+      'Usage is shown on your child’s device.',
+      name: 'budgetUsageUnknown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Budget information is unavailable. Pull to refresh.`
+  String get budgetUnavailable {
+    return Intl.message(
+      'Budget information is unavailable. Pull to refresh.',
+      name: 'budgetUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enabled`
+  String get budgetEnabled {
+    return Intl.message('Enabled', name: 'budgetEnabled', desc: '', args: []);
+  }
+
+  /// `Managed apps are paused until {time}.`
+  String budgetPausedUntil(Object time) {
+    return Intl.message(
+      'Managed apps are paused until $time.',
+      name: 'budgetPausedUntil',
+      desc: '',
+      args: [time],
     );
   }
 }

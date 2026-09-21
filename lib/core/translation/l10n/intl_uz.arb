@@ -262,7 +262,7 @@
   "profileUpdated": "Saqlandi",
   "storeSubtitle": "Tangalaring, sening tanloving",
   "screenTime": "Ekran vaqti",
-  "kidHasLeftToday": "{name} uchun barcha ilovalarga {time} qoldi",
+  "kidHasLeftToday": "{name} uchun bugun {time} qoldi",
   "kidUsedToday": "{name} bugun {time} ishlatdi",
   "mostOfItIn": "Koʻpi {app}da",
   "statTasksDone": "Vazifalar",
@@ -331,7 +331,7 @@
   "taskIdeaPutAwayLaundryTitle": "Toza kiyimlarni joylash",
   "taskIdeaPutAwayLaundryDetails": "Toza kiyimlaringni taxla va tegishli tortmalarga joyla.",
   "limitsSubtitle": "{name} telefoni · bugun",
-  "dailyAllowanceFor": "{name} · barcha ilovalar birgalikda",
+  "dailyAllowanceFor": "{name} · kunlik limit",
   "noLimitsSet": "Cheklov qoʻyilmagan",
   "timeUsed": "{time} ishlatildi",
   "timeLeft": "{time} qoldi",
@@ -662,5 +662,25 @@
         "type": "String"
       }
     }
-  }
+  },
+  "overallDailyBudget": "Umumiy kunlik limit",
+  "noOverallDailyBudget": "O‘chirilgan",
+  "budgetScope": "Safini boshqaradigan ilovalar uchun",
+  "budgetUsedToday": "Bugun ishlatildi",
+  "budgetRemaining": "Qoldi",
+  "budgetExplanation": "Limit tugaganda Safini boshqaradigan ilovalar bloklanadi. Alohida ilova limitlari ham amal qiladi. Telefon, Xabarlar va Safini qoidalari yo‘q ilovalar ochiq qoladi.",
+  "howDailyLimitWorks": "Kunlik limit qanday ishlaydi",
+  "dailyLimitSharedMeaning": "Bitta umumiy limit Safini boshqaradigan barcha ilovalarga amal qiladi.",
+  "dailyLimitAppRuleMeaning": "Ilovaning o‘z limiti uni ertaroq bloklashi mumkin.",
+  "dailyLimitAvailableMeaning": "Telefon, Xabarlar va Safini qoidalari yo‘q ilovalar ochiq qoladi.",
+  "budgetOffExplanation": "Faqat alohida ilova limitlari amal qiladi. Bugun ishlatilgan vaqt saqlanadi.",
+  "budgetNoFreeTime": "Bepul vaqt yo‘q",
+  "budgetPaused": "Ilovalar kunlik limit yangilanguncha bloklangan.",
+  "budgetResetAt": "Yangilanish vaqti: {time}",
+  "budgetMinutesHint": "0 daqiqa Safini boshqaradigan ilovalarni bloklaydi.",
+  "budgetMinutesError": "0 dan 1440 gacha butun son kiriting.",
+  "budgetUsageUnknown": "Foydalanish bolaning qurilmasida ko‘rinadi.",
+  "budgetUnavailable": "Umumiy limit ma’lumotlari mavjud emas. Yangilash uchun pastga torting.",
+  "budgetEnabled": "Yoqilgan",
+  "budgetPausedUntil": "Ilovalar {time} gacha bloklangan."
 }

@@ -362,7 +362,7 @@
   "profileUpdated": "Saved",
   "storeSubtitle": "Your coins, your choice",
   "screenTime": "Screen time",
-  "kidHasLeftToday": "{name} has {time} left across all apps",
+  "kidHasLeftToday": "{name} has {time} left today",
   "kidUsedToday": "{name} used {time} today",
   "mostOfItIn": "Most of it in {app}",
   "statTasksDone": "Tasks done",
@@ -431,7 +431,7 @@
   "taskIdeaPutAwayLaundryTitle": "Put away clean laundry",
   "taskIdeaPutAwayLaundryDetails": "Fold your clean clothes and put them in the right drawers.",
   "limitsSubtitle": "{name}'s phone · today",
-  "dailyAllowanceFor": "{name} · all apps combined",
+  "dailyAllowanceFor": "{name} · daily allowance",
   "noLimitsSet": "No limits set",
   "timeUsed": "{time} used",
   "timeLeft": "{time} left",
@@ -795,5 +795,25 @@
         "type": "String"
       }
     }
-  }
+  },
+  "overallDailyBudget": "Overall daily budget",
+  "noOverallDailyBudget": "Off",
+  "budgetScope": "For apps managed by Safini",
+  "budgetUsedToday": "Used today",
+  "budgetRemaining": "Remaining",
+  "budgetExplanation": "When the budget runs out, managed apps pause. Individual app limits still apply. Phone, Messages and apps without Safini rules stay available.",
+  "howDailyLimitWorks": "How daily limit works",
+  "dailyLimitSharedMeaning": "One shared allowance covers all apps managed by Safini.",
+  "dailyLimitAppRuleMeaning": "An app’s own limit can stop it sooner.",
+  "dailyLimitAvailableMeaning": "Phone, Messages and apps without Safini rules stay available.",
+  "budgetOffExplanation": "Only individual app limits apply. Today’s usage is kept.",
+  "budgetNoFreeTime": "No free time",
+  "budgetPaused": "Managed apps are paused until the daily reset.",
+  "budgetResetAt": "Resets: {time}",
+  "budgetMinutesHint": "0 minutes pauses managed apps.",
+  "budgetMinutesError": "Enter a whole number from 0 to 1440.",
+  "budgetUsageUnknown": "Usage is shown on your child’s device.",
+  "budgetUnavailable": "Budget information is unavailable. Pull to refresh.",
+  "budgetEnabled": "Enabled",
+  "budgetPausedUntil": "Managed apps are paused until {time}."
 }

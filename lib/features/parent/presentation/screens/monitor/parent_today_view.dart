@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/apps/overall_budget_card.dart';
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
@@ -59,8 +60,10 @@ class TodayApp {
 
 class ParentTodayData {
   final bool usageAvailable;
+  final bool configurationAvailable;
   const ParentTodayData({
     this.usageAvailable = true,
+    this.configurationAvailable = true,
     required this.kids,
     required this.selectedIndex,
     required this.kidName,
@@ -73,13 +76,17 @@ class ParentTodayData {
     required this.reviews,
     required this.apps,
     this.streakDays,
+    this.remainingMinutes,
+    this.nextResetAt,
   });
 
   final List<TodayKid> kids;
   final int selectedIndex;
   final String kidName;
   final int usedMinutes;
-  final int limitMinutes;
+  final int? limitMinutes;
+  final int? remainingMinutes;
+  final DateTime? nextResetAt;
   final String topApp;
   final int tasksDone;
   final int tasksTotal;
@@ -91,13 +98,6 @@ class ParentTodayData {
   /// endpoint returns. Null only while the dashboard has not loaded yet;
   /// the cell reads "-" in that window.
   final int? streakDays;
-
-  int get leftMinutes => limitMinutes <= 0
-      ? 0
-      : (limitMinutes - usedMinutes).clamp(0, limitMinutes);
-
-  double get ringProgress =>
-      limitMinutes <= 0 ? 0 : (usedMinutes / limitMinutes).clamp(0.0, 1.0);
 }
 
 /// `hm()` from the artboard script, with localised units: `2 h 10 m` in
@@ -295,72 +295,14 @@ class _ScreenTimeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              if (data.usageAvailable)
-                DsProgressRing(
-                  progress: data.ringProgress,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        formatHmTight(s, data.usedMinutes),
-                        style: const TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.504,
-                          height: 1.1,
-                          color: AppColors.ink,
-                          fontFeatures: AppText.tabular,
-                        ),
-                      ),
-                      const SizedBox(height: 1),
-                      Text(
-                        data.limitMinutes > 0
-                            ? s.ofTotal(formatHmTight(s, data.limitMinutes))
-                            : s.tabToday,
-                        style: AppText.micro,
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(width: 18),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(s.screenTime.toUpperCase(), style: AppText.overline),
-                    const SizedBox(height: 6),
-                    Text(
-                      !data.usageAvailable
-                          ? s.iosScreenTimeLocalUsageShort
-                          : data.limitMinutes > 0
-                          ? s.kidHasLeftToday(
-                              data.kidName,
-                              formatHm(s, data.leftMinutes),
-                            )
-                          : s.kidUsedToday(
-                              data.kidName,
-                              formatHm(s, data.usedMinutes),
-                            ),
-                      style: AppText.headline.copyWith(
-                        fontSize: 17,
-                        letterSpacing: -0.204,
-                        height: 1.35,
-                      ),
-                    ),
-                    if (data.usageAvailable && data.topApp.isNotEmpty) ...[
-                      const SizedBox(height: 5),
-                      Text(
-                        s.mostOfItIn(data.topApp),
-                        style: AppText.meta.copyWith(height: 1.4),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+          OverallBudgetSummary(
+            limitMinutes: data.limitMinutes,
+            usedMinutes: data.usedMinutes,
+            remainingMinutes: data.remainingMinutes,
+            usageAvailable: data.usageAvailable,
+            topApp: data.topApp,
+            configurationAvailable: data.configurationAvailable,
+            nextResetAt: data.nextResetAt,
           ),
           const SizedBox(height: 18),
           const DsDivider(),
@@ -382,6 +324,7 @@ class _ScreenTimeCard extends StatelessWidget {
                   value: '${data.coins}',
                   label: s.statCoins,
                   valueColor: AppColors.primary,
+                  valueLeading: const DsCoinToken(size: 18),
                 ),
               ],
             ),
@@ -397,11 +340,13 @@ class _Stat extends StatelessWidget {
     required this.value,
     required this.label,
     this.valueColor = AppColors.ink,
+    this.valueLeading,
   });
 
   final String value;
   final String label;
   final Color valueColor;
+  final Widget? valueLeading;
 
   @override
   Widget build(BuildContext context) {
@@ -410,15 +355,31 @@ class _Stat extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.285,
-              height: 1.15,
-              color: valueColor,
-              fontFeatures: AppText.tabular,
+          SizedBox(
+            width: double.infinity,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (valueLeading != null) ...[
+                    valueLeading!,
+                    const SizedBox(width: 6),
+                  ],
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.285,
+                      height: 1.15,
+                      color: valueColor,
+                      fontFeatures: AppText.tabular,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 2),

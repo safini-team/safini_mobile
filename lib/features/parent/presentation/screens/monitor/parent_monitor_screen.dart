@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -31,9 +32,11 @@ class ParentMonitorScreen extends StatelessWidget {
           // A tapped weekly digest opens on the child it summarises.
           create: (context) => getIt<ParentMonitorCubit>()
             ..loadMonitorData(
-              childId: getIt<PushDeepLinks>()
-                  .take(PushDestination.parentToday)
-                  ?.childId,
+              childId:
+                  getIt<PushDeepLinks>()
+                      .take(PushDestination.parentToday)
+                      ?.childId ??
+                  context.read<ParentHomeCubit>().state.selectedChildId,
             ),
         ),
         // The tasks cubit comes from the shell: a second instance here meant
@@ -72,6 +75,15 @@ class _ParentMonitorView extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        BlocListener<ParentHomeCubit, ParentHomeState>(
+          listenWhen: (previous, current) =>
+              current.selectedIndex == 0 &&
+              (previous.selectedIndex != 0 ||
+                  previous.selectedChildId != current.selectedChildId),
+          listener: (context, home) => context
+              .read<ParentMonitorCubit>()
+              .loadMonitorData(childId: home.selectedChildId),
+        ),
         BlocListener<ParentTasksCubit, ParentTasksState>(
           // Approving pays coins and moves the streak, and both of those live
           // on the monitor's child row, not in the tasks cubit. Without this
@@ -97,8 +109,9 @@ class _ParentMonitorView extends StatelessWidget {
           return BlocBuilder<ParentTasksCubit, ParentTasksState>(
             builder: (context, tasksState) => ParentTodayView(
               data: _buildData(context, state, tasksState),
-              onSelectKid: (index) =>
-                  context.read<ParentMonitorCubit>().selectChild(index),
+              onSelectKid: (index) => context
+                  .read<ParentHomeCubit>()
+                  .selectChild(state.children[index].id),
               onOpenSettings: () =>
                   context.router.push(const NamedRoute('parentSettings')),
               onOpenLimits: () => context.read<ParentHomeCubit>().selectTab(2),
@@ -179,19 +192,6 @@ class _ParentMonitorView extends StatelessWidget {
               ),
           ];
 
-    // The ring draws against the whole-device cap the parent set. When there
-    // is none the card falls back to usage only: the sum of the per-app limits
-    // used to stand in for a budget here, and it is not one - nothing draws
-    // from it, so "3 h 15 m left" was a number the child could not spend.
-    //
-    // The cap is spent from the rule apps alone, so "left today" keeps their
-    // sum. Without a cap the card says what the child really used.
-    final limit = state.screenTime.limitMinutes ?? 0;
-    final ruleUsed = ruleApps.fold<int>(0, (sum, app) => sum + app.usedMinutes);
-    final used = limit > 0 || device == null
-        ? ruleUsed
-        : (device.totalMinutes > ruleUsed ? device.totalMinutes : ruleUsed);
-
     // The list covers the whole family, so the card takes the selected
     // child's share of it rather than labelling someone else's task with
     // this child's name.
@@ -220,6 +220,7 @@ class _ParentMonitorView extends StatelessWidget {
 
     return ParentTodayData(
       usageAvailable: state.screenTime.usageAvailable,
+      configurationAvailable: state.screenTime.configurationAvailable != false,
       kids: [
         for (final kid in state.children)
           TodayKid(
@@ -230,8 +231,10 @@ class _ParentMonitorView extends StatelessWidget {
       ],
       selectedIndex: state.selectedIndex,
       kidName: child?.nickname ?? '',
-      usedMinutes: used,
-      limitMinutes: limit,
+      usedMinutes: state.screenTime.usedMinutes,
+      limitMinutes: state.screenTime.limitMinutes,
+      remainingMinutes: state.screenTime.remainingMinutes,
+      nextResetAt: state.screenTime.nextResetAt,
       topApp: apps.isEmpty || apps.first.usedMinutes == 0
           ? ''
           : apps.first.name,
@@ -268,9 +271,7 @@ class _TodayPushTargetState extends State<_TodayPushTarget> {
             PushDestination.parentToday,
           );
           if (target != null && mounted) {
-            context.read<ParentMonitorCubit>().loadMonitorData(
-              childId: target.childId,
-            );
+            context.read<ParentHomeCubit>().selectChild(target.childId);
           }
         });
   }
