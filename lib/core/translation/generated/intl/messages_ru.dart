@@ -46,7 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m10(name) => "Код для ${name} готов";
 
   static String m11(count) =>
-      "${Intl.plural(count, one: '${count} монета', few: '${count} монеты', many: '${count} монет', other: '${count} монеты')}";
+      "${Intl.plural(count, one: '${count} монета', few: '${count} монеты', many: '${count} монет', other: '${count} монет')}";
 
   static String m12(count) =>
       "${Intl.plural(count, one: '${count} монета', few: '${count} монеты', many: '${count} монет', other: '${count} монет')}";
@@ -55,7 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "${Intl.plural(count, one: '${count} монета', few: '${count} монеты', many: '${count} монет', other: '${count} монет')}";
 
   static String m14(count) =>
-      "${Intl.plural(count, one: 'Награда: ${count} монета', few: 'Награда: ${count} монеты', many: 'Награда: ${count} монет', other: 'Награда: ${count} монеты')}";
+      "${Intl.plural(count, one: 'Награда: ${count} монета', few: 'Награда: ${count} монеты', many: 'Награда: ${count} монет', other: 'Награда: ${count} монет')}";
 
   static String m15(name) => "${name} · все приложения вместе";
 
@@ -69,8 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m20(name) => "${name} заблокировано";
 
-  static String m21(count) =>
-      "${Intl.plural(count, zero: 'Нет приложений', one: '${count} приложение', few: '${count} приложения', many: '${count} приложений', other: '${count} приложения')}";
+  static String m21(count) => "Всего приложений: ${count}";
 
   static String m22(name) =>
       "Когда ${name} откроет Safini на своём телефоне, установленные приложения появятся здесь.";
@@ -93,7 +92,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m30(name) => "Телефон ${name} · сегодня";
 
   static String m31(count) =>
-      "${Intl.plural(count, one: '${count} минута', few: '${count} минуты', many: '${count} минут', other: '${count} минуты')}";
+      "${Intl.plural(count, one: '${count} минута', few: '${count} минуты', many: '${count} минут', other: '${count} минут')}";
 
   static String m32(minutes) => "${minutes} м осталось";
 
@@ -137,7 +136,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m49(count) => "Показать все приложения (${count})";
 
   static String m50(count) =>
-      "${Intl.plural(count, one: '${count} задание', few: '${count} задания', many: '${count} заданий', other: '${count} задания')}";
+      "${Intl.plural(count, one: '${count} задание', few: '${count} задания', many: '${count} заданий', other: '${count} заданий')}";
 
   static String m51(tasks, coins) => "${tasks} · ${coins}";
 

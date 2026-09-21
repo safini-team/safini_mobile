@@ -6,13 +6,13 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
 
 void main() {
-  test('Russian installed-app counts keep the real number', () async {
+  test('Russian installed-app count uses an unambiguous total label', () async {
     final s = await S.load(const Locale('ru'));
 
-    expect(s.installedAppsCount(1), '1 приложение');
-    expect(s.installedAppsCount(2), '2 приложения');
-    expect(s.installedAppsCount(5), '5 приложений');
-    expect(s.installedAppsCount(21), '21 приложение');
+    expect(s.installedAppsCount(1), 'Всего приложений: 1');
+    expect(s.installedAppsCount(2), 'Всего приложений: 2');
+    expect(s.installedAppsCount(5), 'Всего приложений: 5');
+    expect(s.installedAppsCount(21), 'Всего приложений: 21');
   });
 
   test('parses the app list and the upload timestamp', () {

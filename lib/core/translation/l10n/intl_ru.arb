@@ -24,7 +24,7 @@
   "save": "Сохранить",
   "coins": "Монеты",
   "minutes": "Минуты",
-  "coinCount": "{count, plural, one{{count} монета} few{{count} монеты} many{{count} монет} other{{count} монеты}}",
+  "coinCount": "{count, plural, one{{count} монета} few{{count} монеты} many{{count} монет} other{{count} монет}}",
   "@coinCount": {
     "placeholders": {
       "count": {
@@ -32,7 +32,7 @@
       }
     }
   },
-  "minuteCount": "{count, plural, one{{count} минута} few{{count} минуты} many{{count} минут} other{{count} минуты}}",
+  "minuteCount": "{count, plural, one{{count} минута} few{{count} минуты} many{{count} минут} other{{count} минут}}",
   "@minuteCount": {
     "placeholders": {
       "count": {
@@ -78,7 +78,7 @@
   "manageAll": "Управлять всем",
   "realWorldTasks": "Задания в жизни",
   "newTask": "Новое задание",
-  "coinsReward": "{count, plural, one{Награда: {count} монета} few{Награда: {count} монеты} many{Награда: {count} монет} other{Награда: {count} монеты}}",
+  "coinsReward": "{count, plural, one{Награда: {count} монета} few{Награда: {count} монеты} many{Награда: {count} монет} other{Награда: {count} монет}}",
   "@coinsReward": {
     "placeholders": {
       "count": {
@@ -382,7 +382,7 @@
   "pillPaid": "Оплачено",
   "pillWaiting": "Ждёт",
   "scopeEveryone": "Все",
-  "taskCount": "{count, plural, one{{count} задание} few{{count} задания} many{{count} заданий} other{{count} задания}}",
+  "taskCount": "{count, plural, one{{count} задание} few{{count} задания} many{{count} заданий} other{{count} заданий}}",
   "coinCountShort": "{count, plural, one{{count} монета} few{{count} монеты} many{{count} монет} other{{count} монет}}",
   "taskScopeLine": "{scope} · {tasks}",
   "taskGroupSummary": "{tasks} · {coins}",
@@ -443,7 +443,7 @@
   "seeAllApps": "Все приложения на телефоне",
   "installedAppsTitle": "Установленные приложения",
   "installedAppsSubtitle": "Все приложения на телефоне {name}",
-  "installedAppsCount": "{count, plural, =0{Нет приложений} one{{count} приложение} few{{count} приложения} many{{count} приложений} other{{count} приложения}}",
+  "installedAppsCount": "Всего приложений: {count}",
   "installedAppsEmptyTitle": "Приложения ещё не синхронизированы",
   "installedAppsEmptyBody": "Когда {name} откроет Safini на своём телефоне, установленные приложения появятся здесь.",
   "installedAppsLastSynced": "Синхронизировано: {date}",

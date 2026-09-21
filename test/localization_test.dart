@@ -303,6 +303,16 @@ void main() {
       expect(s.minutesRemainingLong(30), contains('минут'));
     });
 
+    test('Russian unknown plural fallbacks stay plural', () {
+      final ru = _arb('ru');
+
+      expect(ru['coinCount'], contains('other{{count} монет}'));
+      expect(ru['minuteCount'], contains('other{{count} минут}'));
+      expect(ru['coinsReward'], contains('other{Награда: {count} монет}'));
+      expect(ru['taskCount'], contains('other{{count} заданий}'));
+      expect(ru['installedAppsCount'], 'Всего приложений: {count}');
+    });
+
     testWidgets('English count strings read naturally at one', (tester) async {
       await S.load(const Locale('en'));
       final s = S.current;
