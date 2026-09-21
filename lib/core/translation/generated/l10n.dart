@@ -5481,6 +5481,46 @@ class S {
     );
   }
 
+  /// `How daily limit works`
+  String get howDailyLimitWorks {
+    return Intl.message(
+      'How daily limit works',
+      name: 'howDailyLimitWorks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One shared allowance covers all apps managed by Safini.`
+  String get dailyLimitSharedMeaning {
+    return Intl.message(
+      'One shared allowance covers all apps managed by Safini.',
+      name: 'dailyLimitSharedMeaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An app’s own limit can stop it sooner.`
+  String get dailyLimitAppRuleMeaning {
+    return Intl.message(
+      'An app’s own limit can stop it sooner.',
+      name: 'dailyLimitAppRuleMeaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone, Messages and apps without Safini rules stay available.`
+  String get dailyLimitAvailableMeaning {
+    return Intl.message(
+      'Phone, Messages and apps without Safini rules stay available.',
+      name: 'dailyLimitAvailableMeaning',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Only individual app limits apply. Today’s usage is kept.`
   String get budgetOffExplanation {
     return Intl.message(

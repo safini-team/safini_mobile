@@ -435,6 +435,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyAllowanceFor": m17,
     "dailyChore": MessageLookupByLibrary.simpleMessage("Ежедневное дело"),
     "dailyLimit": MessageLookupByLibrary.simpleMessage("Дневной лимит"),
+    "dailyLimitAppRuleMeaning": MessageLookupByLibrary.simpleMessage(
+      "Собственный лимит приложения может заблокировать его раньше.",
+    ),
+    "dailyLimitAvailableMeaning": MessageLookupByLibrary.simpleMessage(
+      "Телефон, Сообщения и приложения без правил Safini остаются доступны.",
+    ),
+    "dailyLimitSharedMeaning": MessageLookupByLibrary.simpleMessage(
+      "Один общий лимит действует для всех приложений под управлением Safini.",
+    ),
     "dailyLimitToggle": MessageLookupByLibrary.simpleMessage("Дневной лимит"),
     "dailyLimitToggleHint": MessageLookupByLibrary.simpleMessage(
       "Если выключено, приложение без ограничений",
@@ -587,6 +596,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Удерживай, чтобы отметить",
     ),
     "home": MessageLookupByLibrary.simpleMessage("Главная"),
+    "howDailyLimitWorks": MessageLookupByLibrary.simpleMessage(
+      "Как работает дневной лимит",
+    ),
     "iconSection": MessageLookupByLibrary.simpleMessage("Значок"),
     "imAKid": MessageLookupByLibrary.simpleMessage("Я ребенок!"),
     "imAParent": MessageLookupByLibrary.simpleMessage("Я родитель"),

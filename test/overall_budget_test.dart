@@ -79,6 +79,33 @@ void main() {
     expect(find.text('47 m left'), findsNothing);
   });
 
+  testWidgets('limit details stay behind a labeled disclosure', (tester) async {
+    await pumpBudget(tester, limit: 180, remaining: 137);
+
+    expect(find.text('How daily limit works'), findsOneWidget);
+    expect(
+      find.text('One shared allowance covers all apps managed by Safini.'),
+      findsNothing,
+    );
+    expect(
+      find.text(
+        'When the budget runs out, managed apps pause. Individual app limits still apply. Phone, Messages and apps without Safini rules stay available.',
+      ),
+      findsNothing,
+    );
+
+    await tester.tap(find.text('How daily limit works'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('How daily limit works'), findsNWidgets(2));
+    expect(
+      find.text('One shared allowance covers all apps managed by Safini.'),
+      findsOneWidget,
+    );
+    expect(find.text('An app’s own limit can stop it sooner.'), findsOneWidget);
+    expect(find.text('Close'), findsOneWidget);
+  });
+
   testWidgets('plus and minus persist thirty-minute steps', (tester) async {
     final saved = <int?>[];
     await pumpBudget(

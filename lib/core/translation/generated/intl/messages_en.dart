@@ -422,6 +422,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyAllowanceFor": m17,
     "dailyChore": MessageLookupByLibrary.simpleMessage("Daily Chore"),
     "dailyLimit": MessageLookupByLibrary.simpleMessage("Daily Limit"),
+    "dailyLimitAppRuleMeaning": MessageLookupByLibrary.simpleMessage(
+      "An app’s own limit can stop it sooner.",
+    ),
+    "dailyLimitAvailableMeaning": MessageLookupByLibrary.simpleMessage(
+      "Phone, Messages and apps without Safini rules stay available.",
+    ),
+    "dailyLimitSharedMeaning": MessageLookupByLibrary.simpleMessage(
+      "One shared allowance covers all apps managed by Safini.",
+    ),
     "dailyLimitToggle": MessageLookupByLibrary.simpleMessage("Daily limit"),
     "dailyLimitToggleHint": MessageLookupByLibrary.simpleMessage(
       "Off means this app is never capped",
@@ -568,6 +577,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Hold to mark it done",
     ),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "howDailyLimitWorks": MessageLookupByLibrary.simpleMessage(
+      "How daily limit works",
+    ),
     "iconSection": MessageLookupByLibrary.simpleMessage("Icon"),
     "imAKid": MessageLookupByLibrary.simpleMessage("I\'m a Kid!"),
     "imAParent": MessageLookupByLibrary.simpleMessage("I\'m a Parent"),

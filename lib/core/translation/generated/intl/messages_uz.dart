@@ -442,6 +442,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyAllowanceFor": m17,
     "dailyChore": MessageLookupByLibrary.simpleMessage("Kundalik ish"),
     "dailyLimit": MessageLookupByLibrary.simpleMessage("Kunlik cheklov"),
+    "dailyLimitAppRuleMeaning": MessageLookupByLibrary.simpleMessage(
+      "Ilovaning o‘z limiti uni ertaroq bloklashi mumkin.",
+    ),
+    "dailyLimitAvailableMeaning": MessageLookupByLibrary.simpleMessage(
+      "Telefon, Xabarlar va Safini qoidalari yo‘q ilovalar ochiq qoladi.",
+    ),
+    "dailyLimitSharedMeaning": MessageLookupByLibrary.simpleMessage(
+      "Bitta umumiy limit Safini boshqaradigan barcha ilovalarga amal qiladi.",
+    ),
     "dailyLimitToggle": MessageLookupByLibrary.simpleMessage("Kunlik limit"),
     "dailyLimitToggleHint": MessageLookupByLibrary.simpleMessage(
       "Oʻchiq boʻlsa, ilova cheklanmaydi",
@@ -594,6 +603,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bajarildi deb belgilash uchun ushlab turing",
     ),
     "home": MessageLookupByLibrary.simpleMessage("Bosh sahifa"),
+    "howDailyLimitWorks": MessageLookupByLibrary.simpleMessage(
+      "Kunlik limit qanday ishlaydi",
+    ),
     "iconSection": MessageLookupByLibrary.simpleMessage("Belgi"),
     "imAKid": MessageLookupByLibrary.simpleMessage("Men bolaman!"),
     "imAParent": MessageLookupByLibrary.simpleMessage("Men ota-onaman"),

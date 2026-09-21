@@ -276,10 +276,37 @@ class _OverallBudgetCardState extends State<OverallBudgetCard> {
             ],
           ),
         ),
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Text(s.budgetExplanation, style: AppText.meta),
+        const SizedBox(height: 8),
+        Semantics(
+          button: true,
+          child: Pressable(
+            onTap: () => _showDailyLimitInfo(context),
+            scale: 0.98,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 9),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    size: 19,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 9),
+                  Expanded(
+                    child: Text(
+                      s.howDailyLimitWorks,
+                      style: AppText.chip.copyWith(color: AppColors.primary),
+                    ),
+                  ),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    size: 21,
+                    color: AppColors.textTertiary,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
         if (_error != null) ...[
           const SizedBox(height: 8),
@@ -291,6 +318,75 @@ class _OverallBudgetCardState extends State<OverallBudgetCard> {
             ),
           ),
         ],
+      ],
+    );
+  }
+
+  Future<void> _showDailyLimitInfo(BuildContext context) {
+    return showDsSheet<void>(
+      context: context,
+      builder: (sheetContext) {
+        final s = S.of(sheetContext);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(s.howDailyLimitWorks, style: AppText.title3),
+            const SizedBox(height: 18),
+            _LimitInfoRow(
+              icon: Icons.apps_rounded,
+              text: s.dailyLimitSharedMeaning,
+            ),
+            const SizedBox(height: 14),
+            _LimitInfoRow(
+              icon: Icons.timer_outlined,
+              text: s.dailyLimitAppRuleMeaning,
+            ),
+            const SizedBox(height: 14),
+            _LimitInfoRow(
+              icon: Icons.phone_iphone_rounded,
+              text: s.dailyLimitAvailableMeaning,
+            ),
+            const SizedBox(height: 22),
+            DsPrimaryButton.secondary(
+              label: s.close,
+              onTap: () => Navigator.of(sheetContext).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _LimitInfoRow extends StatelessWidget {
+  const _LimitInfoRow({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: AppColors.primaryTint,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 18, color: AppColors.primary),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(text, style: AppText.meta.copyWith(height: 1.35)),
+          ),
+        ),
       ],
     );
   }
