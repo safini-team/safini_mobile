@@ -12,6 +12,9 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
 /// Coins and the streak on the Today card come from the child rows in the
 /// family, and the monitor only fetched the family when it had none. Approving
@@ -77,7 +80,67 @@ class _DeviceUsage extends Fake implements DeviceUsageService {
   }
 }
 
+class _DelayedUsage extends _Usage {
+  final replies = <String, Completer<Either<Failure, ChildAppUsageSnapshot>>>{};
+  @override
+  Future<Either<Failure, ChildAppUsageSnapshot>> fetchAppUsage(String childId) {
+    requested.add(childId);
+    return (replies[childId] = Completer()).future;
+  }
+
+  void finish(String id, int minutes) => replies[id]!.complete(
+    Right(
+      ChildAppUsageSnapshot(
+        apps: const [],
+        screenTime: ScreenTimeModel(
+          limitMinutes: minutes,
+          usedMinutes: 0,
+          remainingMinutes: minutes,
+        ),
+      ),
+    ),
+  );
+}
+
 void main() {
+  test(
+    'Today discards a slow response for the previously selected child',
+    () async {
+      final family = _Family(_family({'amir': 25, 'zilola': 40}));
+      final usage = _DelayedUsage();
+      final cubit = ParentMonitorCubit(family, usage);
+      addTearDown(cubit.close);
+      final first = cubit.loadMonitorData(childId: 'amir');
+      await Future<void>.delayed(Duration.zero);
+      final second = cubit.loadMonitorData(childId: 'zilola');
+      await Future<void>.delayed(Duration.zero);
+      usage.finish('zilola', 15);
+      await second;
+      usage.finish('amir', 90);
+      await first;
+      expect((cubit.state as ParentMonitorLoaded).selectedChild?.id, 'zilola');
+      expect((cubit.state as ParentMonitorLoaded).screenTime.limitMinutes, 15);
+    },
+  );
+
+  test(
+    'Limits discards a slow response for the previously selected child',
+    () async {
+      final family = _Family(_family({'amir': 25, 'zilola': 40}));
+      final usage = _DelayedUsage();
+      final cubit = ParentAppsCubit(family, usage);
+      addTearDown(cubit.close);
+      final first = cubit.loadAppLimits(childId: 'amir');
+      final second = cubit.loadAppLimits(childId: 'zilola');
+      usage.finish('zilola', 15);
+      await second;
+      usage.finish('amir', 90);
+      await first;
+      expect(cubit.childId, 'zilola');
+      expect((cubit.state as ParentAppsLoaded).screenTime.limitMinutes, 15);
+    },
+  );
+
   test('a reload refetches the family, so the coin balance is current', () async {
     final family = _Family(_family({'amir': 25}));
     final cubit = ParentMonitorCubit(family, _Usage());

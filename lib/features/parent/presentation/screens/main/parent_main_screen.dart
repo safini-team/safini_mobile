@@ -9,6 +9,7 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubi
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/push_event.dart';
+import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_shell.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
@@ -54,6 +55,7 @@ class _ParentMainScreenState extends State<ParentMainScreen>
   );
   late final ParentHomeCubit _home = ParentHomeCubit(
     initialIndex: _push.initialTab(0),
+    initialChildId: getIt<PushDeepLinks>().pending?.childId,
   );
 
   @override

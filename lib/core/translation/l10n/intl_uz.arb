@@ -662,5 +662,19 @@
         "type": "String"
       }
     }
-  }
+  },
+  "overallDailyBudget": "Umumiy kunlik limit",
+  "noOverallDailyBudget": "Umumiy kunlik limit o‘chirilgan",
+  "budgetScope": "Safini boshqaradigan ilovalar uchun.",
+  "budgetUsedToday": "Bugun ishlatildi",
+  "budgetRemaining": "Qoldi",
+  "budgetExplanation": "Umumiy limit tugaganda, Safini boshqaradigan barcha ilovalar, alohida ilovada vaqt qolgan bo‘lsa ham, bloklanadi. Ilovalarning alohida limitlari ham amal qiladi. Telefon, Xabarlar va Safini qoidalari yo‘q ilovalarga ta’sir qilmaydi.",
+  "budgetOffExplanation": "Ilova limitlari alohida amal qiladi. Umumiy limit o‘chirilganda ishlatilgan vaqt saqlanadi.",
+  "budgetNoFreeTime": "Bepul ekran vaqti yo‘q",
+  "budgetPaused": "Safini boshqaradigan ilovalar kunlik limit yangilanguncha bloklangan.",
+  "budgetResetAt": "Yangilanish vaqti: {time}",
+  "budgetMinutesHint": "0-1440 daqiqa kiriting. Nol Safini boshqaradigan ilovalarni darhol bloklaydi.",
+  "budgetMinutesError": "0 dan 1440 gacha butun son kiriting.",
+  "budgetUsageUnknown": "Ishlatilgan va qolgan vaqt bolaning qurilmasida mavjud.",
+  "budgetUnavailable": "Umumiy limit ma’lumotlari mavjud emas. Yangilash uchun pastga torting."
 }

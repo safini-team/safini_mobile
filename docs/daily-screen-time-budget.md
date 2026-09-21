@@ -1,135 +1,60 @@
-# Daily screen-time budget: current behavior and proposed design
+# Overall daily budget
 
-## Decision needed
+Safini has two independent rules: each app's daily limit and an optional overall
+budget across Safini-managed apps. The sum of app limits is never a spendable
+budget. Phone, Messages, Settings, always-allowed apps, and apps without a
+Safini rule are outside this budget.
 
-Safini currently supports two independent controls:
+## Parent experience
 
-1. A per-app daily limit, such as 30 minutes for Instagram.
-2. An optional daily screen-time cap shared by all controlled apps, such as
-   90 minutes across Instagram, YouTube, and Roblox.
+Today and Limits show the same canonical `screen_time` snapshot:
 
-The shared cap is useful as a family-wide upper bound, but the product must
-present it as a separate, optional rule. The sum of app limits is not a budget
-and must never be labelled as time a child can spend.
+- `global_limit_minutes: null`: no overall daily budget; show used time only.
+- `global_limit_minutes: 0`: no free screen time, not unlimited.
+- Positive limit: show the budget, used today, and remaining time separately.
+- `usage_available: false`: show the configured budget and explain that usage
+  and remaining time stay on the child's device. Do not display false zeroes.
+- Missing/failed snapshot: show unavailable information, not a fabricated budget.
 
-## What the app does today
+Limits has an on/off switch and an explicit duration editor (0 to 1440 whole
+minutes). Changes require Save; Cancel makes no request. The editor explains
+that an exhausted budget pauses all managed apps even if an individual app has
+minutes left. Removing the budget leaves recorded usage and app rules intact.
 
-The API returns a `screen_time` object containing:
+Today, Tasks and Limits share the selected child for the parent session.
+Selecting Everyone in Tasks explicitly clears its child filter. Opening Today
+or Limits again retains that tab's last child until another child is selected.
+Signing out disposes the parent shell and its selection. Tapped notifications
+select their child. Loads discard obsolete results when the child changes.
 
-- `global_limit_minutes`: the optional shared daily cap. `null` means no cap;
-  `0` means no free time.
-- `global_used_minutes`: time used today across controlled apps.
-- `global_remaining_minutes`: remaining time under the shared cap.
-- `usage_available`: whether the parent can see reliable device usage.
+## API and device enforcement
 
-The Limits screen displays and edits `global_limit_minutes` in 15-minute
-steps. When no shared cap exists, however, its allowance card falls back to
-the sum of per-app limits. This is the main source of confusion: that sum is
-not spendable across apps. A child with 60 minutes of YouTube and 30 minutes
-of Instagram cannot spend all 90 minutes in either app.
+`screen_time` is authoritative; clients do not sum visible app rows or calculate
+shared remaining time. The API companion adds `budget_scope` and `next_reset_at`
+to app usage, dashboard, home and today responses. Reset is computed at midnight
+following the requested day in the family timezone, including DST. Clients
+format the supplied instant in the parent's local time. Older servers omit the
+reset label; clients never guess it from the phone's midnight.
 
-The Today screen uses only the real shared cap for its ring. If there is no
-cap, it shows usage without a remaining-time claim. This is more accurate than
-the fallback currently used on Limits, but the two tabs can appear to describe
-different systems.
+Configuration, usage reporting and enforcement are separate capabilities.
+The API reports `configuration_available`; `usage_available` remains independent.
+`enforcement_available: null` means unknown, not disabled. The existing device
+status endpoint/card remains authoritative about setup and device connectivity.
 
-## What happens if the parent sets 15 minutes
+The enforcement policy remains unchanged: effective app remaining time is the
+smaller of the individual allowance and shared remaining allowance. Manual
+blocks still win. Bonus minutes extend only the selected app and cannot bypass
+an exhausted shared budget. Android retains its offline snapshot/usage ledger;
+iOS uses Family Controls, Device Activity and Managed Settings on linked apps.
+iOS policy changes synchronize when the child opens Safini.
 
-On Android, the enforcement policy calculates both the selected app's
-remaining minutes and the shared remaining minutes, then uses the smaller of
-the two. Once the combined usage of controlled apps reaches 15 minutes, every
-controlled app is blocked for the rest of the family-local day. Phone,
-Messages, Settings, always-allowed apps, and apps without a Safini rule are not
-closed by this cap. A manual block still wins immediately, and an individual
-app can run out before the shared cap.
+## Verification
 
-Purchased bonus minutes extend an individual app allowance, but they do not
-bypass an exhausted shared cap. The server refuses purchases after the shared
-cap is spent. Both budgets reset at the next family-local midnight.
+Regression coverage includes off, zero, positive and exhausted budgets; private
+usage; canonical remaining values; duration validation; save, cancel and failed
+saves; English, Russian and Uzbek layout; child selection and stale loads.
+API tests cover fixed-offset timezones and a daylight-saving transition.
 
-Android keeps a local snapshot and foreground-usage ledger so enforcement can
-continue offline. It reconciles the local total with server-known usage to
-avoid granting the same time twice after a restart or sync.
-
-On iOS child devices, the same global cap is enforced across apps explicitly
-linked during the Family Controls setup. Apple's Device Activity monitor and
-Managed Settings shield enforce the thresholds, including while Safini is not
-open. Detailed usage remains local to the child device, so the parent API marks
-usage as unavailable instead of reporting false zeroes. Policy changes sync
-when the child opens Safini; simulator builds verify wiring but only a real
-device in Apple Family Sharing can verify authorization and enforcement.
-
-## Problems to fix after product approval
-
-- Limits uses the sum of per-app limits when the shared cap is off.
-- Plus/minus controls mutate a powerful whole-device rule without a clear
-  explanation of which apps it covers.
-- The Today data model converts both “no cap” and a zero-minute cap to `0`, so
-  it cannot communicate those states differently.
-- Some UI calculations sum app rows instead of using the API's canonical
-  `global_used_minutes` and `global_remaining_minutes`.
-- “All apps combined” sounds like every installed app, while enforcement only
-  covers apps with Safini rules.
-
-## Recommended product design
-
-Keep the shared budget, but make it explicitly optional and distinct from app
-limits.
-
-### Today
-
-When a shared budget is enabled, show one card with three explicit values:
-
-- Daily budget: 1 h 30 m
-- Used today: 45 m
-- Remaining: 45 m
-
-The supporting text should say “Across apps managed by Safini.” When the cap
-is exhausted, show that managed apps are paused until the reset time. When the
-cap is off, show “No overall daily budget” and only “Used today”; do not invent
-remaining time from app limits.
-
-### Limits
-
-Place a separate “Overall daily budget” control above the app list. Use an
-on/off switch plus an explicit duration editor instead of an unexplained
-stepper. Before saving, explain that reaching it pauses all apps managed by
-Safini even when an individual app still has time. Keep per-app rows and their
-limits below as independent rules.
-
-### Architecture
-
-- Preserve nullable cap semantics end to end: `null` is off and `0` is a real
-  zero-minute cap.
-- Treat the backend `screen_time` object as the source of truth on both Today
-  and Limits.
-- Use `global_used_minutes` and `global_remaining_minutes` directly for shared
-  budget UI; do not recompute them from visible rows.
-- Keep per-app remaining time as `min(app remaining, global remaining)` in
-  enforcement.
-- Return the next reset timestamp and budget scope from the API so clients do
-  not infer timezone or coverage.
-- Track separately whether configuration, usage reporting, and enforcement are
-  available on the selected child's platform.
-
-## Acceptance scenarios for the future redesign
-
-1. No shared cap: Today shows real usage and no remaining-time claim; per-app
-   limits continue independently.
-2. A 15-minute shared cap with two managed apps: 10 minutes in one leaves 5
-   minutes in both; another 5 minutes blocks both.
-3. One app reaches its own limit first: that app blocks while another managed
-   app remains usable until its own or the shared limit is reached.
-4. A zero-minute cap: managed apps are immediately blocked and the UI says
-   “No free screen time,” never “unlimited.”
-5. The cap is removed: managed apps return to their individual rules without
-   losing usage already recorded that day.
-6. A bonus is purchased: it extends the selected app only while shared budget
-   remains.
-7. Offline use and a device restart do not reset either consumed allowance.
-8. Parent views in English, Russian, and Uzbek describe the same scope and
-   values.
-
-This document intentionally does not change the shared-budget product in this
-PR. The onboarding exit, installed-app limit flow, and task-template changes
-can ship independently while the product decision above is reviewed.
+Simulators can verify the parent UI and API wiring. iOS Family Sharing approval
+and actual OS shielding still require a real child device. The API metadata must
+be deployed before the reset timestamp appears against the hosted service.

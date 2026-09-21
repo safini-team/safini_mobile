@@ -15,9 +15,7 @@ class ParentAppsLoading extends ParentAppsState {
 class ParentAppsLoaded extends ParentAppsState {
   final List<Map<String, dynamic>> appLimits;
 
-  /// The child's whole-device budget. Null cap means the parent has not set
-  /// one and the panel falls back to the sum of the per-app limits, labelled
-  /// as the sum it is.
+  /// Canonical shared budget. Null cap means off; app limits remain independent.
   final ScreenTimeModel screenTime;
 
   const ParentAppsLoaded({
