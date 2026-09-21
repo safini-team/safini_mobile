@@ -104,11 +104,13 @@ class _DsHoldButtonState extends State<DsHoldButton>
               Positioned.fill(
                 child: AnimatedBuilder(
                   animation: _fill,
-                  builder: (context, _) => Align(
+                  builder: (context, _) => FractionallySizedBox(
                     alignment: Alignment.centerLeft,
-                    child: FractionallySizedBox(
-                      widthFactor: _fill.value,
-                      child: const ColoredBox(color: Color(0x42FFFFFF)),
+                    widthFactor: _fill.value,
+                    heightFactor: 1,
+                    child: const ColoredBox(
+                      key: ValueKey('hold-progress-fill'),
+                      color: Color(0x42FFFFFF),
                     ),
                   ),
                 ),

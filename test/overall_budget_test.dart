@@ -32,7 +32,6 @@ Future<void> pumpBudget(
             usedMinutes: used,
             remainingMinutes: remaining,
             usageAvailable: available,
-            kidName: 'Amir',
             onSave: save,
           ),
         ),

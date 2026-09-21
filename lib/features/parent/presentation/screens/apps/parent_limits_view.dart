@@ -179,7 +179,7 @@ class ParentLimitsView extends StatelessWidget {
               children: [
                 Text(s.tabLimits, style: AppText.largeTitle),
                 const SizedBox(height: 4),
-                Text(s.limitsSubtitle(data.kidName), style: AppText.subtitle),
+                Text(s.dateToday, style: AppText.subtitle),
               ],
             ),
           ),
@@ -197,7 +197,6 @@ class ParentLimitsView extends StatelessWidget {
               usedMinutes: data.usedMinutes,
               remainingMinutes: data.remainingMinutes,
               usageAvailable: data.usageAvailable,
-              kidName: data.kidName,
               configurationAvailable: data.configurationAvailable,
               nextResetAt: data.nextResetAt,
               onSave: onSetCap,
@@ -205,9 +204,7 @@ class ParentLimitsView extends StatelessWidget {
           ),
         ),
 
-        SliverToBoxAdapter(
-          child: DsOverline(s.kidsApps(data.kidName), top: 28),
-        ),
+        SliverToBoxAdapter(child: DsOverline(s.apps, top: 28)),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),

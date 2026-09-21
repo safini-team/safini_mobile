@@ -71,6 +71,20 @@ void main() {
     expect(find.text('1 h 45 m'), findsNothing);
   });
 
+  testWidgets('the selected child name appears only in the selector', (
+    tester,
+  ) async {
+    await _pumpLimits(tester, _data(apps: [_app('Chrome', limit: 60)]));
+
+    expect(find.text('Amir'), findsOneWidget);
+    expect(find.text("Amir's phone · today"), findsNothing);
+    expect(find.text('Amir · daily allowance'), findsNothing);
+    expect(find.text("Amir's apps"), findsNothing);
+    expect(find.text('Today'), findsOneWidget);
+    expect(find.text('OVERALL DAILY BUDGET'), findsOneWidget);
+    expect(find.text('APPS'), findsOneWidget);
+  });
+
   testWidgets('rows show the daily allowance when usage stays on the child', (
     tester,
   ) async {

@@ -19,7 +19,6 @@ class OverallBudgetSummary extends StatelessWidget {
     required this.usedMinutes,
     required this.remainingMinutes,
     required this.usageAvailable,
-    required this.kidName,
     required this.topApp,
     this.configurationAvailable = true,
     this.nextResetAt,
@@ -30,7 +29,6 @@ class OverallBudgetSummary extends StatelessWidget {
   final int? remainingMinutes;
   final bool usageAvailable;
   final bool configurationAvailable;
-  final String kidName;
   final String topApp;
   final DateTime? nextResetAt;
 
@@ -90,7 +88,7 @@ class OverallBudgetSummary extends StatelessWidget {
                     ? s.budgetUsageUnknown
                     : remaining == 0
                     ? s.budgetNoFreeTime
-                    : s.kidHasLeftToday(kidName, formatHm(s, remaining)),
+                    : s.timeLeft(formatHm(s, remaining)),
                 style: AppText.headline.copyWith(fontSize: 17, height: 1.28),
               ),
               const SizedBox(height: 5),
@@ -118,7 +116,6 @@ class OverallBudgetCard extends StatefulWidget {
     required this.usedMinutes,
     required this.remainingMinutes,
     required this.usageAvailable,
-    required this.kidName,
     this.configurationAvailable = true,
     this.nextResetAt,
     this.onSave,
@@ -129,7 +126,6 @@ class OverallBudgetCard extends StatefulWidget {
   final int? remainingMinutes;
   final bool usageAvailable;
   final bool configurationAvailable;
-  final String kidName;
   final DateTime? nextResetAt;
   final Future<String?> Function(int?)? onSave;
 
@@ -206,7 +202,7 @@ class _OverallBudgetCardState extends State<OverallBudgetCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          s.dailyAllowanceFor(widget.kidName).toUpperCase(),
+                          s.overallDailyBudget.toUpperCase(),
                           style: AppText.overline.copyWith(
                             color: const Color(0xA6FFFFFF),
                           ),

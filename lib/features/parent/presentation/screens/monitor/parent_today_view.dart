@@ -300,7 +300,6 @@ class _ScreenTimeCard extends StatelessWidget {
             usedMinutes: data.usedMinutes,
             remainingMinutes: data.remainingMinutes,
             usageAvailable: data.usageAvailable,
-            kidName: data.kidName,
             topApp: data.topApp,
             configurationAvailable: data.configurationAvailable,
             nextResetAt: data.nextResetAt,
@@ -325,6 +324,7 @@ class _ScreenTimeCard extends StatelessWidget {
                   value: '${data.coins}',
                   label: s.statCoins,
                   valueColor: AppColors.primary,
+                  valueLeading: const DsCoinToken(size: 18),
                 ),
               ],
             ),
@@ -340,11 +340,13 @@ class _Stat extends StatelessWidget {
     required this.value,
     required this.label,
     this.valueColor = AppColors.ink,
+    this.valueLeading,
   });
 
   final String value;
   final String label;
   final Color valueColor;
+  final Widget? valueLeading;
 
   @override
   Widget build(BuildContext context) {
@@ -353,15 +355,31 @@ class _Stat extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.285,
-              height: 1.15,
-              color: valueColor,
-              fontFeatures: AppText.tabular,
+          SizedBox(
+            width: double.infinity,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (valueLeading != null) ...[
+                    valueLeading!,
+                    const SizedBox(width: 6),
+                  ],
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.285,
+                      height: 1.15,
+                      color: valueColor,
+                      fontFeatures: AppText.tabular,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 2),
