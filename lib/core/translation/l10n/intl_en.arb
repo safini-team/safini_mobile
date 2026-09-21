@@ -797,17 +797,19 @@
     }
   },
   "overallDailyBudget": "Overall daily budget",
-  "noOverallDailyBudget": "No overall daily budget",
-  "budgetScope": "Across apps managed by Safini.",
+  "noOverallDailyBudget": "Off",
+  "budgetScope": "For apps managed by Safini",
   "budgetUsedToday": "Used today",
   "budgetRemaining": "Remaining",
-  "budgetExplanation": "When this budget runs out, all apps managed by Safini pause, even if an app still has time left. Individual app limits still apply. Phone, Messages and apps without Safini rules are not affected.",
-  "budgetOffExplanation": "App limits apply independently. Recorded usage is kept when you turn this budget off.",
-  "budgetNoFreeTime": "No free screen time",
-  "budgetPaused": "Managed apps are paused until the daily budget resets.",
+  "budgetExplanation": "When the budget runs out, managed apps pause. Individual app limits still apply. Phone, Messages and apps without Safini rules stay available.",
+  "budgetOffExplanation": "Only individual app limits apply. Today’s usage is kept.",
+  "budgetNoFreeTime": "No free time",
+  "budgetPaused": "Managed apps are paused until the daily reset.",
   "budgetResetAt": "Resets: {time}",
-  "budgetMinutesHint": "Enter 0-1440 minutes. Zero pauses managed apps immediately.",
+  "budgetMinutesHint": "0 minutes pauses managed apps.",
   "budgetMinutesError": "Enter a whole number from 0 to 1440.",
-  "budgetUsageUnknown": "Usage and remaining time are available on the child’s device.",
-  "budgetUnavailable": "Budget information is unavailable. Pull to refresh."
+  "budgetUsageUnknown": "Usage is shown on your child’s device.",
+  "budgetUnavailable": "Budget information is unavailable. Pull to refresh.",
+  "budgetEnabled": "Enabled",
+  "budgetPausedUntil": "Managed apps are paused until {time}."
 }

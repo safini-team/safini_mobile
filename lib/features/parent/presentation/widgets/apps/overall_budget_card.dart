@@ -17,6 +17,7 @@ class OverallBudgetSummary extends StatelessWidget {
     required this.usageAvailable,
     this.configurationAvailable = true,
     this.nextResetAt,
+    this.showTitle = true,
   });
   final int? limitMinutes;
   final int usedMinutes;
@@ -24,6 +25,7 @@ class OverallBudgetSummary extends StatelessWidget {
   final bool usageAvailable;
   final bool configurationAvailable;
   final DateTime? nextResetAt;
+  final bool showTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +35,21 @@ class OverallBudgetSummary extends StatelessWidget {
     }
     final limit = limitMinutes;
     final reset = nextResetAt;
+    final paused =
+        limit == 0 ||
+        (limit != null && usageAvailable && remainingMinutes == 0);
+    final resetLabel = reset == null
+        ? null
+        : DateFormat.yMMMd(
+            Localizations.localeOf(context).toLanguageTag(),
+          ).add_Hm().format(reset.toLocal());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(s.overallDailyBudget, style: AppText.overline),
-        const SizedBox(height: 8),
+        if (showTitle) ...[
+          Text(s.overallDailyBudget, style: AppText.overline),
+          const SizedBox(height: 8),
+        ],
         Text(
           limit == null
               ? s.noOverallDailyBudget
@@ -61,21 +73,17 @@ class OverallBudgetSummary extends StatelessWidget {
             ),
         ] else
           Text(s.budgetUsageUnknown, style: AppText.meta),
-        if (limit == 0 ||
-            (limit != null && usageAvailable && remainingMinutes == 0)) ...[
+        if (paused) ...[
           const SizedBox(height: 10),
-          Text(s.budgetPaused, style: AppText.meta),
-        ],
-        if (limit != null && reset != null) ...[
-          const SizedBox(height: 8),
           Text(
-            s.budgetResetAt(
-              DateFormat.yMMMd(
-                Localizations.localeOf(context).toLanguageTag(),
-              ).add_Hm().format(reset.toLocal()),
-            ),
+            resetLabel == null
+                ? s.budgetPaused
+                : s.budgetPausedUntil(resetLabel),
             style: AppText.meta,
           ),
+        ] else if (limit != null && resetLabel != null) ...[
+          const SizedBox(height: 8),
+          Text(s.budgetResetAt(resetLabel), style: AppText.meta),
         ],
       ],
     );
@@ -134,21 +142,32 @@ class OverallBudgetCard extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (onSave != null && configurationAvailable)
-          Align(
-            alignment: Alignment.centerRight,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Semantics(
-                label: S.of(context).overallDailyBudget,
-                child: Switch.adaptive(
-                  value: limitMinutes != null,
-                  onChanged: (enabled) => _edit(context, enabled),
+        if (onSave != null && configurationAvailable) ...[
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  S.of(context).overallDailyBudget,
+                  style: AppText.overline,
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Material(
+                type: MaterialType.transparency,
+                child: Semantics(
+                  label: S.of(context).overallDailyBudget,
+                  child: Switch.adaptive(
+                    value: limitMinutes != null,
+                    onChanged: (enabled) => _edit(context, enabled),
+                  ),
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 8),
+        ],
         OverallBudgetSummary(
+          showTitle: onSave == null || !configurationAvailable,
           limitMinutes: limitMinutes,
           usedMinutes: usedMinutes,
           remainingMinutes: remainingMinutes,
@@ -231,7 +250,7 @@ class _BudgetEditorState extends State<_BudgetEditor> {
               children: [
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text(s.overallDailyBudget),
+                  title: Text(s.budgetEnabled),
                   value: _enabled,
                   onChanged: _saving
                       ? null

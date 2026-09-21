@@ -67,7 +67,7 @@ void main() {
       tester,
       _data(apps: [_app('Chrome', limit: 60), _app('Gmail', limit: 45)]),
     );
-    expect(find.text('No overall daily budget'), findsOneWidget);
+    expect(find.text('Off'), findsOneWidget);
     expect(find.text('Remaining'), findsNothing);
     expect(find.text('1 h 45 m'), findsNothing);
   });
@@ -100,7 +100,7 @@ void main() {
     );
     expect(find.text('Daily limit · 1 h'), findsOneWidget);
     // The overall card still explains where actual usage can be viewed.
-    expect(find.textContaining('Usage and remaining time'), findsOneWidget);
+    expect(find.textContaining('Usage is shown'), findsOneWidget);
     expect(
       find.textContaining('View actual usage in Screen Time'),
       findsNothing,

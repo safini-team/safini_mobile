@@ -61,7 +61,7 @@ void main() {
     tester,
   ) async {
     await pumpBudget(tester);
-    expect(find.text('No overall daily budget'), findsOneWidget);
+    expect(find.text('Off'), findsOneWidget);
     expect(find.text('43 m'), findsOneWidget);
     expect(find.text('Remaining'), findsNothing);
   });
@@ -77,9 +77,9 @@ void main() {
     tester,
   ) async {
     await pumpBudget(tester, limit: 0, remaining: 0, available: false);
-    expect(find.text('No free screen time'), findsOneWidget);
+    expect(find.text('No free time'), findsOneWidget);
     expect(
-      find.text('Managed apps are paused until the daily budget resets.'),
+      find.text('Managed apps are paused until the daily reset.'),
       findsOneWidget,
     );
     expect(find.text('43 m'), findsNothing);
@@ -89,12 +89,7 @@ void main() {
   ) async {
     await pumpBudget(tester, limit: 90, available: false);
     expect(find.text('1 h 30 m'), findsOneWidget);
-    expect(
-      find.text(
-        'Usage and remaining time are available on the child’s device.',
-      ),
-      findsOneWidget,
-    );
+    expect(find.text('Usage is shown on your child’s device.'), findsOneWidget);
     expect(find.text('Remaining'), findsNothing);
   });
   testWidgets(
