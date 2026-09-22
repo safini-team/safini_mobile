@@ -45,7 +45,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
       fallbackTimezone: 'UTC',
       statusMessages: {
         401: 'Session expired. Please log in again.',
-        409: 'This code is invalid or the family already has two parents.',
+        409: 'This code is invalid or can no longer be used.',
         422: 'Invite code must be exactly 4 characters.',
         503: 'Service unavailable. Please try again later.',
       },
@@ -67,7 +67,7 @@ class FamilyRepositoryImpl implements IFamilyRepository {
       ),
       statusMessages: {
         401: 'Session expired. Please log in again.',
-        409: 'A conflict occurred. Your family may already have two parents.',
+        409: 'A conflict occurred. Please create a new invite code.',
         503: 'Service unavailable. Please try again later.',
       },
     );

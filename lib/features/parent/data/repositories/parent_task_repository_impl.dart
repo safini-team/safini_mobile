@@ -23,7 +23,10 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
     try {
       response = await _client
           .get(
-            _uri('/v1/children/$childId/tasks'),
+            _uri(
+              '/v1/children/$childId/tasks',
+              queryParameters: const {'include_completed_history': 'true'},
+            ),
             headers: {'Accept': 'application/json'},
           )
           .timeout(AppConstants.apiTimeout);
@@ -191,8 +194,10 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
     return const Right(null);
   }
 
-  Uri _uri(String path) {
-    return Uri.parse('${SupabaseConfig.apiBaseUrl}$path');
+  Uri _uri(String path, {Map<String, String>? queryParameters}) {
+    return Uri.parse(
+      '${SupabaseConfig.apiBaseUrl}$path',
+    ).replace(queryParameters: queryParameters);
   }
 
   dynamic _decodeBody(String body) {

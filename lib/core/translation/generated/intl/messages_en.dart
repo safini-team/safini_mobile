@@ -274,7 +274,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "badges": MessageLookupByLibrary.simpleMessage("Badges"),
     "blockCompletely": MessageLookupByLibrary.simpleMessage("Block completely"),
     "bothParentsSee": MessageLookupByLibrary.simpleMessage(
-      "Both parents see the same tasks and can approve them.",
+      "All invited adults see the same tasks and can approve them.",
     ),
     "budgetEnabled": MessageLookupByLibrary.simpleMessage("Enabled"),
     "budgetExplanation": MessageLookupByLibrary.simpleMessage(

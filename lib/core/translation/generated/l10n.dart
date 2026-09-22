@@ -3145,10 +3145,10 @@ class S {
     return Intl.message('Invited', name: 'invited', desc: '', args: []);
   }
 
-  /// `Both parents see the same tasks and can approve them.`
+  /// `All invited adults see the same tasks and can approve them.`
   String get bothParentsSee {
     return Intl.message(
-      'Both parents see the same tasks and can approve them.',
+      'All invited adults see the same tasks and can approve them.',
       name: 'bothParentsSee',
       desc: '',
       args: [],

@@ -478,7 +478,7 @@
   "usedOfLimitOver": "{used} of {limit} · over",
   "usedNoLimit": "{used} · no limit",
   "invited": "Invited",
-  "bothParentsSee": "Both parents see the same tasks and can approve them.",
+  "bothParentsSee": "All invited adults see the same tasks and can approve them.",
   "yourAccount": "Your account",
   "inviteAParent": "Invite a parent",
   "addShort": "Add",
