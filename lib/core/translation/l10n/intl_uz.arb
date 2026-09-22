@@ -364,7 +364,7 @@
   "usedOfLimitOver": "{limit} dan {used} · oshdi",
   "usedNoLimit": "{used} · cheklovsiz",
   "invited": "Taklif",
-  "bothParentsSee": "Ikkala ota-ona bir xil vazifalarni koʻradi va tasdiqlay oladi.",
+  "bothParentsSee": "Barcha taklif qilingan kattalar bir xil vazifalarni koʻradi va tasdiqlay oladi.",
   "yourAccount": "Hisobingiz",
   "inviteAParent": "Ota-onani taklif qilish",
   "addShort": "Qoʻshish",

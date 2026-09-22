@@ -277,7 +277,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Заблокировать полностью",
     ),
     "bothParentsSee": MessageLookupByLibrary.simpleMessage(
-      "Оба родителя видят одни и те же задания и могут их одобрять.",
+      "Все приглашённые взрослые видят одни и те же задания и могут их одобрять.",
     ),
     "budgetEnabled": MessageLookupByLibrary.simpleMessage("Включён"),
     "budgetExplanation": MessageLookupByLibrary.simpleMessage(

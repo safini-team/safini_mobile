@@ -280,7 +280,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "badges": MessageLookupByLibrary.simpleMessage("Nishonlar"),
     "blockCompletely": MessageLookupByLibrary.simpleMessage("To‘liq bloklash"),
     "bothParentsSee": MessageLookupByLibrary.simpleMessage(
-      "Ikkala ota-ona bir xil vazifalarni koʻradi va tasdiqlay oladi.",
+      "Barcha taklif qilingan kattalar bir xil vazifalarni koʻradi va tasdiqlay oladi.",
     ),
     "budgetEnabled": MessageLookupByLibrary.simpleMessage("Yoqilgan"),
     "budgetExplanation": MessageLookupByLibrary.simpleMessage(
