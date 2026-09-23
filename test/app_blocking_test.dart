@@ -1,14 +1,22 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
-import 'package:safini/core/di/injection.dart';
-import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
-import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/features/child/data/services/child_app_rules_service.dart';
+import 'package:safini/features/child/data/services/screen_time_service.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_state.dart';
+import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
+import 'package:safini/features/child/presentation/screens/blocking/child_app_block_gate.dart';
 import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
 import 'package:safini/features/common/profile/domain/models/profile_model.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
@@ -69,6 +77,40 @@ class ProfileFake implements ProfileController {
   );
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// Holds [fetchMe] so tests can observe the cubit after native permissions
+/// return and before pairing/startService finish - the reopen flash window.
+class DelayedProfileFake extends ProfileFake {
+  final Completer<void> ready = Completer<void>();
+
+  @override
+  Future<Either<Failure, ProfileModel>> fetchMe() async {
+    await ready.future;
+    return super.fetchMe();
+  }
+}
+
+Future<void> pumpAppBlockGate(
+  WidgetTester tester,
+  ChildAppBlockCubit cubit,
+) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      locale: const Locale('en'),
+      supportedLocales: S.delegate.supportedLocales,
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: BlocProvider.value(
+        value: cubit,
+        child: const ChildAppBlockGate(child: Text('child-home')),
+      ),
+    ),
+  );
 }
 
 class PurchaseNativeFake extends NativeFake {
@@ -223,4 +265,95 @@ void main() {
       await cubit.close();
     },
   );
+  test(
+    'already granted permissions stay initial until profile and service finish',
+    () async {
+      final profile = DelayedProfileFake();
+      final cubit = ChildAppBlockCubit(NativeFake(), RulesFake(), profile);
+      final granted = cubit.stream.firstWhere((s) => s.hasAllPermissions);
+      final pending = cubit.start();
+      await granted;
+      expect(cubit.state.status, AppBlockStatus.initial);
+      expect(cubit.state.isChecking, isTrue);
+      expect(cubit.state.showsSetup, isFalse);
+      profile.ready.complete();
+      await pending;
+      expect(cubit.state.status, AppBlockStatus.active);
+      expect(cubit.state.showsSetup, isFalse);
+      await cubit.close();
+    },
+  );
+  test('setup checklist is only for a confirmed gap or activation error', () {
+    expect(const AppBlockState.initial().showsSetup, isFalse);
+    expect(
+      const AppBlockState(status: AppBlockStatus.unsupported).showsSetup,
+      isFalse,
+    );
+    expect(
+      const AppBlockState(status: AppBlockStatus.active).showsSetup,
+      isFalse,
+    );
+    expect(
+      const AppBlockState(status: AppBlockStatus.needsPermissions).showsSetup,
+      isTrue,
+    );
+    expect(
+      const AppBlockState(status: AppBlockStatus.error).showsSetup,
+      isTrue,
+    );
+    expect(
+      const AppBlockState(
+        status: AppBlockStatus.initial,
+        hasUsageAccess: true,
+        hasOverlayPermission: true,
+        hasDeviceAdmin: true,
+        isChecking: true,
+      ).showsSetup,
+      isFalse,
+    );
+  });
+  testWidgets(
+    'reopen does not flash setup when permissions are already granted',
+    (tester) async {
+      getIt.registerSingleton<ScreenTimeService>(const ScreenTimeService());
+      getIt.registerSingleton<AppBlockService>(const AppBlockService());
+      addTearDown(getIt.reset);
+
+      final profile = DelayedProfileFake();
+      final cubit = ChildAppBlockCubit(NativeFake(), RulesFake(), profile);
+      addTearDown(cubit.close);
+      final granted = cubit.stream.firstWhere((s) => s.hasAllPermissions);
+      final pending = cubit.start();
+      await granted;
+      await pumpAppBlockGate(tester, cubit);
+
+      expect(find.text('Turn on app limits'), findsNothing);
+      expect(find.text('child-home'), findsOneWidget);
+
+      profile.ready.complete();
+      await pending;
+      await tester.pump();
+      expect(find.text('Turn on app limits'), findsNothing);
+      expect(find.text('child-home'), findsOneWidget);
+    },
+  );
+  testWidgets('missing a permission still shows setup after the check', (
+    tester,
+  ) async {
+    getIt.registerSingleton<ScreenTimeService>(const ScreenTimeService());
+    getIt.registerSingleton<AppBlockService>(const AppBlockService());
+    addTearDown(getIt.reset);
+
+    final cubit = ChildAppBlockCubit(
+      NativeFake()..usage = false,
+      RulesFake(),
+      ProfileFake(),
+    );
+    addTearDown(cubit.close);
+    await cubit.start();
+    await pumpAppBlockGate(tester, cubit);
+
+    expect(find.text('Turn on app limits'), findsOneWidget);
+    expect(find.text('child-home'), findsNothing);
+  });
 }
