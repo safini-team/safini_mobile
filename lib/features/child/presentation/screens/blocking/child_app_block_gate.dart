@@ -53,8 +53,7 @@ class _ChildAppBlockGateState extends State<ChildAppBlockGate>
     final cubit = context.read<ChildAppBlockCubit>();
     return BlocBuilder<ChildAppBlockCubit, AppBlockState>(
       builder: (context, state) {
-        if (state.status == AppBlockStatus.unsupported ||
-            state.status == AppBlockStatus.active) {
+        if (!state.showsSetup) {
           return widget.child;
         }
         return Scaffold(

@@ -44,6 +44,14 @@ class AppBlockState {
   bool get hasAllPermissions =>
       hasUsageAccess && hasOverlayPermission && hasDeviceAdmin;
 
+  /// The permissions checklist is only for a confirmed gap or activation
+  /// failure. [AppBlockStatus.initial] is the in-flight check, including the
+  /// profile/pairing wait after permissions are already granted, and must not
+  /// replace the child shell or every reopen flashes setup.
+  bool get showsSetup =>
+      status == AppBlockStatus.needsPermissions ||
+      status == AppBlockStatus.error;
+
   AppBlockState copyWith({
     AppBlockStatus? status,
     bool? hasUsageAccess,
