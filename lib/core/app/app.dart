@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
               // Russian or English. Re-runs if the OS language changes while
               // the app is open. Uzbek is never inferred here.
               localeListResolutionCallback: (deviceLocales, _) =>
-                  LocaleCubit.resolve(deviceLocales),
+                  LocaleCubit.resolvePreferred(deviceLocales, locale),
               routerConfig: appRouter.config(),
               builder: (context, child) {
                 // Clamp the device text scale so extreme accessibility font

@@ -72,6 +72,32 @@ void main() {
       );
     });
 
+    test('keeps an explicit Uzbek override instead of remapping it', () {
+      // Flutter passes MaterialApp.locale as a one-item preferred list.
+      expect(
+        LocaleCubit.resolvePreferred([
+          const Locale('uz'),
+        ], const Locale('uz')).languageCode,
+        'uz',
+      );
+      expect(
+        LocaleCubit.resolvePreferred([
+          const Locale('en'),
+        ], const Locale('uz')).languageCode,
+        'uz',
+      );
+    });
+
+    test(
+      'without an override, a uz-only device still falls back to Russian',
+      () {
+        expect(
+          LocaleCubit.resolvePreferred([const Locale('uz')], null),
+          LocaleCubit.parentDefault,
+        );
+      },
+    );
+
     test('falls back to Russian when nothing auto-selectable matches', () {
       expect(
         LocaleCubit.resolve([const Locale('kk')]),
