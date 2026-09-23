@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Safini API",
-    "description": "Safini API powers the MVP for **earned screen time**. Parents create a family,\ndefine tasks and app-time rules, and children earn **Time Coins** by completing\nhealthy or educational actions.\n\n### Start here: auth and app bootstrap\n\n- Google sign-in happens in the mobile app through **Supabase Auth**\n- This backend does **not** expose a Google login endpoint\n- After sign-in, send `Authorization: Bearer <access_token>`\n- Your first protected call should be `GET /v1/me`\n- Route the app by `account_type`\n  - `parent` -> load the parent shell, then call `GET /v1/families/current`\n  - `child` -> load the child shell using `child_id`\n  - `null` -> show the role chooser\n\n```mermaid\nflowchart TD\n    A[\"Supabase Google sign-in\"] --> B[\"GET /v1/me\"]\n    B --> C{\"account_type\"}\n    C -->|parent| D[\"GET /v1/families/current\"]\n    C -->|child| E[\"GET /v1/children/{child_id}/home\"]\n    C -->|null| F[\"Show role chooser\"]\n    F --> G[\"POST /v1/families\"]\n    F --> H[\"POST /v1/families/join\"]\n    F --> I[\"POST /v1/children/claim\"]\n```\n\n### What this backend covers\n\n- Parent onboarding, second-parent join flow, and family setup\n- Child profiles, avatar state, and invite-code claiming\n- Daily tasks, manual proof submission, parent approval, and steps auto-approval\n- Controlled app rules, usage reporting, and app-time redemption\n- Wallet history, store items, and avatar purchases\n- Guarded MVP AI endpoints for task suggestions and the child AI friend\n\n### Main product flows\n\n1. **Parent onboarding**: create a family and add one or more children. A child starts with the\n   free avatar items and no tasks or app rules, so the parent adds both.\n2. **Second parent join**: an existing parent calls `POST /v1/families/current/parent-invite-code`\n   and the second parent joins through `POST /v1/families/join` as another admin.\n3. **Child claim**: a child signs in, enters the child invite code, and links to one child profile.\n4. **Kid daily loop**: load today's tasks, submit proof or steps, earn Time Coins,\n   then spend coins on app time or avatar cosmetics.\n5. **Parent review loop**: either parent admin can review pending tasks, approve or reject them, and watch dashboards and wallet history update.\n\n### Supabase Auth for frontend and Flutter engineers\n\n- Public routes: `GET /ping`, `GET /v1/health/live`, `GET /v1/health/ready`,\n  and `GET /v1/system/info`\n- Protected routes: all other business endpoints\n- Sign in with a normal Supabase Auth client flow\n- Read the current session access token\n  - React Native / web: `session.access_token`\n  - Flutter: `supabase.auth.currentSession?.accessToken`\n- Send the token as `Authorization: Bearer <access_token>`\n- On `401`, refresh the Supabase session and retry once\n\n### Response conventions\n\n- Database unavailability or a bounded database wait can return `503` with\n  `Retry-After: 1`. Retry reads after that delay. Do not blindly replay writes:\n  reuse the same idempotency key on endpoints that support one, otherwise\n  reconcile the resulting state before retrying.\n- IDs are UUID strings\n- Timestamps are ISO 8601 strings in UTC\n- Daily tasks, streaks, and app-time limits reset on the family's local\n  calendar day, derived from the family `timezone` (UTC when unset);\n  timestamps themselves remain UTC\n- Coins, XP, and minutes are integers\n- `GET /v1/me` is the bootstrap endpoint for routing the app\n- Parent users receive `family_id`; child users receive `child_id`\n- Proof uploads are represented by URLs or object keys; this API does not accept\n  raw binary uploads directly\n- The MVP tracks app-time grants and usage, but it does not yet enforce OS-level\n  app blocking",
+    "description": "Safini API powers the MVP for **earned screen time**. Parents create a family,\ndefine tasks and app-time rules, and children earn **Time Coins** by completing\nhealthy or educational actions.\n\n### Start here: auth and app bootstrap\n\n- Google sign-in happens in the mobile app through **Supabase Auth**\n- This backend does **not** expose a Google login endpoint\n- After sign-in, send `Authorization: Bearer <access_token>`\n- Your first protected call should be `GET /v1/me`\n- Route the app by `account_type`\n  - `parent` -> load the parent shell, then call `GET /v1/families/current`\n  - `child` -> load the child shell using `child_id`\n  - `null` -> show the role chooser\n\n```mermaid\nflowchart TD\n    A[\"Supabase Google sign-in\"] --> B[\"GET /v1/me\"]\n    B --> C{\"account_type\"}\n    C -->|parent| D[\"GET /v1/families/current\"]\n    C -->|child| E[\"GET /v1/children/{child_id}/home\"]\n    C -->|null| F[\"Show role chooser\"]\n    F --> G[\"POST /v1/families\"]\n    F --> H[\"POST /v1/families/join\"]\n    F --> I[\"POST /v1/children/claim\"]\n```\n\n### What this backend covers\n\n- Parent onboarding, second-parent join flow, and family setup\n- Child profiles, avatar state, and invite-code claiming\n- Daily tasks, manual proof submission, parent approval, and steps auto-approval\n- Controlled app rules, usage reporting, and app-time redemption\n- Wallet history, store items, and avatar purchases\n- Parent-made prizes (real-world rewards), the child's asks and wishes, and parent approval\n- Guarded MVP AI endpoints for task suggestions and the child AI friend\n\n### Main product flows\n\n1. **Parent onboarding**: create a family and add one or more children. A child starts with the\n   free avatar items and no tasks or app rules, so the parent adds both.\n2. **Additional parent join**: an existing parent calls `POST /v1/families/current/parent-invite-code`\n   and another trusted adult joins through `POST /v1/families/join` as an admin.\n3. **Child claim**: a child signs in, enters the child invite code, and links to one child profile.\n4. **Kid daily loop**: load today's tasks, submit proof or steps, earn Time Coins,\n   then spend coins on app time or avatar cosmetics.\n5. **Parent review loop**: any parent admin can review pending tasks, approve or reject them, and watch dashboards and wallet history update.\n\n### Supabase Auth for frontend and Flutter engineers\n\n- Public routes: `GET /ping`, `GET /v1/health/live`, `GET /v1/health/ready`,\n  and `GET /v1/system/info`\n- Protected routes: all other business endpoints\n- Sign in with a normal Supabase Auth client flow\n- Read the current session access token\n  - React Native / web: `session.access_token`\n  - Flutter: `supabase.auth.currentSession?.accessToken`\n- Send the token as `Authorization: Bearer <access_token>`\n- On `401`, refresh the Supabase session and retry once\n\n### Response conventions\n\n- Database unavailability or a bounded database wait can return `503` with\n  `Retry-After: 1`. Retry reads after that delay. Do not blindly replay writes:\n  reuse the same idempotency key on endpoints that support one, otherwise\n  reconcile the resulting state before retrying.\n- IDs are UUID strings\n- Timestamps are ISO 8601 strings in UTC\n- Daily tasks, streaks, and app-time limits reset on the family's local\n  calendar day, derived from the family `timezone` (UTC when unset);\n  timestamps themselves remain UTC\n- Coins, XP, and minutes are integers\n- `GET /v1/me` is the bootstrap endpoint for routing the app\n- Parent users receive `family_id`; child users receive `child_id`\n- Proof uploads are represented by URLs or object keys; this API does not accept\n  raw binary uploads directly\n- The MVP tracks app-time grants and usage, but it does not yet enforce OS-level\n  app blocking",
     "version": "0.1.3"
   },
   "paths": {
@@ -881,7 +881,7 @@
           "families"
         ],
         "summary": "Get Current Family",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads the current family for any parent admin, including both parents and all child profiles with current balances.\n\n**Frontend note:** This is the main parent shell bootstrap call after `GET /v1/me` returns `account_type = parent` and `family_id`.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads the current family for any parent admin, including every invited adult and all child profiles with current balances.\n\n**Frontend note:** This is the main parent shell bootstrap call after `GET /v1/me` returns `account_type = parent` and `family_id`.",
         "operationId": "get_current_family_v1_families_current_get",
         "responses": {
           "200": {
@@ -973,7 +973,7 @@
           "families"
         ],
         "summary": "Issue Parent Invite Code",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Creates or rotates a short invite code so a second parent can join the current family as an equal admin.\n\n**Frontend note:** The code contains 4 unambiguous characters, expires after 24 hours, and is replaced when a new code is issued.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Creates or rotates a short invite code so another parent or trusted adult can join the current family as an equal admin.\n\n**Frontend note:** The code contains 4 unambiguous characters, expires after 24 hours, and is replaced when a new code is issued.",
         "operationId": "issue_parent_invite_code_v1_families_current_parent_invite_code_post",
         "responses": {
           "200": {
@@ -1047,7 +1047,7 @@
           "families"
         ],
         "summary": "Join Family As Parent",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a second parent join an existing family using a short family invite code.\n\n**Frontend note:** Submit the 4-character code within 24 hours of issuance. Attempts are limited to 10 per authenticated user every 5 minutes.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets an additional parent or trusted adult join an existing family using a short family invite code.\n\n**Frontend note:** Submit the 4-character code within 24 hours of issuance. Attempts are limited to 10 per authenticated user every 5 minutes.",
         "operationId": "join_family_v1_families_join_post",
         "requestBody": {
           "content": {
@@ -1729,7 +1729,7 @@
           "children"
         ],
         "summary": "Get Child Dashboard",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the parent-facing child dashboard summary, including progression stats and app overview data.\n\n**Frontend note:** This is the best endpoint for the parent monitor screen because it combines child identity, KPI stats, and app section data.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the parent-facing child dashboard summary, including progression stats and app overview data.\n\n**Frontend note:** Combines child identity, KPI stats and app rules. screen_time is the canonical shared budget: null is off, zero allows no free time. budget_scope is safini_managed_apps; next_reset_at is the UTC instant of the next family-local midnight. Configuration and usage availability are independent; enforcement_available null means unknown, so consult device status.",
         "operationId": "get_child_dashboard_v1_children__child_id__dashboard_get",
         "security": [
           {
@@ -1850,7 +1850,7 @@
           "children"
         ],
         "summary": "Get Child Home",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads a lightweight home-screen payload for the kid experience with today's top summary information.\n\n**Frontend note:** Use this for the first kid tab where you want a fast greeting card plus short task progress summary. It shares the day view with `/today`, so it materialises today's recurring instances too.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Loads a lightweight home-screen payload for the kid experience with today's top summary information.\n\n**Frontend note:** Use this for the first kid tab where you want a fast greeting card plus short task progress summary. It shares the day view with `/today`, so it materialises today's recurring instances too. screen_time includes budget_scope (safini_managed_apps), next_reset_at in UTC for the requested family-local day, and separate configuration/usage/enforcement availability.",
         "operationId": "get_child_home_v1_children__child_id__home_get",
         "security": [
           {
@@ -1949,7 +1949,7 @@
           "children"
         ],
         "summary": "Get Today's Child Tasks",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the child-focused task feed for today, including daily summary counts and task instances.\n\n**Frontend note:** This is the main endpoint behind the kid task list screen. Today's recurring instances are materialised on read, so a daily task appears here the first time the day is opened. Never for a future day.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the child-focused task feed for today, including daily summary counts and task instances.\n\n**Frontend note:** This is the main endpoint behind the kid task list screen. Today's recurring instances are materialised on read, so a daily task appears here the first time the day is opened. Never for a future day. screen_time uses the requested family-local day and includes its next_reset_at UTC timestamp and safini_managed_apps budget_scope.",
         "operationId": "get_child_today_v1_children__child_id__today_get",
         "security": [
           {
@@ -2199,7 +2199,7 @@
           "tasks"
         ],
         "summary": "List Child Tasks",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today. Recurring instances for that day are materialised on read, so the parent sees today's list whichever app opens first. Never for a future day.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today. Set `include_completed_history=true` to append approved tasks from earlier days for the Done feed. Recurring instances for the selected day are materialised on read. Never for a future day.",
         "operationId": "list_child_tasks_v1_children__child_id__tasks_get",
         "security": [
           {
@@ -2234,6 +2234,18 @@
               "title": "Date"
             },
             "description": "Day to load in YYYY-MM-DD format. Defaults to the family-local today when omitted."
+          },
+          {
+            "name": "include_completed_history",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Append approved tasks from days before the selected date. Intended for the parent's Done feed.",
+              "default": false,
+              "title": "Include Completed History"
+            },
+            "description": "Append approved tasks from days before the selected date. Intended for the parent's Done feed."
           }
         ],
         "responses": {
@@ -2455,7 +2467,7 @@
           "tasks"
         ],
         "summary": "Update Task",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent edit a task that has not been approved yet.\n\n**Frontend note:** Only send fields that changed. Approved tasks can no longer be edited because the reward was already granted.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent edit a task that has not been approved yet.\n\n**Frontend note:** Only send fields that changed. Editing a generated recurring occurrence updates its series and the opened occurrence, so the change remains on later days. Approved occurrences cannot be edited because their reward was already granted.",
         "operationId": "update_task_v1_tasks__task_id__patch",
         "security": [
           {
@@ -2585,7 +2597,7 @@
           "tasks"
         ],
         "summary": "Delete Task",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent remove a task that is no longer relevant.\n\n**Frontend note:** Approved tasks cannot be deleted because the reward was already granted.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent remove a task that is no longer relevant.\n\n**Frontend note:** Deleting a generated recurring occurrence also stops its series, so it does not return tomorrow. Approved tasks cannot be deleted because the reward was already granted.",
         "operationId": "delete_task_v1_tasks__task_id__delete",
         "security": [
           {
@@ -4502,7 +4514,7 @@
           "apps"
         ],
         "summary": "Get Child App Usage",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns one-day entertainment app usage for a child, grouped by controlled app, so the app can show used minutes, remaining minutes, and today's rule state.\n\n**Frontend note:** Use this for parent or child screens that need a clean daily usage read endpoint. It returns usage plus derived remaining minutes, but it still does not block apps at the OS level.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns one-day entertainment app usage for a child, grouped by controlled app, so the app can show used minutes, remaining minutes, and today's rule state.\n\n**Frontend note:** Use screen_time as the canonical overall budget: null global_limit_minutes means off; zero means no free time. The budget_scope is safini_managed_apps, not every installed app. next_reset_at is the UTC instant after the requested family-local day. usage_available false means usage is private to the child device; never show false zeroes. configuration_available is independent of usage reporting; enforcement_available null means unknown and the device enforcement/status endpoint remains authoritative. Per-app rules apply independently and device enforcement uses the smaller remaining allowance.",
         "operationId": "get_child_app_usage_v1_children__child_id__app_usage_get",
         "security": [
           {
@@ -4552,6 +4564,14 @@
                 "example": {
                   "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
                   "usage_date": "2026-03-27",
+                  "screen_time": {
+                    "global_limit_minutes": 90,
+                    "global_used_minutes": 48,
+                    "global_remaining_minutes": 42,
+                    "budget_scope": "safini_managed_apps",
+                    "next_reset_at": "2026-03-27T18:00:00Z",
+                    "configuration_available": true
+                  },
                   "apps": [
                     {
                       "app_slug": "youtube-kids",
@@ -5602,6 +5622,1077 @@
         }
       }
     },
+    "/v1/children/{child_id}/prizes": {
+      "get": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "List Child Prizes",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Real-world rewards a parent priced in Time Coins for this child, plus the child's open and recently decided asks.\n\n**Frontend note:** The child's Store and the parent's prize list both read this. A prize with `pending_request_id` is waiting for a parent; its price is already held. `requests` covers open asks and anything decided in the last 14 days, newest first.",
+        "operationId": "list_child_prizes_v1_children__child_id__prizes_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prize list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Child Prizes V1 Children  Child Id  Prizes Get"
+                },
+                "example": {
+                  "balance": 950,
+                  "prizes": [
+                    {
+                      "id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "title": "Lego set",
+                      "emoji": "🧱",
+                      "note": "Pick it together at the shop",
+                      "coin_cost": 800,
+                      "template_key": "lego-set",
+                      "created_at": "2026-09-23T12:00:00Z",
+                      "updated_at": "2026-09-23T12:00:00Z"
+                    }
+                  ],
+                  "requests": [
+                    {
+                      "id": "7a0c7a2e-0b8e-4a55-8f0e-6a1b2c3d4e5f",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "kind": "buy",
+                      "prize_id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                      "title": "Lego set",
+                      "emoji": "🧱",
+                      "coin_cost": 800,
+                      "held_coins": 800,
+                      "status": "pending",
+                      "requested_by_user_id": "a0b1c2d3-e4f5-4a6b-8c7d-9e0f1a2b3c4d",
+                      "created_at": "2026-09-23T15:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "Add Prize",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent adds a real-world reward to one child's store.\n\n**Frontend note:** Parents only. The child gets a push a few seconds later; prizes added in a burst arrive as one push. A store holds up to 50 prizes.",
+        "operationId": "create_prize_v1_children__child_id__prizes_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrizeCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prize added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Create Prize V1 Children  Child Id  Prizes Post"
+                },
+                "example": {
+                  "id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "title": "Lego set",
+                  "emoji": "🧱",
+                  "note": "Pick it together at the shop",
+                  "coin_cost": 800,
+                  "template_key": "lego-set",
+                  "created_at": "2026-09-23T12:00:00Z",
+                  "updated_at": "2026-09-23T12:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/prizes/{prize_id}": {
+      "patch": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "Edit Prize",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent renames or reprices a prize.\n\n**Frontend note:** Send only what changed; `null` clears `emoji` or `note`. An open ask keeps the price it was made at.",
+        "operationId": "update_prize_v1_prizes__prize_id__patch",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Prize Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrizeUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prize updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Update Prize V1 Prizes  Prize Id  Patch"
+                },
+                "example": {
+                  "id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "title": "Lego set",
+                  "emoji": "🧱",
+                  "note": "Pick it together at the shop",
+                  "coin_cost": 800,
+                  "template_key": "lego-set",
+                  "created_at": "2026-09-23T12:00:00Z",
+                  "updated_at": "2026-09-23T12:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "Remove Prize",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent takes a prize out of the store.\n\n**Frontend note:** An open ask for it is declined and its coins go back to the child.",
+        "operationId": "delete_prize_v1_prizes__prize_id__delete",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Prize Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prize removed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Delete Prize V1 Prizes  Prize Id  Delete"
+                },
+                "example": {
+                  "deleted": true
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/prizes/{prize_id}/requests": {
+      "post": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "Ask For Prize",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The child asks for a prize. Its price is held from the wallet until a parent decides.\n\n**Frontend note:** Asking again while an ask is open returns that ask, it never holds twice. Send one `client_request_id` per attempt (or an `Idempotency-Key` header). 409 when the child has too few coins or the price changed.",
+        "operationId": "request_prize_v1_prizes__prize_id__requests_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Prize Id"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrizeAskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ask sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Request Prize V1 Prizes  Prize Id  Requests Post"
+                },
+                "example": {
+                  "balance_after": 150,
+                  "request": {
+                    "id": "7a0c7a2e-0b8e-4a55-8f0e-6a1b2c3d4e5f",
+                    "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "kind": "buy",
+                    "prize_id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                    "title": "Lego set",
+                    "emoji": "🧱",
+                    "coin_cost": 800,
+                    "held_coins": 800,
+                    "status": "pending",
+                    "requested_by_user_id": "a0b1c2d3-e4f5-4a6b-8c7d-9e0f1a2b3c4d",
+                    "created_at": "2026-09-23T15:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/wishes": {
+      "post": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "Wish For Something",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The child asks for something that is not in the store yet, with a price they suggest.\n\n**Frontend note:** Nothing is held. If a parent approves, it becomes a prize at the price they pick and the child can ask for it as usual. Up to 3 open wishes per child (409 after that).",
+        "operationId": "wish_v1_children__child_id__wishes_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WishRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wish sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Wish V1 Children  Child Id  Wishes Post"
+                },
+                "example": {
+                  "balance_after": 950,
+                  "request": {
+                    "id": "7a0c7a2e-0b8e-4a55-8f0e-6a1b2c3d4e5f",
+                    "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "kind": "wish",
+                    "title": "Football",
+                    "emoji": "⚽",
+                    "coin_cost": 300,
+                    "held_coins": 0,
+                    "status": "pending",
+                    "requested_by_user_id": "a0b1c2d3-e4f5-4a6b-8c7d-9e0f1a2b3c4d",
+                    "created_at": "2026-09-23T15:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/prize-requests": {
+      "get": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "List Open Prize Asks",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Every open ask and wish across the parent's children, for the review list on Today.\n\n**Frontend note:** Parents only. Oldest first, each with `child_nickname`.",
+        "operationId": "list_family_requests_v1_prize_requests_get",
+        "responses": {
+          "200": {
+            "description": "Open asks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response List Family Requests V1 Prize Requests Get"
+                },
+                "example": {
+                  "requests": [
+                    {
+                      "id": "7a0c7a2e-0b8e-4a55-8f0e-6a1b2c3d4e5f",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "kind": "buy",
+                      "prize_id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                      "title": "Lego set",
+                      "emoji": "🧱",
+                      "coin_cost": 800,
+                      "held_coins": 800,
+                      "status": "pending",
+                      "requested_by_user_id": "a0b1c2d3-e4f5-4a6b-8c7d-9e0f1a2b3c4d",
+                      "created_at": "2026-09-23T15:00:00Z",
+                      "child_nickname": "Ali"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/prize-requests/{request_id}/approve": {
+      "post": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "Approve Prize Ask",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent handed the prize over, or adds a wish to the store.\n\n**Frontend note:** For a `buy` ask the held coins stay spent. For a `wish` a new prize is created at `coin_cost` (default: the child's suggestion) and returned as `prize`. Approving twice is a no-op; approving a declined ask is a 409.",
+        "operationId": "approve_request_v1_prize_requests__request_id__approve_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ApproveRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ask approved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Approve Request V1 Prize Requests  Request Id  Approve Post"
+                },
+                "example": {
+                  "request": {
+                    "id": "7a0c7a2e-0b8e-4a55-8f0e-6a1b2c3d4e5f",
+                    "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "kind": "buy",
+                    "prize_id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                    "title": "Lego set",
+                    "emoji": "🧱",
+                    "coin_cost": 800,
+                    "held_coins": 800,
+                    "status": "approved",
+                    "requested_by_user_id": "a0b1c2d3-e4f5-4a6b-8c7d-9e0f1a2b3c4d",
+                    "created_at": "2026-09-23T15:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/prize-requests/{request_id}/decline": {
+      "post": {
+        "tags": [
+          "prizes"
+        ],
+        "summary": "Decline Prize Ask",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Not this time. Held coins go back to the child's wallet.\n\n**Frontend note:** Declining twice is a no-op; declining an approved ask is a 409.",
+        "operationId": "decline_request_v1_prize_requests__request_id__decline_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ask declined.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Decline Request V1 Prize Requests  Request Id  Decline Post"
+                },
+                "example": {
+                  "request": {
+                    "id": "7a0c7a2e-0b8e-4a55-8f0e-6a1b2c3d4e5f",
+                    "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                    "kind": "buy",
+                    "prize_id": "0d1e7b52-5f1f-4d52-9d0b-1f0f7a1c2b3d",
+                    "title": "Lego set",
+                    "emoji": "🧱",
+                    "coin_cost": 800,
+                    "held_coins": 800,
+                    "status": "declined",
+                    "requested_by_user_id": "a0b1c2d3-e4f5-4a6b-8c7d-9e0f1a2b3c4d",
+                    "created_at": "2026-09-23T15:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/families/current/ai/task-suggestions": {
       "post": {
         "tags": [
@@ -6389,6 +7480,30 @@
           "used_minutes": 48
         }
       },
+      "ApproveRequest": {
+        "properties": {
+          "coin_cost": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100000.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coin Cost",
+            "description": "Wishes only: the price the new prize goes in at. Defaults to the child's suggestion."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ApproveRequest",
+        "example": {
+          "coin_cost": 400
+        }
+      },
       "AvatarItemRedemptionRequest": {
         "properties": {
           "item_key": {
@@ -6880,6 +7995,172 @@
           "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
           "focus_area": "fitness",
           "prompt": "Suggest 3 quick after-school tasks for a 10-year-old."
+        }
+      },
+      "PrizeAskRequest": {
+        "properties": {
+          "client_request_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Request Id",
+            "description": "Idempotency key generated once per ask. A retry returns the original ask."
+          },
+          "expected_coin_cost": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100000.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Coin Cost",
+            "description": "The price the child saw. A different current price is a 409 instead of a surprise."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PrizeAskRequest",
+        "example": {
+          "client_request_id": "6b1f0f9e-9a6f-4a1b-8a3a-2f7f6b4d9c11",
+          "expected_coin_cost": 800
+        }
+      },
+      "PrizeCreateRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "emoji": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emoji"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "Shown to the child when they open the prize, e.g. 'weekends only'."
+          },
+          "coin_cost": {
+            "type": "integer",
+            "maximum": 100000.0,
+            "minimum": 1.0,
+            "title": "Coin Cost"
+          },
+          "template_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Key",
+            "description": "The app's template this prize started from, for analytics only."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "coin_cost"
+        ],
+        "title": "PrizeCreateRequest",
+        "example": {
+          "coin_cost": 800,
+          "emoji": "🧱",
+          "note": "Pick it together at the shop",
+          "template_key": "lego-set",
+          "title": "Lego set"
+        }
+      },
+      "PrizeUpdateRequest": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 60,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "emoji": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emoji"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "coin_cost": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100000.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coin Cost"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PrizeUpdateRequest",
+        "example": {
+          "coin_cost": 900
         }
       },
       "ProfileResponse": {
@@ -7983,6 +9264,60 @@
           "email": "user@example.com",
           "utm_source": "instagram"
         }
+      },
+      "WishRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "emoji": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emoji"
+          },
+          "coin_cost": {
+            "type": "integer",
+            "maximum": 100000.0,
+            "minimum": 1.0,
+            "title": "Coin Cost",
+            "description": "The price the child suggests."
+          },
+          "client_request_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Request Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "coin_cost"
+        ],
+        "title": "WishRequest",
+        "example": {
+          "client_request_id": "0e3f5d7c-1b2a-4c9d-8e7f-6a5b4c3d2e1f",
+          "coin_cost": 300,
+          "emoji": "⚽",
+          "title": "Football"
+        }
       }
     },
     "securitySchemes": {
@@ -8009,7 +9344,7 @@
     },
     {
       "name": "families",
-      "description": "Parent setup flows: create the family, join it as a second parent, and add child profiles."
+      "description": "Parent setup flows: create the family, join it as an additional parent, and add child profiles."
     },
     {
       "name": "children",
@@ -8026,6 +9361,10 @@
     {
       "name": "store",
       "description": "Rewards shop, wallet history, app-time redemption, and avatar item purchases."
+    },
+    {
+      "name": "prizes",
+      "description": "Real-world rewards a parent prices in Time Coins, the child's asks and wishes, and the parent's answer."
     },
     {
       "name": "ai",
