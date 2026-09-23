@@ -17,7 +17,12 @@ enum PushType {
   taskApproved('task_approved'),
   taskRejected('task_rejected'),
   tasksAssigned('tasks_assigned'),
-  streakReminder('streak_reminder');
+  streakReminder('streak_reminder'),
+  prizeRequested('prize_requested'),
+  wishRequested('wish_requested'),
+  prizeAdded('prize_added'),
+  prizeGiven('prize_given'),
+  prizeDeclined('prize_declined');
 
   const PushType(this.wire);
 
@@ -38,7 +43,8 @@ enum PushDestination {
   parentLimits,
   parentFamily,
   childToday,
-  childTasks;
+  childTasks,
+  childStore;
 
   bool get isParent => index <= parentFamily.index;
 }
@@ -110,7 +116,9 @@ class PushEvent {
       childId: childId,
       taskId: taskId,
     ),
-    PushType.weeklyDigest => PushTarget(
+    PushType.weeklyDigest ||
+    PushType.prizeRequested ||
+    PushType.wishRequested => PushTarget(
       PushDestination.parentToday,
       childId: childId,
     ),
@@ -124,5 +132,8 @@ class PushEvent {
       PushDestination.childTasks,
       taskId: taskId,
     ),
+    PushType.prizeAdded ||
+    PushType.prizeGiven ||
+    PushType.prizeDeclined => const PushTarget(PushDestination.childStore),
   };
 }

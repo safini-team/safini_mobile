@@ -20,6 +20,7 @@ class StoreCardData {
     this.badge,
     this.owned = false,
     this.pending = false,
+    this.waiting = false,
     this.packageName,
     this.iconUrl,
   }) : fullName = fullName ?? name;
@@ -50,6 +51,10 @@ class StoreCardData {
 
   /// A purchase for this card is in flight: not tappable, and it says so.
   final bool pending;
+
+  /// Asked for and waiting on a parent, with its price held (SAF-190). The
+  /// [badge] says so in the "waiting on a parent" colours.
+  final bool waiting;
 }
 
 class ChildStoreData {
@@ -60,6 +65,9 @@ class ChildStoreData {
     required this.cards,
     required this.subtitle,
     required this.footnote,
+    this.emptyText,
+    this.actionLabel,
+    this.onAction,
   });
 
   final int coins;
@@ -68,6 +76,13 @@ class ChildStoreData {
   final List<StoreCardData> cards;
   final String subtitle;
   final String footnote;
+
+  /// Shown instead of the grid when this tab has no cards.
+  final String? emptyText;
+
+  /// A button under the grid, e.g. "Wish for something" on Prizes.
+  final String? actionLabel;
+  final VoidCallback? onAction;
 }
 
 /// Kid · Store: a two-column grid of reward tiles, each with its name and its
@@ -119,6 +134,17 @@ class ChildStoreView extends StatelessWidget {
               ),
             ),
           ),
+        if (data.cards.isEmpty && data.emptyText != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(28, 32, 28, 0),
+              child: Text(
+                data.emptyText!,
+                textAlign: TextAlign.center,
+                style: AppText.meta,
+              ),
+            ),
+          ),
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.gutter,
@@ -144,6 +170,22 @@ class ChildStoreView extends StatelessWidget {
             ),
           ),
         ),
+        if (data.actionLabel != null && data.onAction != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.gutter,
+                18,
+                AppSpacing.gutter,
+                0,
+              ),
+              child: DsPrimaryButton.secondary(
+                label: data.actionLabel!,
+                icon: const Text('✨', style: TextStyle(fontSize: 17)),
+                onTap: data.onAction!,
+              ),
+            ),
+          ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 18, 24, 0),
@@ -232,6 +274,12 @@ class _StoreTile extends StatelessWidget {
                 padding: EdgeInsets.all(4),
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
+            )
+          else if (card.waiting)
+            DsPill.pending(
+              label: card.badge ?? '',
+              height: 26,
+              fontSize: 13.5,
             )
           else if (card.owned)
             DsPill.paid(

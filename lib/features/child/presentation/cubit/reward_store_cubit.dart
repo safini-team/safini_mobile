@@ -12,15 +12,22 @@ import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
 import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
+import 'package:safini/features/prizes/prize.dart';
 
 class RewardStoreCubit extends Cubit<RewardStoreState> {
   final CoinsCubit _coins;
   final Dio _dio;
   final ProfileController _profileController;
+  final PrizeApi _prizes;
   String? _childId;
 
-  RewardStoreCubit(this._coins, this._dio, this._profileController)
-    : super(const RewardStoreState.initial()) {
+  RewardStoreCubit(
+    this._coins,
+    this._dio,
+    this._profileController, {
+    PrizeApi? prizes,
+  }) : _prizes = prizes ?? PrizeApi(_dio),
+       super(const RewardStoreState.initial()) {
     loadStore();
   }
 
@@ -39,6 +46,12 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
       return;
     }
 
+    // Prizes load beside the store. An API without them (or a failed call)
+    // leaves the Prizes tab empty rather than failing the whole store.
+    final prizes = _prizes
+        .list(childId)
+        .then<PrizeList?>((list) => list)
+        .catchError((Object _) => null);
     try {
       final response = await _dio.get(ApiConst.childStore(childId));
       final data = _asMap(response.data);
@@ -46,10 +59,13 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
       if (balance != null) {
         _coins.set(balance);
       }
+      final prizeList = await prizes;
       emit(
         state.copyWith(
           appTimeItems: _parseAppTimeItems(data['app_time_offers']),
           avatarItems: _parseAvatarItems(data['avatar_items']),
+          prizes: prizeList?.prizes,
+          openWishes: prizeList?.openWishes,
           isLoading: false,
           hasLoadError: false,
         ),
@@ -165,6 +181,89 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
   }
 
   void selectTab(StoreTab tab) => emit(state.copyWith(selectedTab: tab));
+
+  /// Just the prizes, e.g. when a push says a parent changed them.
+  Future<void> reloadPrizes() async {
+    final childId = await _resolveChildId();
+    if (childId == null) return;
+    try {
+      final list = await _prizes.list(childId);
+      if (list.balance != null) _coins.set(list.balance!);
+      if (!isClosed) {
+        emit(state.copyWith(prizes: list.prizes, openWishes: list.openWishes));
+      }
+    } catch (_) {}
+  }
+
+  /// Ask a parent for a prize. Its price is held until they answer.
+  Future<void> askForPrize(String id, {required String notice}) async {
+    final prize = state.prizes.firstWhere((p) => p.id == id);
+    if (prize.isWaiting) return;
+    if (_coins.state < prize.coinCost) {
+      emit(state.copyWith(missingCoins: prize.coinCost - _coins.state));
+      return;
+    }
+    if (!_beginPurchase(id)) return;
+    try {
+      final result = await _prizes.ask(prize);
+      _applyBalanceAfter({
+        'balance_after': result.balanceAfter,
+      }, fallbackCost: prize.coinCost);
+      final updated = [
+        for (final p in state.prizes)
+          p.id == id
+              ? Prize(
+                  id: p.id,
+                  childId: p.childId,
+                  title: p.title,
+                  emoji: p.emoji,
+                  note: p.note,
+                  coinCost: p.coinCost,
+                  templateKey: p.templateKey,
+                  pendingRequestId: result.request.id,
+                )
+              : p,
+      ];
+      emit(state.copyWith(prizes: updated, notice: notice));
+    } catch (e) {
+      emit(state.copyWith(purchaseError: _purchaseErrorMessage(e)));
+      await reloadPrizes();
+    } finally {
+      _endPurchase(id);
+    }
+  }
+
+  /// Wish for something that is not in the store. Returns false on failure,
+  /// so the sheet can stay open with what the child typed.
+  Future<bool> sendWish({
+    required String title,
+    required int coinCost,
+    String? emoji,
+    required String notice,
+  }) async {
+    final childId = await _resolveChildId();
+    if (childId == null) return false;
+    try {
+      final result = await _prizes.wish(
+        childId,
+        title: title,
+        coinCost: coinCost,
+        emoji: emoji,
+      );
+      emit(
+        state.copyWith(
+          openWishes: [result.request, ...state.openWishes],
+          notice: notice,
+        ),
+      );
+      return true;
+    } catch (e) {
+      emit(state.copyWith(purchaseError: _purchaseErrorMessage(e)));
+      return false;
+    }
+  }
+
+  void clearNotice() => emit(state.copyWith(clearNotice: true));
 
   /// Marks an item busy. Returns false when a purchase for it is already in
   /// flight, which is the whole guard: the sheet can be reopened and confirmed

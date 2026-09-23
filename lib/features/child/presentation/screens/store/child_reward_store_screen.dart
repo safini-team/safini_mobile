@@ -11,6 +11,9 @@ import 'package:safini/features/child/presentation/cubit/reward_store_model.dart
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/widgets/dialogs/reward_sheet.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_event.dart';
+import 'package:safini/features/prizes/widgets/wish_sheet.dart';
 
 class ChildRewardStoreScreen extends StatelessWidget {
   const ChildRewardStoreScreen({super.key});
@@ -22,7 +25,8 @@ class ChildRewardStoreScreen extends StatelessWidget {
           (curr.missingCoins != null &&
               curr.missingCoins != prev.missingCoins) ||
           (curr.purchaseError != null &&
-              curr.purchaseError != prev.purchaseError),
+              curr.purchaseError != prev.purchaseError) ||
+          (curr.notice != null && curr.notice != prev.notice),
       listener: (ctx, state) {
         if (state.missingCoins case final missing?) {
           AppSnackBar.error(ctx, S.of(ctx).moreCoinsNeeded(missing));
@@ -32,8 +36,21 @@ class ChildRewardStoreScreen extends StatelessWidget {
           AppSnackBar.error(ctx, error);
           ctx.read<RewardStoreCubit>().clearPurchaseError();
         }
+        if (state.notice case final notice?) {
+          AppSnackBar.success(ctx, notice);
+          ctx.read<RewardStoreCubit>().clearNotice();
+        }
       },
-      child: const _ChildStoreScreen(),
+      // A parent added, handed over or declined a prize.
+      child: OnPush(
+        types: const {
+          PushType.prizeAdded,
+          PushType.prizeGiven,
+          PushType.prizeDeclined,
+        },
+        onPush: (_) => context.read<RewardStoreCubit>().reloadPrizes(),
+        child: const _ChildStoreScreen(),
+      ),
     );
   }
 }
@@ -56,12 +73,43 @@ class _ChildStoreScreen extends StatelessWidget {
         if (state.hasLoadError) {
           return ChildStoreError(onRetry: cubit.loadStore);
         }
-        if (state.appTimeItems.isEmpty && state.avatarItems.isEmpty) {
+        if (state.appTimeItems.isEmpty &&
+            state.avatarItems.isEmpty &&
+            state.prizes.isEmpty) {
           return ChildStoreEmpty(onRetry: cubit.loadStore);
         }
 
-        final onAppTime = state.selectedTab == StoreTab.appTime;
-        final cards = onAppTime
+        final tab = state.selectedTab;
+        final onAppTime = tab == StoreTab.appTime;
+        final onPrizes = tab == StoreTab.prizes;
+        final cards = onPrizes
+            ? [
+                for (final prize in state.prizes)
+                  StoreCardData(
+                    id: prize.id,
+                    emoji: prize.displayEmoji,
+                    name: prize.title,
+                    cost: prize.coinCost,
+                    affordable: prize.isWaiting || coins >= prize.coinCost,
+                    waiting: prize.isWaiting,
+                    badge: prize.isWaiting ? s.prizeWaiting : null,
+                    pending: state.pendingPurchases.contains(prize.id),
+                  ),
+                // A wish is not in the store yet, so it has no price to pay;
+                // it shows the price the child suggested, waiting.
+                for (final wish in state.openWishes)
+                  StoreCardData(
+                    id: 'wish:${wish.id}',
+                    emoji: wish.displayEmoji,
+                    name: wish.title,
+                    detail: s.wishLabel,
+                    cost: wish.coinCost,
+                    affordable: true,
+                    waiting: true,
+                    badge: s.prizeWaiting,
+                  ),
+              ]
+            : onAppTime
             ? [
                 for (final item in state.appTimeItems)
                   StoreCardData(
@@ -104,15 +152,27 @@ class _ChildStoreScreen extends StatelessWidget {
         return ChildStoreView(
           data: ChildStoreData(
             coins: coins,
-            tabs: [s.storeAppTimeTab, s.storeAvatarTab],
-            selectedTab: onAppTime ? 0 : 1,
+            tabs: [s.storeAppTimeTab, s.prizesTab, s.storeAvatarTab],
+            selectedTab: StoreTab.values.indexOf(tab),
             cards: cards,
             subtitle: s.storeSubtitle,
-            footnote: s.askForSomethingNew,
+            footnote: onPrizes ? s.prizesFootnote : s.askForSomethingNew,
+            emptyText: onPrizes ? s.noPrizesYet : null,
+            actionLabel: onPrizes ? s.wishForSomething : null,
+            onAction: onPrizes
+                ? () => showWishSheet(
+                    context,
+                    onSend: ({required title, required coinCost, emoji}) =>
+                        cubit.sendWish(
+                          title: title,
+                          coinCost: coinCost,
+                          emoji: emoji,
+                          notice: s.wishSent,
+                        ),
+                  )
+                : null,
           ),
-          onSelectTab: (index) => cubit.selectTab(
-            index == 0 ? StoreTab.appTime : StoreTab.avatarItems,
-          ),
+          onSelectTab: (index) => cubit.selectTab(StoreTab.values[index]),
           onOpenCard: (card) => _open(context, state, card, coins, s),
           onRefresh: () => cubit.loadStore(),
         );
@@ -130,6 +190,28 @@ class _ChildStoreScreen extends StatelessWidget {
     final cubit = context.read<RewardStoreCubit>();
     if (state.pendingPurchases.contains(card.id)) return;
     final onAppTime = state.selectedTab == StoreTab.appTime;
+
+    if (state.selectedTab == StoreTab.prizes) {
+      if (card.waiting) {
+        AppSnackBar.info(context, s.prizeWaitingBody);
+        return;
+      }
+      final prize = state.prizes.firstWhere((p) => p.id == card.id);
+      final note = prize.note?.trim() ?? '';
+      final confirmed = await showRewardSheet(
+        context,
+        emoji: card.emoji,
+        name: card.name,
+        cost: card.cost,
+        coins: coins,
+        blurb: note.isEmpty ? s.prizeBlurb : '$note\n\n${s.prizeBlurb}',
+        actionLabel: s.askForPrize,
+      );
+      if (confirmed == true) {
+        await cubit.askForPrize(card.id, notice: s.prizeAsked);
+      }
+      return;
+    }
 
     final blurb = onAppTime ? s.rewardBlurbAppTime : s.rewardBlurbAvatar;
 

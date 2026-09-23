@@ -18,6 +18,10 @@ class TodayKid {
   final Color color;
 }
 
+/// What a review is for: a task to pay for, a prize the child asked for
+/// (coins already held), or a wish to add to the store (SAF-190).
+enum TodayReviewKind { task, prize, wish }
+
 /// A submission waiting on the parent.
 class TodayReview {
   const TodayReview({
@@ -27,6 +31,7 @@ class TodayReview {
     required this.kidName,
     required this.color,
     required this.coins,
+    this.kind = TodayReviewKind.task,
   });
 
   final String id;
@@ -35,6 +40,7 @@ class TodayReview {
   final String kidName;
   final Color color;
   final int coins;
+  final TodayReviewKind kind;
 }
 
 /// One app row in "Where the time went": every app the child used today.
@@ -129,6 +135,7 @@ class ParentTodayView extends StatelessWidget {
     required this.onOpenReview,
     required this.onApproveReview,
     required this.onOpenLimits,
+    this.onDeclineReview,
     this.onRefresh,
   });
 
@@ -137,6 +144,9 @@ class ParentTodayView extends StatelessWidget {
   final VoidCallback onOpenSettings;
   final ValueChanged<TodayReview> onOpenReview;
   final ValueChanged<TodayReview> onApproveReview;
+
+  /// Prize asks and wishes only; a task is sent back from its review sheet.
+  final ValueChanged<TodayReview>? onDeclineReview;
   final VoidCallback onOpenLimits;
   final Future<void> Function()? onRefresh;
 
@@ -212,6 +222,9 @@ class ParentTodayView extends StatelessWidget {
                           review: review,
                           onOpen: () => onOpenReview(review),
                           onApprove: () => onApproveReview(review),
+                          onDecline: onDeclineReview == null
+                              ? null
+                              : () => onDeclineReview!(review),
                         ),
                     ],
                   ),
@@ -410,14 +423,18 @@ class _ReviewRow extends StatelessWidget {
     required this.review,
     required this.onOpen,
     required this.onApprove,
+    this.onDecline,
   });
 
   final TodayReview review;
   final VoidCallback onOpen;
   final VoidCallback onApprove;
+  final VoidCallback? onDecline;
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final isTask = review.kind == TodayReviewKind.task;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       child: Column(
@@ -446,7 +463,19 @@ class _ReviewRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                DsPill.tint(label: '+${review.coins}'),
+                // Earned coins are pine, spent coins are amber.
+                if (isTask)
+                  DsPill.tint(label: '+${review.coins}')
+                else
+                  DsPill.coins(
+                    label: review.kind == TodayReviewKind.prize
+                        ? '−${review.coins}'
+                        : '${review.coins}',
+                    leading: const DsCoinToken(size: 13),
+                    height: 22,
+                    fontSize: 13,
+                    horizontalPadding: 9,
+                  ),
               ],
             ),
           ),
@@ -457,15 +486,19 @@ class _ReviewRow extends StatelessWidget {
               children: [
                 Expanded(
                   child: DsInlineButton(
-                    label: S.of(context).approve,
+                    label: switch (review.kind) {
+                      TodayReviewKind.task => s.approve,
+                      TodayReviewKind.prize => s.markGiven,
+                      TodayReviewKind.wish => s.addToStore,
+                    },
                     onTap: onApprove,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: DsInlineButton.quiet(
-                    label: S.of(context).lookCloser,
-                    onTap: onOpen,
+                    label: isTask ? s.lookCloser : s.notThisTime,
+                    onTap: isTask ? onOpen : (onDecline ?? onOpen),
                   ),
                 ),
               ],

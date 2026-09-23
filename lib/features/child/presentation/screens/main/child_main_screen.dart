@@ -41,6 +41,7 @@ class ChildMainScreen extends StatelessWidget {
   static int? tabFor(PushDestination destination) => switch (destination) {
     PushDestination.childToday => 0,
     PushDestination.childTasks => 1,
+    PushDestination.childStore => 2,
     _ => null,
   };
 
@@ -153,7 +154,10 @@ class _ChildPushBridgeState extends State<_ChildPushBridge>
   late final PushShell _push = PushShell(
     tabFor: ChildMainScreen.tabFor,
     selectTab: (index) => context.read<ChildHomeCubit>().selectTab(index),
-    consumedHere: const {PushDestination.childToday},
+    consumedHere: const {
+      PushDestination.childToday,
+      PushDestination.childStore,
+    },
   );
 
   @override
