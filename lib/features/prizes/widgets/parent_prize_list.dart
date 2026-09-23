@@ -67,6 +67,7 @@ List<Widget> parentPrizeSlivers(
                     leading: DsEmojiTile(
                       emoji: prize.displayEmoji,
                       size: 36,
+                      fontSize: 20,
                       background: AppColors.coinPillBg,
                     ),
                     title: prize.title,
