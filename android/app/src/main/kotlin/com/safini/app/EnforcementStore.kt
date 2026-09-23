@@ -29,10 +29,10 @@ class EnforcementStore(context: Context) {
     var language: String
         get() = prefs.getString("language", null) ?: phoneLanguage()
         set(value) { prefs.edit().putString("language", value).apply() }
-    /** Until the app has said, follow the phone when it is set to a language Safini speaks. */
+    /** Until the app has said, follow the phone when it is Russian or English. */
     private fun phoneLanguage(): String {
         val locales = Resources.getSystem().configuration.locales
-        return (0 until locales.size()).map { locales[it].language }.firstOrNull { it in LANGUAGES } ?: "en"
+        return resolvePhoneLanguage((0 until locales.size()).map { locales[it].language })
     }
     /** True once the device-admin guard has been active for this pairing. Reset
      *  by clear() on a new pairing, so the heartbeat sends null until then. */
@@ -177,7 +177,8 @@ class EnforcementStore(context: Context) {
         covered = false
     }
 
-    private companion object {
-        val LANGUAGES = setOf("uz", "ru", "en")
-    }
 }
+
+/** Device default for the block screen until Flutter sends the app language. Uzbek is never inferred. */
+internal fun resolvePhoneLanguage(languageCodes: Iterable<String>): String =
+    languageCodes.firstOrNull { it == "ru" || it == "en" } ?: "ru"

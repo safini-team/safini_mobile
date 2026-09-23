@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -139,11 +138,6 @@ class _EnterInviteCodePageState extends State<EnterInviteCodePage> {
   Future<void> _onClaimed() async {
     final authCubit = context.read<AuthSessionCubit>();
     final router = context.router;
-
-    // PRD v4 §9.3: the child app defaults to Uzbek. Skipped if the user has
-    // already picked a language for themselves.
-    await context.read<LocaleCubit>().applyChildDefault();
-    if (!mounted) return;
 
     await authCubit.retryFetchProfile();
     if (!mounted) return;
