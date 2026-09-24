@@ -5616,9 +5616,9 @@ class S {
     );
   }
 
-  /// `Prizes`
+  /// `Gifts`
   String get prizesTab {
-    return Intl.message('Prizes', name: 'prizesTab', desc: '', args: []);
+    return Intl.message('Gifts', name: 'prizesTab', desc: '', args: []);
   }
 
   /// `Waiting`
@@ -5721,55 +5721,55 @@ class S {
     return Intl.message('Wish', name: 'wishLabel', desc: '', args: []);
   }
 
-  /// `Prize`
+  /// `Gift`
   String get prizeLabel {
-    return Intl.message('Prize', name: 'prizeLabel', desc: '', args: []);
+    return Intl.message('Gift', name: 'prizeLabel', desc: '', args: []);
   }
 
-  /// `No prizes yet. Wish for something and your parent can add it.`
+  /// `No gifts yet. Wish for something and your parent can add it.`
   String get noPrizesYet {
     return Intl.message(
-      'No prizes yet. Wish for something and your parent can add it.',
+      'No gifts yet. Wish for something and your parent can add it.',
       name: 'noPrizesYet',
       desc: '',
       args: [],
     );
   }
 
-  /// `Real prizes from your parent. Save up, ask, and they hand it over.`
+  /// `Real gifts from your parent. Save up, ask, and they hand it over.`
   String get prizesFootnote {
     return Intl.message(
-      'Real prizes from your parent. Save up, ask, and they hand it over.',
+      'Real gifts from your parent. Save up, ask, and they hand it over.',
       name: 'prizesFootnote',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add a prize`
+  /// `Add a gift`
   String get addAPrize {
-    return Intl.message('Add a prize', name: 'addAPrize', desc: '', args: []);
+    return Intl.message('Add a gift', name: 'addAPrize', desc: '', args: []);
   }
 
-  /// `Edit prize`
+  /// `Edit gift`
   String get editPrize {
-    return Intl.message('Edit prize', name: 'editPrize', desc: '', args: []);
+    return Intl.message('Edit gift', name: 'editPrize', desc: '', args: []);
   }
 
-  /// `Your own prize`
+  /// `Your own gift`
   String get yourOwnPrize {
     return Intl.message(
-      'Your own prize',
+      'Your own gift',
       name: 'yourOwnPrize',
       desc: '',
       args: [],
     );
   }
 
-  /// `Real rewards {name} can save coins for. You hand them over.`
+  /// `Real gifts {name} can save coins for. You hand them over.`
   String prizesBody(Object name) {
     return Intl.message(
-      'Real rewards $name can save coins for. You hand them over.',
+      'Real gifts $name can save coins for. You hand them over.',
       name: 'prizesBody',
       desc: '',
       args: [name],
@@ -5811,10 +5811,10 @@ class S {
     return Intl.message('Price', name: 'prizePriceLabel', desc: '', args: []);
   }
 
-  /// `When {name} asks for a prize, its coins are held. Mark it given when you hand it over, or decline and the coins go back.`
+  /// `When {name} asks for a gift, its coins are held. Mark it given when you hand it over, or decline and the coins go back.`
   String prizeHoldExplainer(Object name) {
     return Intl.message(
-      'When $name asks for a prize, its coins are held. Mark it given when you hand it over, or decline and the coins go back.',
+      'When $name asks for a gift, its coins are held. Mark it given when you hand it over, or decline and the coins go back.',
       name: 'prizeHoldExplainer',
       desc: '',
       args: [name],
@@ -5831,20 +5831,15 @@ class S {
     );
   }
 
-  /// `Remove prize`
+  /// `Remove gift`
   String get removePrize {
-    return Intl.message(
-      'Remove prize',
-      name: 'removePrize',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Remove gift', name: 'removePrize', desc: '', args: []);
   }
 
-  /// `{name}'s prizes`
+  /// `{name}'s gifts`
   String prizesFor(Object name) {
     return Intl.message(
-      '$name\'s prizes',
+      '$name\'s gifts',
       name: 'prizesFor',
       desc: '',
       args: [name],

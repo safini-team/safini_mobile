@@ -128,14 +128,14 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m46(name, prize) => "${name} просит: ${prize}";
 
   static String m47(name) =>
-      "Когда ${name} просит приз, монеты откладываются. Отметьте «Вручено», когда отдадите, или откажите - монеты вернутся.";
+      "Когда ${name} просит подарок, монеты откладываются. Отметьте «Вручено», когда отдадите, или откажите - монеты вернутся.";
 
-  static String m48(name) => "${name} просит этот приз";
+  static String m48(name) => "${name} просит этот подарок";
 
   static String m49(name) =>
-      "Настоящие награды, на которые ${name} может копить монеты. Вручаете вы.";
+      "Настоящие подарки, на которые ${name} может копить монеты. Вручаете вы.";
 
-  static String m50(name) => "Призы: ${name}";
+  static String m50(name) => "Подарки: ${name}";
 
   static String m51(cost, time) =>
       "Ребёнок может потратить ${cost} монет, чтобы открыть ${time} сверх дневного лимита.";
@@ -210,7 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "achievements": MessageLookupByLibrary.simpleMessage("Достижения"),
     "activeTasks": MessageLookupByLibrary.simpleMessage("Активные задания"),
     "addAChild": MessageLookupByLibrary.simpleMessage("Добавить ребёнка"),
-    "addAPrize": MessageLookupByLibrary.simpleMessage("Добавить приз"),
+    "addAPrize": MessageLookupByLibrary.simpleMessage("Добавить подарок"),
     "addAnApp": MessageLookupByLibrary.simpleMessage("Добавить приложение"),
     "addAnAppLimit": MessageLookupByLibrary.simpleMessage(
       "Добавить лимит приложения",
@@ -515,7 +515,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Изменить мой профиль",
     ),
     "editName": m20,
-    "editPrize": MessageLookupByLibrary.simpleMessage("Изменить приз"),
+    "editPrize": MessageLookupByLibrary.simpleMessage("Изменить подарок"),
     "editProfile": MessageLookupByLibrary.simpleMessage(
       "Редактировать профиль",
     ),
@@ -918,7 +918,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noLimitsSet": MessageLookupByLibrary.simpleMessage("Лимиты не заданы"),
     "noOverallDailyBudget": MessageLookupByLibrary.simpleMessage("Выключен"),
     "noPrizesYet": MessageLookupByLibrary.simpleMessage(
-      "Призов пока нет. Загадай желание - родитель может его добавить.",
+      "Подарков пока нет. Загадай желание - родитель может его добавить.",
     ),
     "noQuestsInCategory": MessageLookupByLibrary.simpleMessage(
       "Нет квестов в этой категории",
@@ -1042,7 +1042,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Готово! Родитель увидит просьбу.",
     ),
     "prizeBlurb": MessageLookupByLibrary.simpleMessage(
-      "Приз вручит родитель. До этого монеты отложены.",
+      "Подарок вручит родитель. До этого монеты отложены.",
     ),
     "prizeHoldExplainer": m47,
     "prizeIdeaBackpack": MessageLookupByLibrary.simpleMessage("Новый рюкзак"),
@@ -1058,7 +1058,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Новая видеоигра",
     ),
     "prizeIdeasTitle": MessageLookupByLibrary.simpleMessage("Идеи"),
-    "prizeLabel": MessageLookupByLibrary.simpleMessage("Приз"),
+    "prizeLabel": MessageLookupByLibrary.simpleMessage("Подарок"),
     "prizeNameHint": MessageLookupByLibrary.simpleMessage("Мороженое"),
     "prizeNameLabel": MessageLookupByLibrary.simpleMessage("Название"),
     "prizeNoteHint": MessageLookupByLibrary.simpleMessage("Только по выходным"),
@@ -1071,10 +1071,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "prizeWaitingForYou": m48,
     "prizesBody": m49,
     "prizesFootnote": MessageLookupByLibrary.simpleMessage(
-      "Настоящие призы от родителя. Копи, проси - и родитель вручит.",
+      "Настоящие подарки от родителя. Копи, проси - и родитель вручит.",
     ),
     "prizesFor": m50,
-    "prizesTab": MessageLookupByLibrary.simpleMessage("Призы"),
+    "prizesTab": MessageLookupByLibrary.simpleMessage("Подарки"),
     "profile": MessageLookupByLibrary.simpleMessage("Профиль"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Сохранено"),
     "questsDone": MessageLookupByLibrary.simpleMessage("Заданий выполнено"),
@@ -1134,7 +1134,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Удалить родителя?",
     ),
-    "removePrize": MessageLookupByLibrary.simpleMessage("Удалить приз"),
+    "removePrize": MessageLookupByLibrary.simpleMessage("Удалить подарок"),
     "removeVoice": MessageLookupByLibrary.simpleMessage("Удалить"),
     "repeatDaily": MessageLookupByLibrary.simpleMessage("Каждый день"),
     "repeatDailyShort": MessageLookupByLibrary.simpleMessage("Ежедневно"),
@@ -1503,7 +1503,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Твой аватар"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("ВАШИ ДЕТИ"),
     "yourName": MessageLookupByLibrary.simpleMessage("Ваше имя"),
-    "yourOwnPrize": MessageLookupByLibrary.simpleMessage("Свой приз"),
+    "yourOwnPrize": MessageLookupByLibrary.simpleMessage("Свой подарок"),
     "yoursLabel": MessageLookupByLibrary.simpleMessage("Твоё"),
   };
 }

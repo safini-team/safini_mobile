@@ -129,14 +129,14 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m46(name, prize) => "${name} asked for ${prize}";
 
   static String m47(name) =>
-      "When ${name} asks for a prize, its coins are held. Mark it given when you hand it over, or decline and the coins go back.";
+      "When ${name} asks for a gift, its coins are held. Mark it given when you hand it over, or decline and the coins go back.";
 
   static String m48(name) => "${name} asked for it";
 
   static String m49(name) =>
-      "Real rewards ${name} can save coins for. You hand them over.";
+      "Real gifts ${name} can save coins for. You hand them over.";
 
-  static String m50(name) => "${name}\'s prizes";
+  static String m50(name) => "${name}\'s gifts";
 
   static String m51(cost, time) =>
       "The child can spend ${cost} coins to unlock ${time} beyond the daily limit.";
@@ -210,7 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "achievements": MessageLookupByLibrary.simpleMessage("Achievements"),
     "activeTasks": MessageLookupByLibrary.simpleMessage("Active Tasks"),
     "addAChild": MessageLookupByLibrary.simpleMessage("Add a child"),
-    "addAPrize": MessageLookupByLibrary.simpleMessage("Add a prize"),
+    "addAPrize": MessageLookupByLibrary.simpleMessage("Add a gift"),
     "addAnApp": MessageLookupByLibrary.simpleMessage("Add an app"),
     "addAnAppLimit": MessageLookupByLibrary.simpleMessage("Add an app limit"),
     "addAnotherApp": MessageLookupByLibrary.simpleMessage("Add Another App"),
@@ -499,7 +499,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editChild": MessageLookupByLibrary.simpleMessage("Edit Child"),
     "editMyProfile": MessageLookupByLibrary.simpleMessage("Edit my profile"),
     "editName": m20,
-    "editPrize": MessageLookupByLibrary.simpleMessage("Edit prize"),
+    "editPrize": MessageLookupByLibrary.simpleMessage("Edit gift"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "editProfileSubtitle": MessageLookupByLibrary.simpleMessage(
       "Update your child\'s information below.",
@@ -900,7 +900,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noLimitsSet": MessageLookupByLibrary.simpleMessage("No limits set"),
     "noOverallDailyBudget": MessageLookupByLibrary.simpleMessage("Off"),
     "noPrizesYet": MessageLookupByLibrary.simpleMessage(
-      "No prizes yet. Wish for something and your parent can add it.",
+      "No gifts yet. Wish for something and your parent can add it.",
     ),
     "noQuestsInCategory": MessageLookupByLibrary.simpleMessage(
       "No quests in this category",
@@ -1034,7 +1034,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "A new video game",
     ),
     "prizeIdeasTitle": MessageLookupByLibrary.simpleMessage("Ideas"),
-    "prizeLabel": MessageLookupByLibrary.simpleMessage("Prize"),
+    "prizeLabel": MessageLookupByLibrary.simpleMessage("Gift"),
     "prizeNameHint": MessageLookupByLibrary.simpleMessage("Ice cream"),
     "prizeNameLabel": MessageLookupByLibrary.simpleMessage("Name"),
     "prizeNoteHint": MessageLookupByLibrary.simpleMessage("Weekends only"),
@@ -1047,10 +1047,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "prizeWaitingForYou": m48,
     "prizesBody": m49,
     "prizesFootnote": MessageLookupByLibrary.simpleMessage(
-      "Real prizes from your parent. Save up, ask, and they hand it over.",
+      "Real gifts from your parent. Save up, ask, and they hand it over.",
     ),
     "prizesFor": m50,
-    "prizesTab": MessageLookupByLibrary.simpleMessage("Prizes"),
+    "prizesTab": MessageLookupByLibrary.simpleMessage("Gifts"),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Saved"),
     "questsDone": MessageLookupByLibrary.simpleMessage("Quests Done"),
@@ -1112,7 +1112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "removeParentConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Remove Parent?",
     ),
-    "removePrize": MessageLookupByLibrary.simpleMessage("Remove prize"),
+    "removePrize": MessageLookupByLibrary.simpleMessage("Remove gift"),
     "removeVoice": MessageLookupByLibrary.simpleMessage("Remove"),
     "repeatDaily": MessageLookupByLibrary.simpleMessage("Every day"),
     "repeatDailyShort": MessageLookupByLibrary.simpleMessage("Daily"),
@@ -1469,7 +1469,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Your avatar"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("YOUR CHILDREN"),
     "yourName": MessageLookupByLibrary.simpleMessage("Your name"),
-    "yourOwnPrize": MessageLookupByLibrary.simpleMessage("Your own prize"),
+    "yourOwnPrize": MessageLookupByLibrary.simpleMessage("Your own gift"),
     "yoursLabel": MessageLookupByLibrary.simpleMessage("Yours"),
   };
 }
