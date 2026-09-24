@@ -11,11 +11,19 @@ import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
 
 /// One kid in the scope strip.
 class TodayKid {
-  const TodayKid({required this.id, required this.name, required this.color});
+  const TodayKid({
+    required this.id,
+    required this.name,
+    required this.color,
+    this.pendingReviewCount = 0,
+  });
 
   final String id;
   final String name;
   final Color color;
+
+  /// Items waiting on the parent for this child (tasks plus prize asks).
+  final int pendingReviewCount;
 }
 
 /// What a review is for: a task to pay for, a prize the child asked for
@@ -181,6 +189,7 @@ class ParentTodayView extends StatelessWidget {
                         key: kid.id,
                         label: kid.name,
                         color: kid.color,
+                        badge: kid.pendingReviewCount,
                       ),
                   ],
                   onSelect: (id) =>

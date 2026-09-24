@@ -12,6 +12,7 @@ class DsPickerOption {
     required this.label,
     required this.color,
     this.initial,
+    this.badge = 0,
   });
 
   final String key;
@@ -20,6 +21,50 @@ class DsPickerOption {
 
   /// Overrides the derived initial; the "Everyone" row uses a middot.
   final String? initial;
+
+  /// Pending-review count for this row. Hidden at 0; the trigger sums every
+  /// option except the selected one so the selected child's own queue is not
+  /// double-counted with "Needs your review".
+  final int badge;
+}
+
+/// Label for a red attention count: quiet at 0, capped at `9+`.
+String? attentionBadgeLabel(int count) {
+  if (count <= 0) return null;
+  return count > 9 ? '9+' : '$count';
+}
+
+/// The Tasks-tab badge, reused on the kid picker: `AppColors.danger` pill.
+class DsAttentionBadge extends StatelessWidget {
+  const DsAttentionBadge({super.key, required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = attentionBadgeLabel(count);
+    if (label == null) return const SizedBox.shrink();
+    return Container(
+      constraints: const BoxConstraints(minWidth: 17),
+      height: 17,
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.danger,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textOnPrimary,
+          height: 1,
+          fontFeatures: AppText.tabular,
+        ),
+      ),
+    );
+  }
 }
 
 /// The kid scope picker that replaced the chip strips on Parent Today, Tasks
@@ -71,6 +116,15 @@ class _DsKidPickerState extends State<DsKidPicker>
     orElse: () => widget.options.first,
   );
 
+  int get _otherBadge {
+    var total = 0;
+    for (final option in widget.options) {
+      if (option.key == widget.selectedKey) continue;
+      total += option.badge;
+    }
+    return total;
+  }
+
   void _open() {
     _controller.show();
     _anim.forward();
@@ -105,49 +159,65 @@ class _DsKidPickerState extends State<DsKidPicker>
         child: Pressable(
           onTap: () => _anim.isDismissed ? _open() : _close(),
           scale: 0.97,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(5, 5, 11, 5),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x0D0C231C),
-                  offset: Offset(0, 1),
-                  blurRadius: 2,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: const EdgeInsets.fromLTRB(5, 5, 11, 5),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x0D0C231C),
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                    ),
+                    BoxShadow(
+                      color: Color(0x520C231C),
+                      offset: Offset(0, 10),
+                      blurRadius: 22,
+                      spreadRadius: -16,
+                    ),
+                  ],
                 ),
-                BoxShadow(
-                  color: Color(0x520C231C),
-                  offset: Offset(0, 10),
-                  blurRadius: 22,
-                  spreadRadius: -16,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DsInitialAvatar(
+                      name: selected.label,
+                      label: selected.initial,
+                      color: selected.color,
+                      size: 24,
+                      fontSize: 11,
+                    ),
+                    const SizedBox(width: 7),
+                    Text(
+                      selected.label,
+                      style: AppText.chip.copyWith(letterSpacing: -0.145),
+                    ),
+                    const SizedBox(width: 7),
+                    AnimatedBuilder(
+                      animation: _t,
+                      builder: (context, child) => Transform.rotate(
+                        angle: 3.14159 * _t.value,
+                        child: child,
+                      ),
+                      child: const _Chevron(),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DsInitialAvatar(
-                  name: selected.label,
-                  label: selected.initial,
-                  color: selected.color,
-                  size: 24,
-                  fontSize: 11,
+              ),
+              if (attentionBadgeLabel(_otherBadge) != null)
+                Positioned(
+                  top: -5,
+                  right: -5,
+                  child: DsAttentionBadge(
+                    key: const ValueKey('kid-picker-chip-badge'),
+                    count: _otherBadge,
+                  ),
                 ),
-                const SizedBox(width: 7),
-                Text(
-                  selected.label,
-                  style: AppText.chip.copyWith(letterSpacing: -0.145),
-                ),
-                const SizedBox(width: 7),
-                AnimatedBuilder(
-                  animation: _t,
-                  builder: (context, child) =>
-                      Transform.rotate(angle: 3.14159 * _t.value, child: child),
-                  child: const _Chevron(),
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
@@ -337,7 +407,16 @@ class _Row extends StatelessWidget {
                 ),
               ),
             ),
-            if (selected) ...[const SizedBox(width: 10), const _Check()],
+            if (selected) ...[
+              const SizedBox(width: 10),
+              const _Check(),
+            ] else if (attentionBadgeLabel(option.badge) != null) ...[
+              const SizedBox(width: 10),
+              DsAttentionBadge(
+                key: ValueKey('kid-picker-row-badge-${option.key}'),
+                count: option.badge,
+              ),
+            ],
           ],
         ),
       ),
