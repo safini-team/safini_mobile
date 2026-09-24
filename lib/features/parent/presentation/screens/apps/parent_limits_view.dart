@@ -119,6 +119,9 @@ class ParentLimitsView extends StatelessWidget {
     this.onAddApp,
     this.onSetCap,
     this.onRefresh,
+    this.showingPrizes = false,
+    this.onShowPrizes,
+    this.prizeSlivers = const [],
   });
 
   final ParentLimitsData data;
@@ -130,6 +133,12 @@ class ParentLimitsView extends StatelessWidget {
   /// where the panel renders read-only.
   final Future<String?> Function(int?)? onSetCap;
   final Future<void> Function()? onRefresh;
+
+  /// Apps | Prizes (SAF-190): Limits already decides what coins buy, so the
+  /// child's prizes sit behind a switch here. Absent in the design preview.
+  final bool showingPrizes;
+  final ValueChanged<bool>? onShowPrizes;
+  final List<Widget> prizeSlivers;
 
   @override
   Widget build(BuildContext context) {
@@ -184,50 +193,70 @@ class ParentLimitsView extends StatelessWidget {
             ),
           ),
         ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.gutter,
-              18,
-              AppSpacing.gutter,
-              0,
-            ),
-            child: OverallBudgetCard(
-              limitMinutes: data.capMinutes,
-              usedMinutes: data.usedMinutes,
-              remainingMinutes: data.remainingMinutes,
-              usageAvailable: data.usageAvailable,
-              configurationAvailable: data.configurationAvailable,
-              nextResetAt: data.nextResetAt,
-              onSave: onSetCap,
+        if (onShowPrizes != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.gutter,
+                16,
+                AppSpacing.gutter,
+                0,
+              ),
+              child: DsSegmentedControl(
+                labels: [s.apps, s.prizesTab],
+                selectedIndex: showingPrizes ? 1 : 0,
+                onChanged: (index) => onShowPrizes!(index == 1),
+              ),
             ),
           ),
-        ),
+        if (showingPrizes)
+          ...prizeSlivers
+        else ...[
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.gutter,
+                18,
+                AppSpacing.gutter,
+                0,
+              ),
+              child: OverallBudgetCard(
+                limitMinutes: data.capMinutes,
+                usedMinutes: data.usedMinutes,
+                remainingMinutes: data.remainingMinutes,
+                usageAvailable: data.usageAvailable,
+                configurationAvailable: data.configurationAvailable,
+                nextResetAt: data.nextResetAt,
+                onSave: onSetCap,
+              ),
+            ),
+          ),
 
-        SliverToBoxAdapter(child: DsOverline(s.apps, top: 28)),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                DsGroup(
-                  children: [
-                    for (final app in data.apps)
-                      _AppRow(
-                        usageAvailable: data.usageAvailable,
-                        app: app,
-                        onTap: () => onOpenApp(app),
-                      ),
-                    if (onAddApp != null) _AddAppRow(onTap: onAddApp!),
-                  ],
-                ),
-                DsFootnote(s.limitsFootnote),
-                DsFootnote(s.limitsNotYetEnforced),
-              ],
+          SliverToBoxAdapter(child: DsOverline(s.apps, top: 28)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  DsGroup(
+                    children: [
+                      for (final app in data.apps)
+                        _AppRow(
+                          usageAvailable: data.usageAvailable,
+                          app: app,
+                          onTap: () => onOpenApp(app),
+                        ),
+                      if (onAddApp != null) _AddAppRow(onTap: onAddApp!),
+                    ],
+                  ),
+                  DsFootnote(s.limitsFootnote),
+                  DsFootnote(s.limitsNotYetEnforced),
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }

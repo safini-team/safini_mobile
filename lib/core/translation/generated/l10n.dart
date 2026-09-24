@@ -5615,6 +5615,396 @@ class S {
       args: [time],
     );
   }
+
+  /// `Gifts`
+  String get prizesTab {
+    return Intl.message('Gifts', name: 'prizesTab', desc: '', args: []);
+  }
+
+  /// `Waiting`
+  String get prizeWaiting {
+    return Intl.message('Waiting', name: 'prizeWaiting', desc: '', args: []);
+  }
+
+  /// `Your parent will see it. Your coins wait on hold until they answer.`
+  String get prizeWaitingBody {
+    return Intl.message(
+      'Your parent will see it. Your coins wait on hold until they answer.',
+      name: 'prizeWaitingBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your parent hands it over. Until then your coins wait on hold.`
+  String get prizeBlurb {
+    return Intl.message(
+      'Your parent hands it over. Until then your coins wait on hold.',
+      name: 'prizeBlurb',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ask for it`
+  String get askForPrize {
+    return Intl.message('Ask for it', name: 'askForPrize', desc: '', args: []);
+  }
+
+  /// `Asked! Your parent will see it.`
+  String get prizeAsked {
+    return Intl.message(
+      'Asked! Your parent will see it.',
+      name: 'prizeAsked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wish for something`
+  String get wishForSomething {
+    return Intl.message(
+      'Wish for something',
+      name: 'wishForSomething',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What do you wish for?`
+  String get wishSheetTitle {
+    return Intl.message(
+      'What do you wish for?',
+      name: 'wishSheetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Say what it is worth. Your parent can add it to your store.`
+  String get wishSheetBody {
+    return Intl.message(
+      'Say what it is worth. Your parent can add it to your store.',
+      name: 'wishSheetBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A football`
+  String get wishNameHint {
+    return Intl.message('A football', name: 'wishNameHint', desc: '', args: []);
+  }
+
+  /// `Worth`
+  String get wishPriceLabel {
+    return Intl.message('Worth', name: 'wishPriceLabel', desc: '', args: []);
+  }
+
+  /// `Send wish`
+  String get sendWish {
+    return Intl.message('Send wish', name: 'sendWish', desc: '', args: []);
+  }
+
+  /// `Wish sent. Your parent will see it.`
+  String get wishSent {
+    return Intl.message(
+      'Wish sent. Your parent will see it.',
+      name: 'wishSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wish`
+  String get wishLabel {
+    return Intl.message('Wish', name: 'wishLabel', desc: '', args: []);
+  }
+
+  /// `Gift`
+  String get prizeLabel {
+    return Intl.message('Gift', name: 'prizeLabel', desc: '', args: []);
+  }
+
+  /// `No gifts yet. Wish for something and your parent can add it.`
+  String get noPrizesYet {
+    return Intl.message(
+      'No gifts yet. Wish for something and your parent can add it.',
+      name: 'noPrizesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Real gifts from your parent. Save up, ask, and they hand it over.`
+  String get prizesFootnote {
+    return Intl.message(
+      'Real gifts from your parent. Save up, ask, and they hand it over.',
+      name: 'prizesFootnote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a gift`
+  String get addAPrize {
+    return Intl.message('Add a gift', name: 'addAPrize', desc: '', args: []);
+  }
+
+  /// `Edit gift`
+  String get editPrize {
+    return Intl.message('Edit gift', name: 'editPrize', desc: '', args: []);
+  }
+
+  /// `Your own gift`
+  String get yourOwnPrize {
+    return Intl.message(
+      'Your own gift',
+      name: 'yourOwnPrize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Real gifts {name} can save coins for. You hand them over.`
+  String prizesBody(Object name) {
+    return Intl.message(
+      'Real gifts $name can save coins for. You hand them over.',
+      name: 'prizesBody',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Ideas`
+  String get prizeIdeasTitle {
+    return Intl.message('Ideas', name: 'prizeIdeasTitle', desc: '', args: []);
+  }
+
+  /// `Name`
+  String get prizeNameLabel {
+    return Intl.message('Name', name: 'prizeNameLabel', desc: '', args: []);
+  }
+
+  /// `Ice cream`
+  String get prizeNameHint {
+    return Intl.message('Ice cream', name: 'prizeNameHint', desc: '', args: []);
+  }
+
+  /// `Note`
+  String get prizeNoteLabel {
+    return Intl.message('Note', name: 'prizeNoteLabel', desc: '', args: []);
+  }
+
+  /// `Weekends only`
+  String get prizeNoteHint {
+    return Intl.message(
+      'Weekends only',
+      name: 'prizeNoteHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price`
+  String get prizePriceLabel {
+    return Intl.message('Price', name: 'prizePriceLabel', desc: '', args: []);
+  }
+
+  /// `When {name} asks for a gift, its coins are held. Mark it given when you hand it over, or decline and the coins go back.`
+  String prizeHoldExplainer(Object name) {
+    return Intl.message(
+      'When $name asks for a gift, its coins are held. Mark it given when you hand it over, or decline and the coins go back.',
+      name: 'prizeHoldExplainer',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Add for {name}`
+  String addPrizeFor(Object name) {
+    return Intl.message(
+      'Add for $name',
+      name: 'addPrizeFor',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Remove gift`
+  String get removePrize {
+    return Intl.message('Remove gift', name: 'removePrize', desc: '', args: []);
+  }
+
+  /// `{name}'s gifts`
+  String prizesFor(Object name) {
+    return Intl.message(
+      '$name\'s gifts',
+      name: 'prizesFor',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `{name} asked for it`
+  String prizeWaitingForYou(Object name) {
+    return Intl.message(
+      '$name asked for it',
+      name: 'prizeWaitingForYou',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `{name} wishes for {prize}`
+  String wishReviewTitle(Object name, Object prize) {
+    return Intl.message(
+      '$name wishes for $prize',
+      name: 'wishReviewTitle',
+      desc: '',
+      args: [name, prize],
+    );
+  }
+
+  /// `{name} asked for {prize}`
+  String prizeAskReviewTitle(Object name, Object prize) {
+    return Intl.message(
+      '$name asked for $prize',
+      name: 'prizeAskReviewTitle',
+      desc: '',
+      args: [name, prize],
+    );
+  }
+
+  /// `Set a price and it goes into {name}'s store.`
+  String wishReviewBody(Object name) {
+    return Intl.message(
+      'Set a price and it goes into $name\'s store.',
+      name: 'wishReviewBody',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `{coins} are on hold. Mark it given once you hand it over.`
+  String prizeAskReviewBody(Object coins) {
+    return Intl.message(
+      '$coins are on hold. Mark it given once you hand it over.',
+      name: 'prizeAskReviewBody',
+      desc: '',
+      args: [coins],
+    );
+  }
+
+  /// `Add to store`
+  String get addToStore {
+    return Intl.message('Add to store', name: 'addToStore', desc: '', args: []);
+  }
+
+  /// `Mark given`
+  String get markGiven {
+    return Intl.message('Mark given', name: 'markGiven', desc: '', args: []);
+  }
+
+  /// `Not this time`
+  String get notThisTime {
+    return Intl.message(
+      'Not this time',
+      name: 'notThisTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ice cream`
+  String get prizeIdeaIceCream {
+    return Intl.message(
+      'Ice cream',
+      name: 'prizeIdeaIceCream',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A new book`
+  String get prizeIdeaBook {
+    return Intl.message(
+      'A new book',
+      name: 'prizeIdeaBook',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pizza night`
+  String get prizeIdeaPizzaNight {
+    return Intl.message(
+      'Pizza night',
+      name: 'prizeIdeaPizzaNight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Trip to the cinema`
+  String get prizeIdeaCinema {
+    return Intl.message(
+      'Trip to the cinema',
+      name: 'prizeIdeaCinema',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A new toy`
+  String get prizeIdeaNewToy {
+    return Intl.message(
+      'A new toy',
+      name: 'prizeIdeaNewToy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A new backpack`
+  String get prizeIdeaBackpack {
+    return Intl.message(
+      'A new backpack',
+      name: 'prizeIdeaBackpack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lego set`
+  String get prizeIdeaLego {
+    return Intl.message('Lego set', name: 'prizeIdeaLego', desc: '', args: []);
+  }
+
+  /// `A new video game`
+  String get prizeIdeaVideoGame {
+    return Intl.message(
+      'A new video game',
+      name: 'prizeIdeaVideoGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A new bike`
+  String get prizeIdeaBike {
+    return Intl.message(
+      'A new bike',
+      name: 'prizeIdeaBike',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A pet`
+  String get prizeIdeaPet {
+    return Intl.message('A pet', name: 'prizeIdeaPet', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

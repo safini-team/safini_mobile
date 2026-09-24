@@ -38,6 +38,17 @@ class ApiConst {
   static String redeemAvatarItem(String childId) =>
       '/v1/children/$childId/redemptions/avatar-items';
 
+  // Prizes (SAF-190)
+  static String childPrizes(String childId) => '/v1/children/$childId/prizes';
+  static String childWishes(String childId) => '/v1/children/$childId/wishes';
+  static String prize(String prizeId) => '/v1/prizes/$prizeId';
+  static String askForPrize(String prizeId) => '/v1/prizes/$prizeId/requests';
+  static const String prizeRequests = '/v1/prize-requests';
+  static String approvePrizeRequest(String requestId) =>
+      '/v1/prize-requests/$requestId/approve';
+  static String declinePrizeRequest(String requestId) =>
+      '/v1/prize-requests/$requestId/decline';
+
   /// GET/POST — per-app usage + remaining minutes for a child.
   static String childAppUsage(String childId) =>
       '/v1/children/$childId/app-usage';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum StoreTab { appTime, avatarItems }
+enum StoreTab { appTime, prizes, avatarItems }
 
 class AppTimeItem {
   final String id;

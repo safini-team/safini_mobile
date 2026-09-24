@@ -18,6 +18,7 @@ Future<bool?> showRewardSheet(
   required int cost,
   required int coins,
   required String blurb,
+  String? actionLabel,
 }) {
   final canBuy = coins >= cost;
 
@@ -62,7 +63,7 @@ Future<bool?> showRewardSheet(
           ),
           const SizedBox(height: 22),
           DsPrimaryButton(
-            label: canBuy ? s.askForThis : s.notEnoughCoins,
+            label: canBuy ? actionLabel ?? s.askForThis : s.notEnoughCoins,
             enabled: canBuy,
             shadow: canBuy ? AppShadows.primaryGlowLg : const [],
             onTap: () => Navigator.of(context).pop(true),

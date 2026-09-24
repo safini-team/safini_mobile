@@ -242,6 +242,17 @@ void main() {
           PushDestination.childTasks,
           taskId: _task,
         ),
+        'prize_requested': const PushTarget(
+          PushDestination.parentToday,
+          childId: _child,
+        ),
+        'wish_requested': const PushTarget(
+          PushDestination.parentToday,
+          childId: _child,
+        ),
+        'prize_added': const PushTarget(PushDestination.childStore),
+        'prize_given': const PushTarget(PushDestination.childStore),
+        'prize_declined': const PushTarget(PushDestination.childStore),
       };
       // The set of types is the API's KINDS plus protection alerts.
       expect(PushType.values.map((t) => t.wire).toSet(), {
@@ -266,7 +277,10 @@ void main() {
           PushType.taskApproved ||
           PushType.taskRejected ||
           PushType.tasksAssigned ||
-          PushType.streakReminder => false,
+          PushType.streakReminder ||
+          PushType.prizeAdded ||
+          PushType.prizeGiven ||
+          PushType.prizeDeclined => false,
           _ => true,
         };
         expect(target.isParent, forParent, reason: type.wire);

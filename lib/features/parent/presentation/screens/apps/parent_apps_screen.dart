@@ -18,6 +18,10 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 import 'package:safini/features/parent/presentation/screens/apps/parent_installed_apps_screen.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet.dart';
+import 'package:safini/features/prizes/parent_prizes_cubit.dart';
+import 'package:safini/features/prizes/prize.dart';
+import 'package:safini/features/prizes/widgets/parent_prize_list.dart';
+import 'package:safini/features/prizes/widgets/prize_sheets.dart';
 
 class ParentAppsScreen extends StatefulWidget {
   const ParentAppsScreen({super.key});
@@ -35,6 +39,7 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
           getIt<PushDeepLinks>().take(PushDestination.parentLimits)?.childId ??
           context.read<ParentHomeCubit>().state.selectedChildId,
     );
+  final ParentPrizesCubit _prizes = ParentPrizesCubit(getIt<PrizeApi>());
   StreamSubscription<PushTarget>? _deepLinks;
 
   @override
@@ -58,13 +63,17 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
   void dispose() {
     _deepLinks?.cancel();
     _cubit.close();
+    _prizes.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _cubit),
+        BlocProvider.value(value: _prizes),
+      ],
       // Minutes used and what is locked just changed on the child's phone.
       child: BlocListener<ParentHomeCubit, ParentHomeState>(
         listenWhen: (previous, current) =>
@@ -89,8 +98,15 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
   }
 }
 
-class _ParentLimitsView extends StatelessWidget {
+class _ParentLimitsView extends StatefulWidget {
   const _ParentLimitsView();
+
+  @override
+  State<_ParentLimitsView> createState() => _ParentLimitsViewState();
+}
+
+class _ParentLimitsViewState extends State<_ParentLimitsView> {
+  bool _showingPrizes = false;
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +131,13 @@ class _ParentLimitsView extends StatelessWidget {
         final selected = children
             .where((child) => child.id == selectedId)
             .firstOrNull;
+        final prizes = context.watch<ParentPrizesCubit>();
+        final childName = selected?.nickname ?? '';
+        if (_showingPrizes &&
+            selectedId != null &&
+            prizes.state.childId != selectedId) {
+          prizes.load(selectedId);
+        }
 
         // Every installed app with a rule slug is tappable (add / edit / block),
         // so the pushed screen keeps this ParentAppsCubit alive.
@@ -155,7 +178,7 @@ class _ParentLimitsView extends StatelessWidget {
 
         return Column(
           children: [
-            if (selectedId != null)
+            if (selectedId != null && !_showingPrizes)
               EnforcementStatusCard(
                 key: ValueKey(selectedId),
                 childId: selectedId,
@@ -193,7 +216,39 @@ class _ParentLimitsView extends StatelessWidget {
                   childName: selected?.nickname ?? '',
                 ),
                 onAddApp: onAddApp,
-                onRefresh: () => cubit.loadAppLimits(),
+                onRefresh: () => _showingPrizes
+                    ? prizes.load()
+                    : cubit.loadAppLimits(),
+                showingPrizes: _showingPrizes,
+                onShowPrizes: selectedId == null
+                    ? null
+                    : (show) {
+                        setState(() => _showingPrizes = show);
+                        if (show) prizes.load(selectedId);
+                      },
+                prizeSlivers: parentPrizeSlivers(
+                  context,
+                  state: prizes.state,
+                  childName: childName,
+                  onAdd: () => showNewPrizeChooser(
+                    context,
+                    cubit: prizes,
+                    childName: childName,
+                  ),
+                  onOpen: (prize) => showPrizeEditor(
+                    context,
+                    cubit: prizes,
+                    childName: childName,
+                    prize: prize,
+                  ),
+                  onIdea: (idea) => showPrizeEditor(
+                    context,
+                    cubit: prizes,
+                    childName: childName,
+                    idea: idea,
+                  ),
+                  onRetry: prizes.load,
+                ),
               ),
             ),
           ],

@@ -198,7 +198,8 @@ void main() {
       expect(native.accepted, ['roblox', 100, 5]);
       expect(coins.state, 900);
       expect(cubit.state.appTimeItems.single.remainingMinutes, 5);
-      expect(methods, ['GET']);
+      // The store and its prizes are read; the purchase itself went native.
+      expect(methods, ['GET', 'GET']);
       await cubit.close();
       await coins.close();
     },
