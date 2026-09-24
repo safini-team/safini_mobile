@@ -18,6 +18,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dar
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
+import 'package:safini/features/parent/presentation/screens/monitor/pending_review_counts.dart';
 import 'package:safini/features/parent/presentation/widgets/layout/parent_monitor_states.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -315,6 +316,11 @@ class _ParentMonitorView extends StatelessWidget {
             id: kid.id,
             name: kid.nickname,
             color: AppColors.kidColor(kid.id),
+            pendingReviewCount: pendingReviewCountForChild(
+              childId: kid.id,
+              tasks: tasks?.tasks ?? const [],
+              asks: asks,
+            ),
           ),
       ],
       selectedIndex: state.selectedIndex,
