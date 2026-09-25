@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "82130591868-d15u981na5fph2318dfibmumt0mcm6lr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.safini.app",
+            "certificate_hash": "a31009149efcb27c72c478c05cfd83d83af42b76"
+          }
+        },
+        {
           "client_id": "82130591868-dd7bfm7n1a2tn67jpkv3uutt5fbj07ii.apps.googleusercontent.com",
           "client_type": 3
         }
