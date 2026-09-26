@@ -88,6 +88,20 @@ class ParentAppBlockingService {
     int dailyLimitMinutes,
   ) => upsertRule(childId, rule.copyWith(dailyLimitMinutes: dailyLimitMinutes));
 
+  /// Whether the child's phone is an iPhone, from its Screen Time report.
+  /// An iPhone never uploads an installed-app list (Apple forbids it), so an
+  /// empty list means something different there. Any failure reads as "no".
+  Future<bool> isIosDevice(String childId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiConst.childScreenTimeStatus(childId),
+      );
+      return response.data?['platform'] == 'ios';
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Loads the apps installed on the child's device (uploaded by the child
   /// device — see `ChildAppRulesService.reportInstalledApps`), plus the
   /// `updated_at` of that upload (`null` → the phone has never synced).

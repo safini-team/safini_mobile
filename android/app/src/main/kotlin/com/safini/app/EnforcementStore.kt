@@ -8,7 +8,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 /** Non-secret budgets live in device-protected storage so boot can resume offline. */
-class EnforcementStore(context: Context) {
+class EnforcementStore(context: Context) : FrontApp {
     private val appContext = context.applicationContext
     private val prefs = context.createDeviceProtectedStorageContext()
         .getSharedPreferences("safini_enforcement_v2", Context.MODE_PRIVATE)
@@ -18,8 +18,9 @@ class EnforcementStore(context: Context) {
     /** Every app the child opened, uncapped, for "where the time went". Nothing is spent from it. */
     private val device = JSONObject(prefs.getString("device_usage", "{}")!!)
     var cursor: Long = prefs.getLong("cursor", System.currentTimeMillis())
-    var foreground: String? = prefs.getString("foreground", null)
-    var covered: Boolean = prefs.getBoolean("covered", false)
+    override var foreground: String? = prefs.getString("foreground", null)
+    override var foregroundActivity: String? = prefs.getString("foreground_activity", null)
+    override var covered: Boolean = prefs.getBoolean("covered", false)
     var enabled: Boolean
         get() = prefs.getBoolean("enabled", false)
         set(value) { prefs.edit().putBoolean("enabled", value).commit() }
@@ -162,7 +163,8 @@ class EnforcementStore(context: Context) {
         device.keys().asSequence().sorted().toList().dropLast(2).forEach { device.remove(it) }
         prefs.edit().putString("snapshot", snapshot.toString()).putString("usage", usage.toString())
             .putString("device_usage", device.toString())
-            .putLong("cursor", cursor).putString("foreground", foreground).putBoolean("covered", covered).commit()
+            .putLong("cursor", cursor).putString("foreground", foreground)
+            .putString("foreground_activity", foregroundActivity).putBoolean("covered", covered).commit()
     }
     fun clear() {
         // An editor applies clear() before its puts, whatever the call order.
@@ -174,6 +176,7 @@ class EnforcementStore(context: Context) {
         device.keys().asSequence().toList().forEach { device.remove(it) }
         cursor = System.currentTimeMillis()
         foreground = null
+        foregroundActivity = null
         covered = false
     }
 

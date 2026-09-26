@@ -390,6 +390,7 @@ class SampleData {
         meta: 'Before dinner',
         coins: 15,
         state: ChildTaskState.open,
+        emoji: '🧹',
       ),
       ChildTaskRow(
         id: 'q2',
@@ -397,6 +398,7 @@ class SampleData {
         meta: 'After dinner',
         coins: 10,
         state: ChildTaskState.open,
+        emoji: '🍽️',
       ),
       ChildTaskRow(
         id: 'q3',
@@ -404,6 +406,7 @@ class SampleData {
         meta: 'Sent 18:52',
         coins: 10,
         state: ChildTaskState.sent,
+        emoji: '🛏️',
       ),
       ChildTaskRow(
         id: 'q4',
@@ -411,6 +414,7 @@ class SampleData {
         meta: 'Paid this morning',
         coins: 15,
         state: ChildTaskState.done,
+        emoji: '📚',
       ),
       ChildTaskRow(
         id: 'q5',
@@ -418,6 +422,7 @@ class SampleData {
         meta: 'Health · 21:00',
         coins: 5,
         state: ChildTaskState.open,
+        emoji: '🦷',
       ),
     ],
   );

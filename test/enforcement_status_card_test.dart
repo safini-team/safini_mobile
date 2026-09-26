@@ -91,6 +91,7 @@ void main() {
       'attention_required': 'App limits need attention',
       'offline': 'offline or has stopped reporting',
       'not_configured': 'Set up app limits',
+      'signed_out': 'signed out of Safini',
     }.entries) {
       adapter.status = entry.key;
       await pumpCard(tester, 'child-${entry.key}');
@@ -236,17 +237,41 @@ void main() {
     );
   });
 
-  testWidgets('iOS setup that needs attention is one short line', (
+  testWidgets('iOS without Screen Time says limits are off and what to do', (
+    tester,
+  ) async {
+    // SAF-191: a kid who never granted Screen Time got a bare "Setup needs
+    // attention" label with no hint that nothing is limited.
+    for (final state in ['denied', 'notDetermined']) {
+      adapter.ios = {
+        'platform': 'ios',
+        'authorization': state,
+        'monitoring_active': false,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      };
+      await pumpCard(tester, 'child-ios-$state');
+      expect(
+        find.textContaining("app limits aren't working"),
+        findsOneWidget,
+        reason: state,
+      );
+      expect(find.textContaining('allow Screen Time'), findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+    }
+  });
+
+  testWidgets('iOS that is set up but not monitoring needs attention', (
     tester,
   ) async {
     adapter.ios = {
       'platform': 'ios',
-      'authorization': 'denied',
+      'authorization': 'approved',
       'monitoring_active': false,
       'updated_at': DateTime.now().toUtc().toIso8601String(),
     };
     await pumpCard(tester, 'child-ios-off');
     expect(find.textContaining('Setup needs attention'), findsOneWidget);
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
     expect(
       find.textContaining('View actual usage in Screen Time'),
       findsNothing,

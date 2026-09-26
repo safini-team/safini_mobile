@@ -731,5 +731,10 @@
   "prizeIdeaLego": "Lego toʻplami",
   "prizeIdeaVideoGame": "Yangi video oʻyin",
   "prizeIdeaBike": "Yangi velosiped",
-  "prizeIdeaPet": "Uy hayvoni"
+  "prizeIdeaPet": "Uy hayvoni",
+  "enforcementSignedOut": "Bola telefonida Safini’dan chiqdi. Qayta kirmaguncha ilova limitlari ishlamaydi.",
+  "reconnectMovesProfile": "Uni {name} yangi telefonida \"Men bolaman\" boʻlimiga kiriting. Tangalar, vazifalar va tarix koʻchadi, eski telefonda esa ilova limitlari ishlamay qoladi.",
+  "iosScreenTimeNotSetUp": "Bolaning iPhone’ida ekran vaqti sozlanmagan, shuning uchun ilova limitlari ishlamayapti. Unda Safini’ni oching va ekran vaqtiga ruxsat bering.",
+  "installedAppsIosTitle": "iPhone ilovalari bu yerda koʻrinmaydi",
+  "installedAppsIosBody": "Apple Safini’ga {name} iPhone’idagi ilovalar roʻyxatini koʻrishga ruxsat bermaydi, shuning uchun bu ekranda hozircha limit tanlab boʻlmaydi."
 }

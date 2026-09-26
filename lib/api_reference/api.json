@@ -1624,7 +1624,7 @@
           "children"
         ],
         "summary": "Issue Child Invite Code",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Creates a short invite code so a child account can later claim the profile.\n\n**Frontend note:** The code contains 4 unambiguous characters, expires after 24 hours, and is replaced when a new code is issued.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Creates a short invite code so a child account can later claim the profile. For an already paired child this is the re-connect code: claiming it moves the profile (coins, tasks, history) to the claiming account and revokes the old phone's app-limit pairing.\n\n**Frontend note:** The code contains 4 unambiguous characters, expires after 24 hours, and is replaced when a new code is issued. The current phone stays paired until the code is claimed.",
         "operationId": "issue_invite_code_v1_children__child_id__invite_code_post",
         "security": [
           {
@@ -3923,7 +3923,7 @@
           "enforcement"
         ],
         "summary": "Status",
-        "description": "Auth: parent or claimed child's Supabase bearer token. Business requirement: surface protection failures. Frontend note: poll every minute; offline after three missed heartbeats means unknown connectivity or stopped service, never proof of tampering.",
+        "description": "Auth: parent or claimed child's Supabase bearer token. Business requirement: surface protection failures. Frontend note: poll every minute; offline after three missed heartbeats means unknown connectivity or stopped service, never proof of tampering. `signed_out` means the child signed out of Safini on the paired phone: limits are off until they sign back in.",
         "operationId": "status_v1_children__child_id__enforcement_status_get",
         "security": [
           {

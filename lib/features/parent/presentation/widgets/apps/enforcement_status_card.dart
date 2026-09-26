@@ -112,25 +112,26 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
       final reported = DateTime.tryParse(_ios!['updated_at']?.toString() ?? '');
       final recent =
           reported != null && DateTime.now().difference(reported).inMinutes < 5;
-      final active =
-          _ios!['authorization'] == 'approved' &&
-          _ios!['monitoring_active'] == true;
+      final authorized = _ios!['authorization'] == 'approved';
+      final active = authorized && _ios!['monitoring_active'] == true;
       if (active && recent) return const SizedBox.shrink();
-      final statusLine = active ? s.iosScreenTimeOn : s.iosScreenTimeOff;
+      // Without Screen Time nothing is limited on the iPhone at all, so say
+      // that and what fixes it, not a status label (SAF-191).
       final lastSeen = _iosLastSeen(context, reported);
-      return Material(
-        color: Theme.of(context).colorScheme.surface,
-        child: SafeArea(
-          bottom: false,
-          child: ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: Text(s.iosScreenTimeParent),
-            subtitle: Text(
-              lastSeen.isEmpty ? statusLine : '$statusLine\n$lastSeen',
-            ),
-            onTap: _load,
-          ),
-        ),
+      final statusLine = !authorized
+          ? null
+          : active
+          ? s.iosScreenTimeOn
+          : s.iosScreenTimeOff;
+      final subtitle = [
+        ?statusLine,
+        if (lastSeen.isNotEmpty) lastSeen,
+      ].join('\n');
+      return _Banner(
+        warning: !active,
+        title: authorized ? s.iosScreenTimeParent : s.iosScreenTimeNotSetUp,
+        subtitle: subtitle.isEmpty ? null : subtitle,
+        onTap: _load,
       );
     }
     if (_status == null || _status == 'active') return const SizedBox.shrink();
@@ -139,20 +140,42 @@ class _EnforcementStatusCardState extends State<EnforcementStatusCard>
       'not_configured' => s.enforcementNotConfigured,
       'attention_required' => s.enforcementAttention,
       'offline' => s.enforcementOffline,
+      'signed_out' => s.enforcementSignedOut,
       _ => s.enforcementUnknown,
     };
+    return _Banner(warning: true, title: message, onTap: _load);
+  }
+}
+
+/// One look for every platform: the iOS status used to render as a bare,
+/// unstyled list tile.
+class _Banner extends StatelessWidget {
+  const _Banner({
+    required this.warning,
+    required this.title,
+    required this.onTap,
+    this.subtitle,
+  });
+
+  final bool warning;
+  final String title;
+  final String? subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         bottom: false,
         child: ListTile(
           // Only the icon carries the state colour; the sentence stays ink.
-          leading: const Icon(
-            Icons.warning_amber_rounded,
-            color: AppColors.warning,
-          ),
-          title: Text(message),
-          onTap: _load,
+          leading: warning
+              ? const Icon(Icons.warning_amber_rounded, color: AppColors.warning)
+              : const Icon(Icons.info_outline),
+          title: Text(title),
+          subtitle: subtitle == null ? null : Text(subtitle!),
+          onTap: onTap,
         ),
       ),
     );

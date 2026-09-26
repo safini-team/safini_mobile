@@ -6005,6 +6005,56 @@ class S {
   String get prizeIdeaPet {
     return Intl.message('A pet', name: 'prizeIdeaPet', desc: '', args: []);
   }
+
+  /// `Your child signed out of Safini on their phone. App limits are off until they sign back in.`
+  String get enforcementSignedOut {
+    return Intl.message(
+      'Your child signed out of Safini on their phone. App limits are off until they sign back in.',
+      name: 'enforcementSignedOut',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type it on {name}'s new phone, under "I'm a kid". Coins, tasks and history move over, and the old phone stops getting app limits.`
+  String reconnectMovesProfile(Object name) {
+    return Intl.message(
+      'Type it on $name\'s new phone, under "I\'m a kid". Coins, tasks and history move over, and the old phone stops getting app limits.',
+      name: 'reconnectMovesProfile',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Screen Time isn't set up on your child's iPhone, so app limits aren't working. Open Safini on it and allow Screen Time.`
+  String get iosScreenTimeNotSetUp {
+    return Intl.message(
+      'Screen Time isn\'t set up on your child\'s iPhone, so app limits aren\'t working. Open Safini on it and allow Screen Time.',
+      name: 'iosScreenTimeNotSetUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `iPhone apps aren't listed here`
+  String get installedAppsIosTitle {
+    return Intl.message(
+      'iPhone apps aren\'t listed here',
+      name: 'installedAppsIosTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple doesn't let Safini read the app list on {name}'s iPhone, so limits can't be picked from this screen yet.`
+  String installedAppsIosBody(Object name) {
+    return Intl.message(
+      'Apple doesn\'t let Safini read the app list on $name\'s iPhone, so limits can\'t be picked from this screen yet.',
+      name: 'installedAppsIosBody',
+      desc: '',
+      args: [name],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

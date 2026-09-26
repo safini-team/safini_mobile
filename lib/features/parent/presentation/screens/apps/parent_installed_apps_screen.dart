@@ -82,6 +82,7 @@ class _ParentInstalledAppsView extends StatelessWidget {
                           return _EmptyState(
                             childName: childName,
                             endpointMissing: state.endpointMissing,
+                            iosDevice: state.iosDevice,
                           );
                         }
                         return _AppsList(
@@ -360,15 +361,27 @@ class _InstalledAppRow extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.childName, this.endpointMissing = false});
+  const _EmptyState({
+    required this.childName,
+    this.endpointMissing = false,
+    this.iosDevice = false,
+  });
 
   final String childName;
   final bool endpointMissing;
+  final bool iosDevice;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
 
+    if (iosDevice) {
+      return _CenteredCard(
+        emoji: '📱',
+        title: s.installedAppsIosTitle,
+        body: s.installedAppsIosBody(childName),
+      );
+    }
     return _CenteredCard(
       emoji: '📱',
       title: s.installedAppsEmptyTitle,

@@ -76,6 +76,7 @@ class _ChildTasksScreen extends StatelessWidget {
                   title: task.title,
                   meta: task.localizedSubtitle(s),
                   coins: task.coins,
+                  emoji: task.emoji ?? defaultTaskEmoji,
                   state: task.isCompleted
                       ? ChildTaskState.done
                       : task.isSubmitted

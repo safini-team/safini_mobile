@@ -273,7 +273,11 @@ class _ChildSheetState extends State<_ChildSheet> {
           DsCodePanel(
             caption: s.reconnectCodeValid,
             code: _code!,
-            footnote: s.typeItOnPhone(child.name),
+            // A paired child's code moves the profile to the phone that
+            // claims it; say so before the parent hands it over.
+            footnote: child.paired
+                ? s.reconnectMovesProfile(child.name)
+                : s.typeItOnPhone(child.name),
           ),
         ],
         if (_error != null) ...[
