@@ -38,6 +38,10 @@ class ParentMonitorLoaded extends ParentMonitorState {
   /// [appLimits].
   final DeviceUsage? deviceUsage;
 
+  /// The selected child's seven days before today. Null until it loads, when
+  /// it failed, and for an iPhone, whose usage stays on the device.
+  final WeekUsage? weekUsage;
+
   /// The selected child's chosen face emoji (null → default avatar).
   final String? faceEmoji;
 
@@ -58,6 +62,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
     this.screenTime = ScreenTimeModel.none,
     this.hasActivityData = false,
     this.deviceUsage,
+    this.weekUsage,
     this.faceEmoji,
   });
 
@@ -74,6 +79,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
     bool? hasActivityData,
     DeviceUsage? deviceUsage,
     bool clearDeviceUsage = false,
+    WeekUsage? weekUsage,
     String? faceEmoji,
     bool clearFaceEmoji = false,
   }) {
@@ -89,6 +95,7 @@ class ParentMonitorLoaded extends ParentMonitorState {
       screenTime: screenTime ?? this.screenTime,
       hasActivityData: hasActivityData ?? this.hasActivityData,
       deviceUsage: clearDeviceUsage ? null : (deviceUsage ?? this.deviceUsage),
+      weekUsage: weekUsage ?? this.weekUsage,
       faceEmoji: clearFaceEmoji ? null : (faceEmoji ?? this.faceEmoji),
     );
   }

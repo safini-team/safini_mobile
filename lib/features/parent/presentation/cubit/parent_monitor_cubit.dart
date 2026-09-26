@@ -121,6 +121,23 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         deviceUsage: deviceSnapshot,
       ),
     );
+    await _loadWeek(generation, child.id, deviceSnapshot);
+  }
+
+  /// After Today is on screen, so the past week never holds it up.
+  Future<void> _loadWeek(
+    int generation,
+    String childId,
+    DeviceUsage? today,
+  ) async {
+    final service = _deviceUsage;
+    final date = today?.usageDate;
+    if (service == null || date == null || !today!.usageAvailable) return;
+    final result = await service.fetchWeek(childId, date);
+    if (isClosed || generation != _loadGeneration) return;
+    final current = state;
+    if (current is! ParentMonitorLoaded) return;
+    result.fold((_) {}, (week) => emit(current.copyWith(weekUsage: week)));
   }
 
   /// Started before the other requests and awaited after them, so the three

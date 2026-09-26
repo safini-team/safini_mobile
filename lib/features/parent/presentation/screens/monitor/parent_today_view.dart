@@ -1,5 +1,6 @@
 import 'package:safini/features/parent/presentation/widgets/apps/overall_budget_card.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -7,6 +8,7 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
 
 /// One kid in the scope strip.
@@ -73,6 +75,20 @@ class TodayApp {
   bool get isOver => limitMinutes > 0 && usedMinutes > limitMinutes;
 }
 
+/// "Last 7 days": the seven days before today, and where that time went.
+class TodayWeek {
+  const TodayWeek({
+    required this.days,
+    required this.averageMinutes,
+    required this.apps,
+  });
+
+  /// Oldest first.
+  final List<DayUsage> days;
+  final int averageMinutes;
+  final List<TodayApp> apps;
+}
+
 class ParentTodayData {
   final bool usageAvailable;
   final bool configurationAvailable;
@@ -91,6 +107,7 @@ class ParentTodayData {
     required this.reviews,
     required this.apps,
     this.streakDays,
+    this.week,
     this.remainingMinutes,
     this.nextResetAt,
   });
@@ -108,6 +125,9 @@ class ParentTodayData {
   final int coins;
   final List<TodayReview> reviews;
   final List<TodayApp> apps;
+
+  /// Null, or no minutes in it, and the section is not shown.
+  final TodayWeek? week;
 
   /// `current_streak_days` from the child row, which every child-bearing
   /// endpoint returns. Null only while the dashboard has not loaded yet;
@@ -275,7 +295,112 @@ class ParentTodayView extends StatelessWidget {
             ),
           ),
         ],
+        if (data.week case final week?
+            when week.days.any((day) => day.minutes > 0)) ...[
+          SliverToBoxAdapter(child: DsSectionHeader(title: s.lastSevenDays)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.gutter,
+              ),
+              child: Column(
+                children: [
+                  _WeekCard(week: week),
+                  const SizedBox(height: 12),
+                  AppTimeList(
+                    key: ValueKey('week-${data.kidName}'),
+                    apps: [
+                      for (final app in week.apps)
+                        AppTimeRow(
+                          name: app.name,
+                          iconUrl: app.iconUrl,
+                          usedMinutes: app.usedMinutes,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ],
+    );
+  }
+}
+
+/// A bar per day, the busiest one darker, over the daily average.
+class _WeekCard extends StatelessWidget {
+  const _WeekCard({required this.week});
+
+  final TodayWeek week;
+
+  static const double _barHeight = 64;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final busiest = week.days.fold(
+      0,
+      (m, day) => day.minutes > m ? day.minutes : m,
+    );
+
+    return DsCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            s.averagePerDay(formatHm(s, week.averageMinutes)),
+            style: AppText.rowTitleStrong,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              for (final day in week.days)
+                Expanded(
+                  child: Semantics(
+                    label:
+                        '${DateFormat.EEEE(locale).format(day.date)}, '
+                        '${formatHm(s, day.minutes)}',
+                    excludeSemantics: true,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 18,
+                          height: busiest == 0
+                              ? 4
+                              : (day.minutes / busiest * _barHeight).clamp(
+                                  4,
+                                  _barHeight,
+                                ),
+                          decoration: BoxDecoration(
+                            color: day.minutes == 0
+                                ? AppColors.track
+                                : day.minutes == busiest
+                                ? AppColors.primary
+                                : AppColors.primaryBar,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            DateFormat.E(locale).format(day.date),
+                            maxLines: 1,
+                            style: AppText.micro.copyWith(letterSpacing: 0.345),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

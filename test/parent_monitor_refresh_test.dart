@@ -65,13 +65,33 @@ class _Usage extends Fake implements IParentAppUsageRepository {
 }
 
 class _DeviceUsage extends Fake implements DeviceUsageService {
+  _DeviceUsage({this.today});
+
+  /// The family-local day the API answers with; null like an older fake.
+  final String? today;
   final requested = <String>[];
+  final weeks = <(String, String)>[];
+
+  @override
+  Future<Either<Failure, WeekUsage>> fetchWeek(
+    String childId,
+    String today,
+  ) async {
+    weeks.add((childId, today));
+    return Right(
+      WeekUsage(
+        days: [DayUsage(date: DateTime(2026, 9, 25), minutes: 90)],
+        apps: [DeviceUsageApp(displayName: childId, usedMinutes: 90)],
+      ),
+    );
+  }
 
   @override
   Future<Either<Failure, DeviceUsage>> fetch(String childId) async {
     requested.add(childId);
     return Right(
       DeviceUsage(
+        usageDate: today,
         usageAvailable: true,
         totalMinutes: 40,
         apps: [DeviceUsageApp(displayName: childId, usedMinutes: 40)],
@@ -210,5 +230,19 @@ void main() {
       (cubit.state as ParentMonitorLoaded).deviceUsage?.apps.single.displayName,
       'zilola',
     );
+  });
+
+  test('last week loads after the day, for the day the API is on', () async {
+    final family = _Family(_family({'amir': 25}));
+    final device = _DeviceUsage(today: '2026-09-26');
+    final cubit = ParentMonitorCubit(family, _Usage(), deviceUsage: device);
+    addTearDown(cubit.close);
+
+    await cubit.loadMonitorData();
+
+    expect(device.weeks, [('amir', '2026-09-26')]);
+    final week = (cubit.state as ParentMonitorLoaded).weekUsage;
+    expect(week?.apps.single.displayName, 'amir');
+    expect(week?.totalMinutes, 90);
   });
 }

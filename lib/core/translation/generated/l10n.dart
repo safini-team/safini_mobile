@@ -6452,6 +6452,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Last 7 days`
+  String get lastSevenDays {
+    return Intl.message(
+      'Last 7 days',
+      name: 'lastSevenDays',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{time} a day on average`
+  String averagePerDay(String time) {
+    return Intl.message(
+      '$time a day on average',
+      name: 'averagePerDay',
+      desc: '',
+      args: [time],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

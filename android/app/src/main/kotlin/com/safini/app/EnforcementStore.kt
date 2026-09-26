@@ -18,6 +18,19 @@ class EnforcementStore(context: Context) : FrontApp {
     /** Every app the child opened, uncapped, for "where the time went". Nothing is spent from it. */
     private val device = JSONObject(prefs.getString("device_usage", "{}")!!)
     var cursor: Long = prefs.getLong("cursor", System.currentTimeMillis())
+    /** When this pairing started counting live. The backfill covers the week before it. */
+    var trackedFrom: Long = prefs.getLong("tracked_from", cursor)
+        private set
+    /** [BACKFILL_NONE] until the week before pairing is read, [BACKFILL_READ] until a sync carried it. */
+    var backfill: Int
+        get() = prefs.getInt("backfill", BACKFILL_NONE)
+        set(value) { prefs.edit().putInt("backfill", value).apply() }
+
+    init {
+        // A phone paired before this build has already counted live over the days a backfill
+        // would read, so reading them again would count those minutes twice.
+        if (!prefs.contains("tracked_from") && prefs.contains("cursor")) backfill = BACKFILL_SENT
+    }
     override var foreground: String? = prefs.getString("foreground", null)
     override var foregroundActivity: String? = prefs.getString("foreground_activity", null)
     override var covered: Boolean = prefs.getBoolean("covered", false)
@@ -42,6 +55,10 @@ class EnforcementStore(context: Context) : FrontApp {
         set(value) { prefs.edit().putBoolean("device_admin_seen", value).apply() }
 
     fun day(at: Long): String = Instant.ofEpochMilli(at).atZone(zone()).toLocalDate().toString()
+    /** Family-local midnight [days] days before the day of [at]. */
+    fun startOfDay(at: Long, days: Long = 0): Long =
+        Instant.ofEpochMilli(at).atZone(zone()).toLocalDate().minusDays(days).atStartOfDay(zone()).toInstant().toEpochMilli()
+    fun hasTimezone(): Boolean = snapshot.has("family_timezone")
     private fun zone(): ZoneId = runCatching { ZoneId.of(snapshot.optString("family_timezone", "UTC")) }.getOrDefault(ZoneId.of("UTC"))
     fun apps(): List<JSONObject> = snapshot.optJSONArray("apps")?.let { list ->
         (0 until list.length()).map { list.getJSONObject(it) }
@@ -144,10 +161,13 @@ class EnforcementStore(context: Context) : FrontApp {
         return reports
     }
 
-    /** Cumulative whole minutes per package for today and yesterday; the server keeps the larger total. */
+    /** Days of device usage kept and sent: today and yesterday, or the whole backfilled week until it is sent. */
+    private fun deviceDays() = if (backfill == BACKFILL_READ) UsageBackfill.DAYS+1 else 2
+
+    /** Cumulative whole minutes per package per day; the server keeps the larger total. */
     fun deviceReports(): JSONArray {
         val reports = JSONArray()
-        for (date in device.keys().asSequence().sorted().toList().takeLast(2)) {
+        for (date in device.keys().asSequence().sorted().toList().takeLast(deviceDays()).asReversed()) {
             val values = device.getJSONObject(date)
             for (pkg in values.keys()) {
                 val minutes = values.optLong(pkg)/60000
@@ -160,8 +180,8 @@ class EnforcementStore(context: Context) : FrontApp {
 
     fun persist() {
         usage.keys().asSequence().sorted().toList().dropLast(7).forEach { usage.remove(it) }
-        device.keys().asSequence().sorted().toList().dropLast(2).forEach { device.remove(it) }
-        prefs.edit().putString("snapshot", snapshot.toString()).putString("usage", usage.toString())
+        device.keys().asSequence().sorted().toList().dropLast(deviceDays()).forEach { device.remove(it) }
+        prefs.edit().putLong("tracked_from", trackedFrom).putString("snapshot", snapshot.toString()).putString("usage", usage.toString())
             .putString("device_usage", device.toString())
             .putLong("cursor", cursor).putString("foreground", foreground)
             .putString("foreground_activity", foregroundActivity).putBoolean("covered", covered).commit()
@@ -175,12 +195,17 @@ class EnforcementStore(context: Context) : FrontApp {
         usage.keys().asSequence().toList().forEach { usage.remove(it) }
         device.keys().asSequence().toList().forEach { device.remove(it) }
         cursor = System.currentTimeMillis()
+        trackedFrom = cursor
         foreground = null
         foregroundActivity = null
         covered = false
     }
 
 }
+
+const val BACKFILL_NONE = 0
+const val BACKFILL_READ = 1
+const val BACKFILL_SENT = 2
 
 /** Device default for the block screen until Flutter sends the app language. Uzbek is never inferred. */
 internal fun resolvePhoneLanguage(languageCodes: Iterable<String>): String =
