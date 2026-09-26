@@ -55,7 +55,9 @@ Future<void> showKidHello(BuildContext context) {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Center(child: Fini(size: 120, cheer: true)),
+          const Center(
+            child: Fini(size: 120, cheer: true, pose: FiniPose.wave),
+          ),
           const SizedBox(height: 14),
           Text(
             s.kidHelloTitle,

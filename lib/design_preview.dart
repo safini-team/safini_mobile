@@ -20,10 +20,12 @@ import 'package:safini/features/child/presentation/screens/home/child_today_view
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
+import 'package:safini/features/onboarding/fini.dart';
 import 'package:safini/features/onboarding/getting_started_card.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
 import 'package:safini/features/onboarding/kid_hello.dart';
 import 'package:safini/features/onboarding/kid_setup.dart';
+import 'package:safini/features/onboarding/pairing_connected.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
 import 'package:safini/features/parent/presentation/screens/family/parent_family_view.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
@@ -231,8 +233,7 @@ class _GalleryState extends State<_Gallery> {
         state: const AppBlockState(status: AppBlockStatus.needsPermissions),
         onRequest: (_) {},
         onCheck: () {},
-        onBattery: () =>
-            showKidBatteryTips(context, onOpenSettings: () {}),
+        onBattery: () => showKidBatteryTips(context, onOpenSettings: () {}),
       ),
     ),
     _Entry(
@@ -257,6 +258,43 @@ class _GalleryState extends State<_Gallery> {
           onPressed: () => showKidHello(context),
           child: const Text('Say hi'),
         ),
+      ),
+    ),
+    _Entry(
+      'Fini poses',
+      AppColors.bgParent,
+      (context) => SafeArea(
+        child: SizedBox.expand(
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              for (final pose in FiniPose.values) Fini(size: 150, pose: pose),
+            ],
+          ),
+        ),
+      ),
+    ),
+    _Entry(
+      'Pairing · waiting',
+      AppColors.bgParent,
+      (context) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: FiniSays(
+            size: 64,
+            pose: FiniPose.wait,
+            text: S.of(context).waitingForPhone('Amir'),
+          ),
+        ),
+      ),
+    ),
+    _Entry(
+      'Pairing · connected',
+      AppColors.bgParent,
+      (context) => SafeArea(
+        child: PairingConnected(name: 'Amir', onDone: () {}),
       ),
     ),
     _Entry(
