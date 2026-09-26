@@ -90,6 +90,11 @@ class KidSetup extends StatelessWidget {
                           FiniSays(
                             size: 112,
                             cheer: current == null && !failed,
+                            pose: current != null
+                                ? FiniPose.point
+                                : failed
+                                ? FiniPose.oops
+                                : FiniPose.cheer,
                             text: current == null
                                 ? (failed
                                       ? s.limitsSetupError
@@ -199,7 +204,7 @@ Future<void> showKidBatteryTips(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          FiniSays(size: 72, text: s.limitsBatteryHint),
+          FiniSays(size: 72, pose: FiniPose.oops, text: s.limitsBatteryHint),
           const SizedBox(height: 20),
           DsPrimaryButton(
             label: s.limitsBattery,

@@ -48,6 +48,7 @@ class GettingStartedCard extends StatelessWidget {
                     child: FiniSays(
                       size: 58,
                       cheer: state.complete,
+                      pose: state.complete ? FiniPose.cheer : FiniPose.point,
                       bubbleColor: AppColors.fillAlt,
                       text: _line(s, next),
                     ),

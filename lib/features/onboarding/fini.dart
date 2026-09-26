@@ -5,19 +5,38 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_typography.dart';
 
+/// What Fini is doing. [phone] is the brand art from the splash screen; the
+/// rest were drawn from it (assets/mascot/).
+enum FiniPose {
+  phone('assets/logo/safini-mascot.png'),
+  wave('assets/mascot/fini-wave.png'),
+  cheer('assets/mascot/fini-cheer.png'),
+  point('assets/mascot/fini-point.png'),
+  oops('assets/mascot/fini-oops.png'),
+  wait('assets/mascot/fini-wait.png');
+
+  const FiniPose(this.asset);
+
+  final String asset;
+}
+
 /// Fini, the penguin from the splash screen, as the guide through setup.
 ///
 /// Pops in once, then floats a few pixels up and down. Both motions are off
 /// when the platform asks for reduced motion.
 class Fini extends StatefulWidget {
-  const Fini({super.key, this.size = 72, this.cheer = false});
+  const Fini({
+    super.key,
+    this.size = 72,
+    this.cheer = false,
+    this.pose = FiniPose.phone,
+  });
 
   final double size;
 
   /// A few quick hops instead of the slow float, for a finished step.
   final bool cheer;
-
-  static const asset = 'assets/logo/safini-mascot.png';
+  final FiniPose pose;
 
   @override
   State<Fini> createState() => _FiniState();
@@ -71,7 +90,7 @@ class _FiniState extends State<Fini> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final image = Image.asset(
-      Fini.asset,
+      widget.pose.asset,
       width: widget.size,
       height: widget.size,
       fit: BoxFit.contain,
@@ -79,7 +98,10 @@ class _FiniState extends State<Fini> with TickerProviderStateMixin {
     );
     return AnimatedBuilder(
       animation: Listenable.merge([_pop, _idle]),
-      child: image,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 220),
+        child: KeyedSubtree(key: ValueKey(widget.pose), child: image),
+      ),
       builder: (context, child) {
         final t = _idle.value * 2 * math.pi;
         final dy = widget.cheer
@@ -110,12 +132,14 @@ class FiniSays extends StatelessWidget {
     required this.text,
     this.size = 64,
     this.cheer = false,
+    this.pose = FiniPose.point,
     this.bubbleColor = AppColors.surface,
   });
 
   final String text;
   final double size;
   final bool cheer;
+  final FiniPose pose;
   final Color bubbleColor;
 
   @override
@@ -123,7 +147,7 @@ class FiniSays extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Fini(size: size, cheer: cheer),
+        Fini(size: size, cheer: cheer, pose: pose),
         const SizedBox(width: 6),
         Expanded(
           child: Padding(

@@ -908,5 +908,7 @@
   "kidHelloSpend": "Spend coins on screen time and gifts",
   "kidHelloParent": "Your parent can see which apps you use",
   "kidHelloGo": "Let's go",
-  "finiWhyAdmin": "So Safini stays on. Your parent hears if it gets switched off."
+  "finiWhyAdmin": "So Safini stays on. Your parent hears if it gets switched off.",
+  "phoneConnectedTitle": "{name}'s phone is connected!",
+  "phoneConnectedBody": "Tasks and limits now reach it."
 }

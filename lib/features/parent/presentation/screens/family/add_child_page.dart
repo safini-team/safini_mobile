@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -8,6 +10,9 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/onboarding/fini.dart';
+import 'package:safini/features/onboarding/pairing_connected.dart';
+import 'package:safini/features/onboarding/pairing_watch.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/family/family_sheets.dart';
 
@@ -45,6 +50,11 @@ class _AddChildPageState extends State<AddChildPage> {
   String? _createdName;
   String? _pairingCode;
 
+  /// Flips the waiting line to the connected screen once the kid's phone
+  /// uses the code, from a poll or the `child_connected` push.
+  PairingWatch? _watch;
+  bool _connected = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +63,7 @@ class _AddChildPageState extends State<AddChildPage> {
 
   @override
   void dispose() {
+    _watch?.stop();
     _name.dispose();
     super.dispose();
   }
@@ -61,6 +72,14 @@ class _AddChildPageState extends State<AddChildPage> {
 
   @override
   Widget build(BuildContext context) {
+    return OnPush(
+      types: const {PushType.childConnected},
+      onPush: (_) => _watch?.checkNow(),
+      child: _scaffold(context),
+    );
+  }
+
+  Widget _scaffold(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgParent,
       body: DsScreenEntrance(
@@ -70,7 +89,11 @@ class _AddChildPageState extends State<AddChildPage> {
             padding: EdgeInsets.only(
               bottom: 40 + MediaQuery.viewInsetsOf(context).bottom,
             ),
-            child: _createdName == null ? _details(context) : _pairing(context),
+            child: _createdName == null
+                ? _details(context)
+                : _connected
+                ? _connectedView(context)
+                : _pairing(context),
           ),
         ),
       ),
@@ -284,19 +307,11 @@ class _AddChildPageState extends State<AddChildPage> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(18, 20, 18, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const DsStatusDot(online: false, color: AppColors.coin, size: 7),
-              const SizedBox(width: 9),
-              Text(
-                s.waitingForPhone(name),
-                style: AppText.chip.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
+          child: FiniSays(
+            key: const ValueKey('pairing-waiting'),
+            size: 64,
+            pose: FiniPose.wait,
+            text: s.waitingForPhone(name),
           ),
         ),
         Padding(
@@ -308,6 +323,28 @@ class _AddChildPageState extends State<AddChildPage> {
         ),
       ],
     );
+  }
+
+  // ── connected ──
+  Widget _connectedView(BuildContext context) => PairingConnected(
+    name: _createdName!,
+    onDone: () => context.router.maybePop(true),
+  );
+
+  void _watchPairing(ParentFamilyCubit cubit, String childId) {
+    _watch?.stop();
+    _watch = PairingWatch(
+      isConnected: () async {
+        await cubit.loadCurrentFamily(refresh: true);
+        return cubit.state.family?.children.any(
+              (c) => c.id == childId && (c.claimedByUserId ?? '').isNotEmpty,
+            ) ??
+            false;
+      },
+      onConnected: () {
+        if (mounted) setState(() => _connected = true);
+      },
+    )..start();
   }
 
   String _genderLabel(S s, _Gender option) => switch (option) {
@@ -360,6 +397,7 @@ class _AddChildPageState extends State<AddChildPage> {
     final invite = await cubit.createChildInviteCode(child.id);
     if (!mounted) return;
     setState(() => _pairingCode = invite?.inviteCode);
+    if (invite != null) _watchPairing(cubit, child.id);
   }
 
   String _messageFor(Failure failure) {

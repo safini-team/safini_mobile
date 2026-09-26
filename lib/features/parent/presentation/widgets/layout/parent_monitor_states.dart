@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
@@ -9,6 +8,7 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/skeleton/skeleton_loader.dart';
+import 'package:safini/features/onboarding/fini.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
 /// Loading state for Parent · Today - the same silhouette as the real screen so
@@ -96,17 +96,8 @@ class ParentTodayEmpty extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryTint,
-                      shape: BoxShape.circle,
-                    ),
-                    child: AppIcons.plus(size: 20),
-                  ),
-                  const SizedBox(height: 14),
+                  const Fini(size: 104, pose: FiniPose.wave),
+                  const SizedBox(height: 10),
                   Text(
                     s.addChild,
                     style: AppText.headline,

@@ -6432,6 +6432,26 @@ class S {
       args: [],
     );
   }
+
+  /// `{name}'s phone is connected!`
+  String phoneConnectedTitle(Object name) {
+    return Intl.message(
+      '$name\'s phone is connected!',
+      name: 'phoneConnectedTitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Tasks and limits now reach it.`
+  String get phoneConnectedBody {
+    return Intl.message(
+      'Tasks and limits now reach it.',
+      name: 'phoneConnectedBody',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
