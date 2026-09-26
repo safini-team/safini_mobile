@@ -318,8 +318,9 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
       onCreateCode: () async {
         final invite = await cubit.createChildInviteCode(card.id);
         if (invite != null) return (code: invite.inviteCode, error: null);
-        // The backend refuses a code for a child who is already connected.
+        // Shown in the sheet itself; the page must not keep it as a banner.
         final message = cubit.state.errorMessage;
+        cubit.clearError();
         return (
           code: null,
           error: message == null || message.isEmpty ? fallbackError : message,

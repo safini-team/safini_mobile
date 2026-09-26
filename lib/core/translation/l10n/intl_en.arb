@@ -864,5 +864,10 @@
   "prizeIdeaLego": "Lego set",
   "prizeIdeaVideoGame": "A new video game",
   "prizeIdeaBike": "A new bike",
-  "prizeIdeaPet": "A pet"
+  "prizeIdeaPet": "A pet",
+  "enforcementSignedOut": "Your child signed out of Safini on their phone. App limits are off until they sign back in.",
+  "reconnectMovesProfile": "Type it on {name}'s new phone, under \"I'm a kid\". Coins, tasks and history move over, and the old phone stops getting app limits.",
+  "iosScreenTimeNotSetUp": "Screen Time isn't set up on your child's iPhone, so app limits aren't working. Open Safini on it and allow Screen Time.",
+  "installedAppsIosTitle": "iPhone apps aren't listed here",
+  "installedAppsIosBody": "Apple doesn't let Safini read the app list on {name}'s iPhone, so limits can't be picked from this screen yet."
 }

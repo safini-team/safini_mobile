@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -15,6 +16,7 @@ class ChildTaskRow {
     required this.meta,
     required this.coins,
     required this.state,
+    this.emoji = defaultTaskEmoji,
   });
 
   final String id;
@@ -22,7 +24,13 @@ class ChildTaskRow {
   final String meta;
   final int coins;
   final ChildTaskState state;
+
+  /// The icon the parent picked for the task, same as on Today.
+  final String emoji;
 }
+
+/// Shown for a task saved without an icon; Today and the task sheet use it too.
+const defaultTaskEmoji = '⭐';
 
 class ChildTasksCategory {
   const ChildTasksCategory({required this.label, required this.selected});
@@ -143,7 +151,15 @@ class _TaskRow extends StatelessWidget {
           child: Row(
             children: [
               _StateCircle(state: row.state),
-              const SizedBox(width: 13),
+              const SizedBox(width: 12),
+              DsEmojiTile(
+                emoji: row.emoji,
+                size: 36,
+                radius: AppRadius.xs,
+                background: AppColors.primaryTint,
+                fontSize: 18,
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

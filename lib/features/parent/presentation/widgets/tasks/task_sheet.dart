@@ -19,6 +19,52 @@ import 'package:safini/core/utils/task_category.dart';
 
 enum _NewTaskChoice { custom }
 
+bool taskNeedsPhoto(String? proofMode) =>
+    (proofMode ?? '').toLowerCase().contains('image');
+
+/// Values the API documents: `text_image`, `reported_metric`, `none`.
+/// `text` was never one of them.
+String proofModeFor({required bool photoProof}) =>
+    photoProof ? 'text_image' : 'none';
+
+/// The edit PATCH: a diff against [original] carrying only what changed.
+TaskUpdateRequestDto taskEditRequest(
+  TaskModel original, {
+  required String title,
+  required String? description,
+  required String category,
+  required int coins,
+  required String recurrence,
+  required int recurrenceDays,
+  required String emoji,
+  required bool photoProof,
+}) {
+  final originalEmoji = original.metadata?['emoji'];
+  final nextDescription = description ?? '';
+  final originalDescription = original.description ?? '';
+  return TaskUpdateRequestDto(
+    title: title != original.title ? title : null,
+    description: nextDescription != originalDescription
+        ? nextDescription
+        : null,
+    category: category != original.category ? category : null,
+    coinReward: coins != original.coinReward ? coins : null,
+    xpReward: coins != original.coinReward ? coins : null,
+    // Compared as "needs a photo" so a legacy `text` task is not rewritten
+    // just by opening and saving it.
+    proofMode: photoProof != taskNeedsPhoto(original.proofMode)
+        ? proofModeFor(photoProof: photoProof)
+        : null,
+    recurrence: recurrence != original.recurrence ? recurrence : null,
+    recurrenceDays: recurrence == 'weekly' ? recurrenceDays : null,
+    // The server replaces metadata whole, so keep what else it holds - the
+    // idea a task came from, for one.
+    metadata: emoji != originalEmoji
+        ? {...?original.metadata, 'emoji': emoji}
+        : null,
+  );
+}
+
 /// Lets the parent choose a localized template or start with a blank task.
 /// Nothing is saved until the following editor is submitted.
 Future<void> showNewTaskChooser(
@@ -193,7 +239,7 @@ class _TaskSheetState extends State<TaskSheet> {
       _title.text = task.title;
       _details.text = task.description ?? '';
       _coins = task.coinReward;
-      _photoProof = (task.proofMode ?? '').toLowerCase().contains('image');
+      _photoProof = taskNeedsPhoto(task.proofMode);
       _category = TaskCategory.tryParse(task.category) ?? TaskCategory.home;
       _recurrence = task.recurrence;
       _recurrenceDays = task.recurrenceDays ?? 0;
@@ -244,9 +290,7 @@ class _TaskSheetState extends State<TaskSheet> {
     _ => s.weekdaySun,
   };
 
-  /// Values the API documents: `text_image`, `reported_metric`, `none`.
-  /// `text` was never one of them.
-  String get _proofMode => _photoProof ? 'text_image' : 'none';
+  String get _proofMode => proofModeFor(photoProof: _photoProof);
 
   Future<void> _submit() async {
     final title = _title.text.trim();
@@ -306,25 +350,16 @@ class _TaskSheetState extends State<TaskSheet> {
       return;
     }
 
-    // EDIT - diff against the original and send only what changed.
-    final originalEmoji = original.metadata?['emoji'];
-    final nextDescription = description ?? '';
-    final originalDescription = original.description ?? '';
-    final request = TaskUpdateRequestDto(
-      title: title != original.title ? title : null,
-      description: nextDescription != originalDescription
-          ? nextDescription
-          : null,
-      category: _category.key != original.category ? _category.key : null,
-      coinReward: coins != original.coinReward ? coins : null,
-      xpReward: coins != original.coinReward ? coins : null,
-      recurrence: _recurrence != original.recurrence ? _recurrence : null,
-      recurrenceDays: _recurrence == 'weekly' ? _recurrenceDays : null,
-      // The server replaces metadata whole, so keep what else it holds - the
-      // idea a task came from, for one.
-      metadata: _emoji != originalEmoji
-          ? {...?original.metadata, 'emoji': _emoji}
-          : null,
+    final request = taskEditRequest(
+      original,
+      title: title,
+      description: description,
+      category: _category.key,
+      coins: coins,
+      recurrence: _recurrence,
+      recurrenceDays: _recurrenceDays,
+      emoji: _emoji,
+      photoProof: _photoProof,
     );
 
     if (request.isEmpty && !_voiceSave.hasWork) {

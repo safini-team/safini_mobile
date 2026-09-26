@@ -22,17 +22,13 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     private lateinit var store: EnforcementStore
     private lateinit var client: EnforcementClient
     private lateinit var overlay: BlockOverlay
+    private lateinit var tracker: ForegroundTracker
     private var syncing = false
     private var stopped = false
     private var nextSync = 0L
     private var nextPersist = 0L
     private var purchase = false
     private val waiters = mutableListOf<(Throwable?) -> Unit>()
-    // Every package with an activity that is resumed, or paused for a PiP/split
-    // window and not yet stopped. UsageStats reports one foreground app, so this
-    // is how a video floating in picture-in-picture or a limited app in a split
-    // pane still gets charged and covered. Cleared when the screen goes off.
-    private val visible = LinkedHashSet<String>()
 
     override fun onCreate() {
         super.onCreate()
@@ -40,6 +36,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         store = EnforcementStore(this)
         client = EnforcementClient(this)
         overlay = BlockOverlay(this, this)
+        tracker = ForegroundTracker(store)
         notification()
         handler.post(tick)
     }
@@ -108,7 +105,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             }
             // A limited app in a PiP/split window is not the foreground app, but it
             // is still on screen playing, so it must burn its own budget down to 0.
-            for (other in visible) {
+            for (other in tracker.visible) {
                 if (other == pkg || other == packageName) continue
                 val allowed = store.remaining(other, from) ?: continue
                 if (allowed > 0 && store.app(other) != null) {
@@ -125,20 +122,17 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             when (event.eventType) {
                 // MOVE_TO_FOREGROUND == ACTIVITY_RESUMED.
                 UsageEvents.Event.MOVE_TO_FOREGROUND -> {
-                    store.foreground = event.packageName
+                    tracker.resumed(event.packageName, event.className)
                     store.covered = store.remaining(event.packageName, event.timeStamp) == 0L
-                    visible.add(event.packageName)
                 }
-                // MOVE_TO_BACKGROUND == ACTIVITY_PAUSED. A paused activity may still
-                // be on screen (PiP/split), so it stays in `visible` until STOPPED.
-                UsageEvents.Event.MOVE_TO_BACKGROUND -> if (store.foreground == event.packageName && !store.covered) store.foreground = null
+                // MOVE_TO_BACKGROUND == ACTIVITY_PAUSED.
+                UsageEvents.Event.MOVE_TO_BACKGROUND -> tracker.paused(event.packageName, event.className)
                 UsageEvents.Event.SCREEN_NON_INTERACTIVE,
                 UsageEvents.Event.KEYGUARD_SHOWN,
-                UsageEvents.Event.DEVICE_SHUTDOWN -> { store.foreground = null; store.covered = false; visible.clear() }
+                UsageEvents.Event.DEVICE_SHUTDOWN -> tracker.screenOff()
                 // API 29+. The activity is gone from the screen, PiP window closed.
                 else -> if (Build.VERSION.SDK_INT >= 29 && event.eventType == UsageEvents.Event.ACTIVITY_STOPPED) {
-                    visible.remove(event.packageName)
-                    if (store.foreground == event.packageName && !store.covered) store.foreground = null
+                    tracker.stopped(event.packageName, event.className)
                 }
             }
         }
@@ -172,7 +166,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
 
     /** A limited, out-of-time app on screen in a PiP/split window, newest first. */
     private fun floatingBlocked(now: Long): String? =
-        visible.lastOrNull {
+        tracker.visible.lastOrNull {
             it != packageName && it != store.foreground &&
                 store.app(it) != null && store.remaining(it, now) == 0L
         }

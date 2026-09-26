@@ -252,6 +252,13 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
     return inviteCode;
   }
 
+  /// Drops an error a sheet has already shown, so it does not stay on the
+  /// Family page as a banner with no way to dismiss it.
+  void clearError() {
+    if (state.errorMessage == null) return;
+    emit(state.copyWith(errorMessage: null, canRetry: false, keepFamily: true));
+  }
+
   Future<ChildInviteCodeModel?> createChildInviteCode(String childId) async {
     if (childId.trim().isEmpty) return null;
 

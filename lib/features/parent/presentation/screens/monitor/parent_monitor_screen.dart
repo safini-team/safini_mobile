@@ -23,9 +23,27 @@ import 'package:safini/features/parent/presentation/widgets/layout/parent_monito
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/core/utils/task_category.dart';
 import 'package:safini/features/prizes/prize.dart';
 import 'package:safini/features/prizes/prize_asks_cubit.dart';
 import 'package:safini/features/prizes/widgets/prize_sheets.dart';
+
+/// Pull-to-refresh on Today. It takes the cubits rather than a BuildContext:
+/// the monitor reload swaps Today for its skeleton, which unmounts the context
+/// the pull started from, so the tasks were never refetched and "Needs your
+/// review" stayed stale until the parent opened the Tasks tab (SAF-191). The
+/// cubit is shared with that tab, which loads every child, so Today does too.
+Future<void> refreshParentToday({
+  required ParentMonitorCubit monitor,
+  required PrizeAsksCubit asks,
+  required ParentTasksCubit tasks,
+}) async {
+  await Future.wait([
+    monitor.loadMonitorData(),
+    asks.load(),
+    tasks.loadAllTasks(),
+  ]);
+}
 
 class ParentMonitorScreen extends StatelessWidget {
   const ParentMonitorScreen({super.key});
@@ -143,14 +161,11 @@ class _ParentMonitorView extends StatelessWidget {
                   : _answerAsk(context, asks, review.id, approve: true),
               onDeclineReview: (review) =>
                   _answerAsk(context, asks, review.id, approve: false),
-              onRefresh: () async {
-                final prizeAsks = context.read<PrizeAsksCubit>();
-                await context.read<ParentMonitorCubit>().loadMonitorData();
-                await prizeAsks.load();
-                if (context.mounted) {
-                  await context.read<ParentTasksCubit>().loadTasks();
-                }
-              },
+              onRefresh: () => refreshParentToday(
+                monitor: context.read<ParentMonitorCubit>(),
+                asks: context.read<PrizeAsksCubit>(),
+                tasks: context.read<ParentTasksCubit>(),
+              ),
             ),
           );
         },
@@ -279,7 +294,7 @@ class _ParentMonitorView extends StatelessWidget {
             title: task.displayTitle,
             meta: [
               child?.nickname ?? '',
-              if ((task.category ?? '').isNotEmpty) task.category!,
+              taskCategoryLabel(S.of(context), task.category),
             ].where((part) => part.isNotEmpty).join(' · '),
             kidName: child?.nickname ?? '',
             color: AppColors.kidColor(child?.id ?? child?.nickname),

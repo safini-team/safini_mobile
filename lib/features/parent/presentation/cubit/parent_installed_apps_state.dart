@@ -20,10 +20,14 @@ class ParentInstalledAppsLoaded extends ParentInstalledAppsState {
   /// than an empty-but-valid snapshot. Same empty UI, but the dev hint differs.
   final bool endpointMissing;
 
+  /// The child uses an iPhone, which never sends an app list.
+  final bool iosDevice;
+
   const ParentInstalledAppsLoaded(
     this.apps, {
     this.updatedAt,
     this.endpointMissing = false,
+    this.iosDevice = false,
   });
 
   bool get isEmpty => apps.isEmpty;

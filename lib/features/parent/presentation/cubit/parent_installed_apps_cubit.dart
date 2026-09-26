@@ -29,20 +29,30 @@ class ParentInstalledAppsCubit extends Cubit<ParentInstalledAppsState> {
     final result = await _service.fetchInstalledApps(childId);
     if (isClosed) return;
 
-    result.fold(
-      (failure) {
+    await result.fold(
+      (failure) async {
         if (failure is NotFoundFailure) {
           emit(const ParentInstalledAppsLoaded([], endpointMissing: true));
         } else {
           emit(ParentInstalledAppsError(failure.message));
         }
       },
-      (snapshot) {
+      (snapshot) async {
         final sorted = [...snapshot.apps]..sort(
           (a, b) =>
               a.appName.toLowerCase().compareTo(b.appName.toLowerCase()),
         );
-        emit(ParentInstalledAppsLoaded(sorted, updatedAt: snapshot.updatedAt));
+        // An iPhone never syncs apps, so "when they open Safini the apps show
+        // up" would have the parent waiting forever (SAF-191).
+        final ios = sorted.isEmpty && await _service.isIosDevice(childId);
+        if (isClosed) return;
+        emit(
+          ParentInstalledAppsLoaded(
+            sorted,
+            updatedAt: snapshot.updatedAt,
+            iosDevice: ios,
+          ),
+        );
       },
     );
   }
