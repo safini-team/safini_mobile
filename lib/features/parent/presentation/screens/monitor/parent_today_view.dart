@@ -147,6 +147,8 @@ class ParentTodayView extends StatelessWidget {
     this.onDeclineReview,
     this.onRefresh,
     this.banner,
+    this.screenTimeKey,
+    this.reviewKey,
   });
 
   final ParentTodayData data;
@@ -163,6 +165,10 @@ class ParentTodayView extends StatelessWidget {
   /// Above the screen-time card: the getting-started checklist while a new
   /// family sets up. It brings its own padding, so it can collapse to nothing.
   final Widget? banner;
+
+  /// Where the coach-mark tour points.
+  final Key? screenTimeKey;
+  final Key? reviewKey;
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +219,10 @@ class ParentTodayView extends StatelessWidget {
               AppSpacing.gutter,
               0,
             ),
-            child: _ScreenTimeCard(data: data),
+            child: KeyedSubtree(
+              key: screenTimeKey,
+              child: _ScreenTimeCard(data: data),
+            ),
           ),
         ),
         SliverToBoxAdapter(
@@ -227,23 +236,26 @@ class ParentTodayView extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
-            child: data.reviews.isEmpty
-                ? const _AllCaughtUp()
-                : DsGroup(
-                    horizontalPadding: 0,
-                    verticalPadding: 0,
-                    children: [
-                      for (final review in data.reviews)
-                        _ReviewRow(
-                          review: review,
-                          onOpen: () => onOpenReview(review),
-                          onApprove: () => onApproveReview(review),
-                          onDecline: onDeclineReview == null
-                              ? null
-                              : () => onDeclineReview!(review),
-                        ),
-                    ],
-                  ),
+            child: KeyedSubtree(
+              key: reviewKey,
+              child: data.reviews.isEmpty
+                  ? const _AllCaughtUp()
+                  : DsGroup(
+                      horizontalPadding: 0,
+                      verticalPadding: 0,
+                      children: [
+                        for (final review in data.reviews)
+                          _ReviewRow(
+                            review: review,
+                            onOpen: () => onOpenReview(review),
+                            onApprove: () => onApproveReview(review),
+                            onDecline: onDeclineReview == null
+                                ? null
+                                : () => onDeclineReview!(review),
+                          ),
+                      ],
+                    ),
+            ),
           ),
         ),
         if (data.apps.isNotEmpty) ...[

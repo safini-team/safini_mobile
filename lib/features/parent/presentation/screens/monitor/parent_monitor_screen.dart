@@ -15,6 +15,7 @@ import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
 import 'package:safini/features/onboarding/getting_started_host.dart';
 import 'package:safini/features/onboarding/onboarding_store.dart';
+import 'package:safini/features/onboarding/parent_tour.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
@@ -210,18 +211,38 @@ class _ParentMonitorView extends StatelessWidget {
               onDeclineReview: (review) => review.kind == TodayReviewKind.signout
                   ? _answerSignout(context, signouts, review.id, approve: false)
                   : _answerAsk(context, asks, review.id, approve: false),
-              banner: GettingStartedHost(
-                familyId: context
-                    .watch<ParentFamilyCubit>()
-                    .state
-                    .family
-                    ?.id,
-                children: state.children,
-                selectedChildId: state.selectedChild?.id,
-                hasTask: _loadedOf(tasksState)?.tasks.isNotEmpty ?? false,
-                hasLimit:
-                    state.appLimits.isNotEmpty ||
-                    (state.screenTime.limitMinutes ?? 0) > 0,
+              screenTimeKey: ParentTour.screenTime,
+              reviewKey: ParentTour.review,
+              banner: Column(
+                children: [
+                  ParentTourHost(
+                    familyId: context
+                        .watch<ParentFamilyCubit>()
+                        .state
+                        .family
+                        ?.id,
+                    store: getIt<OnboardingStore>(),
+                    ready:
+                        context.watch<ParentHomeCubit>().state.selectedIndex ==
+                            0 &&
+                        state.children.any(
+                          (c) => (c.claimedByUserId ?? '').isNotEmpty,
+                        ),
+                  ),
+                  GettingStartedHost(
+                    familyId: context
+                        .watch<ParentFamilyCubit>()
+                        .state
+                        .family
+                        ?.id,
+                    children: state.children,
+                    selectedChildId: state.selectedChild?.id,
+                    hasTask: _loadedOf(tasksState)?.tasks.isNotEmpty ?? false,
+                    hasLimit:
+                        state.appLimits.isNotEmpty ||
+                        (state.screenTime.limitMinutes ?? 0) > 0,
+                  ),
+                ],
               ),
               onRefresh: () => refreshParentToday(
                 monitor: context.read<ParentMonitorCubit>(),

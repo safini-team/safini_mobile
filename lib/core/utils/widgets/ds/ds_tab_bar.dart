@@ -13,7 +13,11 @@ class DsTabItem {
     required this.builder,
     required this.label,
     this.badge,
+    this.key,
   });
+
+  /// On the tab's own widget, so a coach mark can find where it is drawn.
+  final Key? key;
 
   /// Receives the resolved colour so the icon can use `currentColor`.
   final Widget Function(Color color) builder;
@@ -113,6 +117,7 @@ class DsTabBar extends StatelessWidget {
                 for (var i = 0; i < items.length; i++)
                   Expanded(
                     child: _Tab(
+                      key: items[i].key,
                       item: items[i],
                       selected: i == currentIndex,
                       onTap: () => onTap(i),
@@ -132,6 +137,7 @@ class DsTabBar extends StatelessWidget {
 
 class _Tab extends StatelessWidget {
   const _Tab({
+    super.key,
     required this.item,
     required this.selected,
     required this.onTap,

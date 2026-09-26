@@ -777,5 +777,12 @@
   "kidHelloGo": "Ketdik",
   "finiWhyAdmin": "Shunda Safini oʻchmaydi. Oʻchirilsa, ota-onang biladi.",
   "phoneConnectedTitle": "{name}ning telefoni ulandi!",
-  "phoneConnectedBody": "Endi vazifalar va cheklovlar unda ishlaydi."
+  "phoneConnectedBody": "Endi vazifalar va cheklovlar unda ishlaydi.",
+  "tourScreenTime": "Bugungi ekran vaqti. Ilovalar ochilganda toʻladi.",
+  "tourReview": "Bajarilgan vazifalar va sovgʻa soʻrovlari shu yerga keladi. Tasdiqlasangiz, tanga beriladi.",
+  "tourTasks": "Vazifalar shu yerda qoʻshiladi. Har biri uchun tanga beriladi.",
+  "tourLimits": "Kunlik cheklovlar, ilova qoidalari va sovgʻalar shu yerda.",
+  "tourNext": "Keyingi",
+  "tourDone": "Tushunarli",
+  "tourSkip": "Oʻtkazib yuborish"
 }

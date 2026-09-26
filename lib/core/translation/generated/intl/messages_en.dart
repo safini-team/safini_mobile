@@ -1497,6 +1497,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Tips for Parents"),
     "toGo": m74,
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Today\'s Quests"),
+    "tourDone": MessageLookupByLibrary.simpleMessage("Got it"),
+    "tourLimits": MessageLookupByLibrary.simpleMessage(
+      "Daily limits, app rules and gifts live here.",
+    ),
+    "tourNext": MessageLookupByLibrary.simpleMessage("Next"),
+    "tourReview": MessageLookupByLibrary.simpleMessage(
+      "Finished tasks and gift asks land here. Approve to pay coins.",
+    ),
+    "tourScreenTime": MessageLookupByLibrary.simpleMessage(
+      "Today\'s screen time. It fills up as apps get used.",
+    ),
+    "tourSkip": MessageLookupByLibrary.simpleMessage("Skip"),
+    "tourTasks": MessageLookupByLibrary.simpleMessage(
+      "Add tasks here. Each one earns coins.",
+    ),
     "tryAgain": MessageLookupByLibrary.simpleMessage("Try again"),
     "tue": MessageLookupByLibrary.simpleMessage("TUE"),
     "typeCodeFromOtherParent": MessageLookupByLibrary.simpleMessage(

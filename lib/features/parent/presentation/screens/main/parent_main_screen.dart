@@ -11,6 +11,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_shell.dart';
+import 'package:safini/features/onboarding/parent_tour.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
@@ -152,11 +153,13 @@ class _ParentMainView extends StatelessWidget {
                       builder: (color) => AppIcons.tabHome(color: color),
                     ),
                     DsTabItem(
+                      key: ParentTour.tasksTab,
                       label: s.tabTasks,
                       builder: (color) => AppIcons.tabTasksParent(color: color),
                       badge: _reviewCount(tasksState),
                     ),
                     DsTabItem(
+                      key: ParentTour.limitsTab,
                       label: s.tabLimits,
                       builder: (color) => AppIcons.tabLimits(color: color),
                     ),

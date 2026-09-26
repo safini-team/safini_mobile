@@ -1578,6 +1578,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "todaysQuests": MessageLookupByLibrary.simpleMessage(
       "Bugungi topshiriqlar",
     ),
+    "tourDone": MessageLookupByLibrary.simpleMessage("Tushunarli"),
+    "tourLimits": MessageLookupByLibrary.simpleMessage(
+      "Kunlik cheklovlar, ilova qoidalari va sovgʻalar shu yerda.",
+    ),
+    "tourNext": MessageLookupByLibrary.simpleMessage("Keyingi"),
+    "tourReview": MessageLookupByLibrary.simpleMessage(
+      "Bajarilgan vazifalar va sovgʻa soʻrovlari shu yerga keladi. Tasdiqlasangiz, tanga beriladi.",
+    ),
+    "tourScreenTime": MessageLookupByLibrary.simpleMessage(
+      "Bugungi ekran vaqti. Ilovalar ochilganda toʻladi.",
+    ),
+    "tourSkip": MessageLookupByLibrary.simpleMessage("Oʻtkazib yuborish"),
+    "tourTasks": MessageLookupByLibrary.simpleMessage(
+      "Vazifalar shu yerda qoʻshiladi. Har biri uchun tanga beriladi.",
+    ),
     "tryAgain": MessageLookupByLibrary.simpleMessage("Qayta urinish"),
     "tue": MessageLookupByLibrary.simpleMessage("SES"),
     "typeCodeFromOtherParent": MessageLookupByLibrary.simpleMessage(
