@@ -23,7 +23,8 @@ enum PushType {
   prizeAdded('prize_added'),
   prizeGiven('prize_given'),
   prizeDeclined('prize_declined'),
-  signoutRequested('signout_requested');
+  signoutRequested('signout_requested'),
+  setupReminder('setup_reminder');
 
   const PushType(this.wire);
 
@@ -124,7 +125,10 @@ class PushEvent {
       PushDestination.parentToday,
       childId: childId,
     ),
-    PushType.childConnected || PushType.parentJoined => PushTarget(
+    // The unpaired child's card is on Family, with their code a tap away.
+    PushType.childConnected ||
+    PushType.parentJoined ||
+    PushType.setupReminder => PushTarget(
       PushDestination.parentFamily,
       childId: childId,
     ),
