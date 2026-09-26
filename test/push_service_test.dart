@@ -232,6 +232,10 @@ void main() {
           PushDestination.parentFamily,
           childId: _child,
         ),
+        'setup_reminder': const PushTarget(
+          PushDestination.parentFamily,
+          childId: _child,
+        ),
         'task_approved': const PushTarget(PushDestination.childToday),
         'streak_reminder': const PushTarget(PushDestination.childToday),
         'task_rejected': const PushTarget(
