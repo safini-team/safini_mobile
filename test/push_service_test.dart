@@ -250,6 +250,10 @@ void main() {
           PushDestination.parentToday,
           childId: _child,
         ),
+        'signout_requested': const PushTarget(
+          PushDestination.parentToday,
+          childId: _child,
+        ),
         'prize_added': const PushTarget(PushDestination.childStore),
         'prize_given': const PushTarget(PushDestination.childStore),
         'prize_declined': const PushTarget(PushDestination.childStore),

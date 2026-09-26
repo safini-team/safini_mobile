@@ -27,8 +27,9 @@ class TodayKid {
 }
 
 /// What a review is for: a task to pay for, a prize the child asked for
-/// (coins already held), or a wish to add to the store (SAF-190).
-enum TodayReviewKind { task, prize, wish }
+/// (coins already held), a wish to add to the store (SAF-190), or a child
+/// asking to sign out of Safini (SAF-191).
+enum TodayReviewKind { task, prize, wish, signout }
 
 /// A submission waiting on the parent.
 class TodayReview {
@@ -473,7 +474,9 @@ class _ReviewRow extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 // Earned coins are pine, spent coins are amber.
-                if (isTask)
+                if (review.kind == TodayReviewKind.signout)
+                  const SizedBox.shrink()
+                else if (isTask)
                   DsPill.tint(label: '+${review.coins}')
                 else
                   DsPill.coins(
@@ -499,6 +502,7 @@ class _ReviewRow extends StatelessWidget {
                       TodayReviewKind.task => s.approve,
                       TodayReviewKind.prize => s.markGiven,
                       TodayReviewKind.wish => s.addToStore,
+                      TodayReviewKind.signout => s.signoutAllow,
                     },
                     onTap: onApprove,
                   ),
@@ -506,7 +510,11 @@ class _ReviewRow extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: DsInlineButton.quiet(
-                    label: isTask ? s.lookCloser : s.notThisTime,
+                    label: isTask
+                        ? s.lookCloser
+                        : review.kind == TodayReviewKind.signout
+                        ? s.signoutKeep
+                        : s.notThisTime,
                     onTap: isTask ? onOpen : (onDecline ?? onOpen),
                   ),
                 ),

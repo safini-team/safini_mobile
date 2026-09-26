@@ -869,5 +869,17 @@
   "reconnectMovesProfile": "Type it on {name}'s new phone, under \"I'm a kid\". Coins, tasks and history move over, and the old phone stops getting app limits.",
   "iosScreenTimeNotSetUp": "Screen Time isn't set up on your child's iPhone, so app limits aren't working. Open Safini on it and allow Screen Time.",
   "installedAppsIosTitle": "iPhone apps aren't listed here",
-  "installedAppsIosBody": "Apple doesn't let Safini read the app list on {name}'s iPhone, so limits can't be picked from this screen yet."
+  "installedAppsIosBody": "Apple doesn't let Safini read the app list on {name}'s iPhone, so limits can't be picked from this screen yet.",
+  "signoutAskTitle": "Ask a parent to sign out",
+  "signoutAskBody": "Signing out turns your app limits off, so a parent has to say yes. We sent them a request.",
+  "signoutWaiting": "Waiting for an answer…",
+  "signoutTypeCode": "Or type the code your parent tells you",
+  "signoutWrongCode": "{count, plural, =1{That code is not right. 1 try left.} other{That code is not right. {count} tries left.}}",
+  "signoutDenied": "Your parent said no, so you stay signed in.",
+  "signoutEnded": "This request has ended. Ask again if you still need to sign out.",
+  "signoutAskAgain": "Ask again",
+  "signoutReviewTitle": "{name} wants to sign out",
+  "signoutReviewMeta": "Code {code} · app limits turn off",
+  "signoutAllow": "Allow",
+  "signoutKeep": "Keep signed in"
 }

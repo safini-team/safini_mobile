@@ -44,6 +44,14 @@ class ApiConst {
   static String prize(String prizeId) => '/v1/prizes/$prizeId';
   static String askForPrize(String prizeId) => '/v1/prizes/$prizeId/requests';
   static const String prizeRequests = '/v1/prize-requests';
+
+  /// A child asks a parent before signing out (SAF-191).
+  static String childSignoutRequests(String childId) =>
+      '/v1/children/$childId/signout-requests';
+  static String childSignoutRequest(String childId, String requestId) =>
+      '/v1/children/$childId/signout-requests/$requestId';
+  static const String familySignoutRequests =
+      '/v1/families/current/signout-requests';
   static String approvePrizeRequest(String requestId) =>
       '/v1/prize-requests/$requestId/approve';
   static String declinePrizeRequest(String requestId) =>

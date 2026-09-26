@@ -27,6 +27,8 @@ import 'package:safini/core/utils/task_category.dart';
 import 'package:safini/features/prizes/prize.dart';
 import 'package:safini/features/prizes/prize_asks_cubit.dart';
 import 'package:safini/features/prizes/widgets/prize_sheets.dart';
+import 'package:safini/features/signout/signout_asks_cubit.dart';
+import 'package:safini/features/signout/signout_request.dart';
 
 /// Pull-to-refresh on Today. It takes the cubits rather than a BuildContext:
 /// the monitor reload swaps Today for its skeleton, which unmounts the context
@@ -37,13 +39,31 @@ Future<void> refreshParentToday({
   required ParentMonitorCubit monitor,
   required PrizeAsksCubit asks,
   required ParentTasksCubit tasks,
+  SignoutAsksCubit? signouts,
 }) async {
   await Future.wait([
     monitor.loadMonitorData(),
     asks.load(),
     tasks.loadAllTasks(),
+    if (signouts != null) signouts.load(),
   ]);
 }
+
+/// A child asking to sign out, first in "Needs your review" whichever child is
+/// selected: once the parent says yes, app limits on that phone turn off
+/// (SAF-191). The code is for reading out to a child standing next to them.
+List<TodayReview> signoutReviews(S s, List<SignoutRequest> asks) => [
+  for (final ask in asks)
+    TodayReview(
+      id: ask.id,
+      title: s.signoutReviewTitle(ask.childNickname ?? ''),
+      meta: s.signoutReviewMeta(ask.code ?? ''),
+      kidName: ask.childNickname ?? '',
+      color: AppColors.kidColor(ask.childId),
+      coins: 0,
+      kind: TodayReviewKind.signout,
+    ),
+];
 
 class ParentMonitorScreen extends StatelessWidget {
   const ParentMonitorScreen({super.key});
@@ -66,6 +86,9 @@ class ParentMonitorScreen extends StatelessWidget {
         BlocProvider(
           create: (_) => PrizeAsksCubit(getIt<PrizeApi>())..load(),
         ),
+        BlocProvider(
+          create: (_) => SignoutAsksCubit(getIt<SignoutApi>())..load(),
+        ),
         // The tasks cubit comes from the shell: a second instance here meant
         // an approval on the Tasks tab never reached this card, and the tab
         // badge never heard about one made from Today.
@@ -86,6 +109,7 @@ class _ParentMonitorView extends StatelessWidget {
         onResume: () {
           context.read<ParentMonitorCubit>().loadMonitorData();
           context.read<PrizeAsksCubit>().load();
+          context.read<SignoutAsksCubit>().load();
         },
         // ...and when a push says a limit ran out or protection changed.
         child: OnPush(
@@ -99,7 +123,11 @@ class _ParentMonitorView extends StatelessWidget {
           child: OnPush(
             types: const {PushType.prizeRequested, PushType.wishRequested},
             onPush: (_) => context.read<PrizeAsksCubit>().load(),
-            child: _TodayPushTarget(child: _buildContent(context)),
+            child: OnPush(
+              types: const {PushType.signoutRequested},
+              onPush: (_) => context.read<SignoutAsksCubit>().load(),
+              child: _TodayPushTarget(child: _buildContent(context)),
+            ),
           ),
         ),
       ),
@@ -141,30 +169,42 @@ class _ParentMonitorView extends StatelessWidget {
           }
 
           final asks = context.watch<PrizeAsksCubit>().state;
+          final signouts = context.watch<SignoutAsksCubit>().state;
           return BlocBuilder<ParentTasksCubit, ParentTasksState>(
             builder: (context, tasksState) => ParentTodayView(
-              data: _buildData(context, state, tasksState, asks),
+              data: _buildData(context, state, tasksState, asks, signouts),
               onSelectKid: (index) => context
                   .read<ParentHomeCubit>()
                   .selectChild(state.children[index].id),
               onOpenSettings: () =>
                   context.router.push(const NamedRoute('parentSettings')),
               onOpenLimits: () => context.read<ParentHomeCubit>().selectTab(2),
-              onOpenReview: (review) => review.kind == TodayReviewKind.task
-                  ? _openReview(context, review.id)
-                  : _openAsk(context, asks, review.id),
-              onApproveReview: (review) => review.kind == TodayReviewKind.task
-                  ? context.read<ParentTasksCubit>().reviewTask(
-                      review.id,
-                      approve: true,
-                    )
-                  : _answerAsk(context, asks, review.id, approve: true),
-              onDeclineReview: (review) =>
-                  _answerAsk(context, asks, review.id, approve: false),
+              onOpenReview: (review) => switch (review.kind) {
+                TodayReviewKind.task => _openReview(context, review.id),
+                // Both answers are on the card itself.
+                TodayReviewKind.signout => null,
+                _ => _openAsk(context, asks, review.id),
+              },
+              onApproveReview: (review) => switch (review.kind) {
+                TodayReviewKind.task => context
+                    .read<ParentTasksCubit>()
+                    .reviewTask(review.id, approve: true),
+                TodayReviewKind.signout => _answerSignout(
+                  context,
+                  signouts,
+                  review.id,
+                  approve: true,
+                ),
+                _ => _answerAsk(context, asks, review.id, approve: true),
+              },
+              onDeclineReview: (review) => review.kind == TodayReviewKind.signout
+                  ? _answerSignout(context, signouts, review.id, approve: false)
+                  : _answerAsk(context, asks, review.id, approve: false),
               onRefresh: () => refreshParentToday(
                 monitor: context.read<ParentMonitorCubit>(),
                 asks: context.read<PrizeAsksCubit>(),
                 tasks: context.read<ParentTasksCubit>(),
+                signouts: context.read<SignoutAsksCubit>(),
               ),
             ),
           );
@@ -226,6 +266,23 @@ class _ParentMonitorView extends StatelessWidget {
     if (!approve) monitor.loadMonitorData();
   }
 
+  Future<void> _answerSignout(
+    BuildContext context,
+    List<SignoutRequest> asks,
+    String id, {
+    required bool approve,
+  }) async {
+    final ask = asks.where((a) => a.id == id).firstOrNull;
+    if (ask == null) return;
+    final s = S.of(context);
+    final error = await context.read<SignoutAsksCubit>().answer(
+      ask,
+      approve: approve,
+    );
+    if (!context.mounted || error == null) return;
+    AppSnackBar.error(context, error.isEmpty ? s.networkError : error);
+  }
+
   static ParentTasksLoaded? _loadedOf(ParentTasksState state) =>
       switch (state) {
         ParentTasksLoaded() => state,
@@ -244,6 +301,7 @@ class _ParentMonitorView extends StatelessWidget {
     ParentMonitorLoaded state,
     ParentTasksState tasksState,
     List<PrizeRequest> asks,
+    List<SignoutRequest> signouts,
   ) {
     final child = state.selectedChild;
     final tasks = _loadedOf(tasksState);
@@ -321,6 +379,7 @@ class _ParentMonitorView extends StatelessWidget {
         ),
       );
     }
+    reviews.insertAll(0, signoutReviews(s, signouts));
 
     return ParentTodayData(
       usageAvailable: state.screenTime.usageAvailable,

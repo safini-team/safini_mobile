@@ -16,6 +16,7 @@ import 'package:safini/features/common/common_injection.dart';
 import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:safini/features/parent/parent_injection.dart';
 import 'package:safini/features/prizes/prize.dart';
+import 'package:safini/features/signout/signout_request.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -82,6 +83,7 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
   // Both shells: the parent prices prizes, the child asks for them.
   if (!getIt.isRegistered<PrizeApi>()) {
     getIt.registerLazySingleton<PrizeApi>(() => PrizeApi(getIt<Dio>()));
+    getIt.registerLazySingleton<SignoutApi>(() => SignoutApi(getIt<Dio>()));
   }
 
   // Only registered when Firebase actually came up. Everything that uses it

@@ -736,5 +736,17 @@
   "reconnectMovesProfile": "Uni {name} yangi telefonida \"Men bolaman\" boʻlimiga kiriting. Tangalar, vazifalar va tarix koʻchadi, eski telefonda esa ilova limitlari ishlamay qoladi.",
   "iosScreenTimeNotSetUp": "Bolaning iPhone’ida ekran vaqti sozlanmagan, shuning uchun ilova limitlari ishlamayapti. Unda Safini’ni oching va ekran vaqtiga ruxsat bering.",
   "installedAppsIosTitle": "iPhone ilovalari bu yerda koʻrinmaydi",
-  "installedAppsIosBody": "Apple Safini’ga {name} iPhone’idagi ilovalar roʻyxatini koʻrishga ruxsat bermaydi, shuning uchun bu ekranda hozircha limit tanlab boʻlmaydi."
+  "installedAppsIosBody": "Apple Safini’ga {name} iPhone’idagi ilovalar roʻyxatini koʻrishga ruxsat bermaydi, shuning uchun bu ekranda hozircha limit tanlab boʻlmaydi.",
+  "signoutAskTitle": "Chiqish uchun ota-onangdan soʻra",
+  "signoutAskBody": "Chiqsang, ilova limitlari oʻchadi, shuning uchun ota-onang rozi boʻlishi kerak. Ularga soʻrov yubordik.",
+  "signoutWaiting": "Javob kutilmoqda…",
+  "signoutTypeCode": "Yoki ota-onang aytgan kodni kirit",
+  "signoutWrongCode": "{count, plural, other{Kod notoʻgʻri. Yana {count} ta urinish qoldi.}}",
+  "signoutDenied": "Ota-onang ruxsat bermadi, shuning uchun hisobingda qolasan.",
+  "signoutEnded": "Bu soʻrov tugadi. Hali ham chiqish kerak boʻlsa, yana soʻra.",
+  "signoutAskAgain": "Yana soʻrash",
+  "signoutReviewTitle": "{name} chiqmoqchi",
+  "signoutReviewMeta": "Kod {code} · ilova limitlari oʻchadi",
+  "signoutAllow": "Ruxsat berish",
+  "signoutKeep": "Chiqarmaslik"
 }
