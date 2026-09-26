@@ -67,15 +67,19 @@ class _ChildStoreScreen extends StatelessWidget {
         final coins = context.watch<CoinsCubit>().state;
         final cubit = context.read<RewardStoreCubit>();
 
-        if (state.isLoading) {
+        final hasItems =
+            state.appTimeItems.isNotEmpty ||
+            state.avatarItems.isNotEmpty ||
+            state.prizes.isNotEmpty;
+        // Today reloads the store on every visit and every resume; a refresh
+        // keeps the shelf up instead of flashing the skeleton.
+        if (state.isLoading && !hasItems) {
           return const ChildStoreSkeleton();
         }
         if (state.hasLoadError) {
           return ChildStoreError(onRetry: cubit.loadStore);
         }
-        if (state.appTimeItems.isEmpty &&
-            state.avatarItems.isEmpty &&
-            state.prizes.isEmpty) {
+        if (!hasItems) {
           return ChildStoreEmpty(onRetry: cubit.loadStore);
         }
 

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/utils/tab_freshness.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
 import 'package:safini/features/models/domain/controllers/task_controller.dart';
@@ -21,9 +22,18 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
   bool _allChildrenMode = false;
   String? _lastChildId;
 
+  /// Drops a slower, older load that lands after a newer one.
+  int _loadGeneration = 0;
+  DateTime? _loadedAt;
+
+  /// Whether switching back to Tasks can skip the refetch.
+  bool get isFresh =>
+      _allChildrenMode && _loaded != null && isTabFresh(_loadedAt);
+
   /// Loads tasks for [childId] when given (e.g. the child selected on the
   /// monitor), otherwise for the family's first child.
   Future<void> loadTasks({String? childId}) async {
+    ++_loadGeneration;
     _allChildrenMode = false;
     emit(const ParentTasksLoading());
 
@@ -62,13 +72,19 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
 
   /// Loads tasks for every child in the family, tagged with the child's name.
   /// Used by the Tasks screen so the parent sees all tasks at once.
+  ///
+  /// A refresh keeps the list on screen and swaps the new one in, and a
+  /// refresh that fails keeps it too; only a first load shows the skeleton.
   Future<void> loadAllTasks() async {
+    final generation = ++_loadGeneration;
+    final shown = _allChildrenMode ? _loaded : null;
     _allChildrenMode = true;
-    emit(const ParentTasksLoading());
+    if (shown == null) emit(const ParentTasksLoading());
 
     if (_familyCubit.state.family == null) {
       await _familyCubit.loadCurrentFamily(refresh: true);
     }
+    if (isClosed || generation != _loadGeneration) return;
 
     final children = _familyCubit.state.family?.children
             .where((c) => c.id.isNotEmpty)
@@ -84,13 +100,19 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       return;
     }
 
+    // Every child at once: one round trip instead of one per child.
+    final results = await Future.wait(
+      children.map((child) => _repository.fetchTasks(child.id)),
+    );
+    if (isClosed || generation != _loadGeneration) return;
+
     final allTasks = <ParentTaskInstanceModel>[];
     final childNames = <String, String>{};
     Failure? firstFailure;
 
-    for (final child in children) {
-      final result = await _repository.fetchTasks(child.id);
-      result.fold((failure) => firstFailure ??= failure, (response) {
+    for (var i = 0; i < children.length; i++) {
+      final child = children[i];
+      results[i].fold((failure) => firstFailure ??= failure, (response) {
         for (final task in response.tasks) {
           allTasks.add(task);
           childNames[task.id] = child.nickname;
@@ -99,10 +121,12 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     }
 
     if (allTasks.isEmpty && firstFailure != null) {
+      if (shown != null) return;
       emit(_errorFromFailure(firstFailure!));
       return;
     }
 
+    _loadedAt = DateTime.now();
     emit(
       ParentTasksLoaded(
         childId: children.first.id,

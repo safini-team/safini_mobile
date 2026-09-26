@@ -104,7 +104,12 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     return BlocListener<ParentHomeCubit, ParentHomeState>(
       listenWhen: (prev, curr) =>
           prev.selectedIndex != curr.selectedIndex && curr.selectedIndex == 1,
-      listener: (_, _) => unawaited(_reload()),
+      listener: (context, _) {
+        // Coming back within a few seconds keeps what is on screen; a
+        // submission still lands through the push below.
+        if (context.read<ParentTasksCubit>().isFresh) return;
+        unawaited(_reload());
+      },
       child: OnAppResume(
         onResume: () => unawaited(_reload()),
         // The tab badge and the list move the moment a child sends a task.

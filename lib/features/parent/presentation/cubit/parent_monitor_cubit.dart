@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/utils/tab_freshness.dart';
 import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
@@ -21,6 +22,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   int _loadGeneration = 0;
   List<ChildAppUsageModel> _appUsage = const [];
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
+  DateTime? _loadedAt;
 
   ParentMonitorCubit(
     this._familyCubit,
@@ -64,10 +66,28 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     return family.children.where((c) => c.id.isNotEmpty).toList();
   }
 
+  /// Whether switching back to Today can skip the refetch for [childId].
+  bool isFreshFor(String? childId) {
+    final current = state;
+    return current is ParentMonitorLoaded &&
+        (childId == null || current.selectedChild?.id == childId) &&
+        isTabFresh(_loadedAt);
+  }
+
   /// [childId] switches to that child, e.g. the one a tapped push is about.
+  ///
+  /// A refresh of the child already on screen keeps it there and swaps the new
+  /// numbers in when they land. Only a first load or a different child shows
+  /// the skeleton, so switching tabs never blanks Today.
   Future<void> loadMonitorData({String? childId}) async {
     final generation = ++_loadGeneration;
-    emit(const ParentMonitorLoading());
+    final shown = state is ParentMonitorLoaded
+        ? state as ParentMonitorLoaded
+        : null;
+    final sameChild =
+        shown != null &&
+        (childId == null || shown.selectedChild?.id == childId);
+    if (!sameChild) emit(const ParentMonitorLoading());
 
     // Always refetch the family. The coin balance and the streak on the card
     // come from the child rows in it, so skipping this when a family was
@@ -93,16 +113,20 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     }
 
     final child = _children[_selectedIndex];
-    _appUsage = const [];
-    _screenTime = ScreenTimeModel.none;
+    // The past week is fetched after Today is up; keep the one on screen so
+    // the chart does not drop out and come back on every refresh.
+    final keptWeek = shown?.selectedChild?.id == child.id
+        ? shown?.weekUsage
+        : null;
+    // All three together: face emoji used to wait for the usage call.
     final deviceUsage = _fetchDeviceUsage(child.id);
+    final faceEmojiFuture = _appUsageRepo.fetchChildFaceEmoji(child.id);
     final result = await _appUsageRepo.fetchAppUsage(child.id);
-    if (isClosed || generation != _loadGeneration) return;
-    result.fold(_clearUsage, _takeUsage);
-    final faceEmoji = await _appUsageRepo.fetchChildFaceEmoji(child.id);
-
+    final faceEmoji = await faceEmojiFuture;
     final deviceSnapshot = await deviceUsage;
     if (isClosed || generation != _loadGeneration) return;
+    result.fold(_clearUsage, _takeUsage);
+    _loadedAt = DateTime.now();
     emit(
       ParentMonitorLoaded(
         children: _children,
@@ -119,6 +143,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
         appLimits: _appUsage.map(_toLimitMap).toList(),
         screenTime: _screenTime,
         deviceUsage: deviceSnapshot,
+        weekUsage: keptWeek,
       ),
     );
     await _loadWeek(generation, child.id, deviceSnapshot);

@@ -35,10 +35,11 @@ import 'package:safini/features/signout/signout_asks_cubit.dart';
 import 'package:safini/features/signout/signout_request.dart';
 
 /// Pull-to-refresh on Today. It takes the cubits rather than a BuildContext:
-/// the monitor reload swaps Today for its skeleton, which unmounts the context
-/// the pull started from, so the tasks were never refetched and "Needs your
-/// review" stayed stale until the parent opened the Tasks tab (SAF-191). The
-/// cubit is shared with that tab, which loads every child, so Today does too.
+/// the monitor reload used to swap Today for its skeleton, which unmounted the
+/// context the pull started from, so the tasks were never refetched and "Needs
+/// your review" stayed stale until the parent opened the Tasks tab (SAF-191).
+/// The cubit is shared with that tab, which loads every child, so Today does
+/// too.
 Future<void> refreshParentToday({
   required ParentMonitorCubit monitor,
   required PrizeAsksCubit asks,
@@ -152,9 +153,13 @@ class _ParentMonitorView extends StatelessWidget {
               current.selectedIndex == 0 &&
               (previous.selectedIndex != 0 ||
                   previous.selectedChildId != current.selectedChildId),
-          listener: (context, home) => context
-              .read<ParentMonitorCubit>()
-              .loadMonitorData(childId: home.selectedChildId),
+          // Coming back within a few seconds keeps what is on screen;
+          // resume, pushes and pull-to-refresh still always refetch.
+          listener: (context, home) {
+            final monitor = context.read<ParentMonitorCubit>();
+            if (monitor.isFreshFor(home.selectedChildId)) return;
+            monitor.loadMonitorData(childId: home.selectedChildId);
+          },
         ),
         BlocListener<ParentTasksCubit, ParentTasksState>(
           // Approving pays coins and moves the streak, and both of those live

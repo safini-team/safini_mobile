@@ -80,8 +80,11 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
             current.selectedIndex == 2 &&
             (previous.selectedIndex != 2 ||
                 previous.selectedChildId != current.selectedChildId),
-        listener: (context, home) =>
-            _cubit.loadAppLimits(childId: home.selectedChildId),
+        listener: (context, home) {
+          // Coming back within a few seconds keeps what is on screen.
+          if (_cubit.isFreshFor(home.selectedChildId)) return;
+          _cubit.loadAppLimits(childId: home.selectedChildId);
+        },
         child: OnPush(
           types: const {
             PushType.appLimitReached,

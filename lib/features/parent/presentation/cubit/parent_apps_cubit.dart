@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/utils/tab_freshness.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
@@ -14,6 +15,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   bool _savingCap = false;
   List<ChildAppUsageModel> _appUsage = const [];
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
+  DateTime? _loadedAt;
 
   ParentAppsCubit(this._familyCubit, this._appUsageRepo)
     : super(const ParentAppsInitial());
@@ -21,9 +23,19 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   /// Child the Limits screen is scoped to; the chip strip switches it.
   String? get childId => _childId;
 
+  /// Whether switching back to Limits can skip the refetch for [childId].
+  bool isFreshFor(String? childId) =>
+      state is ParentAppsLoaded &&
+      (childId == null || childId == _childId) &&
+      isTabFresh(_loadedAt);
+
+  /// A refresh of the child already on screen keeps the list up and swaps the
+  /// new rows in; only a first load or another child shows the skeleton.
   Future<void> loadAppLimits({String? childId}) async {
     final generation = ++_loadGeneration;
-    emit(const ParentAppsLoading());
+    final sameChild =
+        state is ParentAppsLoaded && (childId == null || childId == _childId);
+    if (!sameChild) emit(const ParentAppsLoading());
 
     final cached = _familyCubit.state.family;
     // An alert can name a child another parent added after this app opened.
@@ -53,8 +65,12 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     if (isClosed || generation != _loadGeneration) return;
     result.fold(
       // Degrade to an empty list so the screen still renders (tip + add button).
-      (_) => emit(const ParentAppsLoaded(appLimits: [])),
+      // A failed background refresh keeps the rows already on screen.
+      (_) {
+        if (!sameChild) emit(const ParentAppsLoaded(appLimits: []));
+      },
       (snapshot) {
+        _loadedAt = DateTime.now();
         _appUsage = snapshot.apps;
         _screenTime = snapshot.screenTime;
         _emitLoaded();
