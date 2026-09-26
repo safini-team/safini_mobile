@@ -23,6 +23,9 @@ import 'package:safini/features/child/presentation/screens/profile/child_me_view
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/auth/presentation/account_deletion_flow.dart';
+import 'package:safini/features/common/profile/domain/controllers/profile_controller.dart';
+import 'package:safini/features/signout/kid_signout_sheet.dart';
+import 'package:safini/features/signout/signout_request.dart';
 
 class ChildProfileScreen extends StatelessWidget {
   const ChildProfileScreen({super.key});
@@ -256,6 +259,19 @@ class ChildMeSettings extends StatelessWidget {
     );
   }
 
+  /// The child profile this account holds. `known` is false when that could
+  /// not be checked (offline): signing out then waits, rather than skipping
+  /// the parent.
+  Future<({String? id, bool known})> _childId() async {
+    final claimed = getIt<ChildClaimCubit>().state.child?.id;
+    if (claimed != null && claimed.isNotEmpty) return (id: claimed, known: true);
+    final me = await getIt<ProfileController>().fetchMe();
+    return me.fold((_) => (id: null, known: false), (profile) {
+      final id = profile.childId?.trim();
+      return (id: id == null || id.isEmpty ? null : id, known: true);
+    });
+  }
+
   Future<void> _signOut(BuildContext context, S s) async {
     final router = context.router;
     final auth = context.read<AuthSessionCubit>();
@@ -285,7 +301,22 @@ class ChildMeSettings extends StatelessWidget {
       ),
     );
 
-    if (confirmed != true) return;
+    if (confirmed != true || !context.mounted) return;
+    // Signing out turns app limits off, so a parent says yes first (SAF-191).
+    final child = await _childId();
+    if (!context.mounted) return;
+    if (!child.known) {
+      AppSnackBar.error(context, s.networkError);
+      return;
+    }
+    if (child.id != null) {
+      final allowed = await askParentToSignOut(
+        context,
+        api: getIt<SignoutApi>(),
+        childId: child.id!,
+      );
+      if (!allowed) return;
+    }
     await auth.signOut();
     if (!context.mounted) return;
     router.replaceAll([const NamedRoute('login')]);

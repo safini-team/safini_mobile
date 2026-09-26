@@ -22,7 +22,8 @@ enum PushType {
   wishRequested('wish_requested'),
   prizeAdded('prize_added'),
   prizeGiven('prize_given'),
-  prizeDeclined('prize_declined');
+  prizeDeclined('prize_declined'),
+  signoutRequested('signout_requested');
 
   const PushType(this.wire);
 
@@ -118,7 +119,8 @@ class PushEvent {
     ),
     PushType.weeklyDigest ||
     PushType.prizeRequested ||
-    PushType.wishRequested => PushTarget(
+    PushType.wishRequested ||
+    PushType.signoutRequested => PushTarget(
       PushDestination.parentToday,
       childId: childId,
     ),

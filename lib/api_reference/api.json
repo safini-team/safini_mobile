@@ -3693,7 +3693,7 @@
           "enforcement"
         ],
         "summary": "Unpair",
-        "description": "Auth: X-Safini-Device-Token. Business requirement: revoke this device on explicit sign-out and alert parents that protection stopped. Frontend note: the credential expires immediately; the stopped status is retained.",
+        "description": "Auth: X-Safini-Device-Token. Business requirement: revoke this device on explicit sign-out. A sign-out a parent approved (`/signout-requests`) removes the pairing quietly; any other sign-out reads `signed_out` and alerts parents. Frontend note: the credential expires immediately. `approved` says which of the two happened.",
         "operationId": "unpair_v1_children__child_id__enforcement_session_delete",
         "parameters": [
           {
@@ -6693,6 +6693,424 @@
         }
       }
     },
+    "/v1/children/{child_id}/signout-requests": {
+      "post": {
+        "tags": [
+          "sign-out approval"
+        ],
+        "summary": "Ask",
+        "description": "Auth: the claimed child's Supabase bearer token. Business requirement: signing out turns app limits off, so the child's phone asks a parent first. Every parent gets a `signout_requested` push carrying a 4-digit code. Frontend note: a new ask replaces the open one. Poll `GET .../signout-requests/{id}` until `approved`, or send the code a parent read out to `POST .../verify`; sign out only once it reads `approved`. 403 means this account no longer holds the child profile, so there is nothing to protect and the phone may sign out directly. The child never sees the code.",
+        "operationId": "ask_v1_children__child_id__signout_requests_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/signout-requests/{request_id}": {
+      "get": {
+        "tags": [
+          "sign-out approval"
+        ],
+        "summary": "Read",
+        "description": "Auth: the claimed child or a family parent. Business requirement: the child's phone waits for a parent's answer. Frontend note: `status` is pending, approved, denied, cancelled, locked (five wrong codes) or expired (ten minutes). Only parents get `code`, and only while pending.",
+        "operationId": "read_v1_children__child_id__signout_requests__request_id__get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/signout-requests/{request_id}/verify": {
+      "post": {
+        "tags": [
+          "sign-out approval"
+        ],
+        "summary": "Verify",
+        "description": "Auth: the claimed child's Supabase bearer token. Business requirement: a parent next to the child reads the code out instead of tapping Approve. Frontend note: 200 returns the request (now `approved`); 422 is a wrong code with `attempts_left`; the fifth wrong code locks the request (409 after that), so ask again.",
+        "operationId": "verify_v1_children__child_id__signout_requests__request_id__verify_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/signout-requests/{request_id}/approve": {
+      "post": {
+        "tags": [
+          "sign-out approval"
+        ],
+        "summary": "Approve",
+        "description": "Auth: a family parent. Business requirement: let the child sign out; app limits turn off on that phone. Frontend note: 409 when the request was already answered, replaced or expired.",
+        "operationId": "approve_v1_children__child_id__signout_requests__request_id__approve_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/signout-requests/{request_id}/deny": {
+      "post": {
+        "tags": [
+          "sign-out approval"
+        ],
+        "summary": "Deny",
+        "description": "Auth: a family parent. Business requirement: keep the child signed in. Frontend note: the child's phone reads `denied` on its next poll.",
+        "operationId": "deny_v1_children__child_id__signout_requests__request_id__deny_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/families/current/signout-requests": {
+      "get": {
+        "tags": [
+          "sign-out approval"
+        ],
+        "summary": "Pending",
+        "description": "Auth: a parent. Business requirement: show open sign-out asks on Today next to task reviews, so a missed push is not a dead end. Frontend note: open (pending, unexpired) requests for every child in the family, oldest first, each with `child_nickname` and `code`.",
+        "operationId": "pending_v1_families_current_signout_requests_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/families/current/ai/task-suggestions": {
       "post": {
         "tags": [
@@ -9158,6 +9576,24 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "VerifyRequest": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{4}$",
+            "title": "Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "VerifyRequest",
+        "example": {
+          "code": "4821"
+        }
       },
       "VoiceInstructionRequest": {
         "properties": {

@@ -6055,6 +6055,123 @@ class S {
       args: [name],
     );
   }
+
+  /// `Ask a parent to sign out`
+  String get signoutAskTitle {
+    return Intl.message(
+      'Ask a parent to sign out',
+      name: 'signoutAskTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signing out turns your app limits off, so a parent has to say yes. We sent them a request.`
+  String get signoutAskBody {
+    return Intl.message(
+      'Signing out turns your app limits off, so a parent has to say yes. We sent them a request.',
+      name: 'signoutAskBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for an answer…`
+  String get signoutWaiting {
+    return Intl.message(
+      'Waiting for an answer…',
+      name: 'signoutWaiting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Or type the code your parent tells you`
+  String get signoutTypeCode {
+    return Intl.message(
+      'Or type the code your parent tells you',
+      name: 'signoutTypeCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count, plural, =1{That code is not right. 1 try left.} other{That code is not right. {count} tries left.}}`
+  String signoutWrongCode(num count) {
+    return Intl.plural(
+      count,
+      one: 'That code is not right. 1 try left.',
+      other: 'That code is not right. $count tries left.',
+      name: 'signoutWrongCode',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Your parent said no, so you stay signed in.`
+  String get signoutDenied {
+    return Intl.message(
+      'Your parent said no, so you stay signed in.',
+      name: 'signoutDenied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This request has ended. Ask again if you still need to sign out.`
+  String get signoutEnded {
+    return Intl.message(
+      'This request has ended. Ask again if you still need to sign out.',
+      name: 'signoutEnded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ask again`
+  String get signoutAskAgain {
+    return Intl.message(
+      'Ask again',
+      name: 'signoutAskAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} wants to sign out`
+  String signoutReviewTitle(Object name) {
+    return Intl.message(
+      '$name wants to sign out',
+      name: 'signoutReviewTitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Code {code} · app limits turn off`
+  String signoutReviewMeta(Object code) {
+    return Intl.message(
+      'Code $code · app limits turn off',
+      name: 'signoutReviewMeta',
+      desc: '',
+      args: [code],
+    );
+  }
+
+  /// `Allow`
+  String get signoutAllow {
+    return Intl.message('Allow', name: 'signoutAllow', desc: '', args: []);
+  }
+
+  /// `Keep signed in`
+  String get signoutKeep {
+    return Intl.message(
+      'Keep signed in',
+      name: 'signoutKeep',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

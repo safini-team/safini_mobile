@@ -18,6 +18,7 @@ class DsCodeField extends StatefulWidget {
     this.onCompleted,
     this.autofocus = true,
     this.enabled = true,
+    this.digits = false,
   });
 
   final TextEditingController controller;
@@ -25,6 +26,10 @@ class DsCodeField extends StatefulWidget {
   final ValueChanged<String>? onCompleted;
   final bool autofocus;
   final bool enabled;
+
+  /// A numeric code (the sign-out code) instead of an invite code, whose
+  /// alphabet leaves out 0, 1, I and O.
+  final bool digits;
 
   @override
   State<DsCodeField> createState() => _DsCodeFieldState();
@@ -75,11 +80,15 @@ class _DsCodeFieldState extends State<DsCodeField> {
               autocorrect: false,
               enableSuggestions: false,
               textCapitalization: TextCapitalization.characters,
-              keyboardType: TextInputType.visiblePassword,
+              keyboardType: widget.digits
+                  ? TextInputType.number
+                  : TextInputType.visiblePassword,
               maxLength: widget.length,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
-                  RegExp('[A-HJ-NP-Za-hj-np-z2-9]'),
+                  widget.digits
+                      ? RegExp('[0-9]')
+                      : RegExp('[A-HJ-NP-Za-hj-np-z2-9]'),
                 ),
                 TextInputFormatter.withFunction(
                   (_, next) => next.copyWith(text: next.text.toUpperCase()),
