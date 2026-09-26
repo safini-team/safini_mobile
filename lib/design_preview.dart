@@ -20,12 +20,14 @@ import 'package:safini/features/child/presentation/screens/home/child_today_view
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
+import 'package:safini/features/onboarding/coach_tour.dart';
 import 'package:safini/features/onboarding/fini.dart';
 import 'package:safini/features/onboarding/getting_started_card.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
 import 'package:safini/features/onboarding/kid_hello.dart';
 import 'package:safini/features/onboarding/kid_setup.dart';
 import 'package:safini/features/onboarding/pairing_connected.dart';
+import 'package:safini/features/onboarding/parent_tour.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
 import 'package:safini/features/parent/presentation/screens/family/parent_family_view.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
@@ -298,6 +300,35 @@ class _GalleryState extends State<_Gallery> {
       ),
     ),
     _Entry(
+      'Parent tour',
+      AppColors.bgParent,
+      (context) => _TourPreview(
+        child: ParentTodayView(
+          data: SampleData.parentToday,
+          onSelectKid: (_) {},
+          onOpenSettings: () {},
+          onOpenReview: (_) {},
+          onApproveReview: (_) {},
+          onOpenLimits: () {},
+          screenTimeKey: ParentTour.screenTime,
+          reviewKey: ParentTour.review,
+          banner: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
+            child: GettingStartedCard(
+              state: const GettingStarted(
+                familyId: 'preview',
+                done: {SetupStep.child, SetupStep.phone},
+                hidden: false,
+              ),
+              kidName: 'Amir',
+              onOpen: (_) {},
+              onHide: () {},
+            ),
+          ),
+        ),
+      ),
+    ),
+    _Entry(
       'Parent Today · empty',
       AppColors.bgParent,
       (context) => ParentTodayView(
@@ -351,11 +382,13 @@ class _GalleryState extends State<_Gallery> {
                 builder: (color) => AppIcons.tabHome(color: color),
               ),
               DsTabItem(
+                key: ParentTour.tasksTab,
                 label: s.tabTasks,
                 builder: (color) => AppIcons.tabTasksParent(color: color),
                 badge: 2,
               ),
               DsTabItem(
+                key: ParentTour.limitsTab,
                 label: s.tabLimits,
                 builder: (color) => AppIcons.tabLimits(color: color),
               ),
@@ -461,4 +494,29 @@ class _Switcher extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Starts the parent tour a moment after the page shows, like Today does.
+class _TourPreview extends StatefulWidget {
+  const _TourPreview({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_TourPreview> createState() => _TourPreviewState();
+}
+
+class _TourPreviewState extends State<_TourPreview> {
+  @override
+  void initState() {
+    super.initState();
+    Future<void>.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) {
+        showCoachTour(context, ParentTour.steps(S.of(context)));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

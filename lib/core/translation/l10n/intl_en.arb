@@ -910,5 +910,12 @@
   "kidHelloGo": "Let's go",
   "finiWhyAdmin": "So Safini stays on. Your parent hears if it gets switched off.",
   "phoneConnectedTitle": "{name}'s phone is connected!",
-  "phoneConnectedBody": "Tasks and limits now reach it."
+  "phoneConnectedBody": "Tasks and limits now reach it.",
+  "tourScreenTime": "Today's screen time. It fills up as apps get used.",
+  "tourReview": "Finished tasks and gift asks land here. Approve to pay coins.",
+  "tourTasks": "Add tasks here. Each one earns coins.",
+  "tourLimits": "Daily limits, app rules and gifts live here.",
+  "tourNext": "Next",
+  "tourDone": "Got it",
+  "tourSkip": "Skip"
 }

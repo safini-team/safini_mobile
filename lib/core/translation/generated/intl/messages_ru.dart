@@ -1535,6 +1535,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Советы родителям"),
     "toGo": m74,
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Сегодняшние задания"),
+    "tourDone": MessageLookupByLibrary.simpleMessage("Понятно"),
+    "tourLimits": MessageLookupByLibrary.simpleMessage(
+      "Здесь дневные лимиты, правила для приложений и подарки.",
+    ),
+    "tourNext": MessageLookupByLibrary.simpleMessage("Далее"),
+    "tourReview": MessageLookupByLibrary.simpleMessage(
+      "Сюда приходят выполненные задания и просьбы о подарках. Одобрите, чтобы начислить монеты.",
+    ),
+    "tourScreenTime": MessageLookupByLibrary.simpleMessage(
+      "Экранное время за сегодня. Растёт, пока открыты приложения.",
+    ),
+    "tourSkip": MessageLookupByLibrary.simpleMessage("Пропустить"),
+    "tourTasks": MessageLookupByLibrary.simpleMessage(
+      "Здесь добавляются задания. За каждое дают монеты.",
+    ),
     "tryAgain": MessageLookupByLibrary.simpleMessage("Повторить"),
     "tue": MessageLookupByLibrary.simpleMessage("ВТ"),
     "typeCodeFromOtherParent": MessageLookupByLibrary.simpleMessage(

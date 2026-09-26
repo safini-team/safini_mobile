@@ -6452,6 +6452,61 @@ class S {
       args: [],
     );
   }
+
+  /// `Today's screen time. It fills up as apps get used.`
+  String get tourScreenTime {
+    return Intl.message(
+      'Today\'s screen time. It fills up as apps get used.',
+      name: 'tourScreenTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finished tasks and gift asks land here. Approve to pay coins.`
+  String get tourReview {
+    return Intl.message(
+      'Finished tasks and gift asks land here. Approve to pay coins.',
+      name: 'tourReview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add tasks here. Each one earns coins.`
+  String get tourTasks {
+    return Intl.message(
+      'Add tasks here. Each one earns coins.',
+      name: 'tourTasks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily limits, app rules and gifts live here.`
+  String get tourLimits {
+    return Intl.message(
+      'Daily limits, app rules and gifts live here.',
+      name: 'tourLimits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next`
+  String get tourNext {
+    return Intl.message('Next', name: 'tourNext', desc: '', args: []);
+  }
+
+  /// `Got it`
+  String get tourDone {
+    return Intl.message('Got it', name: 'tourDone', desc: '', args: []);
+  }
+
+  /// `Skip`
+  String get tourSkip {
+    return Intl.message('Skip', name: 'tourSkip', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

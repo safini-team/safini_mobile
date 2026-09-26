@@ -14,6 +14,7 @@ class OnboardingStore {
   static String _doneKey(String familyId) => 'onboarding.done.$familyId';
   static String _hiddenKey(String familyId) => 'onboarding.hidden.$familyId';
   static String _helloKey(String childId) => 'onboarding.kidHello.$childId';
+  static String _tourKey(String familyId) => 'onboarding.tour.$familyId';
 
   Set<String> done(String familyId) =>
       (_prefs?.getStringList(_doneKey(familyId)) ?? const []).toSet();
@@ -32,4 +33,10 @@ class OnboardingStore {
 
   Future<void> markKidHelloSeen(String childId) async =>
       _prefs?.setBool(_helloKey(childId), true);
+
+  bool tourSeen(String familyId) =>
+      _prefs?.getBool(_tourKey(familyId)) ?? false;
+
+  Future<void> markTourSeen(String familyId) async =>
+      _prefs?.setBool(_tourKey(familyId), true);
 }
