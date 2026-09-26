@@ -3,10 +3,10 @@ import 'package:safini/features/child/data/services/screen_time_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
-import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_state.dart';
+import 'package:safini/features/onboarding/kid_setup.dart';
 
 class ChildAppBlockGate extends StatefulWidget {
   final Widget child;
@@ -49,74 +49,23 @@ class _ChildAppBlockGateState extends State<ChildAppBlockGate>
     if (getIt<ScreenTimeService>().isSupported) {
       return IosScreenTimeGate(child: widget.child);
     }
-    final s = S.of(context);
     final cubit = context.read<ChildAppBlockCubit>();
     return BlocBuilder<ChildAppBlockCubit, AppBlockState>(
       builder: (context, state) {
         if (!state.showsSetup) {
           return widget.child;
         }
-        return Scaffold(
-          body: SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                const Icon(Icons.shield_outlined, size: 56),
-                const SizedBox(height: 20),
-                Text(
-                  s.limitsSetupTitle,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 12),
-                Text(s.limitsSetupHint),
-                const SizedBox(height: 24),
-                ListTile(
-                  title: Text(s.limitsUsageAccess),
-                  trailing: Icon(
-                    state.hasUsageAccess ? Icons.check_circle : Icons.settings,
-                  ),
-                  onTap: cubit.requestUsageAccess,
-                ),
-                ListTile(
-                  title: Text(s.limitsOverlayAccess),
-                  trailing: Icon(
-                    state.hasOverlayPermission
-                        ? Icons.check_circle
-                        : Icons.settings,
-                  ),
-                  onTap: cubit.requestOverlayPermission,
-                ),
-                ListTile(
-                  title: Text(s.limitsDeviceAdmin),
-                  subtitle: Text(s.limitsDeviceAdminHint),
-                  trailing: Icon(
-                    state.hasDeviceAdmin ? Icons.check_circle : Icons.settings,
-                  ),
-                  onTap: cubit.requestDeviceAdmin,
-                ),
-                const SizedBox(height: 16),
-                Text(s.limitsBatteryHint),
-                TextButton(
-                  onPressed: cubit.requestBatterySettings,
-                  child: Text(s.limitsBattery),
-                ),
-                if (state.status == AppBlockStatus.error)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Text(s.limitsSetupError),
-                  ),
-                FilledButton(
-                  onPressed: state.isChecking ? null : cubit.refreshPermissions,
-                  child: state.isChecking
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(s.limitsRetry),
-                ),
-              ],
-            ),
+        return KidSetup(
+          state: state,
+          onRequest: (permission) => switch (permission) {
+            KidPermission.usage => cubit.requestUsageAccess(),
+            KidPermission.overlay => cubit.requestOverlayPermission(),
+            KidPermission.admin => cubit.requestDeviceAdmin(),
+          },
+          onCheck: cubit.refreshPermissions,
+          onBattery: () => showKidBatteryTips(
+            context,
+            onOpenSettings: cubit.requestBatterySettings,
           ),
         );
       },

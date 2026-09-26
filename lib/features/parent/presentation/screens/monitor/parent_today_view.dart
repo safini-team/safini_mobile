@@ -146,6 +146,7 @@ class ParentTodayView extends StatelessWidget {
     required this.onOpenLimits,
     this.onDeclineReview,
     this.onRefresh,
+    this.banner,
   });
 
   final ParentTodayData data;
@@ -158,6 +159,10 @@ class ParentTodayView extends StatelessWidget {
   final ValueChanged<TodayReview>? onDeclineReview;
   final VoidCallback onOpenLimits;
   final Future<void> Function()? onRefresh;
+
+  /// Above the screen-time card: the getting-started checklist while a new
+  /// family sets up. It brings its own padding, so it can collapse to nothing.
+  final Widget? banner;
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +204,7 @@ class ParentTodayView extends StatelessWidget {
               ),
             ),
           ),
+        if (banner != null) SliverToBoxAdapter(child: banner),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
