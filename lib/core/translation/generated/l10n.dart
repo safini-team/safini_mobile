@@ -4896,26 +4896,6 @@ class S {
     );
   }
 
-  /// `Turn on app limits`
-  String get limitsSetupTitle {
-    return Intl.message(
-      'Turn on app limits',
-      name: 'limitsSetupTitle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Grant every step below so app limits work and can’t be switched off.`
-  String get limitsSetupHint {
-    return Intl.message(
-      'Grant every step below so app limits work and can’t be switched off.',
-      name: 'limitsSetupHint',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Usage Access`
   String get limitsUsageAccess {
     return Intl.message(
@@ -6168,6 +6148,286 @@ class S {
     return Intl.message(
       'Keep signed in',
       name: 'signoutKeep',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Getting started`
+  String get gettingStartedTitle {
+    return Intl.message(
+      'Getting started',
+      name: 'gettingStartedTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{done} of {total}`
+  String gettingStartedCount(Object done, Object total) {
+    return Intl.message(
+      '$done of $total',
+      name: 'gettingStartedCount',
+      desc: '',
+      args: [done, total],
+    );
+  }
+
+  /// `Hide`
+  String get gettingStartedHide {
+    return Intl.message('Hide', name: 'gettingStartedHide', desc: '', args: []);
+  }
+
+  /// `Add your child`
+  String get setupStepChild {
+    return Intl.message(
+      'Add your child',
+      name: 'setupStepChild',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect their phone`
+  String get setupStepPhone {
+    return Intl.message(
+      'Connect their phone',
+      name: 'setupStepPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create a task`
+  String get setupStepTask {
+    return Intl.message(
+      'Create a task',
+      name: 'setupStepTask',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set a daily limit`
+  String get setupStepLimit {
+    return Intl.message(
+      'Set a daily limit',
+      name: 'setupStepLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a gift`
+  String get setupStepPrize {
+    return Intl.message(
+      'Add a gift',
+      name: 'setupStepPrize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Let's add your child first.`
+  String get finiNextChild {
+    return Intl.message(
+      'Let\'s add your child first.',
+      name: 'finiNextChild',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Now let's connect {name}'s phone.`
+  String finiNextPhone(Object name) {
+    return Intl.message(
+      'Now let\'s connect $name\'s phone.',
+      name: 'finiNextPhone',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Add a first task. Tasks earn coins.`
+  String get finiNextTask {
+    return Intl.message(
+      'Add a first task. Tasks earn coins.',
+      name: 'finiNextTask',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How much screen time a day is enough?`
+  String get finiNextLimit {
+    return Intl.message(
+      'How much screen time a day is enough?',
+      name: 'finiNextLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a gift worth saving coins for.`
+  String get finiNextPrize {
+    return Intl.message(
+      'Add a gift worth saving coins for.',
+      name: 'finiNextPrize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All set! Great start.`
+  String get finiAllSet {
+    return Intl.message(
+      'All set! Great start.',
+      name: 'finiAllSet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Kid's phone`
+  String get kidSetupBadge {
+    return Intl.message(
+      'Kid\'s phone',
+      name: 'kidSetupBadge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{step} of {total}`
+  String kidSetupStepOf(Object step, Object total) {
+    return Intl.message(
+      '$step of $total',
+      name: 'kidSetupStepOf',
+      desc: '',
+      args: [step, total],
+    );
+  }
+
+  /// `Take me there`
+  String get kidSetupGo {
+    return Intl.message(
+      'Take me there',
+      name: 'kidSetupGo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Find Safini in the list and switch it on.`
+  String get kidSetupHintList {
+    return Intl.message(
+      'Find Safini in the list and switch it on.',
+      name: 'kidSetupHintList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scroll down and tap Activate.`
+  String get kidSetupHintAdmin {
+    return Intl.message(
+      'Scroll down and tap Activate.',
+      name: 'kidSetupHintAdmin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Almost there!`
+  String get kidSetupAlmost {
+    return Intl.message(
+      'Almost there!',
+      name: 'kidSetupAlmost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safini keeps closing?`
+  String get kidSetupBatteryLink {
+    return Intl.message(
+      'Safini keeps closing?',
+      name: 'kidSetupBatteryLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This lets me see which app is open, so I can count time.`
+  String get finiWhyUsage {
+    return Intl.message(
+      'This lets me see which app is open, so I can count time.',
+      name: 'finiWhyUsage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This lets me pause an app when time is up.`
+  String get finiWhyOverlay {
+    return Intl.message(
+      'This lets me pause an app when time is up.',
+      name: 'finiWhyOverlay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hi! I'm Fini.`
+  String get kidHelloTitle {
+    return Intl.message(
+      'Hi! I\'m Fini.',
+      name: 'kidHelloTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do tasks, earn coins`
+  String get kidHelloTasks {
+    return Intl.message(
+      'Do tasks, earn coins',
+      name: 'kidHelloTasks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spend coins on screen time and gifts`
+  String get kidHelloSpend {
+    return Intl.message(
+      'Spend coins on screen time and gifts',
+      name: 'kidHelloSpend',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your parent can see which apps you use`
+  String get kidHelloParent {
+    return Intl.message(
+      'Your parent can see which apps you use',
+      name: 'kidHelloParent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Let's go`
+  String get kidHelloGo {
+    return Intl.message('Let\'s go', name: 'kidHelloGo', desc: '', args: []);
+  }
+
+  /// `So Safini stays on. Your parent hears if it gets switched off.`
+  String get finiWhyAdmin {
+    return Intl.message(
+      'So Safini stays on. Your parent hears if it gets switched off.',
+      name: 'finiWhyAdmin',
       desc: '',
       args: [],
     );

@@ -12,6 +12,10 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/onboarding/getting_started_cubit.dart';
+import 'package:safini/features/onboarding/getting_started_host.dart';
+import 'package:safini/features/onboarding/onboarding_store.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
@@ -88,6 +92,12 @@ class ParentMonitorScreen extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => SignoutAsksCubit(getIt<SignoutApi>())..load(),
+        ),
+        BlocProvider(
+          create: (_) => GettingStartedCubit(
+            getIt<OnboardingStore>(),
+            getIt<PrizeApi>(),
+          ),
         ),
         // The tasks cubit comes from the shell: a second instance here meant
         // an approval on the Tasks tab never reached this card, and the tab
@@ -200,6 +210,19 @@ class _ParentMonitorView extends StatelessWidget {
               onDeclineReview: (review) => review.kind == TodayReviewKind.signout
                   ? _answerSignout(context, signouts, review.id, approve: false)
                   : _answerAsk(context, asks, review.id, approve: false),
+              banner: GettingStartedHost(
+                familyId: context
+                    .watch<ParentFamilyCubit>()
+                    .state
+                    .family
+                    ?.id,
+                children: state.children,
+                selectedChildId: state.selectedChild?.id,
+                hasTask: _loadedOf(tasksState)?.tasks.isNotEmpty ?? false,
+                hasLimit:
+                    state.appLimits.isNotEmpty ||
+                    (state.screenTime.limitMinutes ?? 0) > 0,
+              ),
               onRefresh: () => refreshParentToday(
                 monitor: context.read<ParentMonitorCubit>(),
                 asks: context.read<PrizeAsksCubit>(),

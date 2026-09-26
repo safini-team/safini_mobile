@@ -15,10 +15,15 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/design_preview_data.dart';
+import 'package:safini/features/child/presentation/cubit/app_block_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
+import 'package:safini/features/onboarding/getting_started_card.dart';
+import 'package:safini/features/onboarding/getting_started_cubit.dart';
+import 'package:safini/features/onboarding/kid_hello.dart';
+import 'package:safini/features/onboarding/kid_setup.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
 import 'package:safini/features/parent/presentation/screens/family/parent_family_view.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
@@ -167,6 +172,91 @@ class _GalleryState extends State<_Gallery> {
         data: SampleData.kidMe(S.of(context)),
         onChangeAvatar: () {},
         onEditName: () {},
+      ),
+    ),
+    _Entry(
+      'Parent Today · getting started',
+      AppColors.bgParent,
+      (context) => ParentTodayView(
+        data: SampleData.parentToday,
+        onSelectKid: (_) {},
+        onOpenSettings: () {},
+        onOpenReview: (_) {},
+        onApproveReview: (_) {},
+        onOpenLimits: () {},
+        banner: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
+          child: GettingStartedCard(
+            state: const GettingStarted(
+              familyId: 'preview',
+              done: {SetupStep.child, SetupStep.task},
+              hidden: false,
+            ),
+            kidName: 'Amir',
+            onOpen: (_) {},
+            onHide: () {},
+          ),
+        ),
+      ),
+    ),
+    _Entry(
+      'Getting started · all done',
+      AppColors.bgParent,
+      (context) => ParentTodayView(
+        data: SampleData.parentToday,
+        onSelectKid: (_) {},
+        onOpenSettings: () {},
+        onOpenReview: (_) {},
+        onApproveReview: (_) {},
+        onOpenLimits: () {},
+        banner: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
+          child: GettingStartedCard(
+            state: GettingStarted(
+              familyId: 'preview',
+              done: SetupStep.values.toSet(),
+              hidden: false,
+            ),
+            kidName: 'Amir',
+            onOpen: (_) {},
+            onHide: () {},
+          ),
+        ),
+      ),
+    ),
+    _Entry(
+      'Kid setup · step 1',
+      AppColors.bgChild,
+      (context) => KidSetup(
+        state: const AppBlockState(status: AppBlockStatus.needsPermissions),
+        onRequest: (_) {},
+        onCheck: () {},
+        onBattery: () =>
+            showKidBatteryTips(context, onOpenSettings: () {}),
+      ),
+    ),
+    _Entry(
+      'Kid setup · step 3',
+      AppColors.bgChild,
+      (context) => KidSetup(
+        state: const AppBlockState(
+          status: AppBlockStatus.needsPermissions,
+          hasUsageAccess: true,
+          hasOverlayPermission: true,
+        ),
+        onRequest: (_) {},
+        onCheck: () {},
+        onBattery: () {},
+      ),
+    ),
+    _Entry(
+      'Kid hello',
+      AppColors.bgChild,
+      (context) => Center(
+        child: TextButton(
+          onPressed: () => showKidHello(context),
+          child: const Text('Say hi'),
+        ),
       ),
     ),
     _Entry(

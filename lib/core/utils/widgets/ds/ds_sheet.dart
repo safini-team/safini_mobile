@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_motion.dart';
@@ -71,11 +73,15 @@ class DsSheet extends StatelessWidget {
           Flexible(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
+              // 34 is the artboard's home-indicator clearance. Android's
+              // 3-button nav bar is taller and drawn over the app, so the
+              // last button sat under it.
               padding: EdgeInsets.fromLTRB(
                 22,
                 14,
                 22,
-                34 + MediaQuery.viewInsetsOf(context).bottom,
+                math.max(34.0, MediaQuery.viewPaddingOf(context).bottom + 12) +
+                    MediaQuery.viewInsetsOf(context).bottom,
               ),
               child: child,
             ),

@@ -16,9 +16,17 @@ class ParentHomeCubit extends Cubit<ParentHomeState> {
       ParentHomeState(
         selectedIndex: state.selectedIndex,
         selectedChildId: childId,
+        showPrizes: state.showPrizes,
       ),
     );
   }
 
   void selectTab(int index) => emit(state.copyWith(selectedIndex: index));
+
+  /// Limits, on its Prizes view.
+  void openPrizes() => emit(state.copyWith(selectedIndex: 2, showPrizes: true));
+
+  void prizesShown() {
+    if (state.showPrizes) emit(state.copyWith(showPrizes: false));
+  }
 }

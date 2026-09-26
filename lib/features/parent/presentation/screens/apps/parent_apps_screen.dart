@@ -109,7 +109,30 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
   bool _showingPrizes = false;
 
   @override
+  void initState() {
+    super.initState();
+    _takePrizesRequest();
+  }
+
+  /// "Add a prize" on the Today checklist opens this tab on Prizes.
+  void _takePrizesRequest() {
+    final home = context.read<ParentHomeCubit>();
+    if (!home.state.showPrizes) return;
+    _showingPrizes = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) => home.prizesShown());
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return BlocListener<ParentHomeCubit, ParentHomeState>(
+      listenWhen: (previous, current) =>
+          current.showPrizes && !previous.showPrizes,
+      listener: (context, _) => setState(_takePrizesRequest),
+      child: _buildLimits(context),
+    );
+  }
+
+  Widget _buildLimits(BuildContext context) {
     return BlocBuilder<ParentAppsCubit, ParentAppsState>(
       builder: (context, state) {
         if (state is! ParentAppsLoaded) {

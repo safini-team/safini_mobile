@@ -10,6 +10,7 @@ import 'package:safini/core/network/dio_network.dart';
 import 'package:safini/core/notifications/push_service.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/features/onboarding/onboarding_store.dart';
 import 'package:safini/features/child/child_injection.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/features/common/common_injection.dart';
@@ -84,6 +85,16 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
   if (!getIt.isRegistered<PrizeApi>()) {
     getIt.registerLazySingleton<PrizeApi>(() => PrizeApi(getIt<Dio>()));
     getIt.registerLazySingleton<SignoutApi>(() => SignoutApi(getIt<Dio>()));
+  }
+
+  if (!getIt.isRegistered<OnboardingStore>()) {
+    getIt.registerLazySingleton<OnboardingStore>(
+      () => OnboardingStore(
+        getIt.isRegistered<SharedPreferences>()
+            ? getIt<SharedPreferences>()
+            : null,
+      ),
+    );
   }
 
   // Only registered when Firebase actually came up. Everything that uses it

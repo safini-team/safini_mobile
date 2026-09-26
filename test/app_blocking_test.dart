@@ -328,13 +328,13 @@ void main() {
       await granted;
       await pumpAppBlockGate(tester, cubit);
 
-      expect(find.text('Turn on app limits'), findsNothing);
+      expect(find.text("Kid's phone"), findsNothing);
       expect(find.text('child-home'), findsOneWidget);
 
       profile.ready.complete();
       await pending;
       await tester.pump();
-      expect(find.text('Turn on app limits'), findsNothing);
+      expect(find.text("Kid's phone"), findsNothing);
       expect(find.text('child-home'), findsOneWidget);
     },
   );
@@ -354,7 +354,7 @@ void main() {
     await cubit.start();
     await pumpAppBlockGate(tester, cubit);
 
-    expect(find.text('Turn on app limits'), findsOneWidget);
+    expect(find.text("Kid's phone"), findsOneWidget);
     expect(find.text('child-home'), findsNothing);
   });
 }

@@ -21,6 +21,8 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubi
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
+import 'package:safini/features/onboarding/kid_hello.dart';
+import 'package:safini/features/onboarding/onboarding_store.dart';
 import 'package:safini/features/child/presentation/screens/home/child_home_screen.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_screen.dart';
 import 'package:safini/features/child/presentation/screens/store/child_reward_store_screen.dart';
@@ -81,8 +83,15 @@ class ChildMainScreen extends StatelessWidget {
               locale: locale,
               // Outside the gate: a child still setting up app limits should
               // already hear about the tasks their parent is adding.
-              child: const _ChildPushBridge(
-                child: ChildAppBlockGate(child: _ChildMainView()),
+              child: _ChildPushBridge(
+                child: ChildAppBlockGate(
+                  // After the gate: Fini says hi once setup is behind them.
+                  child: KidHello(
+                    userId: context.read<AuthSessionCubit>().state.userId,
+                    store: getIt<OnboardingStore>(),
+                    child: const _ChildMainView(),
+                  ),
+                ),
               ),
             );
           },
