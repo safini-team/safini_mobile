@@ -777,5 +777,7 @@
   "kidHelloGo": "Ketdik",
   "finiWhyAdmin": "Shunda Safini oʻchmaydi. Oʻchirilsa, ota-onang biladi.",
   "phoneConnectedTitle": "{name}ning telefoni ulandi!",
-  "phoneConnectedBody": "Endi vazifalar va cheklovlar unda ishlaydi."
+  "phoneConnectedBody": "Endi vazifalar va cheklovlar unda ishlaydi.",
+  "lastSevenDays": "Oxirgi 7 kun",
+  "averagePerDay": "Kuniga oʻrtacha {time}"
 }

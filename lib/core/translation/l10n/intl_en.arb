@@ -910,5 +910,14 @@
   "kidHelloGo": "Let's go",
   "finiWhyAdmin": "So Safini stays on. Your parent hears if it gets switched off.",
   "phoneConnectedTitle": "{name}'s phone is connected!",
-  "phoneConnectedBody": "Tasks and limits now reach it."
+  "phoneConnectedBody": "Tasks and limits now reach it.",
+  "lastSevenDays": "Last 7 days",
+  "averagePerDay": "{time} a day on average",
+  "@averagePerDay": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

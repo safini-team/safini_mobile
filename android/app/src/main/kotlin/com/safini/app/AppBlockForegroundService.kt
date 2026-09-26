@@ -28,6 +28,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     private var nextSync = 0L
     private var nextPersist = 0L
     private var purchase = false
+    private var backfilling = false
     private val waiters = mutableListOf<(Throwable?) -> Unit>()
 
     override fun onCreate() {
@@ -206,6 +207,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         nextSync = SystemClock.elapsedRealtime()+60_000
         // Installs and a changed home app are picked up once a minute.
         launchable.clear()
+        val backfill = store.backfill
         val body = JSONObject().put("usage", store.reports()).put("device_usage", store.deviceReports())
             .put("usage_access", usageAccess(this)).put("overlay_permission", Settings.canDrawOverlays(this))
             .put("service_running", true).put("manufacturer", Build.MANUFACTURER.take(80))
@@ -214,10 +216,37 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             val response = runCatching { client.request("/sync", body) }
             handler.post {
                 if (stopped) return@post
-                response.onSuccess { store.applySnapshot(it); if (!purchase) refreshOverlay() }
+                response.onSuccess {
+                    store.applySnapshot(it); if (!purchase) refreshOverlay()
+                    if (backfill == BACKFILL_READ && store.backfill == BACKFILL_READ) store.backfill = BACKFILL_SENT
+                    // After the first snapshot, so the days are cut at the family's midnight.
+                    if (store.backfill == BACKFILL_NONE) backfill()
+                }
                 syncing = false
                 val callbacks = waiters.toList(); waiters.clear()
                 callbacks.forEach { it(response.exceptionOrNull()) }
+            }
+        }
+    }
+
+    /** Once per pairing: the week before Safini was watching, from what Android already kept. */
+    private fun backfill() {
+        if (backfilling || !usageAccess(this) || !store.hasTimezone()) return
+        backfilling = true
+        val until = store.trackedFrom
+        val since = store.startOfDay(until, UsageBackfill.DAYS.toLong())
+        network.execute {
+            val found = runCatching { UsageBackfill.read(this, since, until) }
+            handler.post {
+                backfilling = false
+                if (stopped || store.backfill != BACKFILL_NONE) return@post
+                found.onSuccess { stretches ->
+                    for (s in stretches) if (countsAsApp(s.pkg)) store.recordDevice(s.pkg, s.from, s.to)
+                    store.backfill = BACKFILL_READ
+                    store.persist()
+                    // The parent sees last week on the next sync rather than a minute later.
+                    syncNow()
+                }
             }
         }
     }

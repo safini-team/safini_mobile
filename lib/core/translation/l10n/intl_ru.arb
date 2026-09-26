@@ -877,5 +877,7 @@
   "kidHelloGo": "Поехали",
   "finiWhyAdmin": "Так Safini не удалить. Если его выключат, родители узнают.",
   "phoneConnectedTitle": "Телефон подключён! {name} на связи.",
-  "phoneConnectedBody": "Теперь задания и лимиты работают на нём."
+  "phoneConnectedBody": "Теперь задания и лимиты работают на нём.",
+  "lastSevenDays": "Последние 7 дней",
+  "averagePerDay": "В среднем {time} в день"
 }

@@ -2,6 +2,7 @@
 // the artboard's own `state` object. Dev-only; `main.dart` never imports it.
 import 'package:flutter/material.dart';
 
+import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
@@ -43,7 +44,7 @@ class SampleData {
     ),
   ];
 
-  static const ParentTodayData parentToday = ParentTodayData(
+  static final ParentTodayData parentToday = ParentTodayData(
     kids: kids,
     selectedIndex: 0,
     kidName: 'Amir',
@@ -55,7 +56,30 @@ class SampleData {
     coins: 240,
     streakDays: 5,
     apps: apps,
-    reviews: [
+    week: TodayWeek(
+      days: [
+        for (final (i, minutes) in [95, 140, 0, 110, 185, 240, 160].indexed)
+          DayUsage(date: DateTime(2026, 9, 19 + i), minutes: minutes),
+      ],
+      averageMinutes: 155,
+      apps: const [
+        TodayApp(
+          name: 'YouTube',
+          emoji: '▶️',
+          usedMinutes: 410,
+          limitMinutes: 0,
+        ),
+        TodayApp(name: 'Roblox', emoji: '🎮', usedMinutes: 290, limitMinutes: 0),
+        TodayApp(name: 'TikTok', emoji: '🎵', usedMinutes: 150, limitMinutes: 0),
+        TodayApp(
+          name: 'Duolingo',
+          emoji: '🦉',
+          usedMinutes: 80,
+          limitMinutes: 0,
+        ),
+      ],
+    ),
+    reviews: const [
       TodayReview(
         id: 'r1',
         title: 'Made the bed',

@@ -435,6 +435,23 @@ class _ParentMonitorView extends StatelessWidget {
       streakDays: child?.currentStreakDays,
       reviews: reviews,
       apps: state.screenTime.usageAvailable ? apps : [],
+      week: switch (state.weekUsage) {
+        final week? when state.screenTime.usageAvailable => TodayWeek(
+          days: week.days,
+          averageMinutes: week.averageMinutes,
+          apps: [
+            for (final app in week.apps)
+              TodayApp(
+                name: app.displayName,
+                emoji: AppData.getEmojiForApp(app.displayName),
+                usedMinutes: app.usedMinutes,
+                limitMinutes: 0,
+                iconUrl: app.iconUrl,
+              ),
+          ],
+        ),
+        _ => null,
+      },
     );
   }
 }
