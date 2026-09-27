@@ -9,6 +9,7 @@ import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/domain/models/child_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/child_model.dart';
@@ -53,8 +54,14 @@ class FamilyRepositoryImpl implements IFamilyRepository {
   }
 
   @override
-  Future<Either<Failure, FamilyModel>> getCurrentFamily() {
-    return _fetchFamily('/v1/families/current');
+  Future<Either<Failure, FamilyModel>> getCurrentFamily() async {
+    final result = await _fetchFamily('/v1/families/current');
+    final family = result.fold<FamilyModel?>(
+      (_) => null,
+      (value) => value,
+    );
+    if (family == null) return result;
+    return Right(await _attachChildAvatars(family));
   }
 
   @override
@@ -173,7 +180,6 @@ class FamilyRepositoryImpl implements IFamilyRepository {
       (body) => Right(ChildModel.fromJson(body)),
     );
   }
-
 
   @override
   Future<Either<Failure, UnlinkChildResult>> removeChild(String childId) async {
@@ -399,5 +405,60 @@ class FamilyRepositoryImpl implements IFamilyRepository {
       }
     }
     return null;
+  }
+
+  /// `GET /families/current` may omit `avatar_state`. Dashboard already
+  /// returns it, so fill faces in without a new contract.
+  Future<FamilyModel> _attachChildAvatars(FamilyModel family) async {
+    if (family.children.isEmpty) return family;
+    final missing = [
+      for (final child in family.children)
+        if (child.id.isNotEmpty &&
+            !ChildAvatarLook.hasPersistedFace(child.avatarState))
+          child,
+    ];
+    if (missing.isEmpty) return family;
+
+    final fetched = await Future.wait(
+      missing.map((child) async {
+        final state = await _fetchAvatarState(child.id);
+        return MapEntry(child.id, state);
+      }),
+    );
+    final byId = <String, Map<String, dynamic>>{
+      for (final entry in fetched)
+        if (entry.value != null) entry.key: entry.value!,
+    };
+    if (byId.isEmpty) return family;
+
+    return family.copyWith(
+      children: [
+        for (final child in family.children)
+          byId.containsKey(child.id)
+              ? child.copyWith(avatarState: byId[child.id])
+              : child,
+      ],
+    );
+  }
+
+  Future<Map<String, dynamic>?> _fetchAvatarState(String childId) async {
+    try {
+      final response = await _client
+          .get(_uri('/v1/children/$childId/dashboard'), headers: _headers())
+          .timeout(AppConstants.apiTimeout);
+      if (response.statusCode < 200 || response.statusCode >= 300) return null;
+      final decoded = _decodeBody(response.body);
+      if (decoded is! Map) return null;
+      final child = decoded['child'];
+      if (child is! Map) return null;
+      final raw = child['avatar_state'] ?? child['avatarState'];
+      if (raw is Map<String, dynamic>) return Map<String, dynamic>.from(raw);
+      if (raw is Map) {
+        return raw.map((key, value) => MapEntry(key.toString(), value));
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 }

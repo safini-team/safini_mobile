@@ -4,6 +4,7 @@ import 'package:safini/core/theme/app_motion.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_typography.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/widgets/ds/ds_avatar.dart';
 import 'package:safini/core/utils/widgets/ds/pressable.dart';
 
@@ -18,6 +19,7 @@ class DsKidChip extends StatelessWidget {
     required this.selected,
     this.color = AppColors.primary,
     this.initial,
+    this.avatar,
     this.showAvatar = true,
     this.onTap,
     this.avatarSize = 28,
@@ -27,6 +29,7 @@ class DsKidChip extends StatelessWidget {
   final bool selected;
   final Color color;
   final String? initial;
+  final ChildAvatarLook? avatar;
   final bool showAvatar;
   final VoidCallback? onTap;
   final double avatarSize;
@@ -52,8 +55,10 @@ class DsKidChip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (showAvatar) ...[
-              DsInitialAvatar(
-                name: initial ?? name,
+              DsKidFace(
+                name: name,
+                initial: initial,
+                avatar: avatar,
                 color: color,
                 size: avatarSize,
               ),

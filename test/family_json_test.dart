@@ -135,6 +135,35 @@ void main() {
     test('survives a payload with no id at all', () {
       expect(ChildSummaryModel.fromJson({}).id, '');
     });
+
+    test('reads avatar_state from snake_case and camelCase', () {
+      final snake = ChildSummaryModel.fromJson({
+        'id': 'c',
+        'nickname': 'Amir',
+        'avatar_state': {
+          'emojis': {'face': '😎'},
+          'equipped': {'outfit': 'cosmic-cape'},
+        },
+      });
+      expect(snake.avatarLook.faceEmoji, '😎');
+      expect(snake.avatarLook.accessoryEmoji, '🦸');
+      expect(snake.avatarLook.hasCustomFace, isTrue);
+
+      final camel = ChildSummaryModel.fromJson({
+        'id': 'c',
+        'avatarState': {
+          'emojis': {'face': '🥰'},
+        },
+      });
+      expect(camel.avatarLook.faceEmoji, '🥰');
+    });
+
+    test('falls back to the default face when avatar_state is missing', () {
+      final child = ChildSummaryModel.fromJson({'id': 'c', 'nickname': 'Amir'});
+      expect(child.avatarLook.faceEmoji, '😊');
+      expect(child.avatarLook.hasCustomFace, isFalse);
+      expect(child.avatarLook.accessoryEmoji, isNull);
+    });
   });
 
   group('ParentSummaryModel', () {
@@ -190,7 +219,16 @@ void main() {
       'name': 'Karimov',
       'owner_user_id': 'u1',
       'children': [
-        {'id': 'c1', 'nickname': 'Amir', 'age': 9, 'coins_balance': 240},
+        {
+          'id': 'c1',
+          'nickname': 'Amir',
+          'age': 9,
+          'coins_balance': 240,
+          'avatar_state': {
+            'emojis': {'face': '😎'},
+            'equipped': {'outfit': 'cosmic-cape'},
+          },
+        },
       ],
     });
 
@@ -199,5 +237,7 @@ void main() {
     expect(reparsed.name, 'Karimov');
     expect(reparsed.children.single.nickname, 'Amir');
     expect(reparsed.children.single.coinsBalance, 240);
+    expect(reparsed.children.single.avatarLook.faceEmoji, '😎');
+    expect(reparsed.children.single.avatarLook.accessoryEmoji, '🦸');
   });
 }

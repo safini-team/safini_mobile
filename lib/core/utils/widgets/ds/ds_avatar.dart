@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 
 /// Round initial badge - the design's stand-in for a photo everywhere a person
 /// appears. White bold initial on the child's own colour.
@@ -66,6 +67,150 @@ class DsInitialAvatar extends StatelessWidget {
             wasSynchronouslyLoaded || frame != null ? child : fallback,
         errorBuilder: (context, error, stackTrace) => fallback,
       ),
+    );
+  }
+}
+
+/// The child's in-app face on their colour disc, with an optional equipped
+/// extra in a white bubble. Used on parent surfaces so kids never render as
+/// an OAuth profile photo.
+class DsChildAvatar extends StatelessWidget {
+  const DsChildAvatar({
+    super.key,
+    required this.color,
+    this.faceEmoji,
+    this.accessoryEmoji,
+    this.size = 38,
+    this.showAccessory,
+    this.accessoryOnTop = false,
+  });
+
+  factory DsChildAvatar.fromLook({
+    Key? key,
+    required ChildAvatarLook look,
+    required Color color,
+    double size = 38,
+    bool? showAccessory,
+    bool accessoryOnTop = false,
+  }) {
+    return DsChildAvatar(
+      key: key,
+      color: color,
+      faceEmoji: look.faceEmoji,
+      accessoryEmoji: look.accessoryEmoji,
+      size: size,
+      showAccessory: showAccessory,
+      accessoryOnTop: accessoryOnTop,
+    );
+  }
+
+  final Color color;
+  final String? faceEmoji;
+  final String? accessoryEmoji;
+  final double size;
+
+  /// Defaults to on at 24px and above, so the kid picker still shows extras.
+  final bool? showAccessory;
+
+  /// Child Me/Today put a level pill under the chin, so the extra moves up.
+  final bool accessoryOnTop;
+
+  @override
+  Widget build(BuildContext context) {
+    final k = size / 88;
+    final face = (faceEmoji ?? '').trim().isEmpty
+        ? ChildAvatarLook.defaultFaceEmoji
+        : faceEmoji!.trim();
+    final extra = accessoryEmoji?.trim();
+    final drawExtra =
+        extra != null &&
+        extra.isNotEmpty &&
+        (showAccessory ?? size >= 24);
+    final bubble = 32 * k;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned.fill(
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              child: Text(
+                face,
+                style: TextStyle(fontSize: 42 * k, height: 1.15),
+              ),
+            ),
+          ),
+          if (drawExtra)
+            Positioned(
+              right: -2 * k,
+              top: accessoryOnTop ? -2 * k : null,
+              bottom: accessoryOnTop ? null : -2 * k,
+              child: Container(
+                width: bubble,
+                height: bubble,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: AppColors.surface,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x4D0C231C),
+                      offset: Offset(0, 2),
+                      blurRadius: 8,
+                      spreadRadius: -2,
+                    ),
+                  ],
+                ),
+                child: Text(
+                  extra!,
+                  style: TextStyle(fontSize: 17 * k, height: 1.15),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Initials for "Everyone"; otherwise the child's in-app face. Never a photo.
+class DsKidFace extends StatelessWidget {
+  const DsKidFace({
+    super.key,
+    required this.color,
+    required this.name,
+    this.initial,
+    this.avatar,
+    this.size = 24,
+    this.fontSize,
+  });
+
+  final Color color;
+  final String name;
+  final String? initial;
+  final ChildAvatarLook? avatar;
+  final double size;
+  final double? fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    if (initial != null) {
+      return DsInitialAvatar(
+        name: name,
+        label: initial,
+        color: color,
+        size: size,
+        fontSize: fontSize,
+      );
+    }
+    return DsChildAvatar.fromLook(
+      look: avatar ?? const ChildAvatarLook(),
+      color: color,
+      size: size,
     );
   }
 }

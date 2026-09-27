@@ -9,6 +9,7 @@ import 'package:safini/core/notifications/on_push.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/features/parent/data/app_data.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
@@ -57,7 +58,11 @@ Future<void> refreshParentToday({
 /// A child asking to sign out, first in "Needs your review" whichever child is
 /// selected: once the parent says yes, app limits on that phone turn off
 /// (SAF-191). The code is for reading out to a child standing next to them.
-List<TodayReview> signoutReviews(S s, List<SignoutRequest> asks) => [
+List<TodayReview> signoutReviews(
+  S s,
+  List<SignoutRequest> asks, {
+  Map<String, ChildAvatarLook> avatars = const {},
+}) => [
   for (final ask in asks)
     TodayReview(
       id: ask.id,
@@ -67,6 +72,7 @@ List<TodayReview> signoutReviews(S s, List<SignoutRequest> asks) => [
       color: AppColors.kidColor(ask.childId),
       coins: 0,
       kind: TodayReviewKind.signout,
+      avatar: avatars[ask.childId] ?? const ChildAvatarLook(),
     ),
 ];
 
@@ -372,6 +378,9 @@ class _ParentMonitorView extends StatelessWidget {
         )
         .toList();
 
+    final avatars = {
+      for (final kid in state.children) kid.id: kid.avatarLook,
+    };
     final reviews = childTasks
         .where((task) => task.isPendingApproval)
         .map(
@@ -385,6 +394,7 @@ class _ParentMonitorView extends StatelessWidget {
             kidName: child?.nickname ?? '',
             color: AppColors.kidColor(child?.id ?? child?.nickname),
             coins: task.rewardCoins ?? 0,
+            avatar: child?.avatarLook ?? const ChildAvatarLook(),
           ),
         )
         .toList();
@@ -404,10 +414,13 @@ class _ParentMonitorView extends StatelessWidget {
           color: AppColors.kidColor(ask.childId),
           coins: ask.coinCost,
           kind: ask.isWish ? TodayReviewKind.wish : TodayReviewKind.prize,
+          avatar: avatars[ask.childId] ??
+              child?.avatarLook ??
+              const ChildAvatarLook(),
         ),
       );
     }
-    reviews.insertAll(0, signoutReviews(s, signouts));
+    reviews.insertAll(0, signoutReviews(s, signouts, avatars: avatars));
 
     return ParentTodayData(
       usageAvailable: state.screenTime.usageAvailable,
@@ -418,6 +431,7 @@ class _ParentMonitorView extends StatelessWidget {
             id: kid.id,
             name: kid.nickname,
             color: AppColors.kidColor(kid.id),
+            avatar: kid.avatarLook,
             pendingReviewCount: pendingReviewCountForChild(
               childId: kid.id,
               tasks: tasks?.tasks ?? const [],

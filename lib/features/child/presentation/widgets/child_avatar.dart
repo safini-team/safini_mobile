@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
+import 'package:safini/core/utils/widgets/ds/ds_avatar.dart';
 
 /// The child's avatar: their face sticker on a colour disc, the equipped
 /// accessory in a white bubble at the corner, and optionally their level on a
@@ -26,9 +27,6 @@ class ChildAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final k = size / 88;
-    final bubble = 32 * k;
-
     return SizedBox(
       width: size,
       height: size,
@@ -36,44 +34,15 @@ class ChildAvatar extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Positioned.fill(
-            child: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-              child: Text(
-                faceEmoji,
-                style: TextStyle(fontSize: 42 * k, height: 1.15),
-              ),
+            child: DsChildAvatar(
+              faceEmoji: faceEmoji,
+              accessoryEmoji: accessoryEmoji,
+              color: color,
+              size: size,
+              showAccessory: true,
+              accessoryOnTop: level != null,
             ),
           ),
-          if (accessoryEmoji != null)
-            Positioned(
-              right: -2 * k,
-              // With a level pill under the chin the bubble moves up, or the
-              // two collide on the small Today avatar.
-              top: level == null ? null : -2 * k,
-              bottom: level == null ? -2 * k : null,
-              child: Container(
-                width: bubble,
-                height: bubble,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x4D0C231C),
-                      offset: Offset(0, 2),
-                      blurRadius: 8,
-                      spreadRadius: -2,
-                    ),
-                  ],
-                ),
-                child: Text(
-                  accessoryEmoji!,
-                  style: TextStyle(fontSize: 17 * k, height: 1.15),
-                ),
-              ),
-            ),
           if (level != null)
             Positioned(
               left: 0,

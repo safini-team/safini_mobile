@@ -3,6 +3,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_motion.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/widgets/ds/ds_avatar.dart';
 import 'package:safini/core/utils/widgets/ds/pressable.dart';
 
@@ -12,6 +13,7 @@ class DsPickerOption {
     required this.label,
     required this.color,
     this.initial,
+    this.avatar,
     this.badge = 0,
   });
 
@@ -21,6 +23,9 @@ class DsPickerOption {
 
   /// Overrides the derived initial; the "Everyone" row uses a middot.
   final String? initial;
+
+  /// In-app face. Ignored when [initial] is set (Everyone).
+  final ChildAvatarLook? avatar;
 
   /// Pending-review count for this row. Hidden at 0; the trigger sums every
   /// option except the selected one so the selected child's own queue is not
@@ -184,9 +189,10 @@ class _DsKidPickerState extends State<DsKidPicker>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    DsInitialAvatar(
+                    DsKidFace(
                       name: selected.label,
-                      label: selected.initial,
+                      initial: selected.initial,
+                      avatar: selected.avatar,
                       color: selected.color,
                       size: 24,
                       fontSize: 11,
@@ -387,9 +393,10 @@ class _Row extends StatelessWidget {
         ),
         child: Row(
           children: [
-            DsInitialAvatar(
+            DsKidFace(
               name: option.label,
-              label: option.initial,
+              initial: option.initial,
+              avatar: option.avatar,
               color: option.color,
               size: 24,
               fontSize: 11,

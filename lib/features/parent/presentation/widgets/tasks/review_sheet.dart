@@ -5,7 +5,9 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 
 /// The artboard's review sheet: what was submitted, who sent it and what it is
@@ -38,6 +40,21 @@ class _ReviewSheet extends StatefulWidget {
 class _ReviewSheetState extends State<_ReviewSheet> {
   bool? _deciding;
 
+  ChildSummaryModel? _childFor(BuildContext context, String? childId) {
+    if (childId == null || childId.isEmpty) return null;
+    try {
+      return context
+          .read<ParentFamilyCubit>()
+          .state
+          .family
+          ?.children
+          .where((c) => c.id == childId)
+          .firstOrNull;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> _decide(bool approve) async {
     if (_deciding != null) return;
     setState(() => _deciding = approve);
@@ -53,7 +70,8 @@ class _ReviewSheetState extends State<_ReviewSheet> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final task = widget.task;
-    final kid = widget.childName ?? '';
+    final child = _childFor(context, task.childId);
+    final kid = widget.childName ?? child?.nickname ?? '';
     final coins = task.rewardCoins ?? 0;
     final note = (task.submissionNote ?? '').trim();
     // proof_mode is `text_image` when a photo was asked for. The old check
@@ -86,8 +104,9 @@ class _ReviewSheetState extends State<_ReviewSheet> {
           const SizedBox(height: 14),
           Row(
             children: [
-              DsInitialAvatar(
+              DsKidFace(
                 name: kid,
+                avatar: child?.avatarLook,
                 color: AppColors.kidColor(task.childId ?? kid),
                 size: 30,
               ),

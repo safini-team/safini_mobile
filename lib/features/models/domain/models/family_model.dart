@@ -1,3 +1,4 @@
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/display_name.dart';
 
 class FamilyModel {
@@ -85,6 +86,22 @@ class FamilyModel {
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
+
+  FamilyModel copyWith({
+    List<ParentSummaryModel>? parents,
+    List<ChildSummaryModel>? children,
+  }) {
+    return FamilyModel(
+      id: id,
+      ownerUserId: ownerUserId,
+      name: name,
+      timezone: timezone,
+      parents: parents ?? this.parents,
+      children: children ?? this.children,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
+  }
 }
 
 class ParentSummaryModel {
@@ -148,6 +165,10 @@ class ChildSummaryModel {
   /// child returns it, including `GET /v1/families/current`.
   final int currentStreakDays;
 
+  /// Equipped face + extras. Present when the family payload (or a dashboard
+  /// fill-in) includes `avatar_state`.
+  final Map<String, dynamic>? avatarState;
+
   const ChildSummaryModel({
     required this.id,
     required this.nickname,
@@ -157,7 +178,11 @@ class ChildSummaryModel {
     required this.coinsBalance,
     required this.level,
     this.currentStreakDays = 0,
+    this.avatarState,
   });
+
+  ChildAvatarLook get avatarLook =>
+      ChildAvatarLook.fromAvatarState(avatarState);
 
   factory ChildSummaryModel.fromJson(Map<String, dynamic> json) {
     final rawAge = json['age'];
@@ -183,6 +208,9 @@ class ChildSummaryModel {
         final int value => value,
         final Object? value => int.tryParse(value?.toString() ?? '') ?? 0,
       },
+      avatarState: _avatarStateFromJson(
+        json['avatar_state'] ?? json['avatarState'],
+      ),
     );
   }
 
@@ -196,6 +224,29 @@ class ChildSummaryModel {
       'coinsBalance': coinsBalance,
       'level': level,
       'currentStreakDays': currentStreakDays,
+      'avatar_state': avatarState,
     };
   }
+
+  ChildSummaryModel copyWith({Map<String, dynamic>? avatarState}) {
+    return ChildSummaryModel(
+      id: id,
+      nickname: nickname,
+      age: age,
+      gender: gender,
+      claimedByUserId: claimedByUserId,
+      coinsBalance: coinsBalance,
+      level: level,
+      currentStreakDays: currentStreakDays,
+      avatarState: avatarState ?? this.avatarState,
+    );
+  }
+}
+
+Map<String, dynamic>? _avatarStateFromJson(dynamic raw) {
+  if (raw is Map<String, dynamic>) return Map<String, dynamic>.from(raw);
+  if (raw is Map) {
+    return raw.map((key, value) => MapEntry(key.toString(), value));
+  }
+  return null;
 }

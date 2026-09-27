@@ -221,6 +221,7 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
                         id: child.id,
                         name: child.nickname,
                         color: AppColors.kidColor(child.id),
+                        avatar: child.avatarLook,
                       ),
                   ],
                   selectedKidId: selectedId,

@@ -6,17 +6,24 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/overall_budget_card.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
 
 class LimitsKid {
-  const LimitsKid({required this.id, required this.name, required this.color});
+  const LimitsKid({
+    required this.id,
+    required this.name,
+    required this.color,
+    this.avatar = const ChildAvatarLook(),
+  });
 
   final String id;
   final String name;
   final Color color;
+  final ChildAvatarLook avatar;
 }
 
 class LimitsApp {
@@ -168,6 +175,7 @@ class ParentLimitsView extends StatelessWidget {
                         key: kid.id,
                         label: kid.name,
                         color: kid.color,
+                        avatar: kid.avatar,
                       ),
                   ],
                   onSelect: onSelectKid,
