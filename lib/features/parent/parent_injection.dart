@@ -17,6 +17,9 @@ import 'package:safini/features/parent/domain/controllers/parent_controller.dart
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_user_repository.dart';
+import 'package:safini/features/parent/data/datasources/local/parent_app_lock_store.dart';
+import 'package:safini/features/parent/domain/parent_pin_hasher.dart';
+import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
@@ -90,5 +93,19 @@ void registerParentDependencies(GetIt sl) {
   );
   sl.registerLazySingleton<ParentFamilyCubit>(
     () => ParentFamilyCubit(sl<FamilyController>(), sl<SharedPreferences>()),
+  );
+
+  sl.registerLazySingleton<ParentAppLockStore>(
+    () => SecureParentAppLockStore(),
+  );
+  sl.registerLazySingleton<ParentPinHasher>(() => const ParentPinHasher());
+  sl.registerLazySingleton<ParentAppLockCubit>(
+    () => ParentAppLockCubit(
+      store: sl<ParentAppLockStore>(),
+      hasher: sl<ParentPinHasher>(),
+      prefs: sl.isRegistered<SharedPreferences>()
+          ? sl<SharedPreferences>()
+          : null,
+    ),
   );
 }

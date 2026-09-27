@@ -15,7 +15,9 @@ import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:safini/features/parent/presentation/widgets/app_lock/parent_app_lock_host.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: getIt<AuthSessionCubit>()),
         BlocProvider.value(value: getIt<ChildClaimCubit>()),
         BlocProvider.value(value: getIt<ParentFamilyCubit>()),
+        BlocProvider.value(value: getIt<ParentAppLockCubit>()),
       ],
       child: BlocListener<AuthSessionCubit, AuthSessionState>(
         listenWhen: (previous, next) =>
@@ -82,7 +85,7 @@ class MyApp extends StatelessWidget {
                 );
                 return MediaQuery(
                   data: mediaQuery.copyWith(textScaler: clampedScaler),
-                  child: child!,
+                  child: ParentAppLockHost(child: child!),
                 );
               },
             );

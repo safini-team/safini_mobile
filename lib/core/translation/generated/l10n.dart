@@ -6462,6 +6462,206 @@ class S {
       args: [time],
     );
   }
+
+  /// `App lock`
+  String get appLock {
+    return Intl.message('App lock', name: 'appLock', desc: '', args: []);
+  }
+
+  /// `On`
+  String get appLockOn {
+    return Intl.message('On', name: 'appLockOn', desc: '', args: []);
+  }
+
+  /// `Off`
+  String get appLockOff {
+    return Intl.message('Off', name: 'appLockOff', desc: '', args: []);
+  }
+
+  /// `Ask for a PIN when you open Safini`
+  String get appLockSubtitle {
+    return Intl.message(
+      'Ask for a PIN when you open Safini',
+      name: 'appLockSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A 4-digit PIN stays on this phone only. Sign out to reset it.`
+  String get appLockOffHint {
+    return Intl.message(
+      'A 4-digit PIN stays on this phone only. Sign out to reset it.',
+      name: 'appLockOffHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your PIN`
+  String get appLockEnterPin {
+    return Intl.message(
+      'Enter your PIN',
+      name: 'appLockEnterPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a 4-digit PIN`
+  String get appLockCreatePin {
+    return Intl.message(
+      'Choose a 4-digit PIN',
+      name: 'appLockCreatePin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type it again`
+  String get appLockConfirmPin {
+    return Intl.message(
+      'Type it again',
+      name: 'appLockConfirmPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your current PIN`
+  String get appLockCurrentPin {
+    return Intl.message(
+      'Enter your current PIN',
+      name: 'appLockCurrentPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a new PIN`
+  String get appLockNewPin {
+    return Intl.message(
+      'Choose a new PIN',
+      name: 'appLockNewPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type the new PIN again`
+  String get appLockConfirmNewPin {
+    return Intl.message(
+      'Type the new PIN again',
+      name: 'appLockConfirmNewPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change PIN`
+  String get appLockChange {
+    return Intl.message(
+      'Change PIN',
+      name: 'appLockChange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `That PIN doesn't match`
+  String get appLockWrongPin {
+    return Intl.message(
+      'That PIN doesn\'t match',
+      name: 'appLockWrongPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Those PINs didn't match. Try again.`
+  String get appLockMismatch {
+    return Intl.message(
+      'Those PINs didn\'t match. Try again.',
+      name: 'appLockMismatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use 4 digits`
+  String get appLockInvalidPin {
+    return Intl.message(
+      'Use 4 digits',
+      name: 'appLockInvalidPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Too many tries. Wait a moment.`
+  String get appLockLockout {
+    return Intl.message(
+      'Too many tries. Wait a moment.',
+      name: 'appLockLockout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't save the PIN on this phone.`
+  String get appLockStorageError {
+    return Intl.message(
+      'Couldn\'t save the PIN on this phone.',
+      name: 'appLockStorageError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.`
+  String get appLockForgot {
+    return Intl.message(
+      'Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.',
+      name: 'appLockForgot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign out`
+  String get appLockSignOut {
+    return Intl.message('Sign out', name: 'appLockSignOut', desc: '', args: []);
+  }
+
+  /// `App lock is on`
+  String get appLockEnabled {
+    return Intl.message(
+      'App lock is on',
+      name: 'appLockEnabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App lock is off`
+  String get appLockDisabled {
+    return Intl.message(
+      'App lock is off',
+      name: 'appLockDisabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PIN updated`
+  String get appLockChanged {
+    return Intl.message(
+      'PIN updated',
+      name: 'appLockChanged',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

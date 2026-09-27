@@ -15,6 +15,7 @@ import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dar
 import 'package:safini/features/common/auth/data/user_me_service.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
 /// Manages the entire authentication lifecycle:
@@ -278,6 +279,9 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
     // the next parent on this handset must not inherit these alerts.
     if (getIt.isRegistered<PushService>()) {
       await getIt<PushService>().revoke();
+    }
+    if (getIt.isRegistered<ParentAppLockCubit>()) {
+      await getIt<ParentAppLockCubit>().wipeForSignOut();
     }
     await _clearFamilyState();
     await _clearAuthState();

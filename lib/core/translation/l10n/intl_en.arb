@@ -919,5 +919,27 @@
         "type": "String"
       }
     }
-  }
+  },
+  "appLock": "App lock",
+  "appLockOn": "On",
+  "appLockOff": "Off",
+  "appLockSubtitle": "Ask for a PIN when you open Safini",
+  "appLockOffHint": "A 4-digit PIN stays on this phone only. Sign out to reset it.",
+  "appLockEnterPin": "Enter your PIN",
+  "appLockCreatePin": "Choose a 4-digit PIN",
+  "appLockConfirmPin": "Type it again",
+  "appLockCurrentPin": "Enter your current PIN",
+  "appLockNewPin": "Choose a new PIN",
+  "appLockConfirmNewPin": "Type the new PIN again",
+  "appLockChange": "Change PIN",
+  "appLockWrongPin": "That PIN doesn't match",
+  "appLockMismatch": "Those PINs didn't match. Try again.",
+  "appLockInvalidPin": "Use 4 digits",
+  "appLockLockout": "Too many tries. Wait a moment.",
+  "appLockStorageError": "Couldn't save the PIN on this phone.",
+  "appLockForgot": "Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.",
+  "appLockSignOut": "Sign out",
+  "appLockEnabled": "App lock is on",
+  "appLockDisabled": "App lock is off",
+  "appLockChanged": "PIN updated"
 }
