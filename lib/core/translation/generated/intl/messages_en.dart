@@ -996,9 +996,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notSet": MessageLookupByLibrary.simpleMessage("Not set"),
     "notThisTime": MessageLookupByLibrary.simpleMessage("Not this time"),
     "notYet": MessageLookupByLibrary.simpleMessage("Not yet"),
-    "noteForParent": MessageLookupByLibrary.simpleMessage(
-      "Note for your parent · optional",
-    ),
+    "noteForParent": MessageLookupByLibrary.simpleMessage("Note"),
     "noteFromParent": MessageLookupByLibrary.simpleMessage(
       "Note from your parent",
     ),
@@ -1209,9 +1207,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rerecordVoice": MessageLookupByLibrary.simpleMessage("Re-record"),
     "retakePhoto": MessageLookupByLibrary.simpleMessage("Retake"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
-    "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
-      "Add a note (optional)",
-    ),
+    "reviewNoteHint": MessageLookupByLibrary.simpleMessage("Optional"),
     "reviewTaskSheetTitle": MessageLookupByLibrary.simpleMessage("Review Task"),
     "rewardBlurbAppTime": MessageLookupByLibrary.simpleMessage(
       "Added straight away. Use it today, it expires at midnight.",

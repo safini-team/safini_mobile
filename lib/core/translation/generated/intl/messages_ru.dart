@@ -1018,9 +1018,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notSet": MessageLookupByLibrary.simpleMessage("Не указано"),
     "notThisTime": MessageLookupByLibrary.simpleMessage("Не сейчас"),
     "notYet": MessageLookupByLibrary.simpleMessage("Не сейчас"),
-    "noteForParent": MessageLookupByLibrary.simpleMessage(
-      "Заметка родителю · необязательно",
-    ),
+    "noteForParent": MessageLookupByLibrary.simpleMessage("Заметка"),
     "noteFromParent": MessageLookupByLibrary.simpleMessage(
       "Заметка от родителя",
     ),
@@ -1231,9 +1229,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rerecordVoice": MessageLookupByLibrary.simpleMessage("Записать заново"),
     "retakePhoto": MessageLookupByLibrary.simpleMessage("Переснять"),
     "retry": MessageLookupByLibrary.simpleMessage("Повторить"),
-    "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
-      "Добавить заметку (необязательно)",
-    ),
+    "reviewNoteHint": MessageLookupByLibrary.simpleMessage("Необязательно"),
     "reviewTaskSheetTitle": MessageLookupByLibrary.simpleMessage(
       "Проверить задание",
     ),

@@ -2,6 +2,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/utils/task_schedule.dart';
 import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
 import 'package:safini/features/child/presentation/cubit/quest_state.dart';
@@ -52,7 +53,12 @@ class QuestCubit extends Cubit<QuestState> {
       ),
       (response) => emit(
         state.copyWith(
-          quests: _sortQuests(response.tasks.map(_questFromTask).toList()),
+          quests: _sortQuests(
+            response.tasks
+                .where((task) => taskStaysOnDayList(task, DateTime.now()))
+                .map(_questFromTask)
+                .toList(),
+          ),
           childNickname: nickname,
           doneToday: doneToday,
           isLoading: false,

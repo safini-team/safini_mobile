@@ -1039,9 +1039,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notSet": MessageLookupByLibrary.simpleMessage("Koʻrsatilmagan"),
     "notThisTime": MessageLookupByLibrary.simpleMessage("Hozir emas"),
     "notYet": MessageLookupByLibrary.simpleMessage("Hozir emas"),
-    "noteForParent": MessageLookupByLibrary.simpleMessage(
-      "Ota-onaga izoh · ixtiyoriy",
-    ),
+    "noteForParent": MessageLookupByLibrary.simpleMessage("Izoh"),
     "noteFromParent": MessageLookupByLibrary.simpleMessage("Ota-onadan izoh"),
     "nothingForToday": MessageLookupByLibrary.simpleMessage(
       "Bugunga vazifa yoʻq",
@@ -1266,9 +1264,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rerecordVoice": MessageLookupByLibrary.simpleMessage("Qayta yozish"),
     "retakePhoto": MessageLookupByLibrary.simpleMessage("Qayta olish"),
     "retry": MessageLookupByLibrary.simpleMessage("Qayta urinish"),
-    "reviewNoteHint": MessageLookupByLibrary.simpleMessage(
-      "Izoh qoʻshing (ixtiyoriy)",
-    ),
+    "reviewNoteHint": MessageLookupByLibrary.simpleMessage("Ixtiyoriy"),
     "reviewTaskSheetTitle": MessageLookupByLibrary.simpleMessage(
       "Topshiriqni tekshirish",
     ),
