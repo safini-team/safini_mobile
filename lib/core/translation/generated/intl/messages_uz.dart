@@ -300,6 +300,54 @@ class MessageLookup extends MessageLookupByLibrary {
     "appLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
       "Kunlik ekran vaqti cheklovini belgilang",
     ),
+    "appLock": MessageLookupByLibrary.simpleMessage("Ilova qulfi"),
+    "appLockChange": MessageLookupByLibrary.simpleMessage(
+      "PIN-ni almashtirish",
+    ),
+    "appLockChanged": MessageLookupByLibrary.simpleMessage("PIN yangilandi"),
+    "appLockConfirmNewPin": MessageLookupByLibrary.simpleMessage(
+      "Yangi PIN-ni qayta kiriting",
+    ),
+    "appLockConfirmPin": MessageLookupByLibrary.simpleMessage(
+      "Yana bir bor kiriting",
+    ),
+    "appLockCreatePin": MessageLookupByLibrary.simpleMessage(
+      "4 xonali PIN tanlang",
+    ),
+    "appLockCurrentPin": MessageLookupByLibrary.simpleMessage(
+      "Joriy PIN-kodni kiriting",
+    ),
+    "appLockDisabled": MessageLookupByLibrary.simpleMessage("Qulf oʻchirildi"),
+    "appLockEnabled": MessageLookupByLibrary.simpleMessage("Qulf yoqildi"),
+    "appLockEnterPin": MessageLookupByLibrary.simpleMessage(
+      "PIN-kodni kiriting",
+    ),
+    "appLockForgot": MessageLookupByLibrary.simpleMessage(
+      "PIN-ni unutdingizmi? Chiqing, keyin qayta kiring. Bu telefondagi qulf olib tashlanadi.",
+    ),
+    "appLockInvalidPin": MessageLookupByLibrary.simpleMessage(
+      "4 ta raqam kiriting",
+    ),
+    "appLockLockout": MessageLookupByLibrary.simpleMessage(
+      "Juda koʻp urinish. Biroz kuting.",
+    ),
+    "appLockMismatch": MessageLookupByLibrary.simpleMessage(
+      "PIN-lar mos kelmadi. Qayta urinib koʻring.",
+    ),
+    "appLockNewPin": MessageLookupByLibrary.simpleMessage("Yangi PIN tanlang"),
+    "appLockOff": MessageLookupByLibrary.simpleMessage("Oʻchiq"),
+    "appLockOffHint": MessageLookupByLibrary.simpleMessage(
+      "4 xonali PIN faqat shu telefonda qoladi. Qayta tiklash uchun chiqing.",
+    ),
+    "appLockOn": MessageLookupByLibrary.simpleMessage("Yoqilgan"),
+    "appLockSignOut": MessageLookupByLibrary.simpleMessage("Chiqish"),
+    "appLockStorageError": MessageLookupByLibrary.simpleMessage(
+      "PIN-ni shu telefonda saqlab boʻlmadi.",
+    ),
+    "appLockSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Safini ochilganda PIN soʻralsin",
+    ),
+    "appLockWrongPin": MessageLookupByLibrary.simpleMessage("PIN notoʻgʻri"),
     "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeItem": m4,
     "appTimeMinutes": m5,

@@ -21,6 +21,8 @@ import 'package:safini/core/utils/widgets/language_sheet.dart';
 import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/common/auth/presentation/account_deletion_flow.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Parent · Settings, pushed from My family. Follows the artboard, including
@@ -77,6 +79,19 @@ class ParentSettingsScreen extends StatelessWidget {
                       radius: AppRadius.card,
                       shadow: AppShadows.flat,
                       children: [
+                        BlocBuilder<ParentAppLockCubit, ParentAppLockState>(
+                          buildWhen: (previous, next) =>
+                              previous.enabled != next.enabled,
+                          builder: (context, lock) => DsRow(
+                            onTap: () => context.router.push(
+                              const NamedRoute('parentAppLock'),
+                            ),
+                            title: s.appLock,
+                            subtitle: lock.enabled ? s.appLockOn : s.appLockOff,
+                            verticalPadding: 15,
+                            trailing: AppIcons.chevronRight(),
+                          ),
+                        ),
                         DsRow(
                           onTap: () => showLanguageSheet(context),
                           title: s.changeLanguage,

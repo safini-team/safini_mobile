@@ -297,6 +297,50 @@ class MessageLookup extends MessageLookupByLibrary {
     "appLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
       "Установите дневные лимиты экранного времени",
     ),
+    "appLock": MessageLookupByLibrary.simpleMessage("Блокировка приложения"),
+    "appLockChange": MessageLookupByLibrary.simpleMessage("Сменить PIN"),
+    "appLockChanged": MessageLookupByLibrary.simpleMessage("PIN обновлён"),
+    "appLockConfirmNewPin": MessageLookupByLibrary.simpleMessage(
+      "Повторите новый PIN",
+    ),
+    "appLockConfirmPin": MessageLookupByLibrary.simpleMessage("Повторите PIN"),
+    "appLockCreatePin": MessageLookupByLibrary.simpleMessage(
+      "Придумайте 4-значный PIN",
+    ),
+    "appLockCurrentPin": MessageLookupByLibrary.simpleMessage(
+      "Введите текущий PIN",
+    ),
+    "appLockDisabled": MessageLookupByLibrary.simpleMessage(
+      "Блокировка выключена",
+    ),
+    "appLockEnabled": MessageLookupByLibrary.simpleMessage(
+      "Блокировка включена",
+    ),
+    "appLockEnterPin": MessageLookupByLibrary.simpleMessage("Введите PIN-код"),
+    "appLockForgot": MessageLookupByLibrary.simpleMessage(
+      "Забыли PIN? Выйдите из аккаунта и войдите снова. Блокировка на этом телефоне снимется.",
+    ),
+    "appLockInvalidPin": MessageLookupByLibrary.simpleMessage("Нужны 4 цифры"),
+    "appLockLockout": MessageLookupByLibrary.simpleMessage(
+      "Слишком много попыток. Подождите немного.",
+    ),
+    "appLockMismatch": MessageLookupByLibrary.simpleMessage(
+      "PIN-коды не совпали. Попробуйте ещё раз.",
+    ),
+    "appLockNewPin": MessageLookupByLibrary.simpleMessage("Новый PIN-код"),
+    "appLockOff": MessageLookupByLibrary.simpleMessage("Выкл."),
+    "appLockOffHint": MessageLookupByLibrary.simpleMessage(
+      "4-значный PIN хранится только на этом телефоне. Выйдите из аккаунта, чтобы сбросить его.",
+    ),
+    "appLockOn": MessageLookupByLibrary.simpleMessage("Вкл."),
+    "appLockSignOut": MessageLookupByLibrary.simpleMessage("Выйти"),
+    "appLockStorageError": MessageLookupByLibrary.simpleMessage(
+      "Не удалось сохранить PIN на этом телефоне.",
+    ),
+    "appLockSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Спрашивать PIN при открытии Safini",
+    ),
+    "appLockWrongPin": MessageLookupByLibrary.simpleMessage("Неверный PIN"),
     "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeItem": m4,
     "appTimeMinutes": m5,

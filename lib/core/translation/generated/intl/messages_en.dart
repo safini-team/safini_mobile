@@ -295,6 +295,48 @@ class MessageLookup extends MessageLookupByLibrary {
     "appLimitsSubtitle": MessageLookupByLibrary.simpleMessage(
       "Set daily screen time limits",
     ),
+    "appLock": MessageLookupByLibrary.simpleMessage("App lock"),
+    "appLockChange": MessageLookupByLibrary.simpleMessage("Change PIN"),
+    "appLockChanged": MessageLookupByLibrary.simpleMessage("PIN updated"),
+    "appLockConfirmNewPin": MessageLookupByLibrary.simpleMessage(
+      "Type the new PIN again",
+    ),
+    "appLockConfirmPin": MessageLookupByLibrary.simpleMessage("Type it again"),
+    "appLockCreatePin": MessageLookupByLibrary.simpleMessage(
+      "Choose a 4-digit PIN",
+    ),
+    "appLockCurrentPin": MessageLookupByLibrary.simpleMessage(
+      "Enter your current PIN",
+    ),
+    "appLockDisabled": MessageLookupByLibrary.simpleMessage("App lock is off"),
+    "appLockEnabled": MessageLookupByLibrary.simpleMessage("App lock is on"),
+    "appLockEnterPin": MessageLookupByLibrary.simpleMessage("Enter your PIN"),
+    "appLockForgot": MessageLookupByLibrary.simpleMessage(
+      "Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.",
+    ),
+    "appLockInvalidPin": MessageLookupByLibrary.simpleMessage("Use 4 digits"),
+    "appLockLockout": MessageLookupByLibrary.simpleMessage(
+      "Too many tries. Wait a moment.",
+    ),
+    "appLockMismatch": MessageLookupByLibrary.simpleMessage(
+      "Those PINs didn\'t match. Try again.",
+    ),
+    "appLockNewPin": MessageLookupByLibrary.simpleMessage("Choose a new PIN"),
+    "appLockOff": MessageLookupByLibrary.simpleMessage("Off"),
+    "appLockOffHint": MessageLookupByLibrary.simpleMessage(
+      "A 4-digit PIN stays on this phone only. Sign out to reset it.",
+    ),
+    "appLockOn": MessageLookupByLibrary.simpleMessage("On"),
+    "appLockSignOut": MessageLookupByLibrary.simpleMessage("Sign out"),
+    "appLockStorageError": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t save the PIN on this phone.",
+    ),
+    "appLockSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Ask for a PIN when you open Safini",
+    ),
+    "appLockWrongPin": MessageLookupByLibrary.simpleMessage(
+      "That PIN doesn\'t match",
+    ),
     "appName": MessageLookupByLibrary.simpleMessage("SAFINI"),
     "appTimeItem": m4,
     "appTimeMinutes": m5,
