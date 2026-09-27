@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,6 +26,8 @@ import 'package:safini/features/parent/presentation/widgets/tasks/task_sheet.dar
 /// faces. Written to `artifacts/` (and the cloud-agent screenshots folder when
 /// present). These are not device shots: Linux has no iOS simulator here.
 void main() {
+  setUpAll(_loadScreenshotFonts);
+
   testWidgets('write parent child-avatar screenshots', (tester) async {
     tester.view
       ..physicalSize = const Size(402, 874) * 2
@@ -158,11 +161,48 @@ Future<void> _capture(
   await _save(tester, filename);
 }
 
+const _screenshotText = TextStyle(
+  fontFamily: 'NotoSans',
+  fontFamilyFallback: ['NotoColorEmoji'],
+);
+
+Future<void> _loadScreenshotFonts() async {
+  Future<ByteData> bytes(String path) async {
+    final file = File(path);
+    if (!file.existsSync()) {
+      return ByteData(0);
+    }
+    final data = await file.readAsBytes();
+    return ByteData.view(Uint8List.fromList(data).buffer);
+  }
+
+  Future<void> load(String family, List<String> paths) async {
+    final loader = FontLoader(family);
+    var any = false;
+    for (final path in paths) {
+      if (!File(path).existsSync()) continue;
+      loader.addFont(bytes(path));
+      any = true;
+    }
+    if (any) await loader.load();
+  }
+
+  await load('NotoSans', [
+    '/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
+    '/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf',
+  ]);
+  await load('NotoColorEmoji', [
+    '/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf',
+  ]);
+}
+
 Widget _app(Widget child) {
   return RepaintBoundary(
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
+      theme: AppTheme.light.copyWith(
+        textTheme: AppTheme.light.textTheme.apply(fontFamily: 'NotoSans'),
+      ),
       locale: const Locale('en'),
       localizationsDelegates: const [
         S.delegate,
@@ -171,6 +211,10 @@ Widget _app(Widget child) {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
+      builder: (context, appChild) => DefaultTextStyle.merge(
+        style: _screenshotText,
+        child: appChild ?? const SizedBox.shrink(),
+      ),
       home: child,
     ),
   );

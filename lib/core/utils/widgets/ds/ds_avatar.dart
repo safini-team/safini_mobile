@@ -166,7 +166,7 @@ class DsChildAvatar extends StatelessWidget {
                   ],
                 ),
                 child: Text(
-                  extra!,
+                  extra,
                   style: TextStyle(fontSize: 17 * k, height: 1.15),
                 ),
               ),

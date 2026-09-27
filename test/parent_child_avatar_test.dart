@@ -51,7 +51,7 @@ void main() {
     expect(find.text('😎'), findsOneWidget);
     expect(find.text('🦸'), findsOneWidget);
     expect(find.byType(Image), findsNothing);
-    expect(find.text('A'), findsNothing);
+    expect(find.byType(DsChildAvatar), findsOneWidget);
   });
 
   testWidgets('an unequipped child still gets the default smile', (

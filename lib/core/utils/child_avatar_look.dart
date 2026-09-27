@@ -75,11 +75,11 @@ class ChildAvatarLook {
     if (value.contains('rocket')) return '🚀';
     if (value.contains('sword')) return '⚔️';
     if (value.contains('robot')) return '🤖';
+    if (value.contains('hair')) return '👦';
     if (value.contains('star')) return '🤩';
     if (value.contains('cool')) return '😎';
     if (value.contains('shirt') || value.contains('outfit')) return '👕';
     if (value.contains('back') || value.contains('pack')) return '🎒';
-    if (value.contains('hair')) return '👦';
     return null;
   }
 
