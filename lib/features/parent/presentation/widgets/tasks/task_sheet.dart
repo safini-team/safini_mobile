@@ -73,6 +73,13 @@ Future<void> showNewTaskChooser(
   required ParentTasksCubit cubit,
   required String childId,
 }) async {
+  final child = context
+      .read<ParentFamilyCubit>()
+      .state
+      .family
+      ?.children
+      .where((c) => c.id == childId)
+      .firstOrNull;
   final choice = await showDsSheet<Object>(
     context: context,
     builder: (sheetContext) {
@@ -82,9 +89,15 @@ Future<void> showNewTaskChooser(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(s.chooseTaskTitle, style: AppText.title3),
-          const SizedBox(height: 10),
-          _TaskChildIdentity(childId: childId),
-          const SizedBox(height: 12),
+          if (child != null) ...[
+            const SizedBox(height: 10),
+            _TaskChildIdentity(
+              name: child.nickname,
+              color: AppColors.kidColor(child.id),
+            ),
+            const SizedBox(height: 12),
+          ] else
+            const SizedBox(height: 6),
           Text(s.chooseTaskBody, style: AppText.bodyRegular),
           const SizedBox(height: 18),
           DsPrimaryButton.secondary(
@@ -461,7 +474,15 @@ class _TaskSheetState extends State<TaskSheet> {
               if (_children.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 if (widget.isEdit)
-                  _TaskChildIdentity(childId: widget.childId)
+                  _TaskChildIdentity(
+                    name:
+                        _children
+                            .where((c) => c.id == widget.childId)
+                            .firstOrNull
+                            ?.nickname ??
+                        widget.childId,
+                    color: AppColors.kidColor(widget.childId),
+                  )
                 else ...[
                   DsOverlineText(s.whoSection),
                   const SizedBox(height: 10),
@@ -856,25 +877,18 @@ class _FieldRow extends StatelessWidget {
 
 /// Selected child's avatar + name, reused on the chooser and the edit sheet.
 class _TaskChildIdentity extends StatelessWidget {
-  const _TaskChildIdentity({required this.childId});
+  const _TaskChildIdentity({required this.name, required this.color});
 
-  final String childId;
+  final String name;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final child = context
-        .watch<ParentFamilyCubit>()
-        .state
-        .family
-        ?.children
-        .where((c) => c.id == childId)
-        .firstOrNull;
-    if (child == null) return const SizedBox.shrink();
     return Align(
       alignment: Alignment.centerLeft,
       child: DsKidChip(
-        name: child.nickname,
-        color: AppColors.kidColor(child.id),
+        name: name,
+        color: color,
         avatarSize: 26,
         selected: true,
       ),
