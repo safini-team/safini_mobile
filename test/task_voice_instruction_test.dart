@@ -226,6 +226,23 @@ void main() {
       expect(playback.playCount, 1);
     });
 
+    testWidgets('the optional note does not repeat itself', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          TaskDetailDialog(
+            quest: _quest(),
+            onSubmit: (note, image) async => null,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('NOTE'), findsOneWidget);
+      expect(find.text('Optional'), findsOneWidget);
+      expect(find.text('Note for your parent · optional'), findsNothing);
+      expect(find.text('Add a note (optional)'), findsNothing);
+    });
+
     testWidgets('without a voice note keeps the text-only sheet', (
       tester,
     ) async {

@@ -22,6 +22,7 @@ import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.d
 import 'package:safini/features/parent/presentation/widgets/tasks/task_sheet.dart';
 import 'package:safini/core/utils/task_category.dart';
 import 'package:safini/core/utils/relative_date.dart';
+import 'package:safini/core/utils/task_schedule.dart';
 
 /// Scope key used by the "Everyone" chip.
 const String _allScope = 'all';
@@ -257,11 +258,16 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         ? TaskLane.done
         : TaskLane.active;
 
-    final scoped = _scope == _allScope
-        ? loaded.tasks
-        : loaded.tasks
-              .where((task) => (task.childId ?? loaded.childId) == _scope)
-              .toList();
+    final scoped =
+        (_scope == _allScope
+                ? loaded.tasks
+                : loaded.tasks
+                      .where(
+                        (task) => (task.childId ?? loaded.childId) == _scope,
+                      )
+                      .toList())
+            .where((task) => taskStaysOnDayList(task, DateTime.now()))
+            .toList();
 
     final counts = {
       TaskLane.review: scoped.where((t) => t.isPendingApproval).length,

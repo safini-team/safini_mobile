@@ -1636,14 +1636,9 @@ class S {
     );
   }
 
-  /// `Add a note (optional)`
+  /// `Optional`
   String get reviewNoteHint {
-    return Intl.message(
-      'Add a note (optional)',
-      name: 'reviewNoteHint',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Optional', name: 'reviewNoteHint', desc: '', args: []);
   }
 
   /// `Settings`
@@ -4111,14 +4106,9 @@ class S {
     );
   }
 
-  /// `Note for your parent · optional`
+  /// `Note`
   String get noteForParent {
-    return Intl.message(
-      'Note for your parent · optional',
-      name: 'noteForParent',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Note', name: 'noteForParent', desc: '', args: []);
   }
 
   /// `Waiting for your parent to check it`

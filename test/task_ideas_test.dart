@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/theme/app_theme.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/task_category.dart';
+import 'package:safini/core/utils/task_schedule.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/design_preview_data.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
@@ -234,6 +235,8 @@ void main() {
 
     expect(find.text('Create a task'), findsOneWidget);
     expect(find.text('New custom task'), findsOneWidget);
+    expect(find.byType(DsKidChip), findsOneWidget);
+    expect(find.text('Amir'), findsOneWidget);
     expect(find.text('Make the bed'), findsOneWidget);
     expect(find.text('Put away clean laundry'), findsOneWidget);
     expect(find.byType(DsRow), findsNWidgets(15));
@@ -250,8 +253,10 @@ void main() {
         _field(tester, 1),
         'Почисти зубы две минуты после сна и пришли фото.',
       );
-      expect(find.text('10 монет'), findsOneWidget);
+      expect(_field(tester, 2), '10');
       expect(find.text('Новое задание'), findsOneWidget);
+      expect(find.byType(DsKidChip), findsWidgets);
+      expect(find.text('Amir'), findsWidgets);
     });
 
     testWidgets('adding it saves a daily task that remembers the idea', (
@@ -272,6 +277,7 @@ void main() {
       );
       expect(json['category'], 'health');
       expect(json['recurrence'], 'daily');
+      expect(json.containsKey('due_on'), isFalse);
       expect(json['proof_mode'], 'text_image');
       expect(json['coin_reward'], 10);
       expect(json['metadata'], {'emoji': '🦷', 'idea': 'brush-teeth'});
@@ -287,7 +293,59 @@ void main() {
       expect(json['coin_reward'], 20);
       expect(json['recurrence'], 'weekly');
       expect(json['recurrence_days'], TaskIdea.mondayWednesdayFriday);
+      expect(
+        json['due_on'],
+        firstDueOn(
+          recurrence: 'weekly',
+          recurrenceDays: TaskIdea.mondayWednesdayFriday,
+        ),
+      );
       expect(json['metadata'], {'emoji': '🏃', 'idea': 'exercise'});
+    });
+
+    testWidgets(
+      'a school-days idea created off-schedule sends the next due day',
+      (tester) async {
+        final tasks = await _pumpSheet(tester, idea: TaskIdea.homework);
+        await tester.tap(find.text("Add to Amir's list"));
+        await tester.pump();
+
+        final json = tasks.created.single.toJson();
+        expect(json['recurrence'], 'weekly');
+        expect(json['recurrence_days'], TaskIdea.weekdays);
+        expect(
+          json['due_on'],
+          firstDueOn(recurrence: 'weekly', recurrenceDays: TaskIdea.weekdays),
+        );
+      },
+    );
+
+    testWidgets('the reward field accepts a typed amount', (tester) async {
+      final tasks = await _pumpSheet(tester, idea: TaskIdea.homework);
+      await tester.enterText(find.byKey(const ValueKey('coin-amount')), '2000');
+      await tester.pump();
+      await tester.tap(find.text("Add to Amir's list"));
+      await tester.pump();
+      expect(tasks.created.single.toJson()['coin_reward'], 2000);
+    });
+
+    testWidgets('edit shows the assigned child', (tester) async {
+      await _pumpSheet(
+        tester,
+        task: TaskModel(
+          id: 't1',
+          childId: 'amir',
+          title: 'Brush teeth in the morning',
+          category: 'health',
+          coinReward: 10,
+          xpReward: 10,
+          recurrence: 'daily',
+          metadata: _fromIdea(TaskIdea.brushTeeth),
+        ),
+      );
+      expect(find.byType(DsKidChip), findsOneWidget);
+      expect(find.text('Amir'), findsOneWidget);
+      expect(find.text('WHO'), findsNothing);
     });
 
     testWidgets('a blank New Task stays blank and names no idea', (

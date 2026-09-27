@@ -4,6 +4,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/task_schedule.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
@@ -72,6 +73,13 @@ Future<void> showNewTaskChooser(
   required ParentTasksCubit cubit,
   required String childId,
 }) async {
+  final child = context
+      .read<ParentFamilyCubit>()
+      .state
+      .family
+      ?.children
+      .where((c) => c.id == childId)
+      .firstOrNull;
   final choice = await showDsSheet<Object>(
     context: context,
     builder: (sheetContext) {
@@ -81,7 +89,15 @@ Future<void> showNewTaskChooser(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(s.chooseTaskTitle, style: AppText.title3),
-          const SizedBox(height: 6),
+          if (child != null) ...[
+            const SizedBox(height: 10),
+            _TaskChildIdentity(
+              name: child.nickname,
+              color: AppColors.kidColor(child.id),
+            ),
+            const SizedBox(height: 12),
+          ] else
+            const SizedBox(height: 6),
           Text(s.chooseTaskBody, style: AppText.bodyRegular),
           const SizedBox(height: 18),
           DsPrimaryButton.secondary(
@@ -334,6 +350,10 @@ class _TaskSheetState extends State<TaskSheet> {
         xpReward: coins,
         recurrence: _recurrence,
         recurrenceDays: _recurrence == 'weekly' ? _recurrenceDays : null,
+        dueOn: firstDueOn(
+          recurrence: _recurrence,
+          recurrenceDays: _recurrenceDays,
+        ),
         metadata: {
           'emoji': _emoji,
           if (widget.idea case final idea?) TaskIdea.metadataKey: idea.key,
@@ -451,6 +471,45 @@ class _TaskSheetState extends State<TaskSheet> {
                 widget.isEdit ? s.editTaskSheetTitle : s.newTask,
                 style: AppText.title3,
               ),
+              if (_children.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                if (widget.isEdit)
+                  _TaskChildIdentity(
+                    name:
+                        _children
+                            .where((c) => c.id == widget.childId)
+                            .firstOrNull
+                            ?.nickname ??
+                        widget.childId,
+                    color: AppColors.kidColor(widget.childId),
+                  )
+                else ...[
+                  DsOverlineText(s.whoSection),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      DsKidChip(
+                        name: s.scopeEveryone,
+                        showAvatar: false,
+                        avatarSize: 26,
+                        selected: _targetChildId == null,
+                        onTap: () => setState(() => _targetChildId = null),
+                      ),
+                      for (final child in _children)
+                        DsKidChip(
+                          name: child.nickname,
+                          color: AppColors.kidColor(child.id),
+                          avatarSize: 26,
+                          selected: _targetChildId == child.id,
+                          onTap: () =>
+                              setState(() => _targetChildId = child.id),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
               const SizedBox(height: 18),
               _IconPicker(
                 emoji: _emoji,
@@ -466,7 +525,11 @@ class _TaskSheetState extends State<TaskSheet> {
                 onLess: () => setState(
                   () => _coins = (_coins - _coinStep).clamp(5, 100000),
                 ),
-                onMore: () => setState(() => _coins += _coinStep),
+                onMore: () => setState(
+                  () => _coins = (_coins + _coinStep).clamp(5, 100000),
+                ),
+                onCoins: (value) =>
+                    setState(() => _coins = value.clamp(5, 100000)),
                 onPhotoProof: (value) => setState(() => _photoProof = value),
               ),
               const SizedBox(height: 14),
@@ -562,32 +625,6 @@ class _TaskSheetState extends State<TaskSheet> {
               if (_recurrenceError != null) ...[
                 const SizedBox(height: 8),
                 DsFootnote(_recurrenceError!, top: 0),
-              ],
-              if (!widget.isEdit && _children.isNotEmpty) ...[
-                const SizedBox(height: 20),
-                DsOverlineText(s.whoSection),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    DsKidChip(
-                      name: s.scopeEveryone,
-                      showAvatar: false,
-                      avatarSize: 26,
-                      selected: _targetChildId == null,
-                      onTap: () => setState(() => _targetChildId = null),
-                    ),
-                    for (final child in _children)
-                      DsKidChip(
-                        name: child.nickname,
-                        color: AppColors.kidColor(child.id),
-                        avatarSize: 26,
-                        selected: _targetChildId == child.id,
-                        onTap: () => setState(() => _targetChildId = child.id),
-                      ),
-                  ],
-                ),
               ],
               const SizedBox(height: 24),
               DsPrimaryButton(
@@ -696,6 +733,7 @@ class _FieldPanel extends StatelessWidget {
     required this.photoProof,
     required this.onLess,
     required this.onMore,
+    required this.onCoins,
     required this.onPhotoProof,
   });
 
@@ -705,6 +743,7 @@ class _FieldPanel extends StatelessWidget {
   final bool photoProof;
   final VoidCallback onLess;
   final VoidCallback onMore;
+  final ValueChanged<int> onCoins;
   final ValueChanged<bool> onPhotoProof;
 
   @override
@@ -754,14 +793,15 @@ class _FieldPanel extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    S.of(context).coinCountShort(coins),
-                    style: AppText.rowTitleLg
-                        .copyWith(fontWeight: FontWeight.w600)
-                        .nums,
+                  child: DsCoinAmount(
+                    value: coins,
+                    min: 5,
+                    max: 100000,
+                    onChanged: onCoins,
+                    onLess: coins > 5 ? onLess : null,
+                    onMore: coins < 100000 ? onMore : null,
                   ),
                 ),
-                DsStepper.onPanel(onLess: onLess, onMore: onMore),
               ],
             ),
           ),
@@ -830,6 +870,27 @@ class _FieldRow extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(child: child),
         ],
+      ),
+    );
+  }
+}
+
+/// Selected child's avatar + name, reused on the chooser and the edit sheet.
+class _TaskChildIdentity extends StatelessWidget {
+  const _TaskChildIdentity({required this.name, required this.color});
+
+  final String name;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: DsKidChip(
+        name: name,
+        color: color,
+        avatarSize: 26,
+        selected: true,
       ),
     );
   }

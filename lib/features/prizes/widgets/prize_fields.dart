@@ -82,21 +82,19 @@ class PrizePriceRow extends StatelessWidget {
             child: Text(label ?? s.prizePriceLabel, style: AppText.field),
           ),
           const SizedBox(width: 12),
-          const DsCoinToken(size: 18),
-          const SizedBox(width: 6),
           Expanded(
-            child: Text(
-              '$coins',
-              style: AppText.rowTitleLg
-                  .copyWith(fontWeight: FontWeight.w600)
-                  .nums,
+            child: DsCoinAmount(
+              value: coins,
+              min: 10,
+              max: 100000,
+              onChanged: onChanged,
+              onLess: coins > 10
+                  ? () => onChanged(previousPrizePrice(coins))
+                  : null,
+              onMore: coins < 100000
+                  ? () => onChanged(nextPrizePrice(coins))
+                  : null,
             ),
-          ),
-          DsStepper.onPanel(
-            onLess: coins > 10
-                ? () => onChanged(previousPrizePrice(coins))
-                : null,
-            onMore: () => onChanged(nextPrizePrice(coins)),
           ),
         ],
       ),

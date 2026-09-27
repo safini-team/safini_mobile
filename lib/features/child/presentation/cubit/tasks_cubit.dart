@@ -2,6 +2,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/utils/task_schedule.dart';
 import 'package:safini/features/child/domain/repositories/i_child_repository.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_model.dart';
@@ -35,7 +36,12 @@ class TasksCubit extends Cubit<TasksState> {
       (_) => emit(state.copyWith(tasks: const [], isLoading: false)),
       (response) => emit(
         state.copyWith(
-          tasks: _sortTasks(response.tasks.map(_taskFromBackend).toList()),
+          tasks: _sortTasks(
+            response.tasks
+                .where((task) => taskStaysOnDayList(task, DateTime.now()))
+                .map(_taskFromBackend)
+                .toList(),
+          ),
           isLoading: false,
         ),
       ),

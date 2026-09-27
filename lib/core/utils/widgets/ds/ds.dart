@@ -11,6 +11,7 @@ export 'ds_button.dart';
 export 'ds_card.dart';
 export 'ds_chip.dart';
 export 'ds_code_field.dart';
+export 'ds_coin_amount.dart';
 export 'ds_controls.dart';
 export 'ds_hold_button.dart';
 export 'ds_kid_picker.dart';
