@@ -5,6 +5,7 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/task_schedule.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/data/dto/task_dto.dart';
@@ -94,6 +95,7 @@ Future<void> showNewTaskChooser(
             _TaskChildIdentity(
               name: child.nickname,
               color: AppColors.kidColor(child.id),
+              avatar: child.avatarLook,
             ),
             const SizedBox(height: 12),
           ] else
@@ -482,6 +484,10 @@ class _TaskSheetState extends State<TaskSheet> {
                             ?.nickname ??
                         widget.childId,
                     color: AppColors.kidColor(widget.childId),
+                    avatar: _children
+                        .where((c) => c.id == widget.childId)
+                        .firstOrNull
+                        ?.avatarLook,
                   )
                 else ...[
                   DsOverlineText(s.whoSection),
@@ -501,6 +507,7 @@ class _TaskSheetState extends State<TaskSheet> {
                         DsKidChip(
                           name: child.nickname,
                           color: AppColors.kidColor(child.id),
+                          avatar: child.avatarLook,
                           avatarSize: 26,
                           selected: _targetChildId == child.id,
                           onTap: () =>
@@ -877,10 +884,15 @@ class _FieldRow extends StatelessWidget {
 
 /// Selected child's avatar + name, reused on the chooser and the edit sheet.
 class _TaskChildIdentity extends StatelessWidget {
-  const _TaskChildIdentity({required this.name, required this.color});
+  const _TaskChildIdentity({
+    required this.name,
+    required this.color,
+    this.avatar,
+  });
 
   final String name;
   final Color color;
+  final ChildAvatarLook? avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -889,6 +901,7 @@ class _TaskChildIdentity extends StatelessWidget {
       child: DsKidChip(
         name: name,
         color: color,
+        avatar: avatar,
         avatarSize: 26,
         selected: true,
       ),

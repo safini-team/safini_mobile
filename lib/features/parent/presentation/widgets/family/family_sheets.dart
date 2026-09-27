@@ -227,7 +227,12 @@ class _ChildSheetState extends State<_ChildSheet> {
       children: [
         Row(
           children: [
-            DsInitialAvatar(name: child.name, color: child.color, size: 56),
+            DsKidFace(
+              name: child.name,
+              avatar: child.avatar,
+              color: child.color,
+              size: 56,
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(

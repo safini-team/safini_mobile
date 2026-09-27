@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:safini/features/models/domain/models/device_usage.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
@@ -18,9 +19,30 @@ import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_v
 class SampleData {
   const SampleData._();
 
+  static const _amirAvatar = ChildAvatarLook(
+    faceEmoji: '😎',
+    accessoryEmoji: '🦸',
+    hasCustomFace: true,
+  );
+  static const _laylaAvatar = ChildAvatarLook(
+    faceEmoji: '🥰',
+    accessoryEmoji: '🚀',
+    hasCustomFace: true,
+  );
+
   static const List<TodayKid> kids = [
-    TodayKid(id: 'amir', name: 'Amir', color: Color(0xFF1A5C4A)),
-    TodayKid(id: 'layla', name: 'Layla', color: Color(0xFF2E6F8E)),
+    TodayKid(
+      id: 'amir',
+      name: 'Amir',
+      color: Color(0xFF1A5C4A),
+      avatar: _amirAvatar,
+    ),
+    TodayKid(
+      id: 'layla',
+      name: 'Layla',
+      color: Color(0xFF2E6F8E),
+      avatar: _laylaAvatar,
+    ),
   ];
 
   static const List<TodayApp> apps = [
@@ -87,6 +109,7 @@ class SampleData {
         kidName: 'Amir',
         color: Color(0xFF1A5C4A),
         coins: 10,
+        avatar: _amirAvatar,
       ),
       TodayReview(
         id: 'r2',
@@ -95,6 +118,7 @@ class SampleData {
         kidName: 'Layla',
         color: Color(0xFF2E6F8E),
         coins: 25,
+        avatar: _laylaAvatar,
       ),
     ],
   );
@@ -107,11 +131,13 @@ class SampleData {
         key: 'amir',
         label: 'Amir',
         color: Color(0xFF1A5C4A),
+        avatar: _amirAvatar,
       ),
       const TaskScopeChip(
         key: 'layla',
         label: 'Layla',
         color: Color(0xFF2E6F8E),
+        avatar: _laylaAvatar,
       ),
     ],
     selectedScope: 'all',
@@ -123,6 +149,7 @@ class SampleData {
       TaskGroupData(
         name: 'Amir',
         color: const Color(0xFF1A5C4A),
+        avatar: _amirAvatar,
         summary: s.taskGroupSummary(s.taskCount(2), s.coinCountShort(25)),
         rows: const [
           TaskRowData(
@@ -148,6 +175,7 @@ class SampleData {
       TaskGroupData(
         name: 'Layla',
         color: const Color(0xFF2E6F8E),
+        avatar: _laylaAvatar,
         summary: s.taskGroupSummary(s.taskCount(2), s.coinCountShort(40)),
         rows: const [
           TaskRowData(
@@ -182,6 +210,7 @@ class SampleData {
         key: 'amir',
         label: 'Amir',
         color: Color(0xFF1A5C4A),
+        avatar: _amirAvatar,
       ),
     ],
     selectedScope: 'all',
@@ -194,8 +223,18 @@ class SampleData {
 
   static const ParentLimitsData parentLimits = ParentLimitsData(
     kids: [
-      LimitsKid(id: 'amir', name: 'Amir', color: Color(0xFF1A5C4A)),
-      LimitsKid(id: 'layla', name: 'Layla', color: Color(0xFF2E6F8E)),
+      LimitsKid(
+        id: 'amir',
+        name: 'Amir',
+        color: Color(0xFF1A5C4A),
+        avatar: _amirAvatar,
+      ),
+      LimitsKid(
+        id: 'layla',
+        name: 'Layla',
+        color: Color(0xFF2E6F8E),
+        avatar: _laylaAvatar,
+      ),
     ],
     selectedKidId: 'amir',
     kidName: 'Amir',
@@ -252,8 +291,18 @@ class SampleData {
   /// swaps the combined sum for the real budget and grows a stepper.
   static const ParentLimitsData parentLimitsWithCap = ParentLimitsData(
     kids: [
-      LimitsKid(id: 'amir', name: 'Amir', color: Color(0xFF1A5C4A)),
-      LimitsKid(id: 'layla', name: 'Layla', color: Color(0xFF2E6F8E)),
+      LimitsKid(
+        id: 'amir',
+        name: 'Amir',
+        color: Color(0xFF1A5C4A),
+        avatar: _amirAvatar,
+      ),
+      LimitsKid(
+        id: 'layla',
+        name: 'Layla',
+        color: Color(0xFF2E6F8E),
+        avatar: _laylaAvatar,
+      ),
     ],
     selectedKidId: 'amir',
     kidName: 'Amir',
@@ -339,6 +388,7 @@ class SampleData {
         level: 4,
         coins: 240,
         paired: true,
+        avatar: _amirAvatar,
       ),
       FamilyChildCard(
         id: 'layla',
@@ -348,6 +398,7 @@ class SampleData {
         level: 6,
         coins: 415,
         paired: false,
+        avatar: _laylaAvatar,
       ),
     ],
   );

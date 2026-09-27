@@ -151,6 +151,7 @@ class _ParentFamilyScreenState extends State<ParentFamilyScreen> {
                   level: child.level,
                   coins: child.coinsBalance,
                   paired: (child.claimedByUserId ?? '').isNotEmpty,
+                  avatar: child.avatarLook,
                 ),
             ],
           ),

@@ -5,6 +5,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 
 class FamilyParentRow {
@@ -36,6 +37,7 @@ class FamilyChildCard {
     required this.level,
     required this.coins,
     required this.paired,
+    this.avatar = const ChildAvatarLook(),
   });
 
   final String id;
@@ -45,6 +47,7 @@ class FamilyChildCard {
   final int level;
   final int coins;
   final bool paired;
+  final ChildAvatarLook avatar;
 
   String get displayName => age > 0 ? '$name, $age' : name;
 
@@ -326,7 +329,12 @@ class _ChildCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              DsInitialAvatar(name: child.name, color: child.color, size: 52),
+              DsKidFace(
+                name: child.name,
+                avatar: child.avatar,
+                color: child.color,
+                size: 52,
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(

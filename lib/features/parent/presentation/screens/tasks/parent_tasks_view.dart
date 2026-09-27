@@ -5,6 +5,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 
 enum TaskLane { review, active, done }
@@ -41,6 +42,7 @@ class TaskGroupData {
     required this.color,
     required this.rows,
     required this.summary,
+    this.avatar = const ChildAvatarLook(),
   });
 
   final String name;
@@ -49,6 +51,7 @@ class TaskGroupData {
 
   /// Pre-localised "3 tasks · 45 coins".
   final String summary;
+  final ChildAvatarLook avatar;
 
   int get coins => rows.fold(0, (sum, row) => sum + row.coins);
 }
@@ -59,12 +62,14 @@ class TaskScopeChip {
     required this.label,
     this.color,
     this.hasAvatar = true,
+    this.avatar = const ChildAvatarLook(),
   });
 
   final String key;
   final String label;
   final Color? color;
   final bool hasAvatar;
+  final ChildAvatarLook avatar;
 }
 
 class ParentTasksData {
@@ -148,6 +153,7 @@ class ParentTasksView extends StatelessWidget {
                       label: chip.label,
                       color: chip.color ?? AppColors.textTertiary,
                       initial: chip.hasAvatar ? null : '·',
+                      avatar: chip.hasAvatar ? chip.avatar : null,
                     ),
                 ],
                 onSelect: onSelectScope,
@@ -226,8 +232,9 @@ class _Group extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(6, 0, 6, 9),
           child: Row(
             children: [
-              DsInitialAvatar(
+              DsKidFace(
                 name: group.name,
+                avatar: group.avatar,
                 color: group.color,
                 size: 22,
                 fontSize: 11,

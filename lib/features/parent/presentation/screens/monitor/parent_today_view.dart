@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
@@ -18,6 +19,7 @@ class TodayKid {
     required this.name,
     required this.color,
     this.pendingReviewCount = 0,
+    this.avatar = const ChildAvatarLook(),
   });
 
   final String id;
@@ -26,6 +28,7 @@ class TodayKid {
 
   /// Items waiting on the parent for this child (tasks plus prize asks).
   final int pendingReviewCount;
+  final ChildAvatarLook avatar;
 }
 
 /// What a review is for: a task to pay for, a prize the child asked for
@@ -43,6 +46,7 @@ class TodayReview {
     required this.color,
     required this.coins,
     this.kind = TodayReviewKind.task,
+    this.avatar = const ChildAvatarLook(),
   });
 
   final String id;
@@ -52,6 +56,7 @@ class TodayReview {
   final Color color;
   final int coins;
   final TodayReviewKind kind;
+  final ChildAvatarLook avatar;
 }
 
 /// One app row in "Where the time went": every app the child used today.
@@ -215,6 +220,7 @@ class ParentTodayView extends StatelessWidget {
                         key: kid.id,
                         label: kid.name,
                         color: kid.color,
+                        avatar: kid.avatar,
                         badge: kid.pendingReviewCount,
                       ),
                   ],
@@ -586,8 +592,9 @@ class _ReviewRow extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DsInitialAvatar(
+                DsKidFace(
                   name: review.kidName,
+                  avatar: review.avatar,
                   color: review.color,
                   size: 36,
                 ),

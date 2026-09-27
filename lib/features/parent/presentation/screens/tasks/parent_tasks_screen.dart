@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_colors.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/on_push.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
@@ -305,6 +306,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         TaskGroupData(
           name: name,
           color: AppColors.kidColor(child?.id ?? name),
+          avatar: child?.avatarLook ?? const ChildAvatarLook(),
           rows: groupRows,
           summary: s.taskGroupSummary(
             s.taskCount(groupRows.length),
@@ -328,6 +330,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
             key: child.id,
             label: child.nickname,
             color: AppColors.kidColor(child.id),
+            avatar: child.avatarLook,
           ),
       ],
       selectedScope: _scope,

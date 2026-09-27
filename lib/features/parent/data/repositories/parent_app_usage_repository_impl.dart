@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:safini/core/config/supabase_config.dart';
 import 'package:safini/core/network/authenticated_http_client.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
@@ -211,11 +212,11 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
       final decoded = _decodeBody(response.body);
       if (decoded is! Map) return null;
       final child = decoded['child'];
-      final avatarState = child is Map ? child['avatar_state'] : null;
-      final emojis = avatarState is Map ? avatarState['emojis'] : null;
-      final face = emojis is Map ? emojis['face'] : null;
-      final value = face?.toString().trim();
-      return (value == null || value.isEmpty) ? null : value;
+      final avatarState = child is Map
+          ? (child['avatar_state'] ?? child['avatarState'])
+          : null;
+      final look = ChildAvatarLook.fromAvatarState(avatarState);
+      return look.hasCustomFace ? look.faceEmoji : null;
     } catch (_) {
       return null;
     }
