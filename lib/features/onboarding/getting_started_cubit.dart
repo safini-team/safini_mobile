@@ -4,7 +4,7 @@ import 'package:safini/features/onboarding/onboarding_store.dart';
 import 'package:safini/features/prizes/prize.dart';
 
 /// The parent's first-week checklist, in the order it is shown.
-enum SetupStep { child, phone, task, limit, prize }
+enum SetupStep { child, phone, task, limit, prize, appLock }
 
 class GettingStarted {
   const GettingStarted({
@@ -61,22 +61,39 @@ class GettingStartedCubit extends Cubit<GettingStarted> {
     required bool phoneConnected,
     required bool hasTask,
     required bool hasLimit,
+    bool? appLockEnabled = false,
   }) async {
     final firstLook = state.familyId != familyId;
     final stored = firstLook
         ? _store.done(familyId).map(_stepOf).nonNulls.toSet()
-        : state.done;
+        : {...state.done};
+    // Null means the lock store has not been read yet: keep the last answer
+    // so a parent who already set a PIN does not see the card flash.
+    // False is live: turning the lock off opens this step again.
+    final rememberedPin = stored.remove(SetupStep.appLock);
+    final pinOn = appLockEnabled ?? rememberedPin;
     final done = {
       ...stored,
       if (childIds.isNotEmpty) SetupStep.child,
       if (phoneConnected) SetupStep.phone,
       if (hasTask) SetupStep.task,
       if (hasLimit) SetupStep.limit,
+      if (pinOn) SetupStep.appLock,
     };
 
     var hidden = firstLook ? _store.isHidden(familyId) : state.hidden;
+    if (appLockEnabled == false) {
+      // A dismissed checklist comes back until the PIN exists.
+      hidden = false;
+    } else if (appLockEnabled == true &&
+        !firstLook &&
+        !state.done.contains(SetupStep.appLock) &&
+        _store.isHidden(familyId)) {
+      hidden = true;
+    }
     // A family that did everything before this card shipped never sees it.
-    // The prize check has not run yet, so "everything else" is the test.
+    // The prize check has not run yet, so "everything else" — including the
+    // PIN — is the test.
     if (firstLook && !hidden && _store.done(familyId).isEmpty) {
       final rest = {...SetupStep.values}..remove(SetupStep.prize);
       if (done.containsAll(rest) && await _anyPrize(childIds)) {
@@ -98,9 +115,11 @@ class GettingStartedCubit extends Cubit<GettingStarted> {
   }
 
   /// "Hide" on the card, and "Done" once every step is ticked.
+  ///
+  /// The app-lock PIN is mandatory, so the card cannot be dismissed without it.
   Future<void> hide() async {
     final familyId = state.familyId;
-    if (familyId == null) return;
+    if (familyId == null || !state.done.contains(SetupStep.appLock)) return;
     emit(state.copyWith(hidden: true));
     await _store.hide(familyId);
   }

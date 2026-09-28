@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/onboarding/getting_started_card.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_state.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 
@@ -66,12 +70,24 @@ class _GettingStartedHostState extends State<GettingStartedHost> {
         phoneConnected: widget.children.any(_isPaired),
         hasTask: widget.hasTask,
         hasLimit: widget.hasLimit,
+        appLockEnabled: _appLockEnabled(context),
       );
     });
   }
 
   static bool _isPaired(ChildSummaryModel child) =>
       (child.claimedByUserId ?? '').isNotEmpty;
+
+  /// Null until the lock cubit has read storage. Absent in widget tests.
+  static bool? _appLockEnabled(BuildContext context) {
+    try {
+      final lock = context.read<ParentAppLockCubit>().state;
+      if (!lock.ready) return null;
+      return lock.pinIsSet;
+    } catch (_) {
+      return false;
+    }
+  }
 
   String get _kidName {
     final waiting = widget.children.where((c) => !_isPaired(c)).firstOrNull;
@@ -83,12 +99,15 @@ class _GettingStartedHostState extends State<GettingStartedHost> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ParentHomeCubit, ParentHomeState>(
+    final checklist = BlocListener<ParentHomeCubit, ParentHomeState>(
       listenWhen: (previous, current) =>
           previous.selectedIndex != 0 && current.selectedIndex == 0,
-      listener: (context, _) => context
-          .read<GettingStartedCubit>()
-          .refreshPrizes([for (final child in widget.children) child.id]),
+      listener: (context, _) {
+        _observeAfterFrame();
+        context.read<GettingStartedCubit>().refreshPrizes([
+          for (final child in widget.children) child.id,
+        ]);
+      },
       child: BlocBuilder<GettingStartedCubit, GettingStarted>(
         builder: (context, state) => AnimatedSize(
           duration: const Duration(milliseconds: 320),
@@ -113,6 +132,23 @@ class _GettingStartedHostState extends State<GettingStartedHost> {
         ),
       ),
     );
+    if (!_lockInTree(context)) return checklist;
+    return BlocListener<ParentAppLockCubit, ParentAppLockState>(
+      listenWhen: (previous, current) =>
+          previous.pinIsSet != current.pinIsSet ||
+          previous.ready != current.ready,
+      listener: (context, _) => _observeAfterFrame(),
+      child: checklist,
+    );
+  }
+
+  static bool _lockInTree(BuildContext context) {
+    try {
+      context.read<ParentAppLockCubit>();
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   void _open(BuildContext context, SetupStep step) {
@@ -128,6 +164,14 @@ class _GettingStartedHostState extends State<GettingStartedHost> {
         home.selectTab(2);
       case SetupStep.prize:
         home.openPrizes();
+      case SetupStep.appLock:
+        unawaited(_openAppLock(context));
     }
+  }
+
+  Future<void> _openAppLock(BuildContext context) async {
+    await context.router.push(const NamedRoute('parentAppLock'));
+    if (!mounted) return;
+    _observeAfterFrame();
   }
 }
