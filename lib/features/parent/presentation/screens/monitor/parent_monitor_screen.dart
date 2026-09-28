@@ -77,7 +77,9 @@ List<TodayReview> signoutReviews(
 ];
 
 class ParentMonitorScreen extends StatelessWidget {
-  const ParentMonitorScreen({super.key});
+  const ParentMonitorScreen({super.key, this.reviewKey});
+
+  final GlobalKey? reviewKey;
 
   @override
   Widget build(BuildContext context) {
@@ -94,29 +96,27 @@ class ParentMonitorScreen extends StatelessWidget {
                   context.read<ParentHomeCubit>().state.selectedChildId,
             ),
         ),
-        BlocProvider(
-          create: (_) => PrizeAsksCubit(getIt<PrizeApi>())..load(),
-        ),
+        BlocProvider(create: (_) => PrizeAsksCubit(getIt<PrizeApi>())..load()),
         BlocProvider(
           create: (_) => SignoutAsksCubit(getIt<SignoutApi>())..load(),
         ),
         BlocProvider(
-          create: (_) => GettingStartedCubit(
-            getIt<OnboardingStore>(),
-            getIt<PrizeApi>(),
-          ),
+          create: (_) =>
+              GettingStartedCubit(getIt<OnboardingStore>(), getIt<PrizeApi>()),
         ),
         // The tasks cubit comes from the shell: a second instance here meant
         // an approval on the Tasks tab never reached this card, and the tab
         // badge never heard about one made from Today.
       ],
-      child: const _ParentMonitorView(),
+      child: _ParentMonitorView(reviewKey: reviewKey),
     );
   }
 }
 
 class _ParentMonitorView extends StatelessWidget {
-  const _ParentMonitorView();
+  const _ParentMonitorView({this.reviewKey});
+
+  final GlobalKey? reviewKey;
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +193,7 @@ class _ParentMonitorView extends StatelessWidget {
           final signouts = context.watch<SignoutAsksCubit>().state;
           return BlocBuilder<ParentTasksCubit, ParentTasksState>(
             builder: (context, tasksState) => ParentTodayView(
+              reviewKey: reviewKey,
               data: _buildData(context, state, tasksState, asks, signouts),
               onSelectKid: (index) => context
                   .read<ParentHomeCubit>()
@@ -207,9 +208,11 @@ class _ParentMonitorView extends StatelessWidget {
                 _ => _openAsk(context, asks, review.id),
               },
               onApproveReview: (review) => switch (review.kind) {
-                TodayReviewKind.task => context
-                    .read<ParentTasksCubit>()
-                    .reviewTask(review.id, approve: true),
+                TodayReviewKind.task =>
+                  context.read<ParentTasksCubit>().reviewTask(
+                    review.id,
+                    approve: true,
+                  ),
                 TodayReviewKind.signout => _answerSignout(
                   context,
                   signouts,
@@ -218,15 +221,12 @@ class _ParentMonitorView extends StatelessWidget {
                 ),
                 _ => _answerAsk(context, asks, review.id, approve: true),
               },
-              onDeclineReview: (review) => review.kind == TodayReviewKind.signout
+              onDeclineReview: (review) =>
+                  review.kind == TodayReviewKind.signout
                   ? _answerSignout(context, signouts, review.id, approve: false)
                   : _answerAsk(context, asks, review.id, approve: false),
               banner: GettingStartedHost(
-                familyId: context
-                    .watch<ParentFamilyCubit>()
-                    .state
-                    .family
-                    ?.id,
+                familyId: context.watch<ParentFamilyCubit>().state.family?.id,
                 children: state.children,
                 selectedChildId: state.selectedChild?.id,
                 hasTask: _loadedOf(tasksState)?.tasks.isNotEmpty ?? false,
@@ -378,9 +378,7 @@ class _ParentMonitorView extends StatelessWidget {
         )
         .toList();
 
-    final avatars = {
-      for (final kid in state.children) kid.id: kid.avatarLook,
-    };
+    final avatars = {for (final kid in state.children) kid.id: kid.avatarLook};
     final reviews = childTasks
         .where((task) => task.isPendingApproval)
         .map(
@@ -414,7 +412,8 @@ class _ParentMonitorView extends StatelessWidget {
           color: AppColors.kidColor(ask.childId),
           coins: ask.coinCost,
           kind: ask.isWish ? TodayReviewKind.wish : TodayReviewKind.prize,
-          avatar: avatars[ask.childId] ??
+          avatar:
+              avatars[ask.childId] ??
               child?.avatarLook ??
               const ChildAvatarLook(),
         ),

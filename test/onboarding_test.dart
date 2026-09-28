@@ -4,10 +4,14 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_state.dart';
 import 'package:safini/features/onboarding/getting_started_card.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
+import 'package:safini/features/onboarding/getting_started_host.dart';
 import 'package:safini/features/onboarding/kid_hello.dart';
 import 'package:safini/features/onboarding/kid_setup.dart';
 import 'package:safini/features/onboarding/onboarding_store.dart';
 import 'package:safini/features/prizes/prize.dart';
+import 'package:safini/features/models/domain/models/family_model.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Getting started on the parent's Today, and Fini on the kid's phone.
@@ -119,6 +123,22 @@ void main() {
       expect(prizes.calls, hasLength(2));
     });
 
+    test(
+      'returning from Gifts checks again even inside the throttle window',
+      () async {
+        final prizes = _Prizes();
+        final cubit = GettingStartedCubit(await _store(), prizes);
+        await _observe(cubit);
+        expect(cubit.state.done, isNot(contains(SetupStep.prize)));
+        expect(prizes.calls, hasLength(1));
+
+        prizes.withPrize.add('aziz');
+        await cubit.refreshPrizes(const ['aziz']);
+        expect(cubit.state.done, contains(SetupStep.prize));
+        expect(prizes.calls, hasLength(2));
+      },
+    );
+
     test('a family that already did everything never sees the card', () async {
       final store = await _store();
       final cubit = GettingStartedCubit(store, _Prizes(withPrize: {'aziz'}));
@@ -145,6 +165,52 @@ void main() {
       expect(done.state.hidden, isTrue);
       expect(store.isHidden('fam'), isTrue);
     });
+  });
+
+  testWidgets('adding a gift in Limits ticks the Today checklist on return', (
+    tester,
+  ) async {
+    final prizes = _Prizes();
+    final cubit = GettingStartedCubit(await _store(), prizes);
+    final home = ParentHomeCubit();
+    addTearDown(cubit.close);
+    addTearDown(home.close);
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: cubit),
+          BlocProvider.value(value: home),
+        ],
+        child: _app(
+          const GettingStartedHost(
+            familyId: 'fam',
+            children: [
+              ChildSummaryModel(
+                id: 'aziz',
+                nickname: 'Aziz',
+                age: 9,
+                coinsBalance: 0,
+                level: 1,
+              ),
+            ],
+            selectedChildId: 'aziz',
+            hasTask: false,
+            hasLimit: false,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('1 of 5'), findsOneWidget);
+
+    home.selectTab(2);
+    await tester.pump();
+    prizes.withPrize.add('aziz');
+    home.selectTab(0);
+    await tester.pumpAndSettle();
+
+    expect(find.text('2 of 5'), findsOneWidget);
+    expect(cubit.state.done, contains(SetupStep.prize));
   });
 
   group('GettingStartedCard', () {

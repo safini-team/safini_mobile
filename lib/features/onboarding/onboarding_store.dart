@@ -14,6 +14,8 @@ class OnboardingStore {
   static String _doneKey(String familyId) => 'onboarding.done.$familyId';
   static String _hiddenKey(String familyId) => 'onboarding.hidden.$familyId';
   static String _helloKey(String childId) => 'onboarding.kidHello.$childId';
+  static String _tourKey(String role, String userId) =>
+      'onboarding.tour.v1.$role.$userId';
 
   Set<String> done(String familyId) =>
       (_prefs?.getStringList(_doneKey(familyId)) ?? const []).toSet();
@@ -32,4 +34,12 @@ class OnboardingStore {
 
   Future<void> markKidHelloSeen(String childId) async =>
       _prefs?.setBool(_helloKey(childId), true);
+
+  /// Null means this account has not completed the walkthrough. A saved step
+  /// lets a first-time user resume after the app closes mid-tour.
+  int? tourStep(String role, String userId) =>
+      _prefs?.getInt(_tourKey(role, userId));
+
+  Future<void> saveTourStep(String role, String userId, int step) async =>
+      _prefs?.setInt(_tourKey(role, userId), step);
 }

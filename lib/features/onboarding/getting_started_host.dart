@@ -8,6 +8,7 @@ import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/onboarding/getting_started_card.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 
 /// Hands Today's data to [GettingStartedCubit] and shows the card while it is
 /// not hidden. Collapses to nothing, padding included, once it is.
@@ -82,27 +83,34 @@ class _GettingStartedHostState extends State<GettingStartedHost> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GettingStartedCubit, GettingStarted>(
-      builder: (context, state) => AnimatedSize(
-        duration: const Duration(milliseconds: 320),
-        curve: AppMotion.spring,
-        alignment: Alignment.topCenter,
-        child: state.hidden || state.familyId != widget.familyId
-            ? const SizedBox(width: double.infinity)
-            : Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.gutter,
-                  14,
-                  AppSpacing.gutter,
-                  0,
+    return BlocListener<ParentHomeCubit, ParentHomeState>(
+      listenWhen: (previous, current) =>
+          previous.selectedIndex != 0 && current.selectedIndex == 0,
+      listener: (context, _) => context
+          .read<GettingStartedCubit>()
+          .refreshPrizes([for (final child in widget.children) child.id]),
+      child: BlocBuilder<GettingStartedCubit, GettingStarted>(
+        builder: (context, state) => AnimatedSize(
+          duration: const Duration(milliseconds: 320),
+          curve: AppMotion.spring,
+          alignment: Alignment.topCenter,
+          child: state.hidden || state.familyId != widget.familyId
+              ? const SizedBox(width: double.infinity)
+              : Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.gutter,
+                    14,
+                    AppSpacing.gutter,
+                    0,
+                  ),
+                  child: GettingStartedCard(
+                    state: state,
+                    kidName: _kidName,
+                    onOpen: (step) => _open(context, step),
+                    onHide: context.read<GettingStartedCubit>().hide,
+                  ),
                 ),
-                child: GettingStartedCard(
-                  state: state,
-                  kidName: _kidName,
-                  onOpen: (step) => _open(context, step),
-                  onHide: context.read<GettingStartedCubit>().hide,
-                ),
-              ),
+        ),
       ),
     );
   }

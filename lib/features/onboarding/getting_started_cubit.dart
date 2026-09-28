@@ -105,10 +105,23 @@ class GettingStartedCubit extends Cubit<GettingStarted> {
     await _store.hide(familyId);
   }
 
-  Future<void> _checkPrizes(List<String> childIds) async {
+  /// A gift may be added in Limits while Today stays mounted in the tab stack.
+  /// Recheck immediately on return instead of waiting for another dashboard
+  /// rebuild or the normal polling interval.
+  Future<void> refreshPrizes(List<String> childIds) async {
+    if (state.hidden ||
+        state.familyId == null ||
+        state.done.contains(SetupStep.prize)) {
+      return;
+    }
+    await _checkPrizes(childIds, force: true);
+  }
+
+  Future<void> _checkPrizes(List<String> childIds, {bool force = false}) async {
     final last = _prizesCheckedAt;
-    if (_checkingPrizes ||
-        (last != null && _now().difference(last) < prizeRecheck)) {
+    if (!force &&
+        (_checkingPrizes ||
+            (last != null && _now().difference(last) < prizeRecheck))) {
       return;
     }
     _checkingPrizes = true;

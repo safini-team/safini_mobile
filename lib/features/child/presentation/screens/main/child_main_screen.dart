@@ -21,8 +21,7 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubi
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
-import 'package:safini/features/onboarding/kid_hello.dart';
-import 'package:safini/features/onboarding/onboarding_store.dart';
+import 'package:safini/features/onboarding/first_run_tour.dart';
 import 'package:safini/features/child/presentation/screens/home/child_home_screen.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_screen.dart';
 import 'package:safini/features/child/presentation/screens/store/child_reward_store_screen.dart';
@@ -55,14 +54,15 @@ class ChildMainScreen extends StatelessWidget {
         // Hoisted: Today reads the streak from the profile and the "Almost
         // yours" teaser from the store, and the Store tab shares both.
         BlocProvider(
-          create: (context) => ProfileCubit(
-            getIt<ChildController>(),
-            getIt<ProfileRepository>(),
-            getIt<CoinsCubit>(),
-            getIt<Dio>(),
-          )..loadProfile(
-            fallbackChild: context.read<ChildClaimCubit>().state.child,
-          ),
+          create: (context) =>
+              ProfileCubit(
+                getIt<ChildController>(),
+                getIt<ProfileRepository>(),
+                getIt<CoinsCubit>(),
+                getIt<Dio>(),
+              )..loadProfile(
+                fallbackChild: context.read<ChildClaimCubit>().state.child,
+              ),
         ),
         BlocProvider(create: (_) => getIt<RewardStoreCubit>()),
         BlocProvider(create: (_) => getIt<ChildAppBlockCubit>()..start()),
@@ -84,14 +84,7 @@ class ChildMainScreen extends StatelessWidget {
               // Outside the gate: a child still setting up app limits should
               // already hear about the tasks their parent is adding.
               child: _ChildPushBridge(
-                child: ChildAppBlockGate(
-                  // After the gate: Fini says hi once setup is behind them.
-                  child: KidHello(
-                    userId: context.read<AuthSessionCubit>().state.userId,
-                    store: getIt<OnboardingStore>(),
-                    child: const _ChildMainView(),
-                  ),
-                ),
+                child: ChildAppBlockGate(child: const _ChildMainView()),
               ),
             );
           },
@@ -101,8 +94,15 @@ class ChildMainScreen extends StatelessWidget {
   }
 }
 
-class _ChildMainView extends StatelessWidget {
+class _ChildMainView extends StatefulWidget {
   const _ChildMainView();
+
+  @override
+  State<_ChildMainView> createState() => _ChildMainViewState();
+}
+
+class _ChildMainViewState extends State<_ChildMainView> {
+  final _tabBarKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -111,35 +111,45 @@ class _ChildMainView extends StatelessWidget {
         final s = S.of(context);
         final cubit = context.read<ChildHomeCubit>();
 
-        return Scaffold(
-          backgroundColor: AppColors.bgChild,
-          // The tab bar is translucent, so the content has to run underneath it.
-          extendBody: true,
-          body: IndexedStack(
-            index: state.selectedIndex,
-            children: ChildMainScreen._screens,
-          ),
-          bottomNavigationBar: DsTabBar.child(
-            currentIndex: state.selectedIndex,
-            onTap: cubit.selectTab,
-            items: [
-              DsTabItem(
-                label: s.tabToday,
-                builder: (color) => AppIcons.tabHome(color: color),
+        return FirstRunTour(
+          role: TourRole.child,
+          userId: context.read<AuthSessionCubit>().state.userId,
+          selectedTab: state.selectedIndex,
+          onSelectTab: cubit.selectTab,
+          tabBarKey: _tabBarKey,
+          child: Scaffold(
+            backgroundColor: AppColors.bgChild,
+            // The tab bar is translucent, so the content has to run underneath it.
+            extendBody: true,
+            body: IndexedStack(
+              index: state.selectedIndex,
+              children: ChildMainScreen._screens,
+            ),
+            bottomNavigationBar: KeyedSubtree(
+              key: _tabBarKey,
+              child: DsTabBar.child(
+                currentIndex: state.selectedIndex,
+                onTap: cubit.selectTab,
+                items: [
+                  DsTabItem(
+                    label: s.tabToday,
+                    builder: (color) => AppIcons.tabHome(color: color),
+                  ),
+                  DsTabItem(
+                    label: s.tabTasks,
+                    builder: (color) => AppIcons.tabTasksChild(color: color),
+                  ),
+                  DsTabItem(
+                    label: s.tabStore,
+                    builder: (color) => AppIcons.tabStore(color: color),
+                  ),
+                  DsTabItem(
+                    label: s.tabMe,
+                    builder: (color) => AppIcons.tabMe(color: color),
+                  ),
+                ],
               ),
-              DsTabItem(
-                label: s.tabTasks,
-                builder: (color) => AppIcons.tabTasksChild(color: color),
-              ),
-              DsTabItem(
-                label: s.tabStore,
-                builder: (color) => AppIcons.tabStore(color: color),
-              ),
-              DsTabItem(
-                label: s.tabMe,
-                builder: (color) => AppIcons.tabMe(color: color),
-              ),
-            ],
+            ),
           ),
         );
       },
