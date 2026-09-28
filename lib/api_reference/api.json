@@ -2199,7 +2199,7 @@
           "tasks"
         ],
         "summary": "List Child Tasks",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today. Set `include_completed_history=true` to append approved tasks from earlier days for the Done feed. Recurring instances for the selected day are materialised on read. Never for a future day.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today. Set `include_completed_history=true` to append approved tasks from earlier days for the Done feed. Recurring instances for the selected day are materialised on read. Never for a future day.\nApproved tasks include `reviewed_by_parent` with the reviewing parent’s display name and avatar URL when available.",
         "operationId": "list_child_tasks_v1_children__child_id__tasks_get",
         "security": [
           {
@@ -2279,9 +2279,16 @@
                         "difficulty": "easy"
                       },
                       "due_on": "2026-06-10",
-                      "status": "available",
+                      "status": "approved",
                       "created_at": "2026-06-10T12:00:00Z",
-                      "updated_at": "2026-06-10T12:00:00Z"
+                      "updated_at": "2026-06-10T12:00:00Z",
+                      "reviewed_by_user_id": "550e8400-e29b-41d4-a716-446655440001",
+                      "reviewed_by_parent": {
+                        "user_id": "550e8400-e29b-41d4-a716-446655440001",
+                        "display_name": "Alex Smith",
+                        "avatar_url": "https://cdn.example/alex.jpg"
+                      },
+                      "reviewed_at": "2026-06-10T12:10:00Z"
                     }
                   ]
                 }
@@ -2467,7 +2474,7 @@
           "tasks"
         ],
         "summary": "Get Task",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent open any past task, including what the child sent with it.\n\n**Frontend note:** Use this when a parent opens a task from the Done history. Unlike the list, `submission_image_url` is signed for any status, so an approved task's proof photo still loads. The URL expires after five minutes.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent open any past task, including what the child sent with it.\n\n**Frontend note:** Use this when a parent opens a task from the Done history. Unlike the list, `submission_image_url` is signed for any status, so an approved task's proof photo still loads. The URL expires after five minutes.\nThe response includes `reviewed_by_parent` with the reviewing parent’s display name and avatar URL when available.",
         "operationId": "get_task_v1_tasks__task_id__get",
         "security": [
           {
@@ -2517,7 +2524,14 @@
                   "submission_note": "Finished the whole chapter",
                   "submission_image_url": "https://project.supabase.co/storage/v1/object/sign/task-proofs/...",
                   "created_at": "2026-06-10T12:00:00Z",
-                  "updated_at": "2026-06-10T12:00:00Z"
+                  "updated_at": "2026-06-10T12:00:00Z",
+                  "reviewed_by_user_id": "550e8400-e29b-41d4-a716-446655440001",
+                  "reviewed_by_parent": {
+                    "user_id": "550e8400-e29b-41d4-a716-446655440001",
+                    "display_name": "Alex Smith",
+                    "avatar_url": "https://cdn.example/alex.jpg"
+                  },
+                  "reviewed_at": "2026-06-10T12:10:00Z"
                 }
               }
             }

@@ -100,6 +100,9 @@ class _DoneTaskSheetState extends State<DoneTaskSheet> {
     final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('image');
     final showPhoto = wantsPhoto || photoUrl.isNotEmpty;
     final reviewedAt = task.reviewedAt;
+    final reviewer = task.reviewedByParent;
+    final reviewerName = reviewer?.displayName?.trim() ?? '';
+    final reviewerAvatar = reviewer?.avatarUrl?.trim() ?? '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -125,6 +128,54 @@ class _DoneTaskSheetState extends State<DoneTaskSheet> {
                   style: AppText.chip.copyWith(
                     fontWeight: FontWeight.w400,
                     color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (reviewerName.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              ClipOval(
+                child: reviewerAvatar.isEmpty
+                    ? Container(
+                        width: 32,
+                        height: 32,
+                        color: AppColors.fillAlt,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.person_outline,
+                          size: 19,
+                          color: AppColors.textSecondary,
+                        ),
+                      )
+                    : Image.network(
+                        reviewerAvatar,
+                        width: 32,
+                        height: 32,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => Container(
+                          width: 32,
+                          height: 32,
+                          color: AppColors.fillAlt,
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.person_outline,
+                            size: 19,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  reviewerName,
+                  style: AppText.chip.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),

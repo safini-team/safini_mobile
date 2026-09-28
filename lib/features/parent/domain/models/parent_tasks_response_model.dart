@@ -211,6 +211,7 @@ class ParentTaskInstanceModel {
   /// The Done history shows these when a parent looks back at a task.
   final DateTime? submittedAt;
   final DateTime? reviewedAt;
+  final ReviewedByParentModel? reviewedByParent;
 
   const ParentTaskInstanceModel({
     required this.id,
@@ -239,6 +240,7 @@ class ParentTaskInstanceModel {
     this.voiceInstructionMime,
     this.submittedAt,
     this.reviewedAt,
+    this.reviewedByParent,
   });
 
   factory ParentTaskInstanceModel.fromJson(Map<String, dynamic> json) {
@@ -313,6 +315,11 @@ class ParentTaskInstanceModel {
       ]),
       submittedAt: _dateTimeValue(json, ['submitted_at', 'submittedAt']),
       reviewedAt: _dateTimeValue(json, ['reviewed_at', 'reviewedAt']),
+      reviewedByParent: json['reviewed_by_parent'] is Map
+          ? ReviewedByParentModel.fromJson(
+              Map<String, dynamic>.from(json['reviewed_by_parent'] as Map),
+            )
+          : null,
     );
   }
 
@@ -377,6 +384,25 @@ class ParentTaskInstanceModel {
       status: status,
     );
   }
+}
+
+class ReviewedByParentModel {
+  final String userId;
+  final String? displayName;
+  final String? avatarUrl;
+
+  const ReviewedByParentModel({
+    required this.userId,
+    this.displayName,
+    this.avatarUrl,
+  });
+
+  factory ReviewedByParentModel.fromJson(Map<String, dynamic> json) =>
+      ReviewedByParentModel(
+        userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
+        displayName: (json['display_name'] ?? json['displayName']) as String?,
+        avatarUrl: (json['avatar_url'] ?? json['avatarUrl']) as String?,
+      );
 }
 
 String _stringValue(Map<String, dynamic> json, List<String> keys) {
