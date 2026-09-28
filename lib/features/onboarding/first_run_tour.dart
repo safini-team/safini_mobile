@@ -111,9 +111,10 @@ class _FirstRunTourState extends State<FirstRunTour> {
   }
 
   Future<void> _revealReview() async {
-    // The setup checklist can push review below the fold on a new account.
-    // Let the dashboard finish loading, then bring the real section into view.
-    for (var attempt = 0; attempt < 12; attempt++) {
+    // The setup checklist can push review below the fold on a new account,
+    // and Today may still be loading. Keep looking until the section exists.
+    final deadline = DateTime.now().add(const Duration(seconds: 12));
+    while (mounted && _step == 1 && DateTime.now().isBefore(deadline)) {
       await Future<void>.delayed(const Duration(milliseconds: 300));
       if (!mounted || _step != 1) return;
       final target = widget.reviewKey?.currentContext;
@@ -189,8 +190,17 @@ class _FirstRunTourState extends State<FirstRunTour> {
                 final barHeight = bar == null ? 88.0 : size.height - bar.top;
                 return Stack(
                   children: [
+                    const ModalBarrier(
+                      dismissible: false,
+                      color: Colors.transparent,
+                    ),
                     Positioned.fill(
-                      child: CustomPaint(painter: _TourShade(focus.inflate(5))),
+                      child: IgnorePointer(
+                        child: CustomPaint(
+                          painter: _TourShade(focus.inflate(5)),
+                          child: const SizedBox.expand(),
+                        ),
+                      ),
                     ),
                     Positioned(
                       left: 18,

@@ -20,6 +20,7 @@ class _TourHarnessState extends State<_TourHarness> {
   final tabKey = GlobalKey();
   int tab = 0;
   bool gifts = false;
+  bool tappedBehind = false;
 
   void select(int index) => setState(() => tab = index);
 
@@ -35,7 +36,18 @@ class _TourHarnessState extends State<_TourHarness> {
     }),
     tabBarKey: tabKey,
     child: Scaffold(
-      body: Center(child: Text('tab $tab${gifts ? ' gifts' : ''}')),
+      body: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: TextButton(
+              onPressed: () => setState(() => tappedBehind = true),
+              child: const Text('behind the tour'),
+            ),
+          ),
+          Center(child: Text('tab $tab${gifts ? ' gifts' : ''}')),
+        ],
+      ),
       bottomNavigationBar: SizedBox(
         key: tabKey,
         height: 76,
@@ -77,6 +89,11 @@ void main() {
   ) async {
     await _pumpTour(tester, TourRole.parent, 'new-parent');
     expect(find.text('Your dashboard'), findsOneWidget);
+    await tester.tap(find.text('behind the tour'), warnIfMissed: false);
+    await tester.pump();
+    final harness = tester.state<_TourHarnessState>(find.byType(_TourHarness));
+    expect(harness.tappedBehind, isFalse);
+    expect(harness.tab, 0);
 
     for (final title in [
       'Needs your review',
