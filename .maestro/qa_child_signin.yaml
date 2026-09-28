@@ -1,0 +1,25 @@
+appId: com.safini.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Sign in with email (Test)"
+    timeout: 90000
+- tapOn: "Sign in with email (Test)"
+- extendedWaitUntil:
+    visible: "Email"
+    timeout: 20000
+- tapOn: "Email"
+- eraseText: 80
+- inputText: "safini.coder@gmail.com"
+- tapOn: "Test account sign-in"
+- tapOn: "Password"
+- eraseText: 40
+- inputText: "stopscrolling"
+- tapOn: "Test account sign-in"
+- tapOn: "Sign in"
+- extendedWaitUntil:
+    visible:
+      text: ".*(Today|Tasks|Profile|Screen Time|Allow Screen Time|Set up Screen Time|Ask your parent|Safini).*"
+    timeout: 120000
+- takeScreenshot: child_home_after_signin

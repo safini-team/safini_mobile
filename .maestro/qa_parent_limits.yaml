@@ -1,0 +1,20 @@
+appId: com.safini.app
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Sign in with email (Test)"
+    timeout: 90000
+- tapOn: "Sign in with email (Test)"
+- extendedWaitUntil:
+    visible: "Test account sign-in"
+    timeout: 20000
+- tapOn: "Email"
+- inputText: "safini.team@gmail.com"
+- tapOn: "Password"
+- inputText: "stopscrolling"
+- tapOn: "Sign in"
+- extendedWaitUntil:
+    visible: "Limits"
+    timeout: 90000
+- tapOn: "Limits"
+- takeScreenshot: parent_limits_after_fix

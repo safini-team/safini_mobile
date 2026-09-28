@@ -1,0 +1,16 @@
+appId: com.safini.app
+---
+- tapOn: "Safini Coder"
+- takeScreenshot: android_child_picker
+- runFlow:
+    when:
+      visible:
+        text: ".*(Соня|Sonya|Sonia).*"
+    commands:
+      - tapOn:
+          text: ".*(Соня|Sonya|Sonia).*"
+      - extendedWaitUntil:
+          visible: "Limits"
+          timeout: 15000
+      - takeScreenshot: android_parent_limits_sonya
+      - assertNotVisible: "App limits are running"

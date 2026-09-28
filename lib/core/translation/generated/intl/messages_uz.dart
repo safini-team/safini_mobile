@@ -694,6 +694,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "finiAllSet": MessageLookupByLibrary.simpleMessage(
       "Tayyor! Ajoyib boshlanish.",
     ),
+    "finiNextAppLock": MessageLookupByLibrary.simpleMessage(
+      "Safinini faqat siz ochishingiz uchun PIN qoʻying.",
+    ),
     "finiNextChild": MessageLookupByLibrary.simpleMessage(
       "Avval farzandingizni qoʻshamiz.",
     ),
@@ -1375,6 +1378,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Yangi profil yaratish",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Sozlamalar"),
+    "setupStepAppLock": MessageLookupByLibrary.simpleMessage(
+      "Ilova qulfi PIN kodini qoʻyish",
+    ),
     "setupStepChild": MessageLookupByLibrary.simpleMessage(
       "Farzandni qoʻshish",
     ),

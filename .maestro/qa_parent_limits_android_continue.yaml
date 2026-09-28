@@ -1,0 +1,15 @@
+appId: com.safini.app
+---
+- tapOn:
+    text: ".*(Don.t allow|Don’t allow).*"
+- tapOn:
+    id: ".*limits.*"
+    optional: true
+- tapOn:
+    text: "Limits"
+- extendedWaitUntil:
+    visible: "Limits"
+    timeout: 15000
+- assertVisible: "Limits"
+- takeScreenshot: android_parent_limits_healthy
+- assertNotVisible: "App limits are running"

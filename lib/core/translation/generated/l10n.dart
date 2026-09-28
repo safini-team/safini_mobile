@@ -6278,6 +6278,16 @@ class S {
     );
   }
 
+  /// `Set an app lock PIN`
+  String get setupStepAppLock {
+    return Intl.message(
+      'Set an app lock PIN',
+      name: 'setupStepAppLock',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Let's add your child first.`
   String get finiNextChild {
     return Intl.message(
@@ -6323,6 +6333,16 @@ class S {
     return Intl.message(
       'Add a gift worth saving coins for.',
       name: 'finiNextPrize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set a PIN so only you can open Safini.`
+  String get finiNextAppLock {
+    return Intl.message(
+      'Set a PIN so only you can open Safini.',
+      name: 'finiNextAppLock',
       desc: '',
       args: [],
     );

@@ -1,0 +1,12 @@
+---
+description: Run Safini locally on normal iOS and Android devices, without QA-only helpers
+alwaysApply: true
+---
+
+# Local iOS and Android runs
+
+When asked to run the app locally, launch it on both a normal iOS simulator and a normal Android emulator.
+
+- iOS: the already-available iPhone simulator (iPhone 17 Pro unless another non-QA device is requested).
+- Android: `Pixel_10a` or `Safini_Android_16`. Do not boot `Safini_QA` unless the user asks for that AVD.
+- Start each with a plain `flutter run` on that device. Do not add QA-only flags, Maestro flows, or `ENABLE_EMAIL_SIGN_IN` unless the user asks for App Review or QA sign-in.

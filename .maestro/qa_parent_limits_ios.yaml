@@ -1,0 +1,27 @@
+appId: com.safini.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Sign in with email (Test)"
+    timeout: 120000
+- tapOn: "Sign in with email (Test)"
+- extendedWaitUntil:
+    visible: "reviewer@example.com"
+    timeout: 20000
+- tapOn: "reviewer@example.com"
+- eraseText: 100
+- inputText: "safini.team@gmail.com"
+- pressKey: Enter
+- inputText: "stopscrolling"
+- tapOn: "Sign in"
+- extendedWaitUntil:
+    visible:
+      text: ".*(Today|Сегодня|Limits|Лимиты|Family|Семья|Tasks|Задания).*"
+    timeout: 180000
+- tapOn:
+    text: ".*(Limits|Лимиты).*"
+- takeScreenshot: ios_parent_limits_healthy
+- assertNotVisible: "App limits are running"
+- assertNotVisible: "Фактическое использование доступно в разделе"
+- assertNotVisible: "View actual usage in Screen Time on the child’s device"

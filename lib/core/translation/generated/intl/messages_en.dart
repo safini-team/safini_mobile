@@ -657,6 +657,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "familyLabel": MessageLookupByLibrary.simpleMessage("Family"),
     "finiAllSet": MessageLookupByLibrary.simpleMessage("All set! Great start."),
+    "finiNextAppLock": MessageLookupByLibrary.simpleMessage(
+      "Set a PIN so only you can open Safini.",
+    ),
     "finiNextChild": MessageLookupByLibrary.simpleMessage(
       "Let\'s add your child first.",
     ),
@@ -1306,6 +1309,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Set up a new profile",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "setupStepAppLock": MessageLookupByLibrary.simpleMessage(
+      "Set an app lock PIN",
+    ),
     "setupStepChild": MessageLookupByLibrary.simpleMessage("Add your child"),
     "setupStepLimit": MessageLookupByLibrary.simpleMessage("Set a daily limit"),
     "setupStepPhone": MessageLookupByLibrary.simpleMessage(

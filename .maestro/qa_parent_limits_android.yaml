@@ -1,0 +1,35 @@
+appId: com.safini.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Sign in with email (Test)"
+    timeout: 120000
+- tapOn: "Sign in with email (Test)"
+- extendedWaitUntil:
+    visible: "reviewer@example.com"
+    timeout: 30000
+- tapOn: "reviewer@example.com"
+- doubleTapOn: "reviewer@example.com"
+- inputText: "safini.team@gmail.com"
+- pressKey: Enter
+- inputText: "stopscrolling"
+- tapOn: "Sign in"
+- extendedWaitUntil:
+    visible:
+      text: ".*(Today|Limits|Family|Tasks|Сегодня|Лимиты).*"
+    timeout: 180000
+- runFlow:
+    when:
+      visible:
+        text: ".*(Don.t allow|Don’t allow).*"
+    commands:
+      - tapOn:
+          text: ".*(Don.t allow|Don’t allow).*"
+- tapOn: "Limits"
+- extendedWaitUntil:
+    visible: "Limits"
+    timeout: 30000
+- assertVisible: "Limits"
+- takeScreenshot: android_parent_limits_healthy
+- assertNotVisible: "App limits are running"

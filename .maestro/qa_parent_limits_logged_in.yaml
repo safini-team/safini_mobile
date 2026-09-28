@@ -1,0 +1,15 @@
+appId: com.safini.app
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Лимиты"
+    timeout: 30000
+- tapOn: "Лимиты"
+- extendedWaitUntil:
+    visible: "Лимиты"
+    timeout: 15000
+- takeScreenshot: parent_limits_ru
+- assertVisible: "Использование · на устройстве ребёнка"
+- assertNotVisible: "Фактическое использование доступно в разделе"
+- assertNotVisible: "Откройте Safini на этом устройстве для получения новых правил"
+- assertNotVisible: "Сохранённые лимиты действуют и при закрытом приложении"

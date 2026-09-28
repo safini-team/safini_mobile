@@ -46,12 +46,14 @@ Future<void> _observe(
   bool phone = false,
   bool task = false,
   bool limit = false,
+  bool appLockEnabled = false,
 }) => cubit.observe(
   familyId: 'fam',
   childIds: kids,
   phoneConnected: phone,
   hasTask: task,
   hasLimit: limit,
+  appLockEnabled: appLockEnabled,
 );
 
 Widget _app(Widget child) => MaterialApp(
@@ -142,10 +144,68 @@ void main() {
     test('a family that already did everything never sees the card', () async {
       final store = await _store();
       final cubit = GettingStartedCubit(store, _Prizes(withPrize: {'aziz'}));
-      await _observe(cubit, phone: true, task: true, limit: true);
+      await _observe(
+        cubit,
+        phone: true,
+        task: true,
+        limit: true,
+        appLockEnabled: true,
+      );
 
       expect(cubit.state.hidden, isTrue);
       expect(store.isHidden('fam'), isTrue);
+    });
+
+    test(
+      'the app-lock PIN is required before the checklist can hide',
+      () async {
+        final store = await _store();
+        final cubit = GettingStartedCubit(store, _Prizes(withPrize: {'aziz'}));
+        await _observe(cubit, phone: true, task: true, limit: true);
+
+        expect(cubit.state.hidden, isFalse);
+        expect(cubit.state.complete, isFalse);
+        expect(cubit.state.next, SetupStep.appLock);
+        await cubit.hide();
+        expect(cubit.state.hidden, isFalse);
+        expect(store.isHidden('fam'), isFalse);
+
+        await _observe(
+          cubit,
+          phone: true,
+          task: true,
+          limit: true,
+          appLockEnabled: true,
+        );
+        expect(cubit.state.complete, isTrue);
+        await cubit.hide();
+        expect(cubit.state.hidden, isTrue);
+      },
+    );
+
+    test('turning the PIN off opens the step again', () async {
+      final store = await _store();
+      await store.hide('fam');
+      await store.saveDone('fam', {
+        'child',
+        'phone',
+        'task',
+        'limit',
+        'prize',
+        'appLock',
+      });
+      final cubit = GettingStartedCubit(store, _Prizes());
+      await _observe(
+        cubit,
+        phone: true,
+        task: true,
+        limit: true,
+        appLockEnabled: false,
+      );
+
+      expect(cubit.state.hidden, isFalse);
+      expect(cubit.state.done, isNot(contains(SetupStep.appLock)));
+      expect(cubit.state.next, SetupStep.appLock);
     });
 
     test('finishing the last step shows the cheer, Done hides it', () async {
@@ -157,7 +217,13 @@ void main() {
 
       prizes.withPrize.add('aziz');
       final done = GettingStartedCubit(store, prizes);
-      await _observe(done, phone: true, task: true, limit: true);
+      await _observe(
+        done,
+        phone: true,
+        task: true,
+        limit: true,
+        appLockEnabled: true,
+      );
       expect(done.state.complete, isTrue);
       expect(done.state.hidden, isFalse);
 
@@ -201,7 +267,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('1 of 5'), findsOneWidget);
+    expect(find.text('1 of 6'), findsOneWidget);
 
     home.selectTab(2);
     await tester.pump();
@@ -209,7 +275,7 @@ void main() {
     home.selectTab(0);
     await tester.pumpAndSettle();
 
-    expect(find.text('2 of 5'), findsOneWidget);
+    expect(find.text('2 of 6'), findsOneWidget);
     expect(cubit.state.done, contains(SetupStep.prize));
   });
 
@@ -235,8 +301,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Getting started'), findsOneWidget);
-      expect(find.text('2 of 5'), findsOneWidget);
+      expect(find.text('2 of 6'), findsOneWidget);
       expect(find.text("Now let's connect Aziz's phone."), findsOneWidget);
+      expect(find.byIcon(Icons.close_rounded), findsNothing);
 
       await tester.tap(find.text('Add a gift'));
       expect(opened, [SetupStep.prize]);
@@ -245,7 +312,28 @@ void main() {
       expect(opened, [SetupStep.prize]);
     });
 
-    testWidgets('five of five swaps the list for Done', (tester) async {
+    testWidgets('the close button waits until the PIN is set', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          GettingStartedCard(
+            state: const GettingStarted(
+              familyId: 'fam',
+              done: {SetupStep.child, SetupStep.appLock},
+              hidden: false,
+            ),
+            kidName: 'Aziz',
+            onOpen: (_) {},
+            onHide: () {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.close_rounded), findsOneWidget);
+      expect(find.text('Set an app lock PIN'), findsOneWidget);
+    });
+
+    testWidgets('all six steps swap the list for Done', (tester) async {
       var hidden = false;
       await tester.pumpWidget(
         _app(
@@ -265,6 +353,7 @@ void main() {
 
       expect(find.text('All set! Great start.'), findsOneWidget);
       expect(find.text('Add a gift'), findsNothing);
+      expect(find.text('Set an app lock PIN'), findsNothing);
       await tester.tap(find.text('Done'));
       expect(hidden, isTrue);
     });
