@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/theme/app_colors.dart';
-import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
@@ -9,6 +8,7 @@ import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
+import 'package:safini/features/parent/presentation/widgets/tasks/task_proof_photo.dart';
 
 /// The artboard's review sheet: what was submitted, who sent it and what it is
 /// worth, their note, then approve or ask to redo.
@@ -78,21 +78,6 @@ class _ReviewSheetState extends State<_ReviewSheet> {
     // looked for 'photo', which never matches, so this panel never rendered.
     final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('image');
     final photoUrl = (task.submissionImageUrl ?? '').trim();
-    final noPhoto = SizedBox(
-      height: 170,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppIcons.camera(),
-          const SizedBox(height: 8),
-          Text(
-            s.photoProofAsked,
-            style: AppText.metaSm.copyWith(color: AppColors.textTertiary),
-          ),
-        ],
-      ),
-    );
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -125,36 +110,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
         ],
         if (wantsPhoto) ...[
           const SizedBox(height: 18),
-          // The whole photo, not a crop: a phone shot is portrait, and a
-          // fixed 170-high `cover` frame showed a strip across its middle.
-          // The frame takes the photo's own shape, up to half the screen, and
-          // anything taller is letterboxed on the fill.
-          Container(
-            constraints: BoxConstraints(
-              minHeight: 170,
-              maxHeight: MediaQuery.sizeOf(context).height * 0.5,
-            ),
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: AppColors.fill,
-              borderRadius: BorderRadius.circular(AppRadius.card),
-              border: Border.all(
-                color: const Color(0x240C231C),
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: photoUrl.isEmpty
-                ? noPhoto
-                : Image.network(
-                    photoUrl,
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    // The URL expires in five minutes. A sheet left open past
-                    // that shows the same panel as a task with no photo, not a
-                    // broken image.
-                    errorBuilder: (context, _, _) => noPhoto,
-                  ),
-          ),
+          TaskProofPhoto(url: photoUrl, emptyLabel: s.photoProofAsked),
         ],
         if (note.isNotEmpty) ...[
           const SizedBox(height: 16),

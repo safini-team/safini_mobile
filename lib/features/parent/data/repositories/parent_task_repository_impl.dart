@@ -92,6 +92,59 @@ class ParentTaskRepositoryImpl implements IParentTaskRepository {
   }
 
   @override
+  Future<Either<Failure, ParentTaskInstanceModel>> fetchTask(
+    String taskId,
+  ) async {
+    late final http.Response response;
+    try {
+      response = await _client
+          .get(
+            _uri('/v1/tasks/$taskId'),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(AppConstants.apiTimeout);
+    } on AuthSessionUnavailableException {
+      return const Left(UnauthorizedFailure('Session is unavailable.'));
+    } on SocketException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on HttpException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on http.ClientException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+
+    if (response.statusCode == 401) {
+      return const Left(
+        UnauthorizedFailure('Missing, expired, or invalid token.'),
+      );
+    }
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      return Left(
+        ServerFailure(
+          _extractErrorMessage(
+            response.body,
+            defaultMessage: 'Unable to load this task. Please try again.',
+          ),
+        ),
+      );
+    }
+
+    final decoded = _decodeBody(response.body);
+    if (decoded is Map) {
+      return Right(
+        ParentTaskInstanceModel.fromJson(
+          decoded.map((key, value) => MapEntry(key.toString(), value)),
+        ),
+      );
+    }
+
+    return const Left(ServerFailure('Unexpected task response format.'));
+  }
+
+  @override
   Future<Either<Failure, void>> reviewTask(
     String taskId, {
     required String decision,

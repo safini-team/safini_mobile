@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/di/injection.dart';
@@ -19,6 +20,7 @@ import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_view.dart';
 import 'package:safini/features/parent/presentation/widgets/layout/parent_task_states.dart';
+import 'package:safini/features/parent/presentation/widgets/tasks/done_task_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/task_sheet.dart';
 import 'package:safini/core/utils/task_category.dart';
@@ -222,6 +224,17 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       await showReviewSheet(context, cubit: cubit, task: task);
       return;
     }
+    // Approved tasks are locked, so tapping one used to do nothing. Now it
+    // opens what the child sent: the note, the photo, the parent's reply.
+    if (task.isCompleted) {
+      await showDoneTaskSheet(
+        context,
+        cubit: cubit,
+        task: task,
+        childName: loaded.childNames[task.id],
+      );
+      return;
+    }
     if (task.isEditable) {
       await showTaskSheet(
         context,
@@ -280,41 +293,62 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         ? _lane
         : (counts[TaskLane.review]! > 0 ? TaskLane.review : TaskLane.active);
 
-    final rows = scoped
-        .where((task) => laneOf(task) == lane)
-        .map(
-          (task) => TaskRowData(
-            id: task.id,
-            title: task.displayTitle,
-            meta: _metaFor(context, s, task),
-            emoji: task.emoji ?? '📋',
-            lane: laneOf(task),
-            coins: task.rewardCoins ?? 0,
-            childName: childNameOf(task),
-          ),
-        )
-        .toList();
+    final laneTasks = scoped.where((task) => laneOf(task) == lane).toList();
+    final isHistory = lane == TaskLane.done;
+
+    TaskRowData rowOf(ParentTaskInstanceModel task) => TaskRowData(
+      id: task.id,
+      title: task.displayTitle,
+      // The day header already says when, so a history row only says what.
+      meta: isHistory
+          ? taskCategoryLabel(s, task.category)
+          : _metaFor(context, s, task),
+      emoji: task.emoji ?? '📋',
+      lane: laneOf(task),
+      coins: task.rewardCoins ?? 0,
+      childName: childNameOf(task),
+    );
+
+    String summaryOf(List<TaskRowData> rows) => s.taskGroupSummary(
+      s.taskCount(rows.length),
+      s.coinCountShort(rows.fold(0, (sum, row) => sum + row.coins)),
+    );
 
     // Group in family order so the cards do not reshuffle between filters.
     final order = children.map((child) => child.nickname).toList();
-    final groups = <TaskGroupData>[];
-    for (final name in [...order, if (order.isEmpty) loaded.childName]) {
-      final groupRows = rows.where((row) => row.childName == name).toList();
-      if (groupRows.isEmpty) continue;
-      final child = children.where((c) => c.nickname == name).firstOrNull;
-      groups.add(
-        TaskGroupData(
-          name: name,
-          color: AppColors.kidColor(child?.id ?? name),
-          avatar: child?.avatarLook ?? const ChildAvatarLook(),
-          rows: groupRows,
-          summary: s.taskGroupSummary(
-            s.taskCount(groupRows.length),
-            s.coinCountShort(groupRows.fold(0, (sum, row) => sum + row.coins)),
+    List<TaskGroupData> groupsOf(List<TaskRowData> rows) {
+      final groups = <TaskGroupData>[];
+      for (final name in [...order, if (order.isEmpty) loaded.childName]) {
+        final groupRows = rows.where((row) => row.childName == name).toList();
+        if (groupRows.isEmpty) continue;
+        final child = children.where((c) => c.nickname == name).firstOrNull;
+        groups.add(
+          TaskGroupData(
+            name: name,
+            color: AppColors.kidColor(child?.id ?? name),
+            avatar: child?.avatarLook ?? const ChildAvatarLook(),
+            rows: groupRows,
+            summary: summaryOf(groupRows),
           ),
-        ),
-      );
+        );
+      }
+      return groups;
     }
+
+    final groups = isHistory
+        ? const <TaskGroupData>[]
+        : groupsOf(laneTasks.map(rowOf).toList());
+    final days = isHistory
+        ? _historyDays(
+            context,
+            s,
+            laneTasks,
+            rowOf: rowOf,
+            groupsOf: groupsOf,
+            summaryOf: summaryOf,
+            showChildHeaders: _scope == _allScope,
+          )
+        : const <TaskDayData>[];
 
     final scopeName = _scope == _allScope
         ? s.scopeEveryone
@@ -337,6 +371,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       laneCounts: counts,
       lane: lane,
       groups: groups,
+      days: days,
       emptyTitle: switch (lane) {
         TaskLane.review => s.emptyNothingToReview,
         TaskLane.active => s.emptyNoActiveTasks,
@@ -348,6 +383,55 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         TaskLane.done => s.emptyDoneBody,
       },
     );
+  }
+
+  /// Done tasks by the day they were for, newest first, each day's tasks by
+  /// child. A task with no due date falls on the day it was approved.
+  List<TaskDayData> _historyDays(
+    BuildContext context,
+    S s,
+    List<ParentTaskInstanceModel> tasks, {
+    required TaskRowData Function(ParentTaskInstanceModel) rowOf,
+    required List<TaskGroupData> Function(List<TaskRowData>) groupsOf,
+    required String Function(List<TaskRowData>) summaryOf,
+    required bool showChildHeaders,
+  }) {
+    final byDay = <DateTime, List<ParentTaskInstanceModel>>{};
+    for (final task in tasks) {
+      final when =
+          DateTime.tryParse(task.dueOn ?? '') ??
+          task.reviewedAt ??
+          DateTime.now();
+      final day = DateTime(when.year, when.month, when.day);
+      byDay.putIfAbsent(day, () => []).add(task);
+    }
+
+    final newestFirst = byDay.keys.toList()..sort((a, b) => b.compareTo(a));
+    return newestFirst.map((day) {
+      final rows = byDay[day]!.map(rowOf).toList();
+      return TaskDayData(
+        label: _historyDayLabel(context, s, day),
+        summary: summaryOf(rows),
+        groups: groupsOf(rows),
+        showChildHeaders: showChildHeaders,
+      );
+    }).toList();
+  }
+
+  /// Like a chat: "Today", "Yesterday", a weekday for the rest of the past
+  /// week, then the date.
+  String _historyDayLabel(BuildContext context, S s, DateTime day) {
+    final now = DateTime.now();
+    final daysAgo = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).difference(day).inDays;
+    if (daysAgo >= 2 && daysAgo < 7) {
+      final locale = Localizations.localeOf(context).toLanguageTag();
+      return toBeginningOfSentenceCase(DateFormat.EEEE(locale).format(day));
+    }
+    return relativeDateLabel(context, s, day, now: now);
   }
 
   /// "Home · Today", not "home · 2026-08-23". The row used to print the raw

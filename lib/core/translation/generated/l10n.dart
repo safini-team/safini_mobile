@@ -4171,6 +4171,66 @@ class S {
     );
   }
 
+  /// `Done task`
+  String get doneTaskSheetTitle {
+    return Intl.message(
+      'Done task',
+      name: 'doneTaskSheetTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} · paid {coins}`
+  String paidCoinsTo(Object name, Object coins) {
+    return Intl.message(
+      '$name · paid $coins',
+      name: 'paidCoinsTo',
+      desc: '',
+      args: [name, coins],
+    );
+  }
+
+  /// `Approved · {when}`
+  String approvedWhen(Object when) {
+    return Intl.message(
+      'Approved · $when',
+      name: 'approvedWhen',
+      desc: '',
+      args: [when],
+    );
+  }
+
+  /// `Parent's note`
+  String get parentsNote {
+    return Intl.message(
+      'Parent\'s note',
+      name: 'parentsNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't load the photo`
+  String get proofPhotoFailed {
+    return Intl.message(
+      'Couldn\'t load the photo',
+      name: 'proofPhotoFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nothing was sent with this task`
+  String get nothingSentWithTask {
+    return Intl.message(
+      'Nothing was sent with this task',
+      name: 'nothingSentWithTask',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Home`
   String get catHome {
     return Intl.message('Home', name: 'catHome', desc: '', args: []);

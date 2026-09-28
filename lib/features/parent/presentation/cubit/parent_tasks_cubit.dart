@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart' show Either;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/tab_freshness.dart';
 import 'package:safini/core/utils/error/failures.dart';
@@ -153,6 +154,12 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
     if (current is ParentTaskReviewed) return current.base;
     return null;
   }
+
+  /// A done task opened from the history. Read-only, so it never touches the
+  /// list state: the sheet waits on it for the photo and nothing else moves.
+  Future<Either<Failure, ParentTaskInstanceModel>> fetchTaskDetail(
+    String taskId,
+  ) => _repository.fetchTask(taskId);
 
   Future<void> reviewTask(
     String taskId, {
