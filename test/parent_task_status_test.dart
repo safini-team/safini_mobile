@@ -149,6 +149,22 @@ void main() {
       );
       expect(ParentTaskInstanceModel.fromJson({'id': 't'}).emoji, isNull);
     });
+
+    test('reads the reviewing parent identity and avatar', () {
+      final task = ParentTaskInstanceModel.fromJson({
+        'id': 'done',
+        'status': 'approved',
+        'reviewed_by_parent': {
+          'user_id': 'parent-1',
+          'display_name': 'Alex Smith',
+          'avatar_url': 'https://cdn.example/alex.jpg',
+        },
+      });
+
+      expect(task.reviewedByParent?.userId, 'parent-1');
+      expect(task.reviewedByParent?.displayName, 'Alex Smith');
+      expect(task.reviewedByParent?.avatarUrl, 'https://cdn.example/alex.jpg');
+    });
   });
 
   group('ParentTasksResponseModel', () {
