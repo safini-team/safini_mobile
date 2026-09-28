@@ -2462,6 +2462,118 @@
       }
     },
     "/v1/tasks/{task_id}": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Get Task",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent open any past task, including what the child sent with it.\n\n**Frontend note:** Use this when a parent opens a task from the Done history. Unlike the list, `submission_image_url` is signed for any status, so an approved task's proof photo still loads. The URL expires after five minutes.",
+        "operationId": "get_task_v1_tasks__task_id__get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Task V1 Tasks  Task Id  Get"
+                },
+                "example": {
+                  "id": "9f3f7985-70a5-4e4c-a5dc-f3d0a3d88111",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "source": "custom",
+                  "task_type": "custom",
+                  "title": "Read for 20 mins",
+                  "description": "Independent reading before bedtime.",
+                  "category": "learn",
+                  "proof_mode": "text_image",
+                  "verification_mode": "parent_approval",
+                  "coin_reward": 15,
+                  "xp_reward": 20,
+                  "target_value": 20,
+                  "target_unit": "minutes",
+                  "metadata": {
+                    "difficulty": "easy"
+                  },
+                  "due_on": "2026-06-10",
+                  "status": "approved",
+                  "submission_note": "Finished the whole chapter",
+                  "submission_image_url": "https://project.supabase.co/storage/v1/object/sign/task-proofs/...",
+                  "created_at": "2026-06-10T12:00:00Z",
+                  "updated_at": "2026-06-10T12:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
       "patch": {
         "tags": [
           "tasks"

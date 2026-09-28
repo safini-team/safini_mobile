@@ -56,6 +56,26 @@ class TaskGroupData {
   int get coins => rows.fold(0, (sum, row) => sum + row.coins);
 }
 
+/// One day of the Done history: the day's label, what was paid that day, and
+/// the day's tasks grouped by child. With one child in scope there is a single
+/// group and its header is left out, since the chip already says who.
+class TaskDayData {
+  const TaskDayData({
+    required this.label,
+    required this.summary,
+    required this.groups,
+    this.showChildHeaders = true,
+  });
+
+  /// "Today", "Yesterday", "Monday", "Sep 12".
+  final String label;
+
+  /// Pre-localised "3 tasks · 45 coins".
+  final String summary;
+  final List<TaskGroupData> groups;
+  final bool showChildHeaders;
+}
+
 class TaskScopeChip {
   const TaskScopeChip({
     required this.key,
@@ -82,6 +102,7 @@ class ParentTasksData {
     required this.groups,
     required this.emptyTitle,
     required this.emptyBody,
+    this.days = const [],
   });
 
   final String scopeLine;
@@ -92,6 +113,10 @@ class ParentTasksData {
   final List<TaskGroupData> groups;
   final String emptyTitle;
   final String emptyBody;
+
+  /// Done lane only: the history, newest day first. When set it replaces
+  /// [groups], so a parent scrolls back through the days like a chat.
+  final List<TaskDayData> days;
 
   /// Nothing in any lane for this scope.
   bool get hasNoTasks => laneCounts.values.every((count) => count == 0);
@@ -181,24 +206,44 @@ class ParentTasksView extends StatelessWidget {
             ),
           ),
         ),
-        SliverToBoxAdapter(
-          child: Padding(
+        // Days are built as they scroll in: the Done history reaches back
+        // to the first approved task, which is hundreds of rows in a month.
+        if (data.days.isNotEmpty)
+          SliverPadding(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.gutter,
-              16,
+              0,
+              AppSpacing.gutter,
+              0,
+            ),
+            sliver: SliverList.builder(
+              itemCount: data.days.length,
+              itemBuilder: (context, index) => _Day(
+                day: data.days[index],
+                isFirst: index == 0,
+                onOpenTask: onOpenTask,
+              ),
+            ),
+          ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.gutter,
+              data.days.isNotEmpty ? 0 : 16,
               AppSpacing.gutter,
               0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (data.groups.isNotEmpty)
-                  for (final group in data.groups) ...[
-                    _Group(group: group, onOpenTask: onOpenTask),
-                    const SizedBox(height: 16),
-                  ]
-                else ...[
-                  _EmptyLane(title: data.emptyTitle, body: data.emptyBody),
+                if (data.days.isEmpty) ...[
+                  if (data.groups.isNotEmpty)
+                    for (final group in data.groups) ...[
+                      _Group(group: group, onOpenTask: onOpenTask),
+                      const SizedBox(height: 16),
+                    ]
+                  else
+                    _EmptyLane(title: data.emptyTitle, body: data.emptyBody),
                 ],
                 const SizedBox(height: 2),
                 Padding(
@@ -217,10 +262,17 @@ class ParentTasksView extends StatelessWidget {
   }
 }
 
-class _Group extends StatelessWidget {
-  const _Group({required this.group, required this.onOpenTask});
+/// A day header, overline style so it reads above the child headers inside
+/// it, then that day's groups.
+class _Day extends StatelessWidget {
+  const _Day({
+    required this.day,
+    required this.isFirst,
+    required this.onOpenTask,
+  });
 
-  final TaskGroupData group;
+  final TaskDayData day;
+  final bool isFirst;
   final ValueChanged<TaskRowData> onOpenTask;
 
   @override
@@ -229,53 +281,109 @@ class _Group extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(6, 0, 6, 9),
+          padding: EdgeInsets.fromLTRB(6, isFirst ? 20 : 12, 6, 10),
           child: Row(
             children: [
-              DsKidFace(
-                name: group.name,
-                avatar: group.avatar,
-                color: group.color,
-                size: 22,
-                fontSize: 11,
-              ),
-              const SizedBox(width: 9),
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    group.name,
-                    maxLines: 1,
-                    softWrap: false,
-                    style: AppText.chip.copyWith(letterSpacing: -0.116),
-                  ),
+              Expanded(
+                child: Text(
+                  day.label.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.overline.copyWith(color: AppColors.ink),
                 ),
               ),
-              const SizedBox(width: 9),
-              const Expanded(child: DsDivider(color: AppColors.hairline)),
-              const SizedBox(width: 9),
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    group.summary,
-                    maxLines: 1,
-                    softWrap: false,
-                    textAlign: TextAlign.right,
-                    style: AppText.caption
-                        .copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textTertiary,
-                        )
-                        .nums,
-                  ),
-                ),
+              const SizedBox(width: 12),
+              Text(
+                day.summary,
+                maxLines: 1,
+                style: AppText.caption
+                    .copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textTertiary,
+                    )
+                    .nums,
               ),
             ],
           ),
         ),
+        for (final group in day.groups) ...[
+          _Group(
+            group: group,
+            onOpenTask: onOpenTask,
+            showHeader: day.showChildHeaders,
+          ),
+          const SizedBox(height: 16),
+        ],
+      ],
+    );
+  }
+}
+
+class _Group extends StatelessWidget {
+  const _Group({
+    required this.group,
+    required this.onOpenTask,
+    this.showHeader = true,
+  });
+
+  final TaskGroupData group;
+  final ValueChanged<TaskRowData> onOpenTask;
+  final bool showHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (showHeader)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 0, 6, 9),
+            child: Row(
+              children: [
+                DsKidFace(
+                  name: group.name,
+                  avatar: group.avatar,
+                  color: group.color,
+                  size: 22,
+                  fontSize: 11,
+                ),
+                const SizedBox(width: 9),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      group.name,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: AppText.chip.copyWith(letterSpacing: -0.116),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 9),
+                const Expanded(child: DsDivider(color: AppColors.hairline)),
+                const SizedBox(width: 9),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      group.summary,
+                      maxLines: 1,
+                      softWrap: false,
+                      textAlign: TextAlign.right,
+                      style: AppText.caption
+                          .copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textTertiary,
+                          )
+                          .nums,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         DsGroup(
           verticalPadding: 2,
           children: [

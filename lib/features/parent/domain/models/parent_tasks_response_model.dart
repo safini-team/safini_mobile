@@ -207,6 +207,11 @@ class ParentTaskInstanceModel {
   final int? voiceInstructionDurationMs;
   final String? voiceInstructionMime;
 
+  /// When the child sent it in and when a parent approved or rejected it.
+  /// The Done history shows these when a parent looks back at a task.
+  final DateTime? submittedAt;
+  final DateTime? reviewedAt;
+
   const ParentTaskInstanceModel({
     required this.id,
     required this.status,
@@ -232,6 +237,8 @@ class ParentTaskInstanceModel {
     this.voiceInstructionObjectKey,
     this.voiceInstructionDurationMs,
     this.voiceInstructionMime,
+    this.submittedAt,
+    this.reviewedAt,
   });
 
   factory ParentTaskInstanceModel.fromJson(Map<String, dynamic> json) {
@@ -304,6 +311,8 @@ class ParentTaskInstanceModel {
         'voice_instruction_mime',
         'voiceInstructionMime',
       ]),
+      submittedAt: _dateTimeValue(json, ['submitted_at', 'submittedAt']),
+      reviewedAt: _dateTimeValue(json, ['reviewed_at', 'reviewedAt']),
     );
   }
 
@@ -382,6 +391,11 @@ String? _nullableStringValue(Map<String, dynamic> json, List<String> keys) {
     if (text.isNotEmpty) return text;
   }
   return null;
+}
+
+DateTime? _dateTimeValue(Map<String, dynamic> json, List<String> keys) {
+  final text = _nullableStringValue(json, keys);
+  return text == null ? null : DateTime.tryParse(text)?.toLocal();
 }
 
 int? _intValue(Map<String, dynamic> json, List<String> keys) {
