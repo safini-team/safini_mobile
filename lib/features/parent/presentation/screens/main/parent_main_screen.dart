@@ -20,19 +20,13 @@ import 'package:safini/features/parent/presentation/screens/monitor/parent_monit
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_screen.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_apps_screen.dart';
 import 'package:safini/features/parent/presentation/screens/family/parent_family_screen.dart';
+import 'package:safini/features/onboarding/first_run_tour.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 class ParentMainScreen extends StatefulWidget {
   const ParentMainScreen({super.key});
 
-  static const List<Widget> _screens = [
-    ParentMonitorScreen(),
-    ParentTasksScreen(),
-    ParentAppsScreen(),
-    ParentFamilyScreen(),
-  ];
-
-  /// Which tab a tapped push opens, by its index in [_screens].
+  /// Which tab a tapped push opens.
   static int? tabFor(PushDestination destination) => switch (destination) {
     PushDestination.parentToday => 0,
     PushDestination.parentTasks => 1,
@@ -107,8 +101,16 @@ class _ParentMainScreenState extends State<ParentMainScreen>
   }
 }
 
-class _ParentMainView extends StatelessWidget {
+class _ParentMainView extends StatefulWidget {
   const _ParentMainView();
+
+  @override
+  State<_ParentMainView> createState() => _ParentMainViewState();
+}
+
+class _ParentMainViewState extends State<_ParentMainView> {
+  final _tabBarKey = GlobalKey();
+  final _reviewKey = GlobalKey();
 
   /// The red tab badge counts everything waiting on the parent, across kids.
   static int _reviewCount(ParentTasksState state) {
@@ -136,35 +138,53 @@ class _ParentMainView extends StatelessWidget {
         return BlocBuilder<ParentTasksCubit, ParentTasksState>(
           builder: (context, tasksState) {
             return BlocBuilder<LocaleCubit, Locale?>(
-              builder: (context, _) => Scaffold(
-                backgroundColor: AppColors.bgParent,
-                extendBody: true,
-                body: IndexedStack(
-                  index: state.selectedIndex,
-                  children: ParentMainScreen._screens,
-                ),
-                bottomNavigationBar: DsTabBar(
-                  currentIndex: state.selectedIndex,
-                  onTap: cubit.selectTab,
-                  items: [
-                    DsTabItem(
-                      label: s.tabToday,
-                      builder: (color) => AppIcons.tabHome(color: color),
+              builder: (context, _) => FirstRunTour(
+                role: TourRole.parent,
+                userId: context.read<AuthSessionCubit>().state.userId,
+                selectedTab: state.selectedIndex,
+                onSelectTab: cubit.selectTab,
+                onOpenGifts: cubit.openPrizes,
+                tabBarKey: _tabBarKey,
+                reviewKey: _reviewKey,
+                child: Scaffold(
+                  backgroundColor: AppColors.bgParent,
+                  extendBody: true,
+                  body: IndexedStack(
+                    index: state.selectedIndex,
+                    children: [
+                      ParentMonitorScreen(reviewKey: _reviewKey),
+                      const ParentTasksScreen(),
+                      const ParentAppsScreen(),
+                      const ParentFamilyScreen(),
+                    ],
+                  ),
+                  bottomNavigationBar: KeyedSubtree(
+                    key: _tabBarKey,
+                    child: DsTabBar(
+                      currentIndex: state.selectedIndex,
+                      onTap: cubit.selectTab,
+                      items: [
+                        DsTabItem(
+                          label: s.tabToday,
+                          builder: (color) => AppIcons.tabHome(color: color),
+                        ),
+                        DsTabItem(
+                          label: s.tabTasks,
+                          builder: (color) =>
+                              AppIcons.tabTasksParent(color: color),
+                          badge: _reviewCount(tasksState),
+                        ),
+                        DsTabItem(
+                          label: s.tabLimits,
+                          builder: (color) => AppIcons.tabLimits(color: color),
+                        ),
+                        DsTabItem(
+                          label: s.tabFamily,
+                          builder: (color) => AppIcons.tabFamily(color: color),
+                        ),
+                      ],
                     ),
-                    DsTabItem(
-                      label: s.tabTasks,
-                      builder: (color) => AppIcons.tabTasksParent(color: color),
-                      badge: _reviewCount(tasksState),
-                    ),
-                    DsTabItem(
-                      label: s.tabLimits,
-                      builder: (color) => AppIcons.tabLimits(color: color),
-                    ),
-                    DsTabItem(
-                      label: s.tabFamily,
-                      builder: (color) => AppIcons.tabFamily(color: color),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             );

@@ -129,8 +129,17 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
   Widget build(BuildContext context) {
     return BlocListener<ParentHomeCubit, ParentHomeState>(
       listenWhen: (previous, current) =>
-          current.showPrizes && !previous.showPrizes,
-      listener: (context, _) => setState(_takePrizesRequest),
+          (current.showPrizes && !previous.showPrizes) ||
+          (previous.selectedIndex == 2 && current.selectedIndex != 2),
+      listener: (context, state) {
+        // The tour and the checklist open Gifts on this tab. Leaving Limits
+        // must not leave that subview stuck for the next visit.
+        if (state.selectedIndex != 2) {
+          if (_showingPrizes) setState(() => _showingPrizes = false);
+          return;
+        }
+        setState(_takePrizesRequest);
+      },
       child: _buildLimits(context),
     );
   }
@@ -243,9 +252,8 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
                   childName: selected?.nickname ?? '',
                 ),
                 onAddApp: onAddApp,
-                onRefresh: () => _showingPrizes
-                    ? prizes.load()
-                    : cubit.loadAppLimits(),
+                onRefresh: () =>
+                    _showingPrizes ? prizes.load() : cubit.loadAppLimits(),
                 showingPrizes: _showingPrizes,
                 onShowPrizes: selectedId == null
                     ? null

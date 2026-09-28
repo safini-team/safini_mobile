@@ -6278,6 +6278,16 @@ class S {
     );
   }
 
+  /// `Set an app lock PIN`
+  String get setupStepAppLock {
+    return Intl.message(
+      'Set an app lock PIN',
+      name: 'setupStepAppLock',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Let's add your child first.`
   String get finiNextChild {
     return Intl.message(
@@ -6323,6 +6333,16 @@ class S {
     return Intl.message(
       'Add a gift worth saving coins for.',
       name: 'finiNextPrize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set a PIN so only you can open Safini.`
+  String get finiNextAppLock {
+    return Intl.message(
+      'Set a PIN so only you can open Safini.',
+      name: 'finiNextAppLock',
       desc: '',
       args: [],
     );
@@ -6718,6 +6738,231 @@ class S {
     return Intl.message(
       'PIN updated',
       name: 'appLockChanged',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{step} of {total}`
+  String tourStep(int step, int total) {
+    return Intl.message(
+      '$step of $total',
+      name: 'tourStep',
+      desc: '',
+      args: [step, total],
+    );
+  }
+
+  /// `Skip tour`
+  String get tourSkip {
+    return Intl.message('Skip tour', name: 'tourSkip', desc: '', args: []);
+  }
+
+  /// `Next`
+  String get tourNext {
+    return Intl.message('Next', name: 'tourNext', desc: '', args: []);
+  }
+
+  /// `Got it`
+  String get tourDone {
+    return Intl.message('Got it', name: 'tourDone', desc: '', args: []);
+  }
+
+  /// `Your dashboard`
+  String get tourParentTodayTitle {
+    return Intl.message(
+      'Your dashboard',
+      name: 'tourParentTodayTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See today's screen time, tasks, streak, and coin balance for each child here.`
+  String get tourParentTodayBody {
+    return Intl.message(
+      'See today\'s screen time, tasks, streak, and coin balance for each child here.',
+      name: 'tourParentTodayBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Needs your review`
+  String get tourParentReviewTitle {
+    return Intl.message(
+      'Needs your review',
+      name: 'tourParentReviewTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finished tasks and gift requests land here. Approve a task to pay its coins, or look closer first.`
+  String get tourParentReviewBody {
+    return Intl.message(
+      'Finished tasks and gift requests land here. Approve a task to pay its coins, or look closer first.',
+      name: 'tourParentReviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tasks`
+  String get tourParentTasksTitle {
+    return Intl.message(
+      'Tasks',
+      name: 'tourParentTasksTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create tasks, choose their coin rewards, and review what your child submits.`
+  String get tourParentTasksBody {
+    return Intl.message(
+      'Create tasks, choose their coin rewards, and review what your child submits.',
+      name: 'tourParentTasksBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limits`
+  String get tourParentLimitsTitle {
+    return Intl.message(
+      'Limits',
+      name: 'tourParentLimitsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set a daily screen time budget and app rules. You choose whether coins can buy extra time.`
+  String get tourParentLimitsBody {
+    return Intl.message(
+      'Set a daily screen time budget and app rules. You choose whether coins can buy extra time.',
+      name: 'tourParentLimitsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gifts`
+  String get tourParentGiftsTitle {
+    return Intl.message(
+      'Gifts',
+      name: 'tourParentGiftsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add real gifts your child can save for. When they ask, coins are held until you mark the gift given or decline it.`
+  String get tourParentGiftsBody {
+    return Intl.message(
+      'Add real gifts your child can save for. When they ask, coins are held until you mark the gift given or decline it.',
+      name: 'tourParentGiftsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Family`
+  String get tourParentFamilyTitle {
+    return Intl.message(
+      'Family',
+      name: 'tourParentFamilyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add children and connect their phones here. Your setup checklist stays on Today until you're ready.`
+  String get tourParentFamilyBody {
+    return Intl.message(
+      'Add children and connect their phones here. Your setup checklist stays on Today until you\'re ready.',
+      name: 'tourParentFamilyBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Today page`
+  String get tourChildTodayTitle {
+    return Intl.message(
+      'Your Today page',
+      name: 'tourChildTodayTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See your time, coins, streak, and what to do next. Your parent can also see which apps you use.`
+  String get tourChildTodayBody {
+    return Intl.message(
+      'See your time, coins, streak, and what to do next. Your parent can also see which apps you use.',
+      name: 'tourChildTodayBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your tasks`
+  String get tourChildTasksTitle {
+    return Intl.message(
+      'Your tasks',
+      name: 'tourChildTasksTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish a task and send it to your parent. Coins arrive after they approve it.`
+  String get tourChildTasksBody {
+    return Intl.message(
+      'Finish a task and send it to your parent. Coins arrive after they approve it.',
+      name: 'tourChildTasksBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spend your coins`
+  String get tourChildStoreTitle {
+    return Intl.message(
+      'Spend your coins',
+      name: 'tourChildStoreTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use coins for extra app time, avatar items, or real gifts. Your parent handles gift requests.`
+  String get tourChildStoreBody {
+    return Intl.message(
+      'Use coins for extra app time, avatar items, or real gifts. Your parent handles gift requests.',
+      name: 'tourChildStoreBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your space`
+  String get tourChildMeTitle {
+    return Intl.message(
+      'Your space',
+      name: 'tourChildMeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Make your avatar yours and check your progress here.`
+  String get tourChildMeBody {
+    return Intl.message(
+      'Make your avatar yours and check your progress here.',
+      name: 'tourChildMeBody',
       desc: '',
       args: [],
     );

@@ -34,6 +34,10 @@ class ParentAppLockState {
   /// PIN has been entered.
   bool get blocksParent => !ready || (enabled && locked);
 
+  /// A PIN is actually stored. A storage failure fail-closes to [enabled]
+  /// without a PIN, so that must not count.
+  bool get pinIsSet => ready && enabled && error != ParentAppLockError.storage;
+
   ParentAppLockState copyWith({
     bool? ready,
     bool? enabled,

@@ -8,9 +8,9 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/onboarding/fini.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
 
-/// "Getting started · 2 of 5" on the parent's Today. Fini says the next step,
+/// "Getting started · 2 of 6" on the parent's Today. Fini says the next step,
 /// each open row goes to where that step is done, and the card cheers and
-/// leaves once all five are ticked.
+/// leaves once all six are ticked. The app-lock PIN is last, and required.
 class GettingStartedCard extends StatelessWidget {
   const GettingStartedCard({
     super.key,
@@ -53,7 +53,7 @@ class GettingStartedCard extends StatelessWidget {
                       text: _line(s, next),
                     ),
                   ),
-                  if (!state.complete)
+                  if (!state.complete && state.done.contains(SetupStep.appLock))
                     Semantics(
                       button: true,
                       label: s.gettingStartedHide,
@@ -122,6 +122,7 @@ class GettingStartedCard extends StatelessWidget {
     SetupStep.task => s.finiNextTask,
     SetupStep.limit => s.finiNextLimit,
     SetupStep.prize => s.finiNextPrize,
+    SetupStep.appLock => s.finiNextAppLock,
   };
 
   static String _label(S s, SetupStep step) => switch (step) {
@@ -130,6 +131,7 @@ class GettingStartedCard extends StatelessWidget {
     SetupStep.task => s.setupStepTask,
     SetupStep.limit => s.setupStepLimit,
     SetupStep.prize => s.setupStepPrize,
+    SetupStep.appLock => s.setupStepAppLock,
   };
 }
 
