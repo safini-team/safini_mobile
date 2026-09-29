@@ -6,7 +6,7 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 
 /// The pairing-code input from the Join family artboard: a row of 44x56 white
-/// boxes, the next one ringed in purple.
+/// boxes, each outlined in Safini green. The next box has a stronger ring.
 ///
 /// A single hidden field owns the text; the boxes are just a readout, so paste,
 /// autofill and the caret all behave normally.
@@ -135,7 +135,7 @@ class _Box extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.tile),
-        border: focused ? Border.all(color: AppColors.primary, width: 2) : null,
+        border: Border.all(color: AppColors.primary, width: focused ? 2 : 1.25),
         boxShadow: AppShadows.hairline,
       ),
       child: Text(
