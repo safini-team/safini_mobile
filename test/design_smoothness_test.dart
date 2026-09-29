@@ -122,7 +122,10 @@ void main() {
             label: 'Parent Tasks',
           );
           // Nothing on these screens ends in "...": labels shrink instead.
-          _expectNoClippedText(tester, 'Parent Tasks in $locale on ${device.name}');
+          _expectNoClippedText(
+            tester,
+            'Parent Tasks in $locale on ${device.name}',
+          );
         });
 
         testWidgets('Parent Tasks with only task ideas lays out cleanly', (
@@ -213,7 +216,10 @@ void main() {
             label: 'Kid Today',
           );
           // Nothing on these screens ends in "...": labels shrink instead.
-          _expectNoClippedText(tester, 'Kid Today in $locale on ${device.name}');
+          _expectNoClippedText(
+            tester,
+            'Kid Today in $locale on ${device.name}',
+          );
         });
 
         testWidgets('Kid Tasks lays out cleanly', (tester) async {
@@ -229,7 +235,10 @@ void main() {
             label: 'Kid Tasks',
           );
           // Nothing on these screens ends in "...": labels shrink instead.
-          _expectNoClippedText(tester, 'Kid Tasks in $locale on ${device.name}');
+          _expectNoClippedText(
+            tester,
+            'Kid Tasks in $locale on ${device.name}',
+          );
         });
 
         testWidgets('Kid Store lays out cleanly', (tester) async {
@@ -245,7 +254,10 @@ void main() {
             label: 'Kid Store',
           );
           // Nothing on these screens ends in "...": labels shrink instead.
-          _expectNoClippedText(tester, 'Kid Store in $locale on ${device.name}');
+          _expectNoClippedText(
+            tester,
+            'Kid Store in $locale on ${device.name}',
+          );
         });
 
         testWidgets('Kid Me lays out cleanly', (tester) async {
@@ -322,6 +334,10 @@ void main() {
                     DsTabItem(
                       label: s.tabStore,
                       builder: (c) => AppIcons.tabStore(color: c),
+                    ),
+                    DsTabItem(
+                      label: s.friends,
+                      builder: (c) => AppIcons.tabFriends(color: c),
                     ),
                     DsTabItem(
                       label: s.tabMe,

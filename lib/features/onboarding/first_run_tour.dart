@@ -43,7 +43,7 @@ class _FirstRunTourState extends State<FirstRunTour> {
   int? _step;
   String? _checkedUserId;
 
-  int get _total => widget.role == TourRole.parent ? 6 : 4;
+  int get _total => widget.role == TourRole.parent ? 6 : 5;
 
   @override
   void initState() {
@@ -304,6 +304,7 @@ class _TourCard extends StatelessWidget {
             0 => (s.tourChildTodayTitle, s.tourChildTodayBody),
             1 => (s.tourChildTasksTitle, s.tourChildTasksBody),
             2 => (s.tourChildStoreTitle, s.tourChildStoreBody),
+            3 => (s.tourChildFriendsTitle, s.tourChildFriendsBody),
             _ => (s.tourChildMeTitle, s.tourChildMeBody),
           };
     return Material(

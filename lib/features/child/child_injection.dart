@@ -15,6 +15,8 @@ import 'package:safini/features/child/presentation/cubit/child_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/tasks_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
+import 'package:safini/features/child/friends/friend.dart';
+import 'package:safini/features/child/friends/friends_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
@@ -94,6 +96,10 @@ void registerChildDependencies(GetIt sl) {
       sl<safini_profile.ProfileController>(),
       sl<IChildRepository>(),
     ),
+  );
+  sl.registerFactory<FriendsCubit>(
+    () =>
+        FriendsCubit(sl<FriendsApi>(), sl<safini_profile.ProfileController>()),
   );
   sl.registerFactory<RewardStoreCubit>(
     () => RewardStoreCubit(

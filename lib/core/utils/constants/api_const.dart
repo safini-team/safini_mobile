@@ -21,6 +21,12 @@ class ApiConst {
   static String childTasks(String childId) => '/v1/children/$childId/tasks';
   static String task(String taskId) => '/v1/tasks/$taskId';
   static String childHome(String childId) => '/v1/children/$childId/home';
+
+  /// GET/POST the child's friends. DELETE one friend at [childFriend].
+  /// SAF-202. The list has no rank and no wallet.
+  static String childFriends(String childId) => '/v1/children/$childId/friends';
+  static String childFriend(String childId, String friendChildId) =>
+      '/v1/children/$childId/friends/$friendChildId';
   static String childToday(String childId) => '/v1/children/$childId/today';
   static String submitTask(String taskId) => '/v1/tasks/$taskId/submit';
   static String taskProofUploadUrl(String childId) =>

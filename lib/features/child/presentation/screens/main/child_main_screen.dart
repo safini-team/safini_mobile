@@ -22,6 +22,7 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_stat
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
 import 'package:safini/features/common/profile/data/repositories/profile_repository.dart';
 import 'package:safini/features/onboarding/first_run_tour.dart';
+import 'package:safini/features/child/friends/child_friends_screen.dart';
 import 'package:safini/features/child/presentation/screens/home/child_home_screen.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_screen.dart';
 import 'package:safini/features/child/presentation/screens/store/child_reward_store_screen.dart';
@@ -35,6 +36,7 @@ class ChildMainScreen extends StatelessWidget {
     ChildHomeScreen(),
     ChildTasksScreen(),
     ChildRewardStoreScreen(),
+    ChildFriendsScreen(),
     ChildProfileScreen(),
   ];
 
@@ -142,6 +144,10 @@ class _ChildMainViewState extends State<_ChildMainView> {
                   DsTabItem(
                     label: s.tabStore,
                     builder: (color) => AppIcons.tabStore(color: color),
+                  ),
+                  DsTabItem(
+                    label: s.friends,
+                    builder: (color) => AppIcons.tabFriends(color: color),
                   ),
                   DsTabItem(
                     label: s.tabMe,

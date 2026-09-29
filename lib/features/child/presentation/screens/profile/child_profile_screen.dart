@@ -264,7 +264,9 @@ class ChildMeSettings extends StatelessWidget {
   /// the parent.
   Future<({String? id, bool known})> _childId() async {
     final claimed = getIt<ChildClaimCubit>().state.child?.id;
-    if (claimed != null && claimed.isNotEmpty) return (id: claimed, known: true);
+    if (claimed != null && claimed.isNotEmpty) {
+      return (id: claimed, known: true);
+    }
     final me = await getIt<ProfileController>().fetchMe();
     return me.fold((_) => (id: null, known: false), (profile) {
       final id = profile.childId?.trim();
