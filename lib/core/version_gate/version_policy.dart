@@ -143,29 +143,14 @@ class VersionPolicy {
           latestRecommended: '99.0.0',
           storeUrl: store,
         );
-        return const VersionPolicy(
-          android: platform,
-          ios: platform,
-          message: VersionPolicyMessage(
-            hardTitle: 'Update required',
-            hardBody:
-                'This version is no longer supported. Please update to continue.',
-          ),
-        );
+        return const VersionPolicy(android: platform, ios: platform);
       case VersionGateForce.soft:
         const platform = PlatformVersionPolicy(
           minSupported: '0.0.1',
           latestRecommended: '99.0.0',
           storeUrl: store,
         );
-        return const VersionPolicy(
-          android: platform,
-          ios: platform,
-          message: VersionPolicyMessage(
-            softTitle: 'Update available',
-            softBody: 'A newer version is ready.',
-          ),
-        );
+        return const VersionPolicy(android: platform, ios: platform);
     }
   }
 }

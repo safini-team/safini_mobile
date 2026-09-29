@@ -140,7 +140,7 @@ Widget _app(VersionGateCubit cubit, {required GlobalKey boundaryKey}) {
             backgroundColor: AppColors.bgParent,
             body: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 160, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                 child: Text('Today', style: AppText.largeTitle),
               ),
             ),
