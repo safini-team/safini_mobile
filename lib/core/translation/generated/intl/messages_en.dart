@@ -1626,6 +1626,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Tips for Parents"),
     "toGo": m82,
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Today\'s Quests"),
+    "tourChildFriendsBody": MessageLookupByLibrary.simpleMessage(
+      "Add a friend with their 6-digit Safini ID and see how they are doing.",
+    ),
+    "tourChildFriendsTitle": MessageLookupByLibrary.simpleMessage(
+      "Your friends",
+    ),
     "tourChildMeBody": MessageLookupByLibrary.simpleMessage(
       "Make your avatar yours and check your progress here.",
     ),

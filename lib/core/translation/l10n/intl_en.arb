@@ -980,6 +980,8 @@
   "tourChildTasksBody": "Finish a task and send it to your parent. Coins arrive after they approve it.",
   "tourChildStoreTitle": "Spend your coins",
   "tourChildStoreBody": "Use coins for extra app time, avatar items, or real gifts. Your parent handles gift requests.",
+  "tourChildFriendsTitle": "Your friends",
+  "tourChildFriendsBody": "Add a friend with their 6-digit Safini ID and see how they are doing.",
   "tourChildMeTitle": "Your space",
   "tourChildMeBody": "Make your avatar yours and check your progress here.",
   "friends": "Friends",

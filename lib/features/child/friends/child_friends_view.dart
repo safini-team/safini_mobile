@@ -89,7 +89,7 @@ class ChildFriendsView extends StatelessWidget {
           AppSpacing.gutter,
           8,
           AppSpacing.gutter,
-          32 + MediaQuery.viewPaddingOf(context).bottom,
+          AppSpacing.tabBarClearance + DsTabBar.extraHeight(context),
         ),
         children: [
           _IdCard(publicId: publicId, onCopy: onCopyId),

@@ -1662,6 +1662,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Советы родителям"),
     "toGo": m82,
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Сегодняшние задания"),
+    "tourChildFriendsBody": MessageLookupByLibrary.simpleMessage(
+      "Добавь друга по его 6-значному ID Safini и посмотри, как у него дела.",
+    ),
+    "tourChildFriendsTitle": MessageLookupByLibrary.simpleMessage(
+      "Твои друзья",
+    ),
     "tourChildMeBody": MessageLookupByLibrary.simpleMessage(
       "Настрой аватар и смотри свои успехи здесь.",
     ),

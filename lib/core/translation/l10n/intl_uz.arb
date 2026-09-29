@@ -840,6 +840,8 @@
   "tourChildTasksBody": "Topshiriqni bajarib ota-onangga yubor. Ular tasdiqlagach tangalar keladi.",
   "tourChildStoreTitle": "Tangalaringni sarfla",
   "tourChildStoreBody": "Tangalarni qoʻshimcha ilova vaqti, avatar buyumlari yoki sovgʻalarga sarfla. Sovgʻa soʻrovini ota-onang koʻradi.",
+  "tourChildFriendsTitle": "Doʻstlaring",
+  "tourChildFriendsBody": "Doʻstingni 6 xonali Safini ID orqali qoʻsh va u qanday ketayotganini koʻr.",
   "tourChildMeTitle": "Shaxsiy sahifang",
   "tourChildMeBody": "Bu yerda avataringni bezat va yutuqlaringni koʻr.",
   "friends": "Doʻstlar",

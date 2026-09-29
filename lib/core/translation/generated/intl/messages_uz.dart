@@ -1717,6 +1717,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "todaysQuests": MessageLookupByLibrary.simpleMessage(
       "Bugungi topshiriqlar",
     ),
+    "tourChildFriendsBody": MessageLookupByLibrary.simpleMessage(
+      "Doʻstingni 6 xonali Safini ID orqali qoʻsh va u qanday ketayotganini koʻr.",
+    ),
+    "tourChildFriendsTitle": MessageLookupByLibrary.simpleMessage(
+      "Doʻstlaring",
+    ),
     "tourChildMeBody": MessageLookupByLibrary.simpleMessage(
       "Bu yerda avataringni bezat va yutuqlaringni koʻr.",
     ),

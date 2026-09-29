@@ -7008,6 +7008,26 @@ class S {
     );
   }
 
+  /// `Your friends`
+  String get tourChildFriendsTitle {
+    return Intl.message(
+      'Your friends',
+      name: 'tourChildFriendsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a friend with their 6-digit Safini ID and see how they are doing.`
+  String get tourChildFriendsBody {
+    return Intl.message(
+      'Add a friend with their 6-digit Safini ID and see how they are doing.',
+      name: 'tourChildFriendsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Your space`
   String get tourChildMeTitle {
     return Intl.message(

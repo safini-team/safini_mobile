@@ -38,11 +38,12 @@ class _FriendsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
 
-    return Scaffold(
-      backgroundColor: AppColors.bgChild,
-      body: Column(
+    return ColoredBox(
+      color: AppColors.bgChild,
+      child: Column(
         children: [
-          DsNavBar.child(title: s.friends, backLabel: s.tabMe),
+          SizedBox(height: MediaQuery.paddingOf(context).top + 6),
+          DsLargeTitle(title: s.friends),
           Expanded(
             child: BlocBuilder<FriendsCubit, FriendsState>(
               builder: (context, state) {

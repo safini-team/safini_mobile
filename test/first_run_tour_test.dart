@@ -126,7 +126,7 @@ void main() {
     expect(find.text('Your Today page'), findsOneWidget);
     await tester.tap(find.text('Skip tour'));
     await tester.pump();
-    expect(store.tourStep('child', 'child-one'), 4);
+    expect(store.tourStep('child', 'child-one'), 5);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await _pumpTour(tester, TourRole.child, 'child-two');
