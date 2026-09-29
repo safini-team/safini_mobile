@@ -966,5 +966,11 @@
   "friendsYourself": "Это твой ID.",
   "friendsInvalid": "Введи все 6 цифр.",
   "friendsError": "Не получилось загрузить друзей. Потяни вниз, чтобы повторить.",
-  "friendsRowSubtitle": "Смотри, как дела у друзей"
+  "friendsRowSubtitle": "Смотри, как дела у друзей",
+  "updateHardTitle": "Нужно обновить",
+  "updateHardBody": "Эта версия больше не поддерживается. Обновите приложение, чтобы продолжить.",
+  "updateSoftTitle": "Доступно обновление",
+  "updateSoftBody": "Вышла более новая версия.",
+  "updateCta": "Обновить",
+  "updateDismiss": "Позже"
 }

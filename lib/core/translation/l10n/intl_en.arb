@@ -1006,5 +1006,11 @@
   "friendsYourself": "That's your own ID.",
   "friendsInvalid": "Enter all 6 digits.",
   "friendsError": "Couldn't load friends. Pull to try again.",
-  "friendsRowSubtitle": "See how your friends are doing"
+  "friendsRowSubtitle": "See how your friends are doing",
+  "updateHardTitle": "Update required",
+  "updateHardBody": "This version is no longer supported. Please update to continue.",
+  "updateSoftTitle": "Update available",
+  "updateSoftBody": "A newer version is ready.",
+  "updateCta": "Update",
+  "updateDismiss": "Not now"
 }

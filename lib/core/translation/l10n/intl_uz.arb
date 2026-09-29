@@ -866,5 +866,11 @@
   "friendsYourself": "Bu sening ID raqaming.",
   "friendsInvalid": "6 ta raqamni ham yoz.",
   "friendsError": "Doʻstlarni yuklab boʻlmadi. Qayta urinib koʻrish uchun pastga tort.",
-  "friendsRowSubtitle": "Doʻstlaring qanday ketayotganini koʻr"
+  "friendsRowSubtitle": "Doʻstlaring qanday ketayotganini koʻr",
+  "updateHardTitle": "Yangilash shart",
+  "updateHardBody": "Bu versiya endi ishlamaydi. Davom etish uchun ilovani yangilang.",
+  "updateSoftTitle": "Yangilanish bor",
+  "updateSoftBody": "Yangi versiya tayyor.",
+  "updateCta": "Yangilash",
+  "updateDismiss": "Hozir emas"
 }

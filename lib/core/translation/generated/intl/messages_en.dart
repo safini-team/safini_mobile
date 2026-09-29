@@ -1702,6 +1702,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Unlock once, keep forever",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("unlocked"),
+    "updateCta": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateDismiss": MessageLookupByLibrary.simpleMessage("Not now"),
+    "updateHardBody": MessageLookupByLibrary.simpleMessage(
+      "This version is no longer supported. Please update to continue.",
+    ),
+    "updateHardTitle": MessageLookupByLibrary.simpleMessage("Update required"),
+    "updateSoftBody": MessageLookupByLibrary.simpleMessage(
+      "A newer version is ready.",
+    ),
+    "updateSoftTitle": MessageLookupByLibrary.simpleMessage("Update available"),
     "usedLimit": m85,
     "usedNoLimit": m86,
     "usedOfLimit": m87,

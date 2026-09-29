@@ -1736,6 +1736,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Открой один раз - останется навсегда",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("разблокировано"),
+    "updateCta": MessageLookupByLibrary.simpleMessage("Обновить"),
+    "updateDismiss": MessageLookupByLibrary.simpleMessage("Позже"),
+    "updateHardBody": MessageLookupByLibrary.simpleMessage(
+      "Эта версия больше не поддерживается. Обновите приложение, чтобы продолжить.",
+    ),
+    "updateHardTitle": MessageLookupByLibrary.simpleMessage("Нужно обновить"),
+    "updateSoftBody": MessageLookupByLibrary.simpleMessage(
+      "Вышла более новая версия.",
+    ),
+    "updateSoftTitle": MessageLookupByLibrary.simpleMessage(
+      "Доступно обновление",
+    ),
     "usedLimit": m85,
     "usedNoLimit": m86,
     "usedOfLimit": m87,

@@ -1799,6 +1799,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bir marta och - abadiy qoladi",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("ochilgan"),
+    "updateCta": MessageLookupByLibrary.simpleMessage("Yangilash"),
+    "updateDismiss": MessageLookupByLibrary.simpleMessage("Hozir emas"),
+    "updateHardBody": MessageLookupByLibrary.simpleMessage(
+      "Bu versiya endi ishlamaydi. Davom etish uchun ilovani yangilang.",
+    ),
+    "updateHardTitle": MessageLookupByLibrary.simpleMessage("Yangilash shart"),
+    "updateSoftBody": MessageLookupByLibrary.simpleMessage(
+      "Yangi versiya tayyor.",
+    ),
+    "updateSoftTitle": MessageLookupByLibrary.simpleMessage("Yangilanish bor"),
     "usedLimit": m85,
     "usedNoLimit": m86,
     "usedOfLimit": m87,

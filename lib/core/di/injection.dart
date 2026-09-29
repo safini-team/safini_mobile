@@ -10,6 +10,10 @@ import 'package:safini/core/network/dio_network.dart';
 import 'package:safini/core/notifications/push_service.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/utils/constants/app_constants.dart';
+import 'package:safini/core/version_gate/version_gate_cubit.dart';
+import 'package:safini/core/version_gate/version_policy_client.dart';
+import 'package:safini/core/version_gate/version_policy_store.dart';
+import 'package:safini/core/version_gate/version_update_launcher.dart';
 import 'package:safini/features/onboarding/onboarding_store.dart';
 import 'package:safini/features/child/child_injection.dart';
 import 'package:safini/features/child/data/services/app_block_service.dart';
@@ -89,6 +93,29 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
   }
   if (!getIt.isRegistered<FriendsApi>()) {
     getIt.registerLazySingleton<FriendsApi>(() => FriendsApi(getIt<Dio>()));
+  }
+
+  if (!getIt.isRegistered<VersionPolicyClient>()) {
+    getIt.registerLazySingleton<VersionPolicyClient>(
+      () => VersionPolicyClient(getIt<Dio>()),
+    );
+    getIt.registerLazySingleton<VersionPolicyStore>(
+      () => VersionPolicyStore(
+        getIt.isRegistered<SharedPreferences>()
+            ? getIt<SharedPreferences>()
+            : null,
+      ),
+    );
+    getIt.registerLazySingleton<VersionUpdateLauncher>(
+      VersionUpdateLauncher.new,
+    );
+    getIt.registerLazySingleton<VersionGateCubit>(
+      () => VersionGateCubit(
+        client: getIt<VersionPolicyClient>(),
+        store: getIt<VersionPolicyStore>(),
+        launcher: getIt<VersionUpdateLauncher>(),
+      ),
+    );
   }
 
   if (!getIt.isRegistered<OnboardingStore>()) {
