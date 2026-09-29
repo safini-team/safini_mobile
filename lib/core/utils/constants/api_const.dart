@@ -8,10 +8,11 @@ class ApiConst {
   static const String me = '/v1/me';
 
   /// GET - public min/recommended versions for this binary (SAF-203).
-  /// Auth is optional; the gate runs before sign-in. Matches the parallel
-  /// safini-api contract. Do not vendor this path in `api.json` until the
-  /// API actually serves it (CI diffs the spec against production).
-  static const String versionPolicy = '/v1/app/version-policy';
+  /// Auth is optional; the gate runs before sign-in. Matches
+  /// safini-api `GET /v1/system/version-policy`. Do not vendor this path
+  /// in `api.json` until production serves it (CI diffs the spec against
+  /// production).
+  static const String versionPolicy = '/v1/system/version-policy';
 
   /// PUT/DELETE/GET - this handset's push token, parent or child, so
   /// notifications reach whoever is signed in while the app is closed.

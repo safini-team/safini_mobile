@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
 import 'package:safini/core/version_gate/version_policy.dart';
 
-/// `GET /v1/app/version-policy`. Returns null on any failure so the gate
+/// `GET /v1/system/version-policy`. Returns null on any failure so the gate
 /// can fail open.
 class VersionPolicyClient {
   VersionPolicyClient(this._dio, {this.timeout = const Duration(seconds: 5)});

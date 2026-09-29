@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safini/core/utils/constants/api_const.dart';
 import 'package:safini/core/version_gate/app_version.dart';
 import 'package:safini/core/version_gate/version_gate_cubit.dart';
 import 'package:safini/core/version_gate/version_gate_tier.dart';
@@ -10,6 +11,10 @@ import 'package:safini/core/version_gate/version_policy_store.dart';
 import 'package:safini/core/version_gate/version_update_launcher.dart';
 
 void main() {
+  test('policy endpoint matches safini-api GET /v1/system/version-policy', () {
+    expect(ApiConst.versionPolicy, '/v1/system/version-policy');
+  });
+
   group('compareAppVersions', () {
     test('orders major.minor.patch', () {
       expect(compareAppVersions('1.0.8', '1.0.9'), lessThan(0));

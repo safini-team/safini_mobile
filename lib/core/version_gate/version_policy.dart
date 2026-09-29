@@ -94,7 +94,7 @@ class VersionPolicyMessage {
   int get hashCode => Object.hash(hardTitle, hardBody, softTitle, softBody);
 }
 
-/// Remote policy from `GET /v1/app/version-policy`. One document for parent
+/// Remote policy from `GET /v1/system/version-policy`. One document for parent
 /// and child; the client picks android vs ios.
 class VersionPolicy {
   const VersionPolicy({required this.android, required this.ios, this.message});
