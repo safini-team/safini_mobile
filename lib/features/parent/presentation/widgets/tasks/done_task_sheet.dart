@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
-import 'package:safini/core/utils/relative_date.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/task_proof_photo.dart';
+import 'package:safini/features/parent/presentation/widgets/tasks/task_timeline.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 /// A done task from the history, read-only: who did it and what it paid,
-/// when it was approved, and what the child sent with it.
+/// when the child sent it and which parent decided, and what was sent.
 ///
 /// The list carries the note but not the photo (it only signs photos still in
 /// review), so the sheet opens on the list's copy and fetches the task once
@@ -80,12 +79,6 @@ class _DoneTaskSheetState extends State<DoneTaskSheet> {
     }
   }
 
-  String _approvedWhen(BuildContext context, S s, DateTime at) {
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final day = relativeDateLabel(context, s, at);
-    return '$day, ${DateFormat.Hm(locale).format(at)}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -99,10 +92,7 @@ class _DoneTaskSheetState extends State<DoneTaskSheet> {
     final photoUrl = (task.submissionImageUrl ?? '').trim();
     final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('image');
     final showPhoto = wantsPhoto || photoUrl.isNotEmpty;
-    final reviewedAt = task.reviewedAt;
-    final reviewer = task.reviewedByParent;
-    final reviewerName = reviewer?.displayName?.trim() ?? '';
-    final reviewerAvatar = reviewer?.avatarUrl?.trim() ?? '';
+    final events = taskTimeline(context, s, task, includeDecision: true);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -134,60 +124,9 @@ class _DoneTaskSheetState extends State<DoneTaskSheet> {
             ],
           ),
         ],
-        if (reviewerName.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              ClipOval(
-                child: reviewerAvatar.isEmpty
-                    ? Container(
-                        width: 32,
-                        height: 32,
-                        color: AppColors.fillAlt,
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.person_outline,
-                          size: 19,
-                          color: AppColors.textSecondary,
-                        ),
-                      )
-                    : Image.network(
-                        reviewerAvatar,
-                        width: 32,
-                        height: 32,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => Container(
-                          width: 32,
-                          height: 32,
-                          color: AppColors.fillAlt,
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.person_outline,
-                            size: 19,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  reviewerName,
-                  style: AppText.chip.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-        if (reviewedAt != null) ...[
-          const SizedBox(height: 10),
-          Text(
-            s.approvedWhen(_approvedWhen(context, s, reviewedAt)),
-            style: AppText.metaSm,
-          ),
+        if (events.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          TaskTimeline(events: events),
         ],
         if (showPhoto) ...[
           const SizedBox(height: 18),

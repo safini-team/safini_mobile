@@ -243,6 +243,38 @@ class ParentTaskInstanceModel {
     this.reviewedByParent,
   });
 
+  ParentTaskInstanceModel copyWith({String? submissionImageUrl}) {
+    return ParentTaskInstanceModel(
+      id: id,
+      status: status,
+      title: title,
+      category: category,
+      rewardCoins: rewardCoins,
+      xpReward: xpReward,
+      childId: childId,
+      taskType: taskType,
+      proofMode: proofMode,
+      verificationMode: verificationMode,
+      description: description,
+      targetValue: targetValue,
+      targetUnit: targetUnit,
+      dueOn: dueOn,
+      metadata: metadata,
+      recurrence: recurrence,
+      recurrenceDays: recurrenceDays,
+      submissionNote: submissionNote,
+      submissionImageUrl: submissionImageUrl ?? this.submissionImageUrl,
+      reviewNote: reviewNote,
+      voiceInstructionUrl: voiceInstructionUrl,
+      voiceInstructionObjectKey: voiceInstructionObjectKey,
+      voiceInstructionDurationMs: voiceInstructionDurationMs,
+      voiceInstructionMime: voiceInstructionMime,
+      submittedAt: submittedAt,
+      reviewedAt: reviewedAt,
+      reviewedByParent: reviewedByParent,
+    );
+  }
+
   factory ParentTaskInstanceModel.fromJson(Map<String, dynamic> json) {
     final rawMetadata = json['metadata'];
     return ParentTaskInstanceModel(
