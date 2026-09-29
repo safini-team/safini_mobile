@@ -6,6 +6,7 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/task_proof_photo.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/task_timeline.dart';
@@ -79,6 +80,57 @@ class _DoneTaskSheetState extends State<DoneTaskSheet> {
     }
   }
 
+  ReviewedByParentModel? _reviewerFor(
+    BuildContext context,
+    ParentTaskInstanceModel task,
+  ) {
+    final direct = task.reviewedByParent;
+    final id = direct?.userId.isNotEmpty == true
+        ? direct!.userId
+        : task.reviewedByUserId;
+    if (id == null || id.isEmpty) return direct;
+
+    ParentSummaryModel? familyParent;
+    try {
+      familyParent = context
+          .read<ParentFamilyCubit>()
+          .state
+          .family
+          ?.parents
+          .where((parent) => parent.userId == id)
+          .firstOrNull;
+    } catch (_) {
+      // A task detail can also be shown without family state loaded.
+    }
+
+    String? ownName;
+    String? ownAvatarUrl;
+    try {
+      final ownProfile = context.read<ParentCubit>().state.user;
+      if (ownProfile?.userId == id) {
+        ownName = ownProfile?.name;
+        ownAvatarUrl = ownProfile?.avatarUrl;
+      }
+    } catch (_) {
+      // The reviewer's API profile or family entry may still be available.
+    }
+
+    String? nonempty(String? value) =>
+        value?.trim().isNotEmpty == true ? value!.trim() : null;
+
+    return ReviewedByParentModel(
+      userId: id,
+      displayName:
+          nonempty(direct?.displayName) ??
+          nonempty(familyParent?.displayName) ??
+          nonempty(ownName),
+      avatarUrl:
+          nonempty(direct?.avatarUrl) ??
+          nonempty(familyParent?.avatarUrl) ??
+          nonempty(ownAvatarUrl),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -92,7 +144,13 @@ class _DoneTaskSheetState extends State<DoneTaskSheet> {
     final photoUrl = (task.submissionImageUrl ?? '').trim();
     final wantsPhoto = (task.proofMode ?? '').toLowerCase().contains('image');
     final showPhoto = wantsPhoto || photoUrl.isNotEmpty;
-    final events = taskTimeline(context, s, task, includeDecision: true);
+    final events = taskTimeline(
+      context,
+      s,
+      task,
+      includeDecision: true,
+      reviewer: _reviewerFor(context, task),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

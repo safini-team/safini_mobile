@@ -4,6 +4,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/relative_date.dart';
+import 'package:safini/core/utils/widgets/ds/ds_avatar.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 
 /// One moment on a task: what happened, and when.
@@ -12,11 +13,15 @@ class TaskTimelineEvent {
     required this.title,
     required this.when,
     required this.dot,
+    this.reviewerName,
+    this.reviewerAvatarUrl,
   });
 
   final String title;
   final String when;
   final Color dot;
+  final String? reviewerName;
+  final String? reviewerAvatarUrl;
 }
 
 /// "Today, 18:04" — the same shape the Done sheet used for the approval line.
@@ -33,6 +38,7 @@ List<TaskTimelineEvent> taskTimeline(
   S s,
   ParentTaskInstanceModel task, {
   required bool includeDecision,
+  ReviewedByParentModel? reviewer,
 }) {
   final events = <TaskTimelineEvent>[];
   final submitted = task.submittedAt;
@@ -47,18 +53,29 @@ List<TaskTimelineEvent> taskTimeline(
   }
   if (!includeDecision) return events;
 
-  final name = task.reviewedByParent?.displayName?.trim() ?? '';
+  final decidedBy = reviewer ?? task.reviewedByParent;
+  final name = decidedBy?.displayName?.trim() ?? '';
+  final knownReviewer = decidedBy?.userId.isNotEmpty == true;
+  final reviewerName = name.isEmpty && knownReviewer
+      ? s.displayNameFallback
+      : name;
   final reviewed = task.reviewedAt;
-  if (name.isEmpty && reviewed == null) return events;
+  if (reviewerName.isEmpty && reviewed == null) return events;
 
   final rejected = task.status.toLowerCase() == 'rejected';
   events.add(
     TaskTimelineEvent(
       title: rejected
-          ? (name.isEmpty ? s.askedToRedoLabel : s.askedToRedoBy(name))
-          : (name.isEmpty ? s.approvedLabel : s.approvedBy(name)),
+          ? (reviewerName.isEmpty
+                ? s.askedToRedoLabel
+                : s.askedToRedoBy(reviewerName))
+          : (reviewerName.isEmpty
+                ? s.approvedLabel
+                : s.approvedBy(reviewerName)),
       when: reviewed == null ? '' : taskMomentLabel(context, s, reviewed),
       dot: rejected ? AppColors.danger : AppColors.success,
+      reviewerName: reviewerName.isEmpty ? null : reviewerName,
+      reviewerAvatarUrl: decidedBy?.avatarUrl,
     ),
   );
   return events;
@@ -109,17 +126,34 @@ class _EventRow extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(bottom: last ? 0 : 14),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    event.title,
-                    style: AppText.chip.copyWith(fontWeight: FontWeight.w500),
-                  ),
-                  if (event.when.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(event.when, style: AppText.metaSm),
+                  if (event.reviewerName != null) ...[
+                    DsInitialAvatar(
+                      name: event.reviewerName!,
+                      imageUrl: event.reviewerAvatarUrl,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 9),
                   ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          event.title,
+                          style: AppText.chip.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (event.when.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(event.when, style: AppText.metaSm),
+                        ],
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
