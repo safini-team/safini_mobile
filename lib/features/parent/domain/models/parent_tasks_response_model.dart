@@ -211,6 +211,7 @@ class ParentTaskInstanceModel {
   /// The Done history shows these when a parent looks back at a task.
   final DateTime? submittedAt;
   final DateTime? reviewedAt;
+  final String? reviewedByUserId;
   final ReviewedByParentModel? reviewedByParent;
 
   const ParentTaskInstanceModel({
@@ -240,6 +241,7 @@ class ParentTaskInstanceModel {
     this.voiceInstructionMime,
     this.submittedAt,
     this.reviewedAt,
+    this.reviewedByUserId,
     this.reviewedByParent,
   });
 
@@ -271,6 +273,7 @@ class ParentTaskInstanceModel {
       voiceInstructionMime: voiceInstructionMime,
       submittedAt: submittedAt,
       reviewedAt: reviewedAt,
+      reviewedByUserId: reviewedByUserId,
       reviewedByParent: reviewedByParent,
     );
   }
@@ -347,6 +350,10 @@ class ParentTaskInstanceModel {
       ]),
       submittedAt: _dateTimeValue(json, ['submitted_at', 'submittedAt']),
       reviewedAt: _dateTimeValue(json, ['reviewed_at', 'reviewedAt']),
+      reviewedByUserId: _nullableStringValue(json, [
+        'reviewed_by_user_id',
+        'reviewedByUserId',
+      ]),
       reviewedByParent: json['reviewed_by_parent'] is Map
           ? ReviewedByParentModel.fromJson(
               Map<String, dynamic>.from(json['reviewed_by_parent'] as Map),

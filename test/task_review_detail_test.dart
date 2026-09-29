@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/theme/app_theme.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/core/utils/widgets/ds/ds_avatar.dart';
 import 'package:safini/features/models/domain/controllers/family_controller.dart';
 import 'package:safini/features/models/domain/controllers/task_controller.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
@@ -144,6 +145,7 @@ void main() {
       reviewedByParent: const ReviewedByParentModel(
         userId: 'parent-1',
         displayName: 'Alex Smith',
+        avatarUrl: 'https://cdn.example/alex.jpg',
       ),
     );
     final repo = _Repo(detail);
@@ -178,9 +180,77 @@ void main() {
     expect(timeline.events, hasLength(2));
     expect(timeline.events.first.title, 'Sent for approval');
     expect(timeline.events.last.title, 'Asked to redo by Alex Smith');
+    expect(timeline.events.last.reviewerName, 'Alex Smith');
+    expect(
+      timeline.events.last.reviewerAvatarUrl,
+      'https://cdn.example/alex.jpg',
+    );
+    final avatar = tester.widget<DsInitialAvatar>(find.byType(DsInitialAvatar));
+    expect(avatar.name, 'Alex Smith');
+    expect(avatar.imageUrl, 'https://cdn.example/alex.jpg');
     expect(
       tester.getTopLeft(find.text('Sent for approval')).dy,
       lessThan(tester.getTopLeft(find.text('Asked to redo by Alex Smith')).dy),
+    );
+  });
+
+  testWidgets('a done task resolves the reviewer from the family by id', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({
+      'parent_family_cache': jsonEncode({
+        'id': 'family',
+        'parents': [
+          {
+            'user_id': 'parent-1',
+            'display_name': 'Alex Smith',
+            'avatar_url': 'https://cdn.example/alex.jpg',
+          },
+        ],
+      }),
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final family = ParentFamilyCubit(_NoFamily(), prefs);
+    final detail = ParentTaskInstanceModel(
+      id: 'bed',
+      status: 'approved',
+      title: 'Make the bed',
+      reviewedAt: decided.toLocal(),
+      reviewedByUserId: 'parent-1',
+    );
+    final cubit = ParentTasksCubit(_Repo(detail), family, _NoTasks());
+    addTearDown(() async {
+      await cubit.close();
+      await family.close();
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        locale: const Locale('en'),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider<ParentFamilyCubit>.value(value: family),
+            BlocProvider<ParentTasksCubit>.value(value: cubit),
+          ],
+          child: Scaffold(body: DoneTaskSheet(task: detail)),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final timeline = tester.widget<TaskTimeline>(find.byType(TaskTimeline));
+    expect(timeline.events.single.title, 'Approved by Alex Smith');
+    expect(
+      timeline.events.single.reviewerAvatarUrl,
+      'https://cdn.example/alex.jpg',
     );
   });
 }
