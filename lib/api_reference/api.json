@@ -2193,13 +2193,344 @@
         }
       }
     },
+    "/v1/children/{child_id}/friends": {
+      "get": {
+        "tags": [
+          "children"
+        ],
+        "summary": "List Child Friends",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Returns the child's own 6-digit ID and a flat friends list. Each card shows avatar, level, tasks approved today, and prizes claimed. No ranking and no wallet balance.\n\n**Frontend note:** Sort by level on the client if you want. Do not render a podium or coins. tasks_done_today counts approved tasks only, so a submitted task is not done yet.",
+        "operationId": "list_child_friends_v1_children__child_id__friends_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The child's public ID and friends.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Child Friends V1 Children  Child Id  Friends Get"
+                },
+                "example": {
+                  "public_id": "482913",
+                  "friends": [
+                    {
+                      "child_id": "8b1c2d3e-4f50-4611-9abc-def012345678",
+                      "public_id": "120045",
+                      "nickname": "Mia",
+                      "level": 4,
+                      "avatar_state": {
+                        "emojis": {
+                          "face": "😎"
+                        }
+                      },
+                      "tasks_done_today": 2,
+                      "tasks_total_today": 3,
+                      "prizes_claimed_count": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Add Child Friend",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Links two children both ways when one enters the other's 6-digit ID. Rejects a self-add, an unknown ID, and a duplicate.\n\n**Frontend note:** Send the digits only. A 4-character invite code will not match.",
+        "operationId": "add_child_friend_v1_children__child_id__friends_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFriendRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The new friend.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Add Child Friend V1 Children  Child Id  Friends Post"
+                },
+                "example": {
+                  "child_id": "8b1c2d3e-4f50-4611-9abc-def012345678",
+                  "public_id": "120045",
+                  "nickname": "Mia",
+                  "level": 4,
+                  "avatar_state": {
+                    "emojis": {
+                      "face": "😎"
+                    }
+                  },
+                  "tasks_done_today": 2,
+                  "tasks_total_today": 3,
+                  "prizes_claimed_count": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/friends/{friend_child_id}": {
+      "delete": {
+        "tags": [
+          "children"
+        ],
+        "summary": "Remove Child Friend",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Removes the friendship for both children.\n\n**Frontend note:** Either child can remove it. The other child's list updates on the next load.",
+        "operationId": "remove_child_friend_v1_children__child_id__friends__friend_child_id__delete",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "friend_child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Friend Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/children/{child_id}/tasks": {
       "get": {
         "tags": [
           "tasks"
         ],
         "summary": "List Child Tasks",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today. Set `include_completed_history=true` to append approved tasks from earlier days for the Done feed. Recurring instances for the selected day are materialised on read. Never for a future day.\nApproved tasks include `reviewed_by_parent` with the reviewing parent’s display name and avatar URL when available.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Gives parents the task list for one child and one day.\n\n**Frontend note:** Use this for the parent tasks screen. Pass `date` to browse other days; it defaults to the family-local today. Set `include_completed_history=true` to append approved tasks from earlier days for the Done feed. Approved tasks include `reviewed_by_parent` with the reviewer's display name and avatar URL when available. Recurring instances for the selected day are materialised on read. Never for a future day.",
         "operationId": "list_child_tasks_v1_children__child_id__tasks_get",
         "security": [
           {
@@ -2280,15 +2611,15 @@
                       },
                       "due_on": "2026-06-10",
                       "status": "approved",
-                      "created_at": "2026-06-10T12:00:00Z",
-                      "updated_at": "2026-06-10T12:00:00Z",
                       "reviewed_by_user_id": "550e8400-e29b-41d4-a716-446655440001",
                       "reviewed_by_parent": {
                         "user_id": "550e8400-e29b-41d4-a716-446655440001",
                         "display_name": "Alex Smith",
                         "avatar_url": "https://cdn.example/alex.jpg"
                       },
-                      "reviewed_at": "2026-06-10T12:10:00Z"
+                      "reviewed_at": "2026-06-10T12:10:00Z",
+                      "created_at": "2026-06-10T12:00:00Z",
+                      "updated_at": "2026-06-10T12:00:00Z"
                     }
                   ]
                 }
@@ -2474,7 +2805,7 @@
           "tasks"
         ],
         "summary": "Get Task",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent open any past task, including what the child sent with it.\n\n**Frontend note:** Use this when a parent opens a task from the Done history. Unlike the list, `submission_image_url` is signed for any status, so an approved task's proof photo still loads. The URL expires after five minutes.\nThe response includes `reviewed_by_parent` with the reviewing parent’s display name and avatar URL when available.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent open any past task, including what the child sent with it and who approved it.\n\n**Frontend note:** Use this when a parent opens a task from the Done history. Unlike the list, `submission_image_url` is signed for any status, so an approved task's proof photo still loads. The response includes `reviewed_by_parent` with the parent's display name and avatar URL when available. Photo URLs expire after five minutes.",
         "operationId": "get_task_v1_tasks__task_id__get",
         "security": [
           {
@@ -2523,15 +2854,15 @@
                   "status": "approved",
                   "submission_note": "Finished the whole chapter",
                   "submission_image_url": "https://project.supabase.co/storage/v1/object/sign/task-proofs/...",
-                  "created_at": "2026-06-10T12:00:00Z",
-                  "updated_at": "2026-06-10T12:00:00Z",
                   "reviewed_by_user_id": "550e8400-e29b-41d4-a716-446655440001",
                   "reviewed_by_parent": {
                     "user_id": "550e8400-e29b-41d4-a716-446655440001",
                     "display_name": "Alex Smith",
                     "avatar_url": "https://cdn.example/alex.jpg"
                   },
-                  "reviewed_at": "2026-06-10T12:10:00Z"
+                  "reviewed_at": "2026-06-10T12:10:00Z",
+                  "created_at": "2026-06-10T12:00:00Z",
+                  "updated_at": "2026-06-10T12:00:00Z"
                 }
               }
             }
@@ -7841,6 +8172,27 @@
         "title": "AIMessageRequest",
         "example": {
           "content": "What should I do today?"
+        }
+      },
+      "AddFriendRequest": {
+        "properties": {
+          "public_id": {
+            "type": "string",
+            "maxLength": 6,
+            "minLength": 6,
+            "pattern": "^\\d{6}$",
+            "title": "Public Id",
+            "description": "The other child's stable 6-digit Safini ID. Not an invite code."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "public_id"
+        ],
+        "title": "AddFriendRequest",
+        "example": {
+          "public_id": "120045"
         }
       },
       "AppRuleUpdateRequest": {
