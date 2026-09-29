@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
+import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/parent/presentation/widgets/tasks/proof_photo_viewer.dart';
 
 /// The child's proof photo, shared by the review sheet and the Done history.
 ///
@@ -47,6 +49,13 @@ class TaskProofPhoto extends StatelessWidget {
       ),
     );
 
+    final photo = url.isEmpty
+        ? placeholder(emptyLabel)
+        : _OpenablePhoto(
+            url: url,
+            failed: placeholder(failedLabel ?? emptyLabel),
+          );
+
     return Container(
       constraints: BoxConstraints(
         minHeight: 170,
@@ -61,19 +70,87 @@ class TaskProofPhoto extends StatelessWidget {
           style: BorderStyle.solid,
         ),
       ),
-      child: loading
-          ? const SizedBox(height: 170)
-          : url.isEmpty
-          ? placeholder(emptyLabel)
-          : Image.network(
-              url,
+      child: loading ? const SizedBox(height: 170) : photo,
+    );
+  }
+}
+
+/// A loaded proof opens full size. A URL that fails stays a placeholder, with
+/// nothing to tap.
+class _OpenablePhoto extends StatefulWidget {
+  const _OpenablePhoto({required this.url, required this.failed});
+
+  final String url;
+  final Widget failed;
+
+  @override
+  State<_OpenablePhoto> createState() => _OpenablePhotoState();
+}
+
+class _OpenablePhotoState extends State<_OpenablePhoto> {
+  bool _failed = false;
+
+  @override
+  void didUpdateWidget(_OpenablePhoto old) {
+    super.didUpdateWidget(old);
+    if (old.url != widget.url) _failed = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_failed) return widget.failed;
+
+    return Semantics(
+      button: true,
+      label: S.of(context).viewPhoto,
+      child: Pressable(
+        onTap: () => showProofPhoto(context, url: widget.url),
+        scale: 0.985,
+        child: Stack(
+          children: [
+            Image.network(
+              widget.url,
               fit: BoxFit.contain,
               width: double.infinity,
               // The URL expires in five minutes. A sheet left open past that
               // shows a placeholder, not a broken image.
-              errorBuilder: (context, _, _) =>
-                  placeholder(failedLabel ?? emptyLabel),
+              errorBuilder: (context, _, _) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && !_failed) setState(() => _failed = true);
+                });
+                return widget.failed;
+              },
             ),
+            const Positioned(
+              right: 10,
+              bottom: 10,
+              child: IgnorePointer(child: _ExpandMark()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpandMark extends StatelessWidget {
+  const _ExpandMark();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.ink.withValues(alpha: 0.45),
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(
+        Icons.open_in_full_rounded,
+        size: 14,
+        color: AppColors.surface,
+      ),
     );
   }
 }

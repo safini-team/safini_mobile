@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/core/theme/app_theme.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/models/domain/controllers/task_controller.dart';
@@ -101,9 +103,33 @@ void main() {
     final frame = await photoFrame(tester, landscape, 'https://p/land.png');
     expect(frame.height, closeTo(frame.width * 3 / 4, 0.01));
   });
+
+  testWidgets('tapping the photo opens it full size, and it can zoom', (
+    tester,
+  ) async {
+    await photoFrame(tester, portrait, 'https://p/open.png');
+    await tester.ensureVisible(find.byType(Image));
+    await tester.tap(find.byType(Image));
+    await tester.pumpAndSettle();
+
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.minScale, 1);
+    expect(viewer.maxScale, 4);
+
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+    expect(find.byType(InteractiveViewer), findsNothing);
+  });
 }
 
-class _NoRepository extends Fake implements IParentTaskRepository {}
+class _NoRepository extends Fake implements IParentTaskRepository {
+  @override
+  Future<Either<Failure, ParentTaskInstanceModel>> fetchTask(
+    String taskId,
+  ) async => const Left(ServerFailure('skip'));
+}
 
 class _NoFamily extends Fake implements ParentFamilyCubit {}
 

@@ -4201,6 +4201,66 @@ class S {
     );
   }
 
+  /// `Sent for approval`
+  String get sentForApproval {
+    return Intl.message(
+      'Sent for approval',
+      name: 'sentForApproval',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approved`
+  String get approvedLabel {
+    return Intl.message('Approved', name: 'approvedLabel', desc: '', args: []);
+  }
+
+  /// `Approved by {name}`
+  String approvedBy(Object name) {
+    return Intl.message(
+      'Approved by $name',
+      name: 'approvedBy',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Asked to redo`
+  String get askedToRedoLabel {
+    return Intl.message(
+      'Asked to redo',
+      name: 'askedToRedoLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Asked to redo by {name}`
+  String askedToRedoBy(Object name) {
+    return Intl.message(
+      'Asked to redo by $name',
+      name: 'askedToRedoBy',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `What should they fix? Optional.`
+  String get redoNoteHint {
+    return Intl.message(
+      'What should they fix? Optional.',
+      name: 'redoNoteHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View photo`
+  String get viewPhoto {
+    return Intl.message('View photo', name: 'viewPhoto', desc: '', args: []);
+  }
+
   /// `Parent's note`
   String get parentsNote {
     return Intl.message(

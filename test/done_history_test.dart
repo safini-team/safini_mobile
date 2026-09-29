@@ -78,7 +78,12 @@ class _Repo extends Fake implements IParentTaskRepository {
       ParentTaskInstanceModel.fromJson({
         ...json,
         'review_note': 'Great job',
+        'submitted_at': '2026-09-27T13:40:00Z',
         'reviewed_at': '2026-09-27T14:05:00Z',
+        'reviewed_by_parent': {
+          'user_id': 'parent-1',
+          'display_name': 'Alex Smith',
+        },
       }),
     );
   }
@@ -230,6 +235,10 @@ void main() {
     expect(find.text('Made it with corners'), findsOneWidget);
     expect(find.text('Great job'), findsOneWidget);
     expect(find.text('Amir · paid 5 coins'), findsOneWidget);
-    expect(find.textContaining('Approved · '), findsOneWidget);
+    expect(find.text('Sent for approval'), findsOneWidget);
+    expect(find.text('Approved by Alex Smith'), findsOneWidget);
+    final sent = tester.getTopLeft(find.text('Sent for approval')).dy;
+    final approved = tester.getTopLeft(find.text('Approved by Alex Smith')).dy;
+    expect(sent, lessThan(approved));
   });
 }
