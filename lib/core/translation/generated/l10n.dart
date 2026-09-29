@@ -7027,6 +7027,215 @@ class S {
       args: [],
     );
   }
+
+  /// `Friends`
+  String get friends {
+    return Intl.message('Friends', name: 'friends', desc: '', args: []);
+  }
+
+  /// `Your Safini ID`
+  String get friendsYourId {
+    return Intl.message(
+      'Your Safini ID',
+      name: 'friendsYourId',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A friend types this to add you.`
+  String get friendsYourIdHint {
+    return Intl.message(
+      'A friend types this to add you.',
+      name: 'friendsYourIdHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy`
+  String get friendsCopy {
+    return Intl.message('Copy', name: 'friendsCopy', desc: '', args: []);
+  }
+
+  /// `ID copied`
+  String get friendsCopied {
+    return Intl.message('ID copied', name: 'friendsCopied', desc: '', args: []);
+  }
+
+  /// `Add a friend`
+  String get friendsAdd {
+    return Intl.message('Add a friend', name: 'friendsAdd', desc: '', args: []);
+  }
+
+  /// `Add a friend`
+  String get friendsAddTitle {
+    return Intl.message(
+      'Add a friend',
+      name: 'friendsAddTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type their 6-digit Safini ID.`
+  String get friendsAddHint {
+    return Intl.message(
+      'Type their 6-digit Safini ID.',
+      name: 'friendsAddHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No friends yet`
+  String get friendsEmptyTitle {
+    return Intl.message(
+      'No friends yet',
+      name: 'friendsEmptyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ask a friend for their Safini ID and add them here.`
+  String get friendsEmptyBody {
+    return Intl.message(
+      'Ask a friend for their Safini ID and add them here.',
+      name: 'friendsEmptyBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By level`
+  String get friendsSortLevel {
+    return Intl.message(
+      'By level',
+      name: 'friendsSortLevel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recent`
+  String get friendsSortRecent {
+    return Intl.message(
+      'Recent',
+      name: 'friendsSortRecent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count, plural, =1{1 task today} other{{count} tasks today}}`
+  String friendsTasksToday(num count) {
+    return Intl.plural(
+      count,
+      one: '1 task today',
+      other: '$count tasks today',
+      name: 'friendsTasksToday',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count, plural, =1{1 prize} other{{count} prizes}}`
+  String friendsPrizes(num count) {
+    return Intl.plural(
+      count,
+      one: '1 prize',
+      other: '$count prizes',
+      name: 'friendsPrizes',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Remove`
+  String get friendsRemove {
+    return Intl.message('Remove', name: 'friendsRemove', desc: '', args: []);
+  }
+
+  /// `Remove {name}?`
+  String friendsRemoveTitle(Object name) {
+    return Intl.message(
+      'Remove $name?',
+      name: 'friendsRemoveTitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `You can add them again with their ID.`
+  String get friendsRemoveBody {
+    return Intl.message(
+      'You can add them again with their ID.',
+      name: 'friendsRemoveBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No one has that ID.`
+  String get friendsNotFound {
+    return Intl.message(
+      'No one has that ID.',
+      name: 'friendsNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You're already friends.`
+  String get friendsAlready {
+    return Intl.message(
+      'You\'re already friends.',
+      name: 'friendsAlready',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `That's your own ID.`
+  String get friendsYourself {
+    return Intl.message(
+      'That\'s your own ID.',
+      name: 'friendsYourself',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter all 6 digits.`
+  String get friendsInvalid {
+    return Intl.message(
+      'Enter all 6 digits.',
+      name: 'friendsInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't load friends. Pull to try again.`
+  String get friendsError {
+    return Intl.message(
+      'Couldn\'t load friends. Pull to try again.',
+      name: 'friendsError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See how your friends are doing`
+  String get friendsRowSubtitle {
+    return Intl.message(
+      'See how your friends are doing',
+      name: 'friendsRowSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

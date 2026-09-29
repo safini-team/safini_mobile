@@ -14,6 +14,7 @@ import 'package:safini/features/common/auth/presentation/pages/role_selection_pa
 import 'package:safini/features/common/profile/presentation/pages/edit_profile_page.dart';
 import 'package:safini/features/common/splash/splash_screen.dart';
 import 'package:safini/features/child/presentation/screens/main/child_main_screen.dart';
+import 'package:safini/features/child/friends/child_friends_screen.dart';
 import 'package:safini/features/child/presentation/screens/avatar/child_avatar_customizer_screen.dart';
 import 'package:safini/features/parent/presentation/screens/family/add_child_page.dart';
 import 'package:safini/features/parent/presentation/screens/main/parent_main_screen.dart';
@@ -86,6 +87,11 @@ class AppRouter {
         name: 'avatar',
         path: '/avatar',
         builder: (context, data) => const ChildAvatarCustomizerScreen(),
+      ),
+      NamedRouteDef(
+        name: 'childFriends',
+        path: '/child-friends',
+        builder: (context, data) => const ChildFriendsScreen(),
       ),
       NamedRouteDef(
         name: 'parentSettings',

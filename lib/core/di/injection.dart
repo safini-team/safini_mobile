@@ -16,6 +16,7 @@ import 'package:safini/features/child/data/services/app_block_service.dart';
 import 'package:safini/features/common/common_injection.dart';
 import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:safini/features/parent/parent_injection.dart';
+import 'package:safini/features/child/friends/friend.dart';
 import 'package:safini/features/prizes/prize.dart';
 import 'package:safini/features/signout/signout_request.dart';
 
@@ -85,6 +86,9 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
   if (!getIt.isRegistered<PrizeApi>()) {
     getIt.registerLazySingleton<PrizeApi>(() => PrizeApi(getIt<Dio>()));
     getIt.registerLazySingleton<SignoutApi>(() => SignoutApi(getIt<Dio>()));
+  }
+  if (!getIt.isRegistered<FriendsApi>()) {
+    getIt.registerLazySingleton<FriendsApi>(() => FriendsApi(getIt<Dio>()));
   }
 
   if (!getIt.isRegistered<OnboardingStore>()) {
