@@ -341,7 +341,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "PIN-kodni kiriting",
     ),
     "appLockForgot": MessageLookupByLibrary.simpleMessage(
-      "PIN-ni unutdingizmi? Chiqing, keyin qayta kiring. Bu telefondagi qulf olib tashlanadi.",
+      "Hisobdan chiqing, keyin qayta kiring. Bu telefondagi PIN kodi o‘chiriladi.",
+    ),
+    "appLockForgotAction": MessageLookupByLibrary.simpleMessage(
+      "Parolni unutdingizmi?",
     ),
     "appLockInvalidPin": MessageLookupByLibrary.simpleMessage(
       "4 ta raqam kiriting",
@@ -359,6 +362,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appLockOn": MessageLookupByLibrary.simpleMessage("Yoqilgan"),
     "appLockSignOut": MessageLookupByLibrary.simpleMessage("Chiqish"),
+    "appLockSignOutFailed": MessageLookupByLibrary.simpleMessage(
+      "Hisobdan chiqib bo‘lmadi. Qayta urinib ko‘ring.",
+    ),
     "appLockStorageError": MessageLookupByLibrary.simpleMessage(
       "PIN-ni shu telefonda saqlab boʻlmadi.",
     ),
@@ -1799,6 +1805,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bir marta och - abadiy qoladi",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("ochilgan"),
+    "updateCta": MessageLookupByLibrary.simpleMessage("Yangilash"),
+    "updateDismiss": MessageLookupByLibrary.simpleMessage("Hozir emas"),
+    "updateHardBody": MessageLookupByLibrary.simpleMessage(
+      "Bu versiya endi ishlamaydi. Davom etish uchun ilovani yangilang.",
+    ),
+    "updateHardTitle": MessageLookupByLibrary.simpleMessage("Yangilash shart"),
+    "updateSoftBody": MessageLookupByLibrary.simpleMessage(
+      "Yangi versiya tayyor.",
+    ),
+    "updateSoftTitle": MessageLookupByLibrary.simpleMessage("Yangilanish bor"),
     "usedLimit": m85,
     "usedNoLimit": m86,
     "usedOfLimit": m87,

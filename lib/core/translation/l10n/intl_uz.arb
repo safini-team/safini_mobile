@@ -812,8 +812,10 @@
   "appLockInvalidPin": "4 ta raqam kiriting",
   "appLockLockout": "Juda koʻp urinish. Biroz kuting.",
   "appLockStorageError": "PIN-ni shu telefonda saqlab boʻlmadi.",
-  "appLockForgot": "PIN-ni unutdingizmi? Chiqing, keyin qayta kiring. Bu telefondagi qulf olib tashlanadi.",
+  "appLockForgot": "Hisobdan chiqing, keyin qayta kiring. Bu telefondagi PIN kodi o‘chiriladi.",
+  "appLockForgotAction": "Parolni unutdingizmi?",
   "appLockSignOut": "Chiqish",
+  "appLockSignOutFailed": "Hisobdan chiqib bo‘lmadi. Qayta urinib ko‘ring.",
   "appLockEnabled": "Qulf yoqildi",
   "appLockDisabled": "Qulf oʻchirildi",
   "appLockChanged": "PIN yangilandi",
@@ -866,5 +868,11 @@
   "friendsYourself": "Bu sening ID raqaming.",
   "friendsInvalid": "6 ta raqamni ham yoz.",
   "friendsError": "Doʻstlarni yuklab boʻlmadi. Qayta urinib koʻrish uchun pastga tort.",
-  "friendsRowSubtitle": "Doʻstlaring qanday ketayotganini koʻr"
+  "friendsRowSubtitle": "Doʻstlaring qanday ketayotganini koʻr",
+  "updateHardTitle": "Yangilash shart",
+  "updateHardBody": "Bu versiya endi ishlamaydi. Davom etish uchun ilovani yangilang.",
+  "updateSoftTitle": "Yangilanish bor",
+  "updateSoftBody": "Yangi versiya tayyor.",
+  "updateCta": "Yangilash",
+  "updateDismiss": "Hozir emas"
 }

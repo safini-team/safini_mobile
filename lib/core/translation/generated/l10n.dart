@@ -6758,11 +6758,21 @@ class S {
     );
   }
 
-  /// `Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.`
+  /// `Sign out, then sign in again. This clears the PIN on this phone.`
   String get appLockForgot {
     return Intl.message(
-      'Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.',
+      'Sign out, then sign in again. This clears the PIN on this phone.',
       name: 'appLockForgot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forgot password?`
+  String get appLockForgotAction {
+    return Intl.message(
+      'Forgot password?',
+      name: 'appLockForgotAction',
       desc: '',
       args: [],
     );
@@ -6771,6 +6781,16 @@ class S {
   /// `Sign out`
   String get appLockSignOut {
     return Intl.message('Sign out', name: 'appLockSignOut', desc: '', args: []);
+  }
+
+  /// `Could not sign out. Try again.`
+  String get appLockSignOutFailed {
+    return Intl.message(
+      'Could not sign out. Try again.',
+      name: 'appLockSignOutFailed',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `App lock is on`
@@ -7255,6 +7275,56 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Update required`
+  String get updateHardTitle {
+    return Intl.message(
+      'Update required',
+      name: 'updateHardTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This version is no longer supported. Please update to continue.`
+  String get updateHardBody {
+    return Intl.message(
+      'This version is no longer supported. Please update to continue.',
+      name: 'updateHardBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update available`
+  String get updateSoftTitle {
+    return Intl.message(
+      'Update available',
+      name: 'updateSoftTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A newer version is ready.`
+  String get updateSoftBody {
+    return Intl.message(
+      'A newer version is ready.',
+      name: 'updateSoftBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update`
+  String get updateCta {
+    return Intl.message('Update', name: 'updateCta', desc: '', args: []);
+  }
+
+  /// `Not now`
+  String get updateDismiss {
+    return Intl.message('Not now', name: 'updateDismiss', desc: '', args: []);
   }
 }
 

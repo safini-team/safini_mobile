@@ -116,6 +116,18 @@ class AppIcons {
     color: color,
   );
 
+  static Widget close({
+    double size = 14,
+    Color color = AppColors.textTertiary,
+  }) => _svg(
+    '<path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" '
+    'stroke-linecap="round"/>',
+    width: 14,
+    height: 14,
+    size: size,
+    color: color,
+  );
+
   static Widget copy({
     double size = 14,
     Color color = AppColors.textOnPrimary,

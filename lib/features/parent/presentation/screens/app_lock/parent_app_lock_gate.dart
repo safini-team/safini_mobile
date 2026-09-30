@@ -24,8 +24,33 @@ String? parentAppLockErrorText(S s, ParentAppLockError? error) {
 }
 
 /// Full-screen PIN gate. Sits above every parent route, including settings.
-class ParentAppLockGate extends StatelessWidget {
+class ParentAppLockGate extends StatefulWidget {
   const ParentAppLockGate({super.key});
+
+  @override
+  State<ParentAppLockGate> createState() => _ParentAppLockGateState();
+}
+
+class _ParentAppLockGateState extends State<ParentAppLockGate> {
+  bool _showRecovery = false;
+  bool _signingOut = false;
+  bool _signOutFailed = false;
+
+  Future<void> _signOut() async {
+    if (_signingOut) return;
+    setState(() {
+      _signingOut = true;
+      _signOutFailed = false;
+    });
+    try {
+      await context.read<AuthSessionCubit>().signOut();
+    } catch (error) {
+      debugPrint('PIN recovery sign-out failed: $error');
+      if (mounted) setState(() => _signOutFailed = true);
+    } finally {
+      if (mounted) setState(() => _signingOut = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,51 +86,99 @@ class ParentAppLockGate extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 22),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: ParentPinPad(
-                        title: s.appLockEnterPin,
-                        error: parentAppLockErrorText(s, state.error),
-                        enabled: !state.busy,
-                        clearToken: Object.hash(
-                          state.error,
-                          state.failedAttempts,
-                          state.lockoutUntil,
-                          state.busy,
-                        ),
-                        onCompleted: (pin) {
-                          context.read<ParentAppLockCubit>().unlock(pin);
-                        },
+                  if (_showRecovery) ...[
+                    const Spacer(),
+                    Text(
+                      s.appLockForgotAction,
+                      textAlign: TextAlign.center,
+                      style: AppText.title2,
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.gutter,
+                      ),
+                      child: Text(
+                        s.appLockForgot,
+                        textAlign: TextAlign.center,
+                        style: AppText.bodyRegular,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.gutter,
-                      8,
-                      AppSpacing.gutter,
-                      8,
+                    const Spacer(),
+                    if (_signOutFailed)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          s.appLockSignOutFailed,
+                          style: AppText.bodyRegular.copyWith(
+                            color: AppColors.danger,
+                          ),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.gutter,
+                      ),
+                      child: DsDestructiveButton(
+                        key: const ValueKey('app-lock-sign-out'),
+                        label: s.appLockSignOut,
+                        onTap: _signingOut ? null : _signOut,
+                      ),
                     ),
-                    child: Text(
-                      s.appLockForgot,
-                      textAlign: TextAlign.center,
-                      style: AppText.footnote,
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.gutter,
+                        0,
+                        AppSpacing.gutter,
+                        12,
+                      ),
+                      child: DsPrimaryButton.secondary(
+                        key: const ValueKey('app-lock-recovery-cancel'),
+                        label: s.cancel,
+                        onTap: _signingOut
+                            ? null
+                            : () => setState(() => _showRecovery = false),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.gutter,
-                      0,
-                      AppSpacing.gutter,
-                      12,
+                  ] else ...[
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: ParentPinPad(
+                          title: s.appLockEnterPin,
+                          error: parentAppLockErrorText(s, state.error),
+                          enabled: !state.busy,
+                          clearToken: Object.hash(
+                            state.error,
+                            state.failedAttempts,
+                            state.lockoutUntil,
+                            state.busy,
+                          ),
+                          onCompleted: (pin) {
+                            context.read<ParentAppLockCubit>().unlock(pin);
+                          },
+                        ),
+                      ),
                     ),
-                    child: DsDestructiveButton(
-                      key: const ValueKey('app-lock-sign-out'),
-                      label: s.appLockSignOut,
-                      filled: false,
-                      onTap: () => _confirmSignOut(context, s),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.gutter,
+                        8,
+                        AppSpacing.gutter,
+                        12,
+                      ),
+                      child: TextButton(
+                        key: const ValueKey('app-lock-forgot'),
+                        onPressed: () => setState(() => _showRecovery = true),
+                        child: Text(
+                          s.appLockForgotAction,
+                          style: AppText.bodyRegular.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -113,34 +186,5 @@ class ParentAppLockGate extends StatelessWidget {
         );
       },
     );
-  }
-
-  Future<void> _confirmSignOut(BuildContext context, S s) async {
-    final auth = context.read<AuthSessionCubit>();
-    final confirmed = await showDsSheet<bool>(
-      context: context,
-      builder: (context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(s.logoutConfirmTitle, style: AppText.title3),
-          const SizedBox(height: 8),
-          Text(s.appLockForgot, style: AppText.bodyRegular),
-          const SizedBox(height: 22),
-          DsPrimaryButton(
-            label: s.appLockSignOut,
-            background: AppColors.danger,
-            shadow: const [],
-            onTap: () => Navigator.of(context).pop(true),
-          ),
-          const SizedBox(height: 9),
-          DsPrimaryButton.secondary(
-            label: s.cancel,
-            onTap: () => Navigator.of(context).pop(false),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true) await auth.signOut();
   }
 }

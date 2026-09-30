@@ -330,7 +330,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appLockEnabled": MessageLookupByLibrary.simpleMessage("App lock is on"),
     "appLockEnterPin": MessageLookupByLibrary.simpleMessage("Enter your PIN"),
     "appLockForgot": MessageLookupByLibrary.simpleMessage(
-      "Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.",
+      "Sign out, then sign in again. This clears the PIN on this phone.",
+    ),
+    "appLockForgotAction": MessageLookupByLibrary.simpleMessage(
+      "Forgot password?",
     ),
     "appLockInvalidPin": MessageLookupByLibrary.simpleMessage("Use 4 digits"),
     "appLockLockout": MessageLookupByLibrary.simpleMessage(
@@ -346,6 +349,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appLockOn": MessageLookupByLibrary.simpleMessage("On"),
     "appLockSignOut": MessageLookupByLibrary.simpleMessage("Sign out"),
+    "appLockSignOutFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not sign out. Try again.",
+    ),
     "appLockStorageError": MessageLookupByLibrary.simpleMessage(
       "Couldn\'t save the PIN on this phone.",
     ),
@@ -1702,6 +1708,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Unlock once, keep forever",
     ),
     "unlocked": MessageLookupByLibrary.simpleMessage("unlocked"),
+    "updateCta": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateDismiss": MessageLookupByLibrary.simpleMessage("Not now"),
+    "updateHardBody": MessageLookupByLibrary.simpleMessage(
+      "This version is no longer supported. Please update to continue.",
+    ),
+    "updateHardTitle": MessageLookupByLibrary.simpleMessage("Update required"),
+    "updateSoftBody": MessageLookupByLibrary.simpleMessage(
+      "A newer version is ready.",
+    ),
+    "updateSoftTitle": MessageLookupByLibrary.simpleMessage("Update available"),
     "usedLimit": m85,
     "usedNoLimit": m86,
     "usedOfLimit": m87,
