@@ -1,16 +1,23 @@
 # iOS Screen Time
 
-The release implementation replaces the former debug-only prototype. Child mode
-is enabled on iOS, with Apple Family Sharing child authorization required before
-setup can complete. See `ios_screen_time_review.md` for provisioning and testing.
+The native implementation replaces the former debug-only prototype. As of
+2026-09-30, release iOS child entry clearly says kid mode is coming soon.
+The iOS simulator exercised invite claiming and policy retrieval from the API.
+Apple child authorization, app-token linking, monitoring, shields and bonus
+redemption still need a signed real-device test. Parent mode remains available
+on iPhone for a child using Android. Debug builds can open iOS child mode with
+`--dart-define=IOS_CHILD_MODE_PREVIEW=true`. See `ios_screen_time_review.md`
+for verification required before lifting the release gate.
 
 ## Architecture
 
 - Flutter: `IosScreenTimeCubit` loads the authenticated child's policy on entry,
   resume, every 30 seconds while foreground, and after successful redemption.
-- Native setup: one app token is linked locally to each catalog rule. Apple does
+- Native setup: one app token is linked locally to each app rule. Apple does
   not tell Safini the selected app's identity; the supervising parent must choose
   the matching app. Categories, websites and overlapping selections are rejected.
+- Authorization requests the Apple child account; an account outside the
+  parent's Family Sharing group shows a setup error rather than self-approval.
 - Links cannot be edited while authorized. The parent first revokes Safini's
   access in Apple Settings, then authorizes and links again. Signing out preserves
   enforcement. An authorized device cannot silently switch child accounts.
@@ -26,7 +33,7 @@ setup can complete. See `ios_screen_time_review.md` for provisioning and testing
 
 ## API dependency
 
-Deploy the companion API migration and endpoints before releasing mobile:
+The iOS implementation uses these existing API endpoints:
 
 - GET `/v1/children/{id}/screen-time-policy`: family timezone, global cap,
   per-app rules and today's granted bonus totals with expiry.

@@ -885,7 +885,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Экранное время недоступно на этом устройстве. Включите Экранное время в Настройках и повторите попытку.",
     ),
     "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
-      "Попросите родителя помочь на этом iPhone или iPad. Лучше всего, если Apple Account ребёнка входит в семейную группу Apple родителя. Если нет, Safini запросит Экранное время на этом устройстве.",
+      "Попросите родителя помочь на этом iPhone или iPad. Войдите в Apple Account ребёнка, который входит в семейную группу Apple родителя. Родитель должен одобрить доступ к Экранному времени.",
     ),
     "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
       "Связано на этом устройстве",
@@ -940,7 +940,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "keepHolding": MessageLookupByLibrary.simpleMessage("Держи…"),
     "kidComingSoonIos": MessageLookupByLibrary.simpleMessage("Скоро на iOS"),
     "kidComingSoonIosBody": MessageLookupByLibrary.simpleMessage(
-      "Установите Safini на телефон ребёнка. Приложение для родителя уже работает на iPhone.",
+      "Детский режим пока недоступен на iPhone. Установите Safini на Android-телефон ребёнка. Режим родителя работает на iPhone.",
     ),
     "kidComingSoonIosTitle": MessageLookupByLibrary.simpleMessage(
       "Детский режим скоро появится на iPhone",

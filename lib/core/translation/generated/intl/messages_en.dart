@@ -811,13 +811,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsLastSynced": m36,
     "installedAppsLimited": MessageLookupByLibrary.simpleMessage("Limited"),
     "installedAppsNoMatch": MessageLookupByLibrary.simpleMessage(
-      "No installed apps match your search.",
+      "No apps match your search.",
     ),
     "installedAppsNotControllable": MessageLookupByLibrary.simpleMessage(
       "Safini can\'t limit this app yet.",
     ),
     "installedAppsSearchHint": MessageLookupByLibrary.simpleMessage(
-      "Search installed apps",
+      "Search apps",
     ),
     "installedAppsSetLimit": MessageLookupByLibrary.simpleMessage(
       "Set a daily limit",
@@ -869,7 +869,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Screen Time is unavailable on this device. Turn Screen Time on in Settings, then try again.",
     ),
     "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
-      "Ask your parent to help on this iPhone or iPad. Best set up with the child’s Apple Account in the parent’s Apple Family Sharing group. If it isn’t, Safini asks for Screen Time on this device instead.",
+      "Ask your parent to help on this iPhone or iPad. Sign in with the child’s Apple Account in the parent’s Apple Family Sharing group. Your parent must approve Screen Time access.",
     ),
     "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
       "Linked on this device",
@@ -928,7 +928,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Coming soon on iOS",
     ),
     "kidComingSoonIosBody": MessageLookupByLibrary.simpleMessage(
-      "Set Safini up on your child’s phone. The parent app already works on iPhone.",
+      "Kid mode isn\'t available on iPhone yet. Set up Safini on your child\'s Android phone. Parent mode works on iPhone.",
     ),
     "kidComingSoonIosTitle": MessageLookupByLibrary.simpleMessage(
       "Kid mode is coming to iPhone",

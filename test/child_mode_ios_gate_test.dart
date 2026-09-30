@@ -10,7 +10,7 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/common/auth/presentation/pages/role_selection_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Child accounts reach the native Screen Time setup after claiming a profile.
+/// iOS shows the coming-soon message; Android keeps the child entry.
 Future<void> _pumpRoles(WidgetTester tester) async {
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
@@ -37,15 +37,17 @@ Future<void> _pumpRoles(WidgetTester tester) async {
 void main() {
   tearDown(() => debugDefaultTargetPlatformOverride = null);
 
-  testWidgets('iOS exposes child mode now that release setup is available', (
-    tester,
-  ) async {
+  testWidgets('iOS labels kid mode as coming soon', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    expect(isChildModeAvailable, isTrue);
+    expect(isChildModeAvailable, isFalse);
     await _pumpRoles(tester);
-    expect(find.text('Earn coins & play'), findsOneWidget);
+    expect(find.text('Coming soon on iOS'), findsOneWidget);
     expect(find.text('Back to sign in'), findsOneWidget);
-    expect(find.text('Coming soon on iOS'), findsNothing);
+    expect(find.text('Earn coins & play'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('role-kid')));
+    await tester.pumpAndSettle();
+    expect(find.text('Kid mode is coming to iPhone'), findsOneWidget);
+    expect(find.textContaining('Kid mode isn\'t available on iPhone yet'), findsOneWidget);
     debugDefaultTargetPlatformOverride = null;
   });
 

@@ -2985,20 +2985,20 @@ class S {
     );
   }
 
-  /// `Search installed apps`
+  /// `Search apps`
   String get installedAppsSearchHint {
     return Intl.message(
-      'Search installed apps',
+      'Search apps',
       name: 'installedAppsSearchHint',
       desc: '',
       args: [],
     );
   }
 
-  /// `No installed apps match your search.`
+  /// `No apps match your search.`
   String get installedAppsNoMatch {
     return Intl.message(
-      'No installed apps match your search.',
+      'No apps match your search.',
       name: 'installedAppsNoMatch',
       desc: '',
       args: [],
@@ -5116,10 +5116,10 @@ class S {
     );
   }
 
-  /// `Set Safini up on your child’s phone. The parent app already works on iPhone.`
+  /// `Kid mode isn't available on iPhone yet. Set up Safini on your child's Android phone. Parent mode works on iPhone.`
   String get kidComingSoonIosBody {
     return Intl.message(
-      'Set Safini up on your child’s phone. The parent app already works on iPhone.',
+      'Kid mode isn\'t available on iPhone yet. Set up Safini on your child\'s Android phone. Parent mode works on iPhone.',
       name: 'kidComingSoonIosBody',
       desc: '',
       args: [],
@@ -5136,10 +5136,10 @@ class S {
     );
   }
 
-  /// `Ask your parent to help on this iPhone or iPad. Best set up with the child’s Apple Account in the parent’s Apple Family Sharing group. If it isn’t, Safini asks for Screen Time on this device instead.`
+  /// `Ask your parent to help on this iPhone or iPad. Sign in with the child’s Apple Account in the parent’s Apple Family Sharing group. Your parent must approve Screen Time access.`
   String get iosScreenTimeFamily {
     return Intl.message(
-      'Ask your parent to help on this iPhone or iPad. Best set up with the child’s Apple Account in the parent’s Apple Family Sharing group. If it isn’t, Safini asks for Screen Time on this device instead.',
+      'Ask your parent to help on this iPhone or iPad. Sign in with the child’s Apple Account in the parent’s Apple Family Sharing group. Your parent must approve Screen Time access.',
       name: 'iosScreenTimeFamily',
       desc: '',
       args: [],

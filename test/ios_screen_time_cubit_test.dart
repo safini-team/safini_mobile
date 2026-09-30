@@ -134,16 +134,13 @@ void main() {
     },
   );
   test(
-    'a device outside Family Sharing falls back to individual authorization',
+    'a device outside Family Sharing requires a child Apple Account',
     () async {
       native.childAuthFailure = 'invalid_account';
       await cubit.start('child');
       await cubit.authorize();
-      expect(native.authorizeCalls, [
-        ScreenTimeMember.child,
-        ScreenTimeMember.individual,
-      ]);
-      expect(cubit.state.errorCode, isNull);
+      expect(native.authorizeCalls, [ScreenTimeMember.child]);
+      expect(cubit.state.errorCode, 'invalid_account');
     },
   );
   test('a non-account authorization failure is surfaced, not retried', () async {
