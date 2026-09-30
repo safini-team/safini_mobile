@@ -150,6 +150,37 @@ void main() {
     });
   });
 
+  test('iOS store URL stays on the Safini App Store listing', () {
+    const ios = PlatformVersionPolicy(
+      minSupported: '1.0.0',
+      latestRecommended: '1.1.0',
+      storeUrl: 'https://apps.apple.com/app/id0000000000',
+    );
+    expect(ios.effectiveStoreUrl(isIos: true), kAppStoreListingUrl);
+    expect(
+      const PlatformVersionPolicy(
+        minSupported: '1.0.0',
+        latestRecommended: '1.1.0',
+        storeUrl: kPlayStoreListingUrl,
+      ).effectiveStoreUrl(isIos: true),
+      kAppStoreListingUrl,
+    );
+    expect(
+      const PlatformVersionPolicy(
+        minSupported: '1.0.0',
+        latestRecommended: '1.1.0',
+        storeUrl: 'https://apps.apple.com/us/app/safini/id6761075183',
+      ).effectiveStoreUrl(isIos: true),
+      'https://apps.apple.com/us/app/safini/id6761075183',
+    );
+    expect(
+      VersionPolicy.forced(
+        VersionGateForce.hard,
+      ).ios.effectiveStoreUrl(isIos: true),
+      kAppStoreListingUrl,
+    );
+  });
+
   group('VersionGateCubit', () {
     late _FakeClient client;
     late VersionPolicyStore store;
@@ -178,7 +209,7 @@ void main() {
       ios: PlatformVersionPolicy(
         minSupported: '2.0.0',
         latestRecommended: '2.0.0',
-        storeUrl: 'https://apps.apple.com/app/id123',
+        storeUrl: 'https://apps.apple.com/us/app/safini/id6761075183',
       ),
     );
 
@@ -305,7 +336,28 @@ void main() {
       client.policy = hard;
       await cubit.refresh();
       await cubit.openStore();
-      expect(opened, [Uri.parse('https://apps.apple.com/app/id123')]);
+      expect(opened, [
+        Uri.parse('https://apps.apple.com/us/app/safini/id6761075183'),
+      ]);
+    });
+
+    test('unknown installed version never triggers a hard gate', () async {
+      await cubit.close();
+      cubit = VersionGateCubit(
+        client: client,
+        store: store,
+        launcher: VersionUpdateLauncher(
+          startImmediate: () async => false,
+          startFlexible: () async => false,
+          openUrl: (_) async => true,
+        ),
+        installedVersion: () async => '',
+        isIos: () => false,
+      );
+      client.policy = hard;
+      await cubit.refresh();
+      expect(cubit.state.tier, VersionGateTier.silent);
+      expect(cubit.state.blocksApp, isFalse);
     });
   });
 }

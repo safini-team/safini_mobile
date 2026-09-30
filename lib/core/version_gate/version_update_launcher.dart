@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:safini/core/version_gate/version_gate_tier.dart';
-import 'package:safini/core/version_gate/version_policy.dart';
 
 /// Play In-App Updates (Android) plus store-URL fallback.
 ///
@@ -37,10 +36,7 @@ class VersionUpdateLauncher {
   }
 
   Future<bool> openStoreUrl(String storeUrl) async {
-    final raw = storeUrl.trim().isEmpty
-        ? kPlayStoreListingUrl
-        : storeUrl.trim();
-    final uri = Uri.tryParse(raw);
+    final uri = Uri.tryParse(storeUrl.trim());
     if (uri == null || !uri.hasScheme) return false;
     try {
       return await _openUrl(uri);

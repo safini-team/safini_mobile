@@ -44,6 +44,16 @@ class _SeededAuth extends AuthSessionCubit {
         _FakeTokens(),
       );
 
+  int signOutCalls = 0;
+  bool failSignOut = false;
+
+  @override
+  Future<void> signOut() async {
+    signOutCalls++;
+    if (failSignOut) throw StateError('Sign-out unavailable');
+    emit(const AuthSessionState(status: AuthSessionStatus.unauthenticated));
+  }
+
   void seed(String? accountType) {
     emit(
       AuthSessionState(
@@ -155,6 +165,50 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Enter your PIN'), findsNothing);
     expect(find.text('CHILD SHELL'), findsOneWidget);
+  });
+
+  testWidgets('forgot PIN reveals a working sign-out with cancel and retry', (
+    tester,
+  ) async {
+    await store.write(const ParentPinHasher().hash('2580'));
+    await tester.pumpWidget(
+      _app(
+        auth: auth,
+        lock: lock,
+        home: const ParentAppLockHost(
+          child: Scaffold(body: Text('PARENT SHELL')),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('app-lock-forgot')), findsOneWidget);
+    expect(find.byKey(const ValueKey('app-lock-sign-out')), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('app-lock-forgot')));
+    await tester.pumpAndSettle();
+    expect(find.text('Forgot password?'), findsOneWidget);
+    expect(find.byKey(const ValueKey('app-lock-sign-out')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('app-lock-recovery-cancel')));
+    await tester.pumpAndSettle();
+    expect(find.text('Enter your PIN'), findsOneWidget);
+    expect(find.byKey(const ValueKey('app-lock-sign-out')), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('app-lock-forgot')));
+    await tester.pumpAndSettle();
+    auth.failSignOut = true;
+    await tester.tap(find.byKey(const ValueKey('app-lock-sign-out')));
+    await tester.pumpAndSettle();
+    expect(find.text('Could not sign out. Try again.'), findsOneWidget);
+    expect(auth.state.status, AuthSessionStatus.authenticated);
+
+    auth.failSignOut = false;
+    await tester.tap(find.byKey(const ValueKey('app-lock-sign-out')));
+    await tester.pumpAndSettle();
+    expect(auth.signOutCalls, 2);
+    expect(auth.state.status, AuthSessionStatus.unauthenticated);
+    expect(find.byKey(const ValueKey('app-lock-sign-out')), findsNothing);
   });
 
   testWidgets('locking again covers parent chrome with the PIN gate', (

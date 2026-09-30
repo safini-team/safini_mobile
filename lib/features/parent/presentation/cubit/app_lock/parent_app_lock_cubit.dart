@@ -267,6 +267,7 @@ class ParentAppLockCubit extends Cubit<ParentAppLockState> {
       await _store.clear();
     } catch (e) {
       debugPrint('Parent app lock wipe failed: $e');
+      rethrow;
     }
     _safeEmit(
       state.copyWith(

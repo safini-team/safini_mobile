@@ -341,7 +341,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "PIN-kodni kiriting",
     ),
     "appLockForgot": MessageLookupByLibrary.simpleMessage(
-      "PIN-ni unutdingizmi? Chiqing, keyin qayta kiring. Bu telefondagi qulf olib tashlanadi.",
+      "Hisobdan chiqing, keyin qayta kiring. Bu telefondagi PIN kodi o‘chiriladi.",
+    ),
+    "appLockForgotAction": MessageLookupByLibrary.simpleMessage(
+      "Parolni unutdingizmi?",
     ),
     "appLockInvalidPin": MessageLookupByLibrary.simpleMessage(
       "4 ta raqam kiriting",
@@ -359,6 +362,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appLockOn": MessageLookupByLibrary.simpleMessage("Yoqilgan"),
     "appLockSignOut": MessageLookupByLibrary.simpleMessage("Chiqish"),
+    "appLockSignOutFailed": MessageLookupByLibrary.simpleMessage(
+      "Hisobdan chiqib bo‘lmadi. Qayta urinib ko‘ring.",
+    ),
     "appLockStorageError": MessageLookupByLibrary.simpleMessage(
       "PIN-ni shu telefonda saqlab boʻlmadi.",
     ),

@@ -143,7 +143,8 @@ class VersionGateCubit extends Cubit<VersionGateState> {
     } catch (error) {
       debugPrint('PackageInfo unavailable for version gate: $error');
     }
-    return '0.0.0';
+    // An unknown installed version must not be treated as an old one.
+    return '';
   }
 
   static bool _platformIsIos() {

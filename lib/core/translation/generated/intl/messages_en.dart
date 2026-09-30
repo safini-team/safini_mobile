@@ -330,7 +330,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appLockEnabled": MessageLookupByLibrary.simpleMessage("App lock is on"),
     "appLockEnterPin": MessageLookupByLibrary.simpleMessage("Enter your PIN"),
     "appLockForgot": MessageLookupByLibrary.simpleMessage(
-      "Forgot your PIN? Sign out, then sign in again. That clears the lock on this phone.",
+      "Sign out, then sign in again. This clears the PIN on this phone.",
+    ),
+    "appLockForgotAction": MessageLookupByLibrary.simpleMessage(
+      "Forgot password?",
     ),
     "appLockInvalidPin": MessageLookupByLibrary.simpleMessage("Use 4 digits"),
     "appLockLockout": MessageLookupByLibrary.simpleMessage(
@@ -346,6 +349,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appLockOn": MessageLookupByLibrary.simpleMessage("On"),
     "appLockSignOut": MessageLookupByLibrary.simpleMessage("Sign out"),
+    "appLockSignOutFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not sign out. Try again.",
+    ),
     "appLockStorageError": MessageLookupByLibrary.simpleMessage(
       "Couldn\'t save the PIN on this phone.",
     ),

@@ -21,8 +21,17 @@ class SoftUpdateBanner extends StatelessWidget {
     return BlocBuilder<VersionGateCubit, VersionGateState>(
       builder: (context, state) {
         final message = state.policy?.message;
-        final title = versionGateCopy(message?.softTitle, s.updateSoftTitle);
-        final body = versionGateCopy(message?.softBody, s.updateSoftBody);
+        final locale = Localizations.localeOf(context);
+        final title = versionGateCopy(
+          message?.softTitle,
+          s.updateSoftTitle,
+          locale,
+        );
+        final body = versionGateCopy(
+          message?.softBody,
+          s.updateSoftBody,
+          locale,
+        );
 
         return Padding(
           padding: const EdgeInsets.fromLTRB(

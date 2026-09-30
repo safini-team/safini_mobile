@@ -10,7 +10,9 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/version_gate/version_gate_cubit.dart';
 import 'package:safini/core/version_gate/version_gate_state.dart';
 
-String versionGateCopy(String? remote, String localized) {
+String versionGateCopy(String? remote, String localized, Locale locale) {
+  // The policy contract has one English message, without locale variants.
+  if (locale.languageCode != 'en') return localized;
   final value = remote?.trim();
   if (value == null || value.isEmpty) return localized;
   return value;
@@ -26,8 +28,17 @@ class HardUpdateGate extends StatelessWidget {
     return BlocBuilder<VersionGateCubit, VersionGateState>(
       builder: (context, state) {
         final message = state.policy?.message;
-        final title = versionGateCopy(message?.hardTitle, s.updateHardTitle);
-        final body = versionGateCopy(message?.hardBody, s.updateHardBody);
+        final locale = Localizations.localeOf(context);
+        final title = versionGateCopy(
+          message?.hardTitle,
+          s.updateHardTitle,
+          locale,
+        );
+        final body = versionGateCopy(
+          message?.hardBody,
+          s.updateHardBody,
+          locale,
+        );
 
         return PopScope(
           canPop: false,

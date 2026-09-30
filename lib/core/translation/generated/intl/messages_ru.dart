@@ -336,7 +336,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appLockEnterPin": MessageLookupByLibrary.simpleMessage("Введите PIN-код"),
     "appLockForgot": MessageLookupByLibrary.simpleMessage(
-      "Забыли PIN? Выйдите из аккаунта и войдите снова. Блокировка на этом телефоне снимется.",
+      "Выйдите из аккаунта и войдите снова. PIN на этом телефоне сбросится.",
+    ),
+    "appLockForgotAction": MessageLookupByLibrary.simpleMessage(
+      "Забыли пароль?",
     ),
     "appLockInvalidPin": MessageLookupByLibrary.simpleMessage("Нужны 4 цифры"),
     "appLockLockout": MessageLookupByLibrary.simpleMessage(
@@ -352,6 +355,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appLockOn": MessageLookupByLibrary.simpleMessage("Вкл."),
     "appLockSignOut": MessageLookupByLibrary.simpleMessage("Выйти"),
+    "appLockSignOutFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось выйти. Попробуйте ещё раз.",
+    ),
     "appLockStorageError": MessageLookupByLibrary.simpleMessage(
       "Не удалось сохранить PIN на этом телефоне.",
     ),

@@ -114,6 +114,46 @@ void main() {
     );
     expect(find.text('Today'), findsOneWidget);
   });
+
+  testWidgets('Russian gate copy stays localized with English remote copy', (
+    tester,
+  ) async {
+    client.policy = VersionPolicy(
+      android: _hardPolicy.android,
+      ios: _hardPolicy.ios,
+      message: const VersionPolicyMessage(
+        hardTitle: 'Remote update required',
+        hardBody: 'Remote English body',
+      ),
+    );
+    await tester.pumpWidget(
+      _app(cubit, child: const Text('Today'), locale: const Locale('ru')),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Нужно обновить'), findsOneWidget);
+    expect(find.text('Remote update required'), findsNothing);
+  });
+
+  testWidgets('Russian soft banner ignores English remote copy', (
+    tester,
+  ) async {
+    client.policy = VersionPolicy(
+      android: _softPolicy.android,
+      ios: _softPolicy.ios,
+      message: const VersionPolicyMessage(
+        softTitle: 'Remote update available',
+        softBody: 'Remote English body',
+      ),
+    );
+    await tester.pumpWidget(
+      _app(cubit, child: const Text('Today'), locale: const Locale('ru')),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Доступно обновление'), findsOneWidget);
+    expect(find.text('Remote update available'), findsNothing);
+  });
 }
 
 const _hardPolicy = VersionPolicy(
@@ -149,12 +189,16 @@ class _FakeClient extends VersionPolicyClient {
   Future<VersionPolicy?> fetch() async => policy;
 }
 
-Widget _app(VersionGateCubit cubit, {required Widget child}) {
+Widget _app(
+  VersionGateCubit cubit, {
+  required Widget child,
+  Locale locale = const Locale('en'),
+}) {
   return BlocProvider.value(
     value: cubit,
     child: MaterialApp(
       theme: AppTheme.light,
-      locale: const Locale('en'),
+      locale: locale,
       localizationsDelegates: const [
         S.delegate,
         GlobalMaterialLocalizations.delegate,

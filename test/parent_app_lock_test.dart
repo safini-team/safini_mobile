@@ -194,6 +194,23 @@ void main() {
       expect(cubit.state.locked, isFalse);
       expect(cubit.state.blocksParent, isFalse);
     });
+
+    test('failed PIN wipe keeps recovery available for retry', () async {
+      final failingStore = _FailingClearStore();
+      await failingStore.write(const ParentPinHasher().hash('2580'));
+      final failingLock = ParentAppLockCubit(
+        store: failingStore,
+        hasher: const ParentPinHasher(),
+      );
+      addTearDown(failingLock.close);
+      await failingLock.load();
+      await expectLater(
+        failingLock.wipeForSignOut(),
+        throwsA(isA<StateError>()),
+      );
+      expect(failingLock.state.blocksParent, isTrue);
+      expect(await failingStore.read(), isNotNull);
+    });
   });
 
   group('AuthSessionCubit sign-out', () {
@@ -232,6 +249,11 @@ void main() {
 class _FakeGoogleAuth extends AuthGoogleSignInService {
   @override
   Future<void> signOut() async {}
+}
+
+class _FailingClearStore extends MemoryParentAppLockStore {
+  @override
+  Future<void> clear() async => throw StateError('Keychain unavailable');
 }
 
 class _FakeTokens implements AuthTokenProvider {

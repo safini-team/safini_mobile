@@ -4,6 +4,10 @@ import 'package:safini/core/version_gate/app_version.dart';
 const kPlayStoreListingUrl =
     'https://play.google.com/store/apps/details?id=com.safini.app';
 
+/// Public App Store listing for the iOS bundle `com.safini.app`.
+const kAppStoreListingUrl =
+    'https://apps.apple.com/us/app/safini/id6761075183';
+
 class PlatformVersionPolicy {
   const PlatformVersionPolicy({
     required this.minSupported,
@@ -17,9 +21,16 @@ class PlatformVersionPolicy {
 
   String effectiveStoreUrl({required bool isIos}) {
     final url = storeUrl.trim();
-    if (url.isNotEmpty) return url;
-    if (isIos) return '';
-    return kPlayStoreListingUrl;
+    if (isIos) {
+      final uri = Uri.tryParse(url);
+      final validAppStoreUrl =
+          uri != null &&
+          uri.scheme == 'https' &&
+          uri.host == 'apps.apple.com' &&
+          uri.pathSegments.contains('id6761075183');
+      return validAppStoreUrl ? url : kAppStoreListingUrl;
+    }
+    return url.isNotEmpty ? url : kPlayStoreListingUrl;
   }
 
   static PlatformVersionPolicy? tryParse(dynamic data) {
@@ -135,22 +146,31 @@ class VersionPolicy {
 
   /// Screenshot / QA only. Never used as a shipped min-version seed.
   factory VersionPolicy.forced(VersionGateForce force) {
-    const store = kPlayStoreListingUrl;
     switch (force) {
       case VersionGateForce.hard:
-        const platform = PlatformVersionPolicy(
+        const android = PlatformVersionPolicy(
           minSupported: '99.0.0',
           latestRecommended: '99.0.0',
-          storeUrl: store,
+          storeUrl: kPlayStoreListingUrl,
         );
-        return const VersionPolicy(android: platform, ios: platform);
+        const ios = PlatformVersionPolicy(
+          minSupported: '99.0.0',
+          latestRecommended: '99.0.0',
+          storeUrl: kAppStoreListingUrl,
+        );
+        return const VersionPolicy(android: android, ios: ios);
       case VersionGateForce.soft:
-        const platform = PlatformVersionPolicy(
+        const android = PlatformVersionPolicy(
           minSupported: '0.0.1',
           latestRecommended: '99.0.0',
-          storeUrl: store,
+          storeUrl: kPlayStoreListingUrl,
         );
-        return const VersionPolicy(android: platform, ios: platform);
+        const ios = PlatformVersionPolicy(
+          minSupported: '0.0.1',
+          latestRecommended: '99.0.0',
+          storeUrl: kAppStoreListingUrl,
+        );
+        return const VersionPolicy(android: android, ios: ios);
     }
   }
 }
