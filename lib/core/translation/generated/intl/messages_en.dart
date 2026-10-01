@@ -811,13 +811,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsLastSynced": m36,
     "installedAppsLimited": MessageLookupByLibrary.simpleMessage("Limited"),
     "installedAppsNoMatch": MessageLookupByLibrary.simpleMessage(
-      "No apps match your search.",
+      "No installed apps match your search.",
     ),
     "installedAppsNotControllable": MessageLookupByLibrary.simpleMessage(
       "Safini can\'t limit this app yet.",
     ),
     "installedAppsSearchHint": MessageLookupByLibrary.simpleMessage(
-      "Search apps",
+      "Search installed apps",
     ),
     "installedAppsSetLimit": MessageLookupByLibrary.simpleMessage(
       "Set a daily limit",

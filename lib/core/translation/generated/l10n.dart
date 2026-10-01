@@ -2985,20 +2985,20 @@ class S {
     );
   }
 
-  /// `Search apps`
+  /// `Search installed apps`
   String get installedAppsSearchHint {
     return Intl.message(
-      'Search apps',
+      'Search installed apps',
       name: 'installedAppsSearchHint',
       desc: '',
       args: [],
     );
   }
 
-  /// `No apps match your search.`
+  /// `No installed apps match your search.`
   String get installedAppsNoMatch {
     return Intl.message(
-      'No apps match your search.',
+      'No installed apps match your search.',
       name: 'installedAppsNoMatch',
       desc: '',
       args: [],
