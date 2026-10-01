@@ -263,8 +263,8 @@ to pass tokens and state. Full breakdown, code, and sources:
 `observation/screenzen_research.md`.
 
 > **Status:** Increment 1 of Option B is now implemented — authorize → pick apps
-> → apply/clear the shield, from the main app target, with a DEV screen to drive
-> it (`ChildScreenTimeDebugScreen`, Kid · Me → "DEV · Screen Time (iOS)"). Steps
+> → apply/clear the shield, from the main app target, via `IosScreenTimeScreen`
+> (Kid · Me → Screen Time). Steps
 > 1–3 above are live; steps 4–6 (scheduling + branded overlay) are deferred
 > because they need separate Xcode extension targets + an App Group. It stays
 > inert until Apple approves the family-controls entitlement. Full status,
@@ -288,10 +288,9 @@ to pass tokens and state. Full breakdown, code, and sources:
 - The Android **installed-apps** dev screen (`ChildAppsDebugScreen`) still shows
   the "iOS only / Android only" block — accurate, since iOS has nothing to
   enumerate.
-- The new iOS **Screen Time** dev screen (`ChildScreenTimeDebugScreen`) shows
-  authorization status + selected-token *counts* (no names) and drives
-  authorize / pick / block / unblock. Before the entitlement is approved,
-  "Request authorization" reports a missing-entitlement error — expected.
+- iOS Screen Time is the real setup UI (`IosScreenTimeScreen`, Kid · Me →
+  Screen Time): authorization, app linking, and shield/setup. There is no
+  "DEV · Screen Time" debug screen.
 - If Option A (detection) is ever added, relabel its result on iOS as "Detected
   controlled apps" so it is not mistaken for a full device list.
 
