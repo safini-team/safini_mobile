@@ -137,18 +137,7 @@ class IosScreenTimeCubit extends Cubit<IosScreenTimeState> {
 
   Future<void> authorize() async {
     await _action(() async {
-      try {
-        await native.requestAuthorization(member: ScreenTimeMember.child);
-      } on ScreenTimeException catch (e) {
-        // `.child` needs this device's Apple Account to be a child inside the
-        // parent's Family Sharing group. Anywhere else Apple rejects it with
-        // `invalidAccountType` and never shows a prompt, which dead-ends setup
-        // on a phone the family has not enrolled yet (App Review 2026-09-15).
-        // Individual authorization prompts for the same Screen Time powers on
-        // the device itself, so fall back to it rather than stopping.
-        if (e.code != 'invalid_account') rethrow;
-        await native.requestAuthorization(member: ScreenTimeMember.individual);
-      }
+      await native.requestAuthorization(member: ScreenTimeMember.child);
     });
   }
 

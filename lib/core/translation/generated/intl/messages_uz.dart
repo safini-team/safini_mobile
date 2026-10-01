@@ -908,7 +908,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bu qurilmada Ekran vaqti mavjud emas. Sozlamalarda Ekran vaqtini yoqing va qayta urinib ko‘ring.",
     ),
     "iosScreenTimeFamily": MessageLookupByLibrary.simpleMessage(
-      "Ota-onangizdan shu iPhone yoki iPad’da yordam so‘rang. Eng yaxshisi, bolaning Apple Account’i ota-onaning Apple oilaviy guruhida bo‘lsin. Agar bo‘lmasa, Safini shu qurilmaning o‘zida Ekran vaqtini so‘raydi.",
+      "Ota-onangizdan shu iPhone yoki iPad’da yordam so‘rang. Ota-onangizning Apple oilaviy guruhidagi bola Apple Account’i bilan kiring. Ekran vaqtiga ruxsatni ota-ona tasdiqlashi kerak.",
     ),
     "iosScreenTimeLinked": MessageLookupByLibrary.simpleMessage(
       "Shu qurilmaga bog‘langan",
@@ -967,7 +967,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "iOS uchun tez orada",
     ),
     "kidComingSoonIosBody": MessageLookupByLibrary.simpleMessage(
-      "Safini’ni bolaning telefoniga oʻrnating. Ota-ona ilovasi iPhone’da allaqachon ishlaydi.",
+      "Bola rejimi iPhone’da hozircha mavjud emas. Safini’ni bolaning Android telefoniga oʻrnating. Ota-ona rejimi iPhone’da ishlaydi.",
     ),
     "kidComingSoonIosTitle": MessageLookupByLibrary.simpleMessage(
       "Bola rejimi tez orada iPhone’da ham boʻladi",
