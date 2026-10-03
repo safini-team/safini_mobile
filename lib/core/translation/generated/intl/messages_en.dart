@@ -602,16 +602,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "editTaskSheetTitle": MessageLookupByLibrary.simpleMessage("Edit Task"),
     "educational": MessageLookupByLibrary.simpleMessage("Educational"),
-    "emailHint": MessageLookupByLibrary.simpleMessage("reviewer@example.com"),
+    "emailHint": MessageLookupByLibrary.simpleMessage("you@example.com"),
     "emailLabel": MessageLookupByLibrary.simpleMessage("Email"),
     "emailRequired": MessageLookupByLibrary.simpleMessage(
       "Enter a valid email address",
     ),
     "emailSignInDescription": MessageLookupByLibrary.simpleMessage(
-      "For debug and App Review accounts only.",
+      "Use the email and password of an existing Safini account.",
     ),
     "emailSignInTitle": MessageLookupByLibrary.simpleMessage(
-      "Test account sign-in",
+      "Sign in with email",
     ),
     "emptyActiveBody": MessageLookupByLibrary.simpleMessage(
       "Add one with the button below.",
@@ -1008,8 +1008,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginWithApple": MessageLookupByLibrary.simpleMessage(
       "Continue with Apple",
     ),
-    "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
-      "Sign in with email (Test)",
+    "loginWithEmail": MessageLookupByLibrary.simpleMessage(
+      "Sign in with email",
     ),
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Continue with Google",

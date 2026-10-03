@@ -1201,30 +1201,30 @@ class S {
     );
   }
 
-  /// `Sign in with email (Test)`
-  String get loginWithEmailTest {
+  /// `Sign in with email`
+  String get loginWithEmail {
     return Intl.message(
-      'Sign in with email (Test)',
-      name: 'loginWithEmailTest',
+      'Sign in with email',
+      name: 'loginWithEmail',
       desc: '',
       args: [],
     );
   }
 
-  /// `Test account sign-in`
+  /// `Sign in with email`
   String get emailSignInTitle {
     return Intl.message(
-      'Test account sign-in',
+      'Sign in with email',
       name: 'emailSignInTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `For debug and App Review accounts only.`
+  /// `Use the email and password of an existing Safini account.`
   String get emailSignInDescription {
     return Intl.message(
-      'For debug and App Review accounts only.',
+      'Use the email and password of an existing Safini account.',
       name: 'emailSignInDescription',
       desc: '',
       args: [],
@@ -1236,10 +1236,10 @@ class S {
     return Intl.message('Email', name: 'emailLabel', desc: '', args: []);
   }
 
-  /// `reviewer@example.com`
+  /// `you@example.com`
   String get emailHint {
     return Intl.message(
-      'reviewer@example.com',
+      'you@example.com',
       name: 'emailHint',
       desc: '',
       args: [],

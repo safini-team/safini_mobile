@@ -22,8 +22,8 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 ///
 /// 1. **App start** — [checkExistingSession] reads the persisted Supabase
 ///    session and, if present, refreshes as needed before fetching the profile.
-/// 2. **Login** — Google is the public flow. [signInWithEmail] supports only
-///    pre-created debug and App Review accounts.
+/// 2. **Login** — Apple (iOS), Google, or [signInWithEmail] for accounts that
+///    already have a password. The app never signs anyone up by email.
 /// 3. **Profile** — [_fetchProfile] calls `GET /v1/me` and emits
 ///    [AuthSessionStatus.authenticated] with `userId` / `accountType`.
 /// 4. **Sign out** — [signOut] clears Google, Supabase, and local auth state.
