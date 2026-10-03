@@ -641,16 +641,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Topshiriqni tahrirlash",
     ),
     "educational": MessageLookupByLibrary.simpleMessage("Taʼlimiy"),
-    "emailHint": MessageLookupByLibrary.simpleMessage("tekshiruvchi@misol.uz"),
+    "emailHint": MessageLookupByLibrary.simpleMessage("ism@misol.uz"),
     "emailLabel": MessageLookupByLibrary.simpleMessage("Elektron pochta"),
     "emailRequired": MessageLookupByLibrary.simpleMessage(
       "Toʻgʻri email kiriting",
     ),
     "emailSignInDescription": MessageLookupByLibrary.simpleMessage(
-      "Faqat test va App Review tekshiruvi uchun.",
+      "Mavjud Safini hisobingizning email va parolini kiriting.",
     ),
     "emailSignInTitle": MessageLookupByLibrary.simpleMessage(
-      "Test hisobiga kirish",
+      "Email orqali kirish",
     ),
     "emptyActiveBody": MessageLookupByLibrary.simpleMessage(
       "Quyidagi tugma bilan qoʻshing.",
@@ -1057,8 +1057,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginWithApple": MessageLookupByLibrary.simpleMessage(
       "Apple bilan davom etish",
     ),
-    "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
-      "Email orqali kirish (test)",
+    "loginWithEmail": MessageLookupByLibrary.simpleMessage(
+      "Email orqali kirish",
     ),
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Google bilan davom etish",

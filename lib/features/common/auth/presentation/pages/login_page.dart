@@ -20,8 +20,8 @@ import 'package:safini/features/common/auth/presentation/cubit/auth_session_stat
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 
 /// Sign-in, laid out like the Welcome artboard: logo and wordmark up top, the
-/// platform's own sign-in first (Apple on iOS, Google on Android), and an
-/// optional debug/review email action below.
+/// platform's own sign-in first (Apple on iOS, Google on Android), then email
+/// sign-in for accounts that already exist. There is no email sign-up.
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -74,6 +74,7 @@ class _LoginView extends StatelessWidget {
             state.status == AuthSessionStatus.fetchingProfile;
         final googleLoading = loading && state.pendingMethod == AuthMethod.google;
         final appleLoading = loading && state.pendingMethod == AuthMethod.apple;
+        final emailLoading = loading && state.pendingMethod == AuthMethod.email;
         final supabaseBlocked = !SupabaseConfig.isSupabaseConfigured;
         final googleBlocked =
             supabaseBlocked || !SupabaseConfig.isGoogleConfigured;
@@ -190,14 +191,14 @@ class _LoginView extends StatelessWidget {
                         const SizedBox(height: 10),
                       ],
                       googleButton,
-                      if (SupabaseConfig.isEmailSignInEnabled) ...[
-                        const SizedBox(height: 10),
-                        DsPrimaryButton.secondary(
-                          label: s.loginWithEmailTest,
-                          enabled: !supabaseBlocked && !loading,
-                          onTap: () => _showEmailSignInSheet(context),
-                        ),
-                      ],
+                      const SizedBox(height: 10),
+                      DsPrimaryButton.secondary(
+                        key: const ValueKey('login-email'),
+                        label: emailLoading ? s.signingIn : s.loginWithEmail,
+                        enabled: !supabaseBlocked && !loading,
+                        busy: emailLoading,
+                        onTap: () => _showEmailSignInSheet(context),
+                      ),
                     ],
                     if (state.status == AuthSessionStatus.profileError &&
                         state.canRetry) ...[

@@ -626,17 +626,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Изменить задание",
     ),
     "educational": MessageLookupByLibrary.simpleMessage("Образование"),
-    "emailHint": MessageLookupByLibrary.simpleMessage("reviewer@primer.ru"),
+    "emailHint": MessageLookupByLibrary.simpleMessage("imya@primer.ru"),
     "emailLabel": MessageLookupByLibrary.simpleMessage("Эл. почта"),
     "emailRequired": MessageLookupByLibrary.simpleMessage(
       "Введите корректный email",
     ),
     "emailSignInDescription": MessageLookupByLibrary.simpleMessage(
-      "Только для отладки и проверки App Review.",
+      "Введите email и пароль существующего аккаунта Safini.",
     ),
-    "emailSignInTitle": MessageLookupByLibrary.simpleMessage(
-      "Вход в тестовый аккаунт",
-    ),
+    "emailSignInTitle": MessageLookupByLibrary.simpleMessage("Вход по email"),
     "emptyActiveBody": MessageLookupByLibrary.simpleMessage(
       "Добавьте кнопкой ниже.",
     ),
@@ -1028,9 +1026,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loginWithApple": MessageLookupByLibrary.simpleMessage(
       "Продолжить с Apple",
     ),
-    "loginWithEmailTest": MessageLookupByLibrary.simpleMessage(
-      "Войти по email (тест)",
-    ),
+    "loginWithEmail": MessageLookupByLibrary.simpleMessage("Войти по email"),
     "loginWithGoogle": MessageLookupByLibrary.simpleMessage(
       "Продолжить с Google",
     ),

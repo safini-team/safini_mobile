@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Supabase and Google OAuth configuration.
@@ -16,9 +15,8 @@ class SupabaseConfig {
   /// `String.fromEnvironment` only reads a `--dart-define` when it is evaluated
   /// as a constant, and it cannot be constant with a variable key. Calling it
   /// with `key` returned the default every time, so step 1 above silently did
-  /// nothing for every value here, including the `ENABLE_EMAIL_SIGN_IN=true`
-  /// the README tells you to pass for an App Review build. This map is a const
-  /// context, so these do resolve.
+  /// nothing for every value here. This map is a const context, so these do
+  /// resolve.
   static const Map<String, String> _defines = {
     'API_BASE_URL': String.fromEnvironment('API_BASE_URL'),
     'SUPABASE_URL': String.fromEnvironment('SUPABASE_URL'),
@@ -26,7 +24,6 @@ class SupabaseConfig {
     'GOOGLE_WEB_CLIENT_ID': String.fromEnvironment('GOOGLE_WEB_CLIENT_ID'),
     'GOOGLE_IOS_CLIENT_ID': String.fromEnvironment('GOOGLE_IOS_CLIENT_ID'),
     'GOOGLE_ANDROID_CLIENT_ID': String.fromEnvironment('GOOGLE_ANDROID_CLIENT_ID'),
-    'ENABLE_EMAIL_SIGN_IN': String.fromEnvironment('ENABLE_EMAIL_SIGN_IN'),
   };
 
   static String _env(String key, {String defaultValue = ''}) {
@@ -62,15 +59,6 @@ class SupabaseConfig {
   static bool get isSupabaseConfigured => url.isNotEmpty && anonKey.isNotEmpty;
 
   static bool get isGoogleConfigured => googleWebClientId.isNotEmpty;
-
-  /// Enables the non-public email/password login used by local testing and
-  /// App Review. It is on by default for debug builds and off for release
-  /// builds unless explicitly enabled with `ENABLE_EMAIL_SIGN_IN=true`.
-  static bool get isEmailSignInEnabled {
-    final configured = _env('ENABLE_EMAIL_SIGN_IN').toLowerCase();
-    if (configured.isEmpty) return kDebugMode;
-    return configured == 'true' || configured == '1' || configured == 'yes';
-  }
 
   /// Where the API lives when nothing overrides it.
   static const String productionApiBaseUrl = 'https://api.safini.fun';

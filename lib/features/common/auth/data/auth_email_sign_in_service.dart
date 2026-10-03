@@ -9,7 +9,7 @@ class AuthEmailSignInFailure implements Exception {
   String toString() => message;
 }
 
-/// Signs an existing test/review user in with Supabase email and password.
+/// Signs an existing user in with Supabase email and password.
 ///
 /// User creation intentionally does not live in the mobile application.
 class AuthEmailSignInService {

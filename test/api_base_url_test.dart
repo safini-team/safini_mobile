@@ -41,13 +41,4 @@ void main() {
         ? 'run with --dart-define=API_BASE_URL=... to exercise this'
         : false,
   );
-
-  test('a dart-define reaches the other keys too', () {
-    // ENABLE_EMAIL_SIGN_IN is the one the README tells App Review builds to
-    // pass. It read the env file only, so the flag never arrived.
-    dotenv.testLoad(fileInput: 'ENABLE_EMAIL_SIGN_IN=true');
-    expect(SupabaseConfig.isEmailSignInEnabled, isTrue);
-    dotenv.testLoad(fileInput: 'ENABLE_EMAIL_SIGN_IN=false');
-    expect(SupabaseConfig.isEmailSignInEnabled, isFalse);
-  });
 }
