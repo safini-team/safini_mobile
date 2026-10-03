@@ -61,6 +61,15 @@ class AvatarItem {
   /// "Cosmic Cape". Empty only when the payload omitted it.
   final String name;
 
+  /// Stable asset key from the backend (`avatar_items[].asset_key`).
+  /// Used to load `assets/avatar/cosmetics/<slot>/<assetKey>.png`.
+  /// Null for legacy items that only carry an emoji heuristic.
+  final String? assetKey;
+
+  /// Cosmetic slot ('head', 'accessory', 'vehicle', 'outfit', 'back', …).
+  /// Populated from `avatar_items[].slot` when present.
+  final String? slot;
+
   final String emoji;
   final int? cost;
   final bool isEquipped;
@@ -70,6 +79,8 @@ class AvatarItem {
   const AvatarItem({
     required this.id,
     this.name = '',
+    this.assetKey,
+    this.slot,
     required this.emoji,
     this.cost,
     this.isEquipped = false,
@@ -82,6 +93,9 @@ class AvatarItem {
   AvatarItem copyWith({bool? isEquipped, bool clearCost = false}) {
     return AvatarItem(
       id: id,
+      name: name,
+      assetKey: assetKey,
+      slot: slot,
       emoji: emoji,
       cost: clearCost ? null : cost,
       isEquipped: isEquipped ?? this.isEquipped,

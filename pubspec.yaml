@@ -62,6 +62,17 @@ flutter:
     - assets/logo/
     - assets/mascot/
     - assets/env/app.env
+    # Illustrated avatar system (SAF-201).
+    # Add PNG files under these directories; Flutter picks them up automatically.
+    # Expected paths:
+    #   assets/avatar/characters/char_01.png … char_24.png
+    #   assets/avatar/cosmetics/head/<item_id>.png
+    #   assets/avatar/cosmetics/accessories/<item_id>.png
+    #   assets/avatar/cosmetics/vehicles/<item_id>.png
+    - assets/avatar/characters/
+    - assets/avatar/cosmetics/head/
+    - assets/avatar/cosmetics/accessories/
+    - assets/avatar/cosmetics/vehicles/
 
 flutter_launcher_icons:
   android: true

@@ -139,6 +139,8 @@ class _ChildStoreScreen extends StatelessWidget {
                   StoreCardData(
                     id: item.id,
                     emoji: item.emoji,
+                    assetKey: item.assetKey,
+                    slot: item.slot,
                     // The API sends the real name ("Cosmic Cape"); only fall
                     // back to the generic label when it omitted one. Being worn
                     // is a state, so it belongs on the badge, not the name.

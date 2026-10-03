@@ -23,6 +23,8 @@ class StoreCardData {
     this.waiting = false,
     this.packageName,
     this.iconUrl,
+    this.assetKey,
+    this.slot,
   }) : fullName = fullName ?? name;
 
   final String id;
@@ -32,6 +34,10 @@ class StoreCardData {
   /// launcher by package, else the copy it uploaded.
   final String? packageName;
   final String? iconUrl;
+
+  /// For illustrated avatar cosmetics: stable asset key and slot.
+  final String? assetKey;
+  final String? slot;
 
   /// What it is - "Brawl Stars", "Cosmic Cape". One line on the tile.
   final String name;

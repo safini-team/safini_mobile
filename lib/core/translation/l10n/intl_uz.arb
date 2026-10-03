@@ -874,5 +874,13 @@
   "updateSoftTitle": "Yangilanish bor",
   "updateSoftBody": "Yangi versiya tayyor.",
   "updateCta": "Yangilash",
-  "updateDismiss": "Hozir emas"
+  "updateDismiss": "Hozir emas",
+  "avatarTabCharacters": "Belgilar",
+  "avatarTabHead": "Bosh kiyim",
+  "avatarTabAccessories": "Aksessuarlar",
+  "avatarTabVehicles": "Transport",
+  "noCosmeticsYet": "Hali buyumlar yoʻq",
+  "extraHead": "Bosh kiyim",
+  "extraAccessory": "Aksessuar",
+  "extraVehicle": "Transport"
 }

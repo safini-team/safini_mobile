@@ -1,16 +1,46 @@
-/// The in-app face a child equips, plus an optional worn extra.
+/// The in-app appearance of a child's avatar.
 ///
-/// Face lives in `avatar_state.emojis.face`. Equipped extras are inventory
-/// keys (`outfit`, `back`, …) which we map to the same sticker emojis the
-/// child customizer uses. Parents never get an OAuth photo from this.
+/// v2 fields: [characterId], [headItemId], [accessoryItemId], [vehicleItemId]
+///   — drive the illustrated SafiniAvatar renderer.
+///
+/// Legacy fields: [faceEmoji], [accessoryEmoji]
+///   — kept for backward compat and for any parent surface that has not yet
+///   been migrated to the illustrated renderer.
+///
+/// When [characterId] is non-null the avatar is illustrated (new system).
+/// When it is null the old emoji disc is shown (legacy fallback).
 class ChildAvatarLook {
   static const defaultFaceEmoji = '😊';
 
   const ChildAvatarLook({
+    this.characterId,
+    this.headItemId,
+    this.accessoryItemId,
+    this.vehicleItemId,
     this.faceEmoji = defaultFaceEmoji,
     this.accessoryEmoji,
     this.hasCustomFace = false,
   });
+
+  // ── v2 illustrated fields ────────────────────────────────────────────────
+
+  /// Stable character ID ('char_01' … 'char_24'). Non-null once the child
+  /// has selected an illustrated character.
+  final String? characterId;
+
+  /// Cosmetic slot: head item key (hat, crown, …).
+  final String? headItemId;
+
+  /// Cosmetic slot: accessory item key (glasses, watch, …).
+  final String? accessoryItemId;
+
+  /// Cosmetic slot: vehicle item key (car, board, …).
+  final String? vehicleItemId;
+
+  /// True when the child is using the new illustrated avatar system.
+  bool get isIllustrated => characterId != null && characterId!.isNotEmpty;
+
+  // ── Legacy emoji fields (kept for backward compat) ───────────────────────
 
   final String faceEmoji;
   final String? accessoryEmoji;
@@ -18,11 +48,22 @@ class ChildAvatarLook {
   /// True when the payload actually recorded a face, vs our fallback smile.
   final bool hasCustomFace;
 
+  // ── Factory ──────────────────────────────────────────────────────────────
+
   factory ChildAvatarLook.fromAvatarState(dynamic raw) {
     final state = _asMap(raw);
     final emojis = _asMap(state['emojis']);
     final equipped = _asMap(state['equipped']);
 
+    // v2: character_id
+    final charId = _trimmed(state['character_id']);
+
+    // v2: new cosmetic slots (head / accessory / vehicle)
+    final headItem = _trimmed(equipped['head']);
+    final accessoryItem = _trimmed(equipped['accessory']);
+    final vehicleItem = _trimmed(equipped['vehicle']);
+
+    // Legacy: face emoji resolution
     final equippedFace = _trimmed(equipped['face']);
     final face = _trimmed(emojis['face']) ??
         _emojiIfLiteral(equippedFace) ??
@@ -30,6 +71,10 @@ class ChildAvatarLook {
     final accessory = _accessoryFrom(emojis, equipped);
 
     return ChildAvatarLook(
+      characterId: charId,
+      headItemId: headItem,
+      accessoryItemId: accessoryItem,
+      vehicleItemId: vehicleItem,
       faceEmoji: (face == null || face.isEmpty) ? defaultFaceEmoji : face,
       accessoryEmoji: accessory,
       hasCustomFace: face != null && face.isNotEmpty,
@@ -39,6 +84,8 @@ class ChildAvatarLook {
   static bool hasPersistedFace(dynamic raw) {
     return ChildAvatarLook.fromAvatarState(raw).hasCustomFace;
   }
+
+  // ── Private helpers ──────────────────────────────────────────────────────
 
   static String? _accessoryFrom(
     Map<String, dynamic> emojis,
@@ -67,7 +114,7 @@ class ChildAvatarLook {
   }
 
   /// Sticker for an equipped inventory key. Null when the key is not a
-  /// known extra - never the default face, so a missing map does not draw
+  /// known extra — never the default face, so a missing map does not draw
   /// a second smile in the accessory bubble.
   static String? emojiForAvatarKey(String key) {
     final value = key.toLowerCase();

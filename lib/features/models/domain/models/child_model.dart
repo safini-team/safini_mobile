@@ -89,22 +89,41 @@ class ChildModel {
 }
 
 class AvatarStateModel {
+  /// v2: identifies the base illustrated character ('char_01' … 'char_24').
+  /// Null for children who have not yet picked a character; callers should
+  /// fall back to [defaultCharacterId] from avatar_character_catalog.dart.
+  final String? characterId;
+
+  /// Legacy + v2 equipped items, keyed by slot.
+  ///
+  /// Legacy slots  : hair, outfit (or outfits), back
+  /// v2 slots      : head, accessory, vehicle
+  ///
+  /// Both sets are preserved so the server never sees an equipped map that
+  /// is narrower than what it last saved (SAF-131).
   final Map<String, String> equipped;
 
-  const AvatarStateModel({required this.equipped});
+  const AvatarStateModel({this.characterId, required this.equipped});
 
   /// A child row with no avatar yet (`avatar_state` null) arrives as `{}`.
   /// The hard cast used to throw there, and Save on Edit child spun forever.
   factory AvatarStateModel.fromJson(Map<String, dynamic> json) {
+    final charId = json['character_id']?.toString().trim();
     final equipped = json['equipped'];
     return AvatarStateModel(
+      characterId: (charId == null || charId.isEmpty) ? null : charId,
       equipped: equipped is Map
-          ? Map<String, String>.from(equipped)
+          ? Map<String, String>.from(
+              equipped.map((k, v) => MapEntry(k.toString(), v.toString())),
+            )
           : const <String, String>{},
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'equipped': equipped};
+    return {
+      if (characterId != null) 'character_id': characterId,
+      'equipped': equipped,
+    };
   }
 }

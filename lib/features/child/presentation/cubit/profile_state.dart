@@ -9,6 +9,13 @@ class ProfileState {
   final int level;
   final String levelLabel;
   final double xpProgress;
+
+  /// v2: illustrated character ID ('char_01' … 'char_24'). Non-null once
+  /// loaded from the backend; surfaces should fall back to [defaultCharacterId]
+  /// from avatar_character_catalog.dart when null.
+  final String? characterId;
+
+  /// Legacy: emoji face (kept for parent surfaces not yet on the illustrated renderer).
   final String equippedFaceEmoji;
   final String equippedBadgeEmoji;
   final bool isUpdatingName;
@@ -22,6 +29,7 @@ class ProfileState {
     required this.level,
     required this.levelLabel,
     required this.xpProgress,
+    this.characterId,
     required this.equippedFaceEmoji,
     required this.equippedBadgeEmoji,
     required this.isUpdatingName,
@@ -38,6 +46,7 @@ class ProfileState {
       level = 0,
       levelLabel = '',
       xpProgress = 0,
+      characterId = null,
       equippedFaceEmoji = '😊',
       equippedBadgeEmoji = '🚀',
       isUpdatingName = false;
@@ -50,6 +59,7 @@ class ProfileState {
     int? dayStreak,
     int? level,
     double? xpProgress,
+    String? characterId,
     String? equippedFaceEmoji,
     String? equippedBadgeEmoji,
     bool? isUpdatingName,
@@ -63,6 +73,7 @@ class ProfileState {
       level: level ?? this.level,
       levelLabel: level != null ? 'Level $level Hero' : levelLabel,
       xpProgress: xpProgress ?? this.xpProgress,
+      characterId: characterId ?? this.characterId,
       equippedFaceEmoji: equippedFaceEmoji ?? this.equippedFaceEmoji,
       equippedBadgeEmoji: equippedBadgeEmoji ?? this.equippedBadgeEmoji,
       isUpdatingName: isUpdatingName ?? this.isUpdatingName,
@@ -77,20 +88,27 @@ class AvatarState {
   final AvatarCategory selectedCategory;
   final int level;
 
-  /// The child's chosen face emoji (free pick, persisted to the backend).
+  /// v2: stable illustrated character ID ('char_01' … 'char_24').
+  /// Null before the child has chosen a character (UI defaults to char_01).
+  final String? characterId;
+
+  /// Legacy: emoji face (kept for backward compat with parent surfaces that
+  /// have not yet migrated to the illustrated renderer).
   final String selectedFaceEmoji;
 
   const AvatarState({
     required this.avatarItems,
-    this.selectedCategory = AvatarCategory.face,
+    this.selectedCategory = AvatarCategory.character,
     this.level = 0,
+    this.characterId,
     this.selectedFaceEmoji = '😊',
   });
 
   const AvatarState.initial()
     : avatarItems = const [],
-      selectedCategory = AvatarCategory.face,
+      selectedCategory = AvatarCategory.character,
       level = 0,
+      characterId = null,
       selectedFaceEmoji = '😊';
 
   List<AvatarGridItem> get currentItems =>
@@ -102,12 +120,15 @@ class AvatarState {
     List<AvatarGridItem>? avatarItems,
     AvatarCategory? selectedCategory,
     int? level,
+    String? characterId,
+    bool clearCharacterId = false,
     String? selectedFaceEmoji,
   }) {
     return AvatarState(
       avatarItems: avatarItems ?? this.avatarItems,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       level: level ?? this.level,
+      characterId: clearCharacterId ? null : (characterId ?? this.characterId),
       selectedFaceEmoji: selectedFaceEmoji ?? this.selectedFaceEmoji,
     );
   }

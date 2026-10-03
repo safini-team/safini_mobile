@@ -391,6 +391,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "askedToRedoLabel": MessageLookupByLibrary.simpleMessage("На переделку"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Предмет аватара"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Предметы"),
+    "avatarTabAccessories": MessageLookupByLibrary.simpleMessage("Аксессуары"),
+    "avatarTabCharacters": MessageLookupByLibrary.simpleMessage("Персонажи"),
+    "avatarTabHead": MessageLookupByLibrary.simpleMessage("Голова"),
+    "avatarTabVehicles": MessageLookupByLibrary.simpleMessage("Транспорт"),
     "averagePerDay": m10,
     "backToSignIn": MessageLookupByLibrary.simpleMessage("Вернуться ко входу"),
     "badgeCoins": m11,
@@ -684,9 +688,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "expiresTonight": MessageLookupByLibrary.simpleMessage(
       "Используй сегодня, в полночь сгорит.",
     ),
+    "extraAccessory": MessageLookupByLibrary.simpleMessage("Аксессуар"),
     "extraBackpack": MessageLookupByLibrary.simpleMessage("Рюкзак"),
     "extraHair": MessageLookupByLibrary.simpleMessage("Причёска"),
+    "extraHead": MessageLookupByLibrary.simpleMessage("Голова"),
     "extraOutfit": MessageLookupByLibrary.simpleMessage("Одежда"),
+    "extraVehicle": MessageLookupByLibrary.simpleMessage("Транспорт"),
     "extrasFootnote": MessageLookupByLibrary.simpleMessage(
       "Дополнения покупаются один раз. На задания это не влияет.",
     ),
@@ -1099,6 +1106,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noCodeAskThem": MessageLookupByLibrary.simpleMessage(
       "Нет кода? Попросите их открыть Safini и раздел «Моя семья».",
+    ),
+    "noCosmeticsYet": MessageLookupByLibrary.simpleMessage(
+      "Пока нет предметов",
     ),
     "noDailyLimit": MessageLookupByLibrary.simpleMessage("Без дневного лимита"),
     "noFamilySetupYet": MessageLookupByLibrary.simpleMessage(
