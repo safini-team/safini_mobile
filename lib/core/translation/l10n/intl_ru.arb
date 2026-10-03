@@ -974,5 +974,13 @@
   "updateSoftTitle": "Доступно обновление",
   "updateSoftBody": "Вышла более новая версия.",
   "updateCta": "Обновить",
-  "updateDismiss": "Позже"
+  "updateDismiss": "Позже",
+  "avatarTabCharacters": "Персонажи",
+  "avatarTabHead": "Голова",
+  "avatarTabAccessories": "Аксессуары",
+  "avatarTabVehicles": "Транспорт",
+  "noCosmeticsYet": "Пока нет предметов",
+  "extraHead": "Голова",
+  "extraAccessory": "Аксессуар",
+  "extraVehicle": "Транспорт"
 }

@@ -387,6 +387,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "askedToRedoLabel": MessageLookupByLibrary.simpleMessage("Asked to redo"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Avatar item"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar Items"),
+    "avatarTabAccessories": MessageLookupByLibrary.simpleMessage("Accessories"),
+    "avatarTabCharacters": MessageLookupByLibrary.simpleMessage("Characters"),
+    "avatarTabHead": MessageLookupByLibrary.simpleMessage("Head"),
+    "avatarTabVehicles": MessageLookupByLibrary.simpleMessage("Vehicles"),
     "averagePerDay": m10,
     "backToSignIn": MessageLookupByLibrary.simpleMessage("Back to sign in"),
     "badgeCoins": m11,
@@ -664,9 +668,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "expiresTonight": MessageLookupByLibrary.simpleMessage(
       "Use it today, it expires at midnight.",
     ),
+    "extraAccessory": MessageLookupByLibrary.simpleMessage("Accessory"),
     "extraBackpack": MessageLookupByLibrary.simpleMessage("Backpack"),
     "extraHair": MessageLookupByLibrary.simpleMessage("Hair"),
+    "extraHead": MessageLookupByLibrary.simpleMessage("Head"),
     "extraOutfit": MessageLookupByLibrary.simpleMessage("Outfit"),
+    "extraVehicle": MessageLookupByLibrary.simpleMessage("Vehicle"),
     "extrasFootnote": MessageLookupByLibrary.simpleMessage(
       "Extras cost coins once. Nothing here changes your tasks.",
     ),
@@ -1090,6 +1097,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noCodeAskThem": MessageLookupByLibrary.simpleMessage(
       "No code? Ask them to open Safini, then My family.",
     ),
+    "noCosmeticsYet": MessageLookupByLibrary.simpleMessage("No items yet"),
     "noDailyLimit": MessageLookupByLibrary.simpleMessage("No daily limit"),
     "noFamilySetupYet": MessageLookupByLibrary.simpleMessage(
       "No family set up yet",

@@ -59,6 +59,7 @@ class _ChildMeScreen extends StatelessWidget {
             name: state.name,
             faceEmoji: state.equippedFaceEmoji,
             avatarColor: AppColors.avatarPalette[1],
+            characterId: state.characterId,
             accessoryEmoji: state.equippedBadgeEmoji.isEmpty
                 ? null
                 : state.equippedBadgeEmoji,

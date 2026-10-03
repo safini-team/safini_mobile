@@ -1014,5 +1014,13 @@
   "updateSoftTitle": "Update available",
   "updateSoftBody": "A newer version is ready.",
   "updateCta": "Update",
-  "updateDismiss": "Not now"
+  "updateDismiss": "Not now",
+  "avatarTabCharacters": "Characters",
+  "avatarTabHead": "Head",
+  "avatarTabAccessories": "Accessories",
+  "avatarTabVehicles": "Vehicles",
+  "noCosmeticsYet": "No items yet",
+  "extraHead": "Head",
+  "extraAccessory": "Accessory",
+  "extraVehicle": "Vehicle"
 }

@@ -8,6 +8,8 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
+import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
+import 'package:safini/features/child/presentation/widgets/utils/avatar_character_catalog.dart';
 
 class MeBadge {
   const MeBadge({required this.emoji, required this.label, this.earned = true});
@@ -30,6 +32,7 @@ class ChildMeData {
     required this.streakDays,
     required this.badges,
     this.accessoryEmoji,
+    this.characterId,
   });
 
   final String name;
@@ -43,6 +46,10 @@ class ChildMeData {
   final int streakDays;
   final List<MeBadge> badges;
   final String? accessoryEmoji;
+
+  /// v2 illustrated character. When set, [SafiniAvatar] is used instead of the
+  /// legacy emoji disc.
+  final String? characterId;
 }
 
 /// Kid · Me: the avatar card with the level bar, this week's streak strip, then
@@ -147,11 +154,16 @@ class _ProfileCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ChildAvatar(
-              faceEmoji: data.faceEmoji,
-              color: data.avatarColor,
-              accessoryEmoji: data.accessoryEmoji,
-            ),
+            child: data.characterId != null
+                ? SafiniAvatar(
+                    characterId: data.characterId!,
+                    size: 88,
+                  )
+                : ChildAvatar(
+                    faceEmoji: data.faceEmoji,
+                    color: data.avatarColor,
+                    accessoryEmoji: data.accessoryEmoji,
+                  ),
           ),
           const SizedBox(height: 14),
           Pressable(
