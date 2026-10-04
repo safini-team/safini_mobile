@@ -88,6 +88,7 @@ void registerChildDependencies(GetIt sl) {
   sl.registerFactory<ChildTimeCubit>(
     () => ChildTimeCubit(
       sl<DeviceUsageService>(),
+      sl<ChildAppRulesService>(),
       sl<safini_profile.ProfileController>(),
     ),
   );

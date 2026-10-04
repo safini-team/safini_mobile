@@ -3702,11 +3702,11 @@ class S {
     );
   }
 
-  /// `Almost yours`
-  String get almostYours {
+  /// `Buy more time`
+  String get buyMoreTime {
     return Intl.message(
-      'Almost yours',
-      name: 'almostYours',
+      'Buy more time',
+      name: 'buyMoreTime',
       desc: '',
       args: [],
     );
@@ -5391,11 +5391,11 @@ class S {
     );
   }
 
-  /// `My time today`
-  String get myTimeToday {
+  /// `My usage today`
+  String get myUsageToday {
     return Intl.message(
-      'My time today',
-      name: 'myTimeToday',
+      'My usage today',
+      name: 'myUsageToday',
       desc: '',
       args: [],
     );
@@ -7325,6 +7325,101 @@ class S {
   /// `Not now`
   String get updateDismiss {
     return Intl.message('Not now', name: 'updateDismiss', desc: '', args: []);
+  }
+
+  /// `{time} left today`
+  String kidScreenTimeLeft(Object time) {
+    return Intl.message(
+      '$time left today',
+      name: 'kidScreenTimeLeft',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `No free time left today`
+  String get kidScreenTimeUp {
+    return Intl.message(
+      'No free time left today',
+      name: 'kidScreenTimeUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{time} a day`
+  String kidScreenTimeDaily(Object time) {
+    return Intl.message(
+      '$time a day',
+      name: 'kidScreenTimeDaily',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Back at {time}`
+  String kidScreenTimeBackAt(Object time) {
+    return Intl.message(
+      'Back at $time',
+      name: 'kidScreenTimeBackAt',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Shared by the apps your parent manages`
+  String get kidBudgetShared {
+    return Intl.message(
+      'Shared by the apps your parent manages',
+      name: 'kidBudgetShared',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked`
+  String get kidAppBlocked {
+    return Intl.message('Blocked', name: 'kidAppBlocked', desc: '', args: []);
+  }
+
+  /// `Your parent turned this app off`
+  String get kidAppBlockedBody {
+    return Intl.message(
+      'Your parent turned this app off',
+      name: 'kidAppBlockedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time's up`
+  String get kidAppTimesUp {
+    return Intl.message(
+      'Time\'s up',
+      name: 'kidAppTimesUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get more time in the Store`
+  String get kidGetMoreInStore {
+    return Intl.message(
+      'Get more time in the Store',
+      name: 'kidGetMoreInStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+{time} from coins`
+  String kidBonusFromCoins(Object time) {
+    return Intl.message(
+      '+$time from coins',
+      name: 'kidBonusFromCoins',
+      desc: '',
+      args: [time],
+    );
   }
 }
 
