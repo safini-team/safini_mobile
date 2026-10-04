@@ -3702,11 +3702,11 @@ class S {
     );
   }
 
-  /// `Almost yours`
-  String get almostYours {
+  /// `Buy more time`
+  String get buyMoreTime {
     return Intl.message(
-      'Almost yours',
-      name: 'almostYours',
+      'Buy more time',
+      name: 'buyMoreTime',
       desc: '',
       args: [],
     );
@@ -5391,11 +5391,11 @@ class S {
     );
   }
 
-  /// `My time today`
-  String get myTimeToday {
+  /// `My usage today`
+  String get myUsageToday {
     return Intl.message(
-      'My time today',
-      name: 'myTimeToday',
+      'My usage today',
+      name: 'myUsageToday',
       desc: '',
       args: [],
     );
@@ -7327,11 +7327,6 @@ class S {
     return Intl.message('Not now', name: 'updateDismiss', desc: '', args: []);
   }
 
-  /// `My limits`
-  String get myLimits {
-    return Intl.message('My limits', name: 'myLimits', desc: '', args: []);
-  }
-
   /// `{time} left today`
   String kidScreenTimeLeft(Object time) {
     return Intl.message(
@@ -7372,10 +7367,10 @@ class S {
     );
   }
 
-  /// `Shared by the apps below`
+  /// `Shared by the apps your parent manages`
   String get kidBudgetShared {
     return Intl.message(
-      'Shared by the apps below',
+      'Shared by the apps your parent manages',
       name: 'kidBudgetShared',
       desc: '',
       args: [],
@@ -7407,11 +7402,6 @@ class S {
     );
   }
 
-  /// `No limit`
-  String get kidAppNoLimit {
-    return Intl.message('No limit', name: 'kidAppNoLimit', desc: '', args: []);
-  }
-
   /// `Get more time in the Store`
   String get kidGetMoreInStore {
     return Intl.message(
@@ -7427,16 +7417,6 @@ class S {
     return Intl.message(
       '+$time from coins',
       name: 'kidBonusFromCoins',
-      desc: '',
-      args: [time],
-    );
-  }
-
-  /// `{time} today`
-  String kidAppUsedToday(Object time) {
-    return Intl.message(
-      '$time today',
-      name: 'kidAppUsedToday',
       desc: '',
       args: [time],
     );

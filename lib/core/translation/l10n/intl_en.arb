@@ -544,7 +544,7 @@
   "allTasks": "All tasks",
   "doThisNext": "Do this next",
   "nothingLeft": "Nothing left",
-  "almostYours": "Almost yours",
+  "buyMoreTime": "Buy more time",
   "ofTotal": "of {total}",
   "tasksLeftCoinsOnTable": "{tasks} left - {coins} on the table",
   "everythingIsWithParent": "Everything is with your parent",
@@ -767,7 +767,7 @@
   "iosScreenTimeErrorGeneric": "Screen Time access could not be granted. Try again.",
   "showAllAppsCount": "Show all {count} apps",
   "showFewerApps": "Show fewer",
-  "myTimeToday": "My time today",
+  "myUsageToday": "My usage today",
   "@showAllAppsCount": {
     "placeholders": {
       "count": {
@@ -1015,17 +1015,14 @@
   "updateSoftBody": "A newer version is ready.",
   "updateCta": "Update",
   "updateDismiss": "Not now",
-  "myLimits": "My limits",
   "kidScreenTimeLeft": "{time} left today",
   "kidScreenTimeUp": "No free time left today",
   "kidScreenTimeDaily": "{time} a day",
   "kidScreenTimeBackAt": "Back at {time}",
-  "kidBudgetShared": "Shared by the apps below",
+  "kidBudgetShared": "Shared by the apps your parent manages",
   "kidAppBlocked": "Blocked",
   "kidAppBlockedBody": "Your parent turned this app off",
   "kidAppTimesUp": "Time's up",
-  "kidAppNoLimit": "No limit",
   "kidGetMoreInStore": "Get more time in the Store",
-  "kidBonusFromCoins": "+{time} from coins",
-  "kidAppUsedToday": "{time} today"
+  "kidBonusFromCoins": "+{time} from coins"
 }

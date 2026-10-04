@@ -7,7 +7,9 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/parent/data/app_data.dart';
+import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm, formatHmTight;
 
@@ -35,19 +37,19 @@ class KidBudget {
   final DateTime? nextResetAt;
 }
 
-enum KidAppLimitState { blocked, timesUp, limited, open }
+enum KidAppState { timesUp, limited, blocked, free }
 
-/// One app the parent has a rule on, as the kid reads it.
-class KidAppLimit {
-  const KidAppLimit({
+/// One app in "My usage today": anything the child opened today, plus every
+/// app the parent capped or blocked even if it has not been opened yet.
+class KidAppUsage {
+  const KidAppUsage({
     required this.name,
     required this.usedMinutes,
-    required this.limitMinutes,
-    required this.remainingMinutes,
     this.iconUrl,
+    this.limitMinutes,
     this.bonusMinutes = 0,
+    this.remainingMinutes,
     this.isBlocked = false,
-    this.isLimited = true,
     this.canRedeem = false,
   });
 
@@ -55,82 +57,172 @@ class KidAppLimit {
   final String? iconUrl;
   final int usedMinutes;
 
-  /// The parent's daily allowance, before minutes bought with coins.
-  final int limitMinutes;
+  /// The parent's daily cap, before minutes bought with coins. Null when the
+  /// app has none: its row is just the minutes.
+  final int? limitMinutes;
 
   /// Bought with coins and not spent yet.
   final int bonusMinutes;
 
   /// What the server says is still spendable, already capped by the daily
-  /// budget. Null for an app with no limit under no budget.
+  /// budget.
   final int? remainingMinutes;
   final bool isBlocked;
-  final bool isLimited;
 
   /// Extra minutes for this app are sold in the Store.
   final bool canRedeem;
 
-  KidAppLimitState get state {
-    if (isBlocked) return KidAppLimitState.blocked;
-    if (remainingMinutes == 0) return KidAppLimitState.timesUp;
-    return isLimited ? KidAppLimitState.limited : KidAppLimitState.open;
+  int get allowanceMinutes => (limitMinutes ?? 0) + bonusMinutes;
+
+  KidAppState get state {
+    if (isBlocked) return KidAppState.blocked;
+    if (limitMinutes == null) return KidAppState.free;
+    return remainingMinutes == 0 ? KidAppState.timesUp : KidAppState.limited;
   }
 
-  /// Most urgent first: out of time, then the least left, then apps with no
-  /// limit, then the ones the parent switched off.
-  static int compare(KidAppLimit a, KidAppLimit b) {
-    int rank(KidAppLimit app) => switch (app.state) {
-      KidAppLimitState.timesUp => 0,
-      KidAppLimitState.limited => 1,
-      KidAppLimitState.open => 2,
-      KidAppLimitState.blocked => 3,
-    };
-    final byRank = rank(a).compareTo(rank(b));
-    if (byRank != 0) return byRank;
-    if (a.state == KidAppLimitState.limited) {
-      final byLeft = (a.remainingMinutes ?? 0).compareTo(
+  /// Limits first, most urgent on top: out of time, then the least left,
+  /// then the ones the parent switched off. Uncapped apps follow, most used
+  /// first, like "where the time went" on the parent's Today.
+  static int compare(KidAppUsage a, KidAppUsage b) {
+    final byState = a.state.index.compareTo(b.state.index);
+    if (byState != 0) return byState;
+    final int byMinutes = switch (a.state) {
+      KidAppState.limited => (a.remainingMinutes ?? 0).compareTo(
         b.remainingMinutes ?? 0,
-      );
-      if (byLeft != 0) return byLeft;
-    }
+      ),
+      KidAppState.free => b.usedMinutes.compareTo(a.usedMinutes),
+      _ => 0,
+    };
+    if (byMinutes != 0) return byMinutes;
     return a.name.toLowerCase().compareTo(b.name.toLowerCase());
   }
 }
 
-/// Kid · Today "My limits": how much of the day's budget is left and, per
-/// app, what the parent allows and what is left of it, so the child can plan
-/// a game before the block screen ends it.
-class KidLimitsSection extends StatelessWidget {
-  const KidLimitsSection({
+/// Joins where the time went ([usage], every app opened, real minutes) with
+/// the parent's rules ([rules], from `app-usage`) on the app slug. A capped or
+/// blocked app reads its minutes from the rule, so "37 m of 45 m" and
+/// "8 m left" agree. A rule with no cap adds nothing the budget card does not
+/// say, so it only shows if the app was used.
+List<KidAppUsage> kidAppUsage({
+  DeviceUsage? usage,
+  List<ChildAppUsageModel> rules = const [],
+}) {
+  bool capped(ChildAppUsageModel rule) => rule.isLimited || rule.isBlocked;
+  KidAppUsage fromRule(ChildAppUsageModel rule) => KidAppUsage(
+    name: rule.displayName,
+    iconUrl: rule.iconUrl,
+    usedMinutes: rule.usedMinutes,
+    limitMinutes: rule.isLimited ? rule.dailyLimitMinutes : null,
+    bonusMinutes: rule.bonusMinutesRemaining,
+    remainingMinutes: rule.remainingMinutesToday,
+    isBlocked: rule.isBlocked,
+    canRedeem: rule.canRedeem,
+  );
+
+  final pending = {for (final rule in rules) rule.appSlug: rule};
+  final rows = <KidAppUsage>[];
+  if (usage != null && usage.usageAvailable) {
+    for (final app in usage.apps) {
+      final rule = pending.remove(app.appSlug);
+      rows.add(
+        rule != null && capped(rule)
+            ? fromRule(rule)
+            : KidAppUsage(
+                name: app.displayName,
+                iconUrl: app.iconUrl ?? rule?.iconUrl,
+                usedMinutes: app.usedMinutes,
+              ),
+      );
+    }
+  }
+  for (final rule in pending.values) {
+    if (capped(rule)) rows.add(fromRule(rule));
+  }
+  return rows..sort(KidAppUsage.compare);
+}
+
+/// Kid · Today "My usage today": how much of the day's budget is left, then
+/// one row per app - what is left of a capped one, the minutes of the rest -
+/// so the child can plan a game before the block screen ends it.
+class KidUsageSection extends StatefulWidget {
+  const KidUsageSection({
     super.key,
     required this.apps,
     this.budget,
     this.usageAvailable = true,
     this.onOpenStore,
+    this.collapsed = 6,
   });
 
   final KidBudget? budget;
-  final List<KidAppLimit> apps;
+  final List<KidAppUsage> apps;
   final bool usageAvailable;
   final VoidCallback? onOpenStore;
 
+  /// Rows shown before "Show all N apps". Limits sort first, so only the
+  /// least used uncapped apps fold away.
+  final int collapsed;
+
+  @override
+  State<KidUsageSection> createState() => _KidUsageSectionState();
+}
+
+class _KidUsageSectionState extends State<KidUsageSection> {
+  bool _expanded = false;
+
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final budget = widget.budget;
+    final apps = widget.apps;
+    final hidden = apps.length - widget.collapsed;
+    final shown = _expanded || hidden <= 0
+        ? apps
+        : apps.take(widget.collapsed).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (budget != null) _BudgetCard(budget: budget!),
+        if (budget != null) _BudgetCard(budget: budget),
         if (budget != null && apps.isNotEmpty) const SizedBox(height: 10),
         if (apps.isNotEmpty)
           DsGroup(
             verticalPadding: 4,
             shadow: AppShadows.flat,
             children: [
-              for (final app in apps)
-                _AppLimitRow(
+              for (final app in shown)
+                _AppRow(
                   app: app,
-                  usageAvailable: usageAvailable,
-                  onTap: app.canRedeem && !app.isBlocked ? onOpenStore : null,
+                  usageAvailable: widget.usageAvailable,
+                  onTap: app.canRedeem && app.state != KidAppState.blocked
+                      ? widget.onOpenStore
+                      : null,
+                ),
+              if (hidden > 0)
+                Pressable.row(
+                  onTap: () => setState(() => _expanded = !_expanded),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _expanded
+                                ? s.showFewerApps
+                                : s.showAllAppsCount(apps.length),
+                            style: AppText.rowTitleStrong.copyWith(
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                        AnimatedRotation(
+                          turns: _expanded ? -0.25 : 0.25,
+                          duration: const Duration(milliseconds: 200),
+                          child: AppIcons.chevronRight(),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -246,14 +338,10 @@ class _BudgetCard extends StatelessWidget {
   }
 }
 
-class _AppLimitRow extends StatelessWidget {
-  const _AppLimitRow({
-    required this.app,
-    required this.usageAvailable,
-    this.onTap,
-  });
+class _AppRow extends StatelessWidget {
+  const _AppRow({required this.app, required this.usageAvailable, this.onTap});
 
-  final KidAppLimit app;
+  final KidAppUsage app;
   final bool usageAvailable;
   final VoidCallback? onTap;
 
@@ -261,42 +349,47 @@ class _AppLimitRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final state = app.state;
-    final allowance = app.limitMinutes + app.bonusMinutes;
+    final allowance = app.allowanceMinutes;
     final remaining = app.remainingMinutes ?? 0;
-    final low =
-        state == KidAppLimitState.limited && remaining <= kidLowTimeMinutes;
+    final low = state == KidAppState.limited && remaining <= kidLowTimeMinutes;
     final showBar =
         usageAvailable &&
-        (state == KidAppLimitState.limited ||
-            (state == KidAppLimitState.timesUp && app.isLimited));
+        (state == KidAppState.limited || state == KidAppState.timesUp);
 
-    final Widget? pill = switch (state) {
-      KidAppLimitState.blocked => DsPill.muted(label: s.kidAppBlocked),
-      KidAppLimitState.timesUp => DsPill(
+    final Widget? trailing = switch (state) {
+      KidAppState.blocked => DsPill.muted(label: s.kidAppBlocked),
+      KidAppState.timesUp => DsPill(
         label: s.kidAppTimesUp,
         background: AppColors.fill,
         foreground: AppColors.dangerDeep,
       ),
-      KidAppLimitState.limited when !usageAvailable => null,
-      KidAppLimitState.limited when low => DsPill.pending(
+      KidAppState.limited when !usageAvailable => null,
+      KidAppState.limited when low => DsPill.pending(
         label: s.timeLeft(formatHm(s, remaining)),
       ),
-      KidAppLimitState.limited => DsPill.tint(
+      KidAppState.limited => DsPill.tint(
         label: s.timeLeft(formatHm(s, remaining)),
       ),
-      KidAppLimitState.open => DsPill.paid(label: s.kidAppNoLimit),
+      KidAppState.free => Text(
+        formatHm(s, app.usedMinutes),
+        style: AppText.metaSm.copyWith(
+          fontWeight: FontWeight.w600,
+          color: AppColors.textSecondary,
+          fontFeatures: AppText.tabular,
+        ),
+      ),
     };
 
-    final String detail;
-    if (state == KidAppLimitState.blocked) {
+    final String? detail;
+    if (state == KidAppState.free) {
+      detail = null;
+    } else if (state == KidAppState.blocked) {
       detail = s.kidAppBlockedBody;
     } else if (!usageAvailable) {
-      detail = app.isLimited
-          ? s.dailyLimitValue(formatHm(s, app.limitMinutes))
-          : s.noDailyLimit;
-    } else if (state == KidAppLimitState.timesUp && app.canRedeem) {
+      detail = s.dailyLimitValue(formatHm(s, app.limitMinutes ?? 0));
+    } else if (state == KidAppState.timesUp && app.canRedeem) {
       detail = s.kidGetMoreInStore;
-    } else if (app.isLimited) {
+    } else {
       final used = s.usedOfLimit(
         formatHm(s, app.usedMinutes),
         formatHm(s, allowance),
@@ -304,9 +397,8 @@ class _AppLimitRow extends StatelessWidget {
       detail = app.bonusMinutes > 0
           ? '$used · ${s.kidBonusFromCoins(formatHm(s, app.bonusMinutes))}'
           : used;
-    } else {
-      detail = s.kidAppUsedToday(formatHm(s, app.usedMinutes));
     }
+    final emphasize = state == KidAppState.timesUp && app.canRedeem;
 
     final row = Padding(
       padding: const EdgeInsets.symmetric(vertical: 13),
@@ -318,7 +410,7 @@ class _AppLimitRow extends StatelessWidget {
             size: 36,
             radius: AppRadius.sm,
             fontSize: 18,
-            opacity: state == KidAppLimitState.blocked ? 0.5 : 1,
+            opacity: state == KidAppState.blocked ? 0.5 : 1,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -329,40 +421,44 @@ class _AppLimitRow extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
+                      // Two lines: a long name beside "27 m left" in Russian
+                      // would otherwise lose most of itself on a small phone.
                       child: Text(
                         app.name,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.rowTitleStrong,
                       ),
                     ),
-                    if (pill != null) ...[const SizedBox(width: 8), pill],
+                    if (trailing != null) ...[
+                      const SizedBox(width: 8),
+                      trailing,
+                    ],
                   ],
                 ),
                 if (showBar) ...[
                   const SizedBox(height: 8),
                   DsProgressBar(
                     progress: allowance <= 0 ? 1 : app.usedMinutes / allowance,
-                    color: state == KidAppLimitState.timesUp
+                    color: state == KidAppState.timesUp
                         ? AppColors.danger
                         : low
                         ? AppColors.coin
                         : AppColors.primary,
                   ),
                 ],
-                const SizedBox(height: 6),
-                Text(
-                  detail,
-                  style: AppText.metaSm.copyWith(
-                    color: state == KidAppLimitState.timesUp && app.canRedeem
-                        ? AppColors.primary
-                        : AppColors.textSecondary,
-                    fontWeight:
-                        state == KidAppLimitState.timesUp && app.canRedeem
-                        ? FontWeight.w600
-                        : null,
+                if (detail != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    detail,
+                    style: AppText.metaSm.copyWith(
+                      color: emphasize
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                      fontWeight: emphasize ? FontWeight.w600 : null,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
