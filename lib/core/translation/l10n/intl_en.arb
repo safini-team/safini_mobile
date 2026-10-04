@@ -829,6 +829,8 @@
   "budgetPausedUntil": "Managed apps are paused until {time}.",
   "prizesTab": "Gifts",
   "prizeWaiting": "Waiting",
+  "rewardsForYou": "Rewards for you",
+  "seeAllRewards": "See all",
   "prizeWaitingBody": "Your parent will see it. Your coins wait on hold until they answer.",
   "prizeBlurb": "Your parent hands it over. Until then your coins wait on hold.",
   "askForPrize": "Ask for it",

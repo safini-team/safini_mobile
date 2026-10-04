@@ -1372,6 +1372,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "rewardFieldLabel": MessageLookupByLibrary.simpleMessage("Reward"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Reward Store"),
+    "rewardsForYou": MessageLookupByLibrary.simpleMessage("Rewards for you"),
     "roleLabel": MessageLookupByLibrary.simpleMessage("Role"),
     "roleOwner": MessageLookupByLibrary.simpleMessage("Owner"),
     "roleParent": MessageLookupByLibrary.simpleMessage("Parent"),
@@ -1397,6 +1398,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "seeAllApps": MessageLookupByLibrary.simpleMessage(
       "See all apps on this phone",
     ),
+    "seeAllRewards": MessageLookupByLibrary.simpleMessage("See all"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
     "sendWish": MessageLookupByLibrary.simpleMessage("Send wish"),
     "sentForApproval": MessageLookupByLibrary.simpleMessage(

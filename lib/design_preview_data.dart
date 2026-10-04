@@ -446,6 +446,30 @@ class SampleData {
       cost: 320,
       coins: 240,
     ),
+    gifts: const [
+      TodayGift(
+        id: 'w1',
+        name: 'Ice cream after school',
+        emoji: '🍦',
+        cost: 60,
+        coins: 240,
+      ),
+      TodayGift(
+        id: 'w2',
+        name: 'Pick the film on Friday',
+        emoji: '🎬',
+        cost: 120,
+        coins: 240,
+        isWaiting: true,
+      ),
+      TodayGift(
+        id: 'w4',
+        name: 'Trip to the pool',
+        emoji: '🏊',
+        cost: 320,
+        coins: 240,
+      ),
+    ],
     budget: const KidBudget(
       limitMinutes: 120,
       usedMinutes: 85,

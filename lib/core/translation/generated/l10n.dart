@@ -5716,6 +5716,21 @@ class S {
     return Intl.message('Waiting', name: 'prizeWaiting', desc: '', args: []);
   }
 
+  /// `Rewards for you`
+  String get rewardsForYou {
+    return Intl.message(
+      'Rewards for you',
+      name: 'rewardsForYou',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See all`
+  String get seeAllRewards {
+    return Intl.message('See all', name: 'seeAllRewards', desc: '', args: []);
+  }
+
   /// `Your parent will see it. Your coins wait on hold until they answer.`
   String get prizeWaitingBody {
     return Intl.message(

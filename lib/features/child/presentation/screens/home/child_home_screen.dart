@@ -19,6 +19,7 @@ import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
 import 'package:safini/features/child/presentation/cubit/quest_state.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
 import 'package:safini/features/child/presentation/widgets/kid_usage_section.dart';
@@ -34,6 +35,46 @@ String childGreeting(S s) {
   if (hour >= 12 && hour < 17) return s.goodAfternoon;
   if (hour >= 17 && hour < 21) return s.goodEvening;
   return s.goodNight;
+}
+
+/// How many rewards Today previews before "See all".
+const int todayGiftLimit = 6;
+
+/// The rewards Today previews from the Store: the parent's gifts first, then
+/// avatar items the child can still buy, each cheapest first. Nothing until
+/// the store has loaded, and nothing when it failed, so Today never shows a
+/// half state.
+List<TodayGift> todayGifts(RewardStoreState store, int coins) {
+  if (store.hasLoadError) return const [];
+  final gifts = [
+    for (final prize in store.prizes)
+      TodayGift(
+        id: prize.id,
+        name: prize.title,
+        emoji: prize.displayEmoji,
+        cost: prize.coinCost,
+        coins: coins,
+        isWaiting: prize.isWaiting,
+      ),
+  ]..sort((a, b) => a.cost.compareTo(b.cost));
+  final avatar = [
+    // Owned, worn, free and level-locked items have nothing to buy.
+    for (final item in store.avatarItems)
+      if (item.cost case final cost?
+          when cost > 0 && !item.isLocked && !item.isEquipped)
+        TodayGift(
+          id: item.id,
+          name: item.name,
+          emoji: item.emoji,
+          cost: cost,
+          coins: coins,
+          isAvatarItem: true,
+        ),
+  ]..sort((a, b) => a.cost.compareTo(b.cost));
+  return [
+    ...gifts,
+    ...avatar.where((item) => item.name.isNotEmpty),
+  ].take(todayGiftLimit).toList();
 }
 
 class ChildHomeScreen extends StatelessWidget {
@@ -132,6 +173,7 @@ class _ChildTodayScreen extends StatelessWidget {
             avatarColor: AppColors.avatarPalette[1],
             level: profile.level,
             teaser: _teaser(store, coins, s),
+            gifts: todayGifts(store, coins),
             usageApps: kidAppUsage(
               usage: time.usage,
               rules: time.limits?.apps ?? const [],
@@ -144,6 +186,14 @@ class _ChildTodayScreen extends StatelessWidget {
                 true,
           ),
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
+          onOpenGifts: () => _openGifts(context, store),
+          onOpenGift: (gift) {
+            context.read<ChildHomeCubit>().selectTab(2);
+            context.read<RewardStoreCubit>().openItem(
+              gift.isAvatarItem ? StoreTab.avatarItems : StoreTab.prizes,
+              gift.id,
+            );
+          },
           onOpenTasks: () => context.read<ChildHomeCubit>().selectTab(1),
           onOpenProfile: () => context.read<ChildHomeCubit>().selectTab(3),
           onOpenQuest: (quest) => _openQuest(context, quests, quest.id),
@@ -162,6 +212,15 @@ class _ChildTodayScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  /// "See all" under the rewards strip: the Store on Gifts when the parent
+  /// has added any, else on Avatar, the strip's other source.
+  void _openGifts(BuildContext context, RewardStoreState store) {
+    context.read<ChildHomeCubit>().selectTab(2);
+    context.read<RewardStoreCubit>().selectTab(
+      store.prizes.isNotEmpty ? StoreTab.prizes : StoreTab.avatarItems,
     );
   }
 

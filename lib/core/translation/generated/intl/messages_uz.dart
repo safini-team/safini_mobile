@@ -1443,6 +1443,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "rewardFieldLabel": MessageLookupByLibrary.simpleMessage("Mukofot"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Mukofot doʻkoni"),
+    "rewardsForYou": MessageLookupByLibrary.simpleMessage(
+      "Sen uchun sovgʻalar",
+    ),
     "roleLabel": MessageLookupByLibrary.simpleMessage("Rol"),
     "roleOwner": MessageLookupByLibrary.simpleMessage("Egasi"),
     "roleParent": MessageLookupByLibrary.simpleMessage("Ota-ona"),
@@ -1470,6 +1473,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "seeAllApps": MessageLookupByLibrary.simpleMessage(
       "Telefondagi barcha ilovalar",
     ),
+    "seeAllRewards": MessageLookupByLibrary.simpleMessage("Hammasi"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Tilni tanlang"),
     "sendWish": MessageLookupByLibrary.simpleMessage("Yuborish"),
     "sentForApproval": MessageLookupByLibrary.simpleMessage(

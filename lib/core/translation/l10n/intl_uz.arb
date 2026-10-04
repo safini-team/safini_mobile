@@ -696,6 +696,8 @@
   "budgetPausedUntil": "Ilovalar {time} gacha bloklangan.",
   "prizesTab": "Sovgʻalar",
   "prizeWaiting": "Kutilmoqda",
+  "rewardsForYou": "Sen uchun sovgʻalar",
+  "seeAllRewards": "Hammasi",
   "prizeWaitingBody": "Ota-onang koʻradi. Javob berguncha tangalaring band turadi.",
   "prizeBlurb": "Sovgʻani ota-onang beradi. Ungacha tangalaring band turadi.",
   "askForPrize": "Soʻrash",
