@@ -1014,5 +1014,18 @@
   "updateSoftTitle": "Update available",
   "updateSoftBody": "A newer version is ready.",
   "updateCta": "Update",
-  "updateDismiss": "Not now"
+  "updateDismiss": "Not now",
+  "myLimits": "My limits",
+  "kidScreenTimeLeft": "{time} left today",
+  "kidScreenTimeUp": "No free time left today",
+  "kidScreenTimeDaily": "{time} a day",
+  "kidScreenTimeBackAt": "Back at {time}",
+  "kidBudgetShared": "Shared by the apps below",
+  "kidAppBlocked": "Blocked",
+  "kidAppBlockedBody": "Your parent turned this app off",
+  "kidAppTimesUp": "Time's up",
+  "kidAppNoLimit": "No limit",
+  "kidGetMoreInStore": "Get more time in the Store",
+  "kidBonusFromCoins": "+{time} from coins",
+  "kidAppUsedToday": "{time} today"
 }

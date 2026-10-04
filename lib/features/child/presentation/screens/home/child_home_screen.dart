@@ -21,9 +21,11 @@ import 'package:safini/features/child/presentation/cubit/quest_state.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
+import 'package:safini/features/child/presentation/widgets/kid_limits_section.dart';
 import 'package:safini/features/child/presentation/widgets/dialogs/task_detail_dialog.dart';
 import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
+import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 
 /// Localized greeting based on the current time of day.
 String childGreeting(S s) {
@@ -130,8 +132,14 @@ class _ChildTodayScreen extends StatelessWidget {
             avatarColor: AppColors.avatarPalette[1],
             level: profile.level,
             teaser: _teaser(store, coins, s),
-            timeApps: _timeApps(time),
-            timeMinutes: time?.totalMinutes ?? 0,
+            timeApps: _timeApps(time.usage),
+            timeMinutes: time.usage?.totalMinutes ?? 0,
+            budget: _budget(time.limits),
+            limitApps: _limitApps(time.limits),
+            usageAvailable:
+                time.limits?.screenTime.usageAvailable ??
+                time.usage?.usageAvailable ??
+                true,
           ),
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
           onOpenTasks: () => context.read<ChildHomeCubit>().selectTab(1),
@@ -166,6 +174,39 @@ class _ChildTodayScreen extends StatelessWidget {
           isOver: app.isOver,
         ),
     ];
+  }
+
+  KidBudget? _budget(ChildAppUsageSnapshot? limits) {
+    final screenTime = limits?.screenTime;
+    final limit = screenTime?.limitMinutes;
+    if (screenTime == null || limit == null) return null;
+    return KidBudget(
+      limitMinutes: limit,
+      usedMinutes: screenTime.usedMinutes,
+      remainingMinutes:
+          screenTime.remainingMinutes ??
+          (limit - screenTime.usedMinutes).clamp(0, limit),
+      usageAvailable: screenTime.usageAvailable,
+      nextResetAt: screenTime.nextResetAt,
+    );
+  }
+
+  List<KidAppLimit> _limitApps(ChildAppUsageSnapshot? limits) {
+    if (limits == null) return const [];
+    return [
+      for (final app in limits.apps)
+        KidAppLimit(
+          name: app.displayName,
+          iconUrl: app.iconUrl,
+          usedMinutes: app.usedMinutes,
+          limitMinutes: app.dailyLimitMinutes,
+          bonusMinutes: app.bonusMinutesRemaining,
+          remainingMinutes: app.remainingMinutesToday,
+          isBlocked: app.isBlocked,
+          isLimited: app.isLimited,
+          canRedeem: app.canRedeem,
+        ),
+    ]..sort(KidAppLimit.compare);
   }
 
   TodayQuest _toTodayQuest(QuestModel quest, S s) => TodayQuest(

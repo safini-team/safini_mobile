@@ -39,6 +39,9 @@ class ChildAppUsageModel {
   /// Null when the app is uncapped and no global cap is set, so there is no
   /// finite number to show.
   final int? remainingMinutesToday;
+
+  /// Minutes bought with coins for today and not spent yet.
+  final int bonusMinutesRemaining;
   final int redeemCoinCost;
   final int redeemRewardMinutes;
 
@@ -55,6 +58,7 @@ class ChildAppUsageModel {
     required this.dailyLimitMinutes,
     required this.usedMinutes,
     required this.remainingMinutesToday,
+    this.bonusMinutesRemaining = 0,
     required this.redeemCoinCost,
     required this.redeemRewardMinutes,
     this.iconUrl,
@@ -75,6 +79,7 @@ class ChildAppUsageModel {
       dailyLimitMinutes: asInt(json['daily_limit_minutes']),
       usedMinutes: asInt(json['used_minutes']),
       remainingMinutesToday: asNullableInt(json['remaining_minutes_today']),
+      bonusMinutesRemaining: asInt(json['bonus_minutes_remaining']),
       redeemCoinCost: asInt(json['redeem_coin_cost']),
       redeemRewardMinutes: asInt(json['redeem_reward_minutes']),
       iconUrl: iconUrl is String && iconUrl.isNotEmpty ? iconUrl : null,
@@ -113,6 +118,7 @@ class ChildAppUsageModel {
       dailyLimitMinutes: dailyLimitMinutes ?? this.dailyLimitMinutes,
       usedMinutes: usedMinutes,
       remainingMinutesToday: remainingMinutesToday,
+      bonusMinutesRemaining: bonusMinutesRemaining,
       redeemCoinCost: redeemCoinCost ?? this.redeemCoinCost,
       redeemRewardMinutes: redeemRewardMinutes ?? this.redeemRewardMinutes,
       iconUrl: iconUrl,

@@ -7,6 +7,7 @@ import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
+import 'package:safini/features/child/presentation/widgets/kid_limits_section.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
@@ -445,6 +446,48 @@ class SampleData {
       cost: 320,
       coins: 240,
     ),
+    budget: const KidBudget(
+      limitMinutes: 120,
+      usedMinutes: 85,
+      remainingMinutes: 35,
+    ),
+    limitApps: const [
+      KidAppLimit(
+        name: 'Roblox',
+        usedMinutes: 30,
+        limitMinutes: 30,
+        remainingMinutes: 0,
+        canRedeem: true,
+      ),
+      KidAppLimit(
+        name: 'Minecraft',
+        usedMinutes: 37,
+        limitMinutes: 45,
+        remainingMinutes: 8,
+      ),
+      KidAppLimit(
+        name: 'YouTube',
+        usedMinutes: 18,
+        limitMinutes: 30,
+        bonusMinutes: 15,
+        remainingMinutes: 27,
+        canRedeem: true,
+      ),
+      KidAppLimit(
+        name: 'Duolingo',
+        usedMinutes: 12,
+        limitMinutes: 0,
+        remainingMinutes: 35,
+        isLimited: false,
+      ),
+      KidAppLimit(
+        name: 'TikTok',
+        usedMinutes: 0,
+        limitMinutes: 0,
+        remainingMinutes: 0,
+        isBlocked: true,
+      ),
+    ],
   );
 
   static ChildTasksData kidTasks(S s) => ChildTasksData(

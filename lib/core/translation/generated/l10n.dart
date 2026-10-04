@@ -7326,6 +7326,121 @@ class S {
   String get updateDismiss {
     return Intl.message('Not now', name: 'updateDismiss', desc: '', args: []);
   }
+
+  /// `My limits`
+  String get myLimits {
+    return Intl.message('My limits', name: 'myLimits', desc: '', args: []);
+  }
+
+  /// `{time} left today`
+  String kidScreenTimeLeft(Object time) {
+    return Intl.message(
+      '$time left today',
+      name: 'kidScreenTimeLeft',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `No free time left today`
+  String get kidScreenTimeUp {
+    return Intl.message(
+      'No free time left today',
+      name: 'kidScreenTimeUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{time} a day`
+  String kidScreenTimeDaily(Object time) {
+    return Intl.message(
+      '$time a day',
+      name: 'kidScreenTimeDaily',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Back at {time}`
+  String kidScreenTimeBackAt(Object time) {
+    return Intl.message(
+      'Back at $time',
+      name: 'kidScreenTimeBackAt',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Shared by the apps below`
+  String get kidBudgetShared {
+    return Intl.message(
+      'Shared by the apps below',
+      name: 'kidBudgetShared',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked`
+  String get kidAppBlocked {
+    return Intl.message('Blocked', name: 'kidAppBlocked', desc: '', args: []);
+  }
+
+  /// `Your parent turned this app off`
+  String get kidAppBlockedBody {
+    return Intl.message(
+      'Your parent turned this app off',
+      name: 'kidAppBlockedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time's up`
+  String get kidAppTimesUp {
+    return Intl.message(
+      'Time\'s up',
+      name: 'kidAppTimesUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No limit`
+  String get kidAppNoLimit {
+    return Intl.message('No limit', name: 'kidAppNoLimit', desc: '', args: []);
+  }
+
+  /// `Get more time in the Store`
+  String get kidGetMoreInStore {
+    return Intl.message(
+      'Get more time in the Store',
+      name: 'kidGetMoreInStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+{time} from coins`
+  String kidBonusFromCoins(Object time) {
+    return Intl.message(
+      '+$time from coins',
+      name: 'kidBonusFromCoins',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `{time} today`
+  String kidAppUsedToday(Object time) {
+    return Intl.message(
+      '$time today',
+      name: 'kidAppUsedToday',
+      desc: '',
+      args: [time],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

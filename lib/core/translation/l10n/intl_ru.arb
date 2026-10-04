@@ -974,5 +974,18 @@
   "updateSoftTitle": "Доступно обновление",
   "updateSoftBody": "Вышла более новая версия.",
   "updateCta": "Обновить",
-  "updateDismiss": "Позже"
+  "updateDismiss": "Позже",
+  "myLimits": "Мои лимиты",
+  "kidScreenTimeLeft": "Сегодня осталось {time}",
+  "kidScreenTimeUp": "На сегодня время закончилось",
+  "kidScreenTimeDaily": "{time} в день",
+  "kidScreenTimeBackAt": "Снова можно в {time}",
+  "kidBudgetShared": "Общее время для приложений ниже",
+  "kidAppBlocked": "Закрыто",
+  "kidAppBlockedBody": "Родитель выключил это приложение",
+  "kidAppTimesUp": "Время вышло",
+  "kidAppNoLimit": "Без лимита",
+  "kidGetMoreInStore": "Ещё время можно купить в Магазине",
+  "kidBonusFromCoins": "+{time} за монеты",
+  "kidAppUsedToday": "{time} сегодня"
 }

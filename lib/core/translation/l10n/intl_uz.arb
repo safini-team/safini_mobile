@@ -874,5 +874,18 @@
   "updateSoftTitle": "Yangilanish bor",
   "updateSoftBody": "Yangi versiya tayyor.",
   "updateCta": "Yangilash",
-  "updateDismiss": "Hozir emas"
+  "updateDismiss": "Hozir emas",
+  "myLimits": "Mening limitlarim",
+  "kidScreenTimeLeft": "Bugun {time} qoldi",
+  "kidScreenTimeUp": "Bugungi boʻsh vaqt tugadi",
+  "kidScreenTimeDaily": "Kuniga {time}",
+  "kidScreenTimeBackAt": "{time} da yana ochiladi",
+  "kidBudgetShared": "Quyidagi ilovalar uchun umumiy vaqt",
+  "kidAppBlocked": "Yopiq",
+  "kidAppBlockedBody": "Ota-onang bu ilovani oʻchirib qoʻygan",
+  "kidAppTimesUp": "Vaqt tugadi",
+  "kidAppNoLimit": "Cheklovsiz",
+  "kidGetMoreInStore": "Qoʻshimcha vaqtni Doʻkondan ol",
+  "kidBonusFromCoins": "+{time} tangalar evaziga",
+  "kidAppUsedToday": "Bugun {time}"
 }

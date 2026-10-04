@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
+import 'package:safini/features/child/presentation/widgets/kid_limits_section.dart';
 import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
@@ -71,6 +72,9 @@ class ChildTodayData {
     this.level,
     this.timeApps = const [],
     this.timeMinutes = 0,
+    this.budget,
+    this.limitApps = const [],
+    this.usageAvailable = true,
   });
 
   final String greeting;
@@ -109,6 +113,18 @@ class ChildTodayData {
   final List<AppTimeRow> timeApps;
   final int timeMinutes;
 
+  /// "My limits": the parent's daily budget, null when there is none.
+  final KidBudget? budget;
+
+  /// Every app with a rule, most urgent first. Empty with no [budget] hides
+  /// the section.
+  final List<KidAppLimit> limitApps;
+
+  /// False on an iPhone: limits are known, minutes are not.
+  final bool usageAvailable;
+
+  bool get hasLimits => budget != null || limitApps.isNotEmpty;
+
   double get ringProgress =>
       questsTotal <= 0 ? 0 : (questsDone / questsTotal).clamp(0.0, 1.0);
 
@@ -135,8 +151,8 @@ class ChildTodayData {
 }
 
 /// Kid · Today. The child's avatar and greeting, the deep hero, then the next
-/// task with the press-and-hold send and up to two more after it, then what
-/// the coins are heading towards.
+/// task with the press-and-hold send and up to two more after it, what the
+/// parent allows today, then what the coins are heading towards.
 class ChildTodayView extends StatelessWidget {
   const ChildTodayView({
     super.key,
@@ -248,6 +264,24 @@ class ChildTodayView extends StatelessWidget {
               ),
             ),
           ),
+        if (data.hasLimits) ...[
+          SliverToBoxAdapter(
+            child: DsSectionHeader(title: s.myLimits, top: 28),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.gutter,
+              ),
+              child: KidLimitsSection(
+                budget: data.budget,
+                apps: data.limitApps,
+                usageAvailable: data.usageAvailable,
+                onOpenStore: onOpenStore,
+              ),
+            ),
+          ),
+        ],
         if (data.teaser != null) ...[
           SliverToBoxAdapter(
             child: DsSectionHeader(title: s.almostYours, top: 28),
