@@ -796,6 +796,8 @@
   "budgetPausedUntil": "Приложения заблокированы до {time}.",
   "prizesTab": "Подарки",
   "prizeWaiting": "Ждёт",
+  "rewardsForYou": "Награды для тебя",
+  "seeAllRewards": "Все",
   "prizeWaitingBody": "Родитель увидит. Монеты отложены, пока он не ответит.",
   "prizeBlurb": "Подарок вручит родитель. До этого монеты отложены.",
   "askForPrize": "Попросить",

@@ -48,6 +48,36 @@ class TodayTeaser {
   double get progress => cost <= 0 ? 1 : (coins / cost).clamp(0.0, 1.0);
 }
 
+/// Something in the Store the child can spend coins on, previewed on Today:
+/// a gift a parent added, or an avatar item not owned yet.
+class TodayGift {
+  const TodayGift({
+    required this.id,
+    required this.name,
+    required this.emoji,
+    required this.cost,
+    required this.coins,
+    this.isAvatarItem = false,
+    this.isWaiting = false,
+  });
+
+  final String id;
+  final String name;
+  final String emoji;
+  final int cost;
+  final int coins;
+
+  /// Which Store tab it lives on: Avatar, or Gifts.
+  final bool isAvatarItem;
+
+  /// Asked for and waiting on a parent, with its price held.
+  final bool isWaiting;
+
+  bool get affordable => coins >= cost;
+
+  double get progress => cost <= 0 ? 1 : (coins / cost).clamp(0.0, 1.0);
+}
+
 /// Why the child has nothing to start right now.
 enum TodayRest { withParent, allDone, empty }
 
@@ -64,6 +94,7 @@ class ChildTodayData {
     this.questsAwaitingReview = 0,
     this.more = const [],
     this.teaser,
+    this.gifts = const [],
     this.streakDays,
     this.faceEmoji,
     this.accessoryEmoji,
@@ -96,6 +127,10 @@ class ChildTodayData {
 
   final bool holdToComplete;
   final TodayTeaser? teaser;
+
+  /// "Rewards for you": a few things from the Store, so the child sees what
+  /// coins are for without opening it. Empty hides the section.
+  final List<TodayGift> gifts;
 
   /// Null until the backend exposes streaks; the pill is hidden when it is.
   final int? streakDays;
@@ -147,8 +182,9 @@ class ChildTodayData {
 }
 
 /// Kid · Today. The child's avatar and greeting, the deep hero, then the next
-/// task with the press-and-hold send and up to two more after it, the day's
-/// apps against what the parent allows, then more time to buy.
+/// task with the press-and-hold send and up to two more after it, a strip of
+/// rewards from the Store, the day's apps against what the parent allows, then
+/// more time to buy.
 class ChildTodayView extends StatelessWidget {
   const ChildTodayView({
     super.key,
@@ -158,11 +194,19 @@ class ChildTodayView extends StatelessWidget {
     required this.onOpenQuest,
     required this.onSendQuest,
     this.onOpenProfile,
+    this.onOpenGift,
+    this.onOpenGifts,
     this.onRefresh,
   });
 
   final ChildTodayData data;
   final VoidCallback onOpenStore;
+
+  /// Opens that reward in the Store. Falls back to [onOpenStore] when null.
+  final ValueChanged<TodayGift>? onOpenGift;
+
+  /// "See all" beside the rewards. Falls back to [onOpenStore] when null.
+  final VoidCallback? onOpenGifts;
   final VoidCallback onOpenTasks;
   final VoidCallback? onOpenProfile;
   final ValueChanged<TodayQuest> onOpenQuest;
@@ -260,6 +304,22 @@ class ChildTodayView extends StatelessWidget {
               ),
             ),
           ),
+        if (data.gifts.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: DsSectionHeader(
+              title: s.rewardsForYou,
+              trailingText: s.seeAllRewards,
+              onTrailingTap: onOpenGifts ?? onOpenStore,
+              top: 28,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _GiftStrip(
+              gifts: data.gifts,
+              onOpen: onOpenGift ?? (_) => onOpenStore(),
+            ),
+          ),
+        ],
         if (data.hasUsage) ...[
           SliverToBoxAdapter(
             child: DsSectionHeader(
@@ -593,6 +653,125 @@ class _TeaserCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A sideways row of Store rewards. One the child can afford shows its price
+/// in coin colours; one still out of reach shows how close they are.
+class _GiftStrip extends StatelessWidget {
+  const _GiftStrip({required this.gifts, required this.onOpen});
+
+  final List<TodayGift> gifts;
+  final ValueChanged<TodayGift> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      // Room for the card shadow under the 150pt card.
+      height: 162,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.gutter,
+          0,
+          AppSpacing.gutter,
+          12,
+        ),
+        clipBehavior: Clip.none,
+        itemCount: gifts.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
+        itemBuilder: (context, index) => _GiftCard(
+          gift: gifts[index],
+          onTap: () => onOpen(gifts[index]),
+        ),
+      ),
+    );
+  }
+}
+
+class _GiftCard extends StatelessWidget {
+  const _GiftCard({required this.gift, required this.onTap});
+
+  final TodayGift gift;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    const coin = DsCoinToken(size: 14);
+
+    return SizedBox(
+      width: 128,
+      child: DsCard(
+        onTap: onTap,
+        pressScale: 0.975,
+        shadow: AppShadows.tile,
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(gift.emoji, style: const TextStyle(fontSize: 30)),
+            const SizedBox(height: 8),
+            // Same rule as the Store tile: a long name shrinks to fit rather
+            // than ending in "..." or a half-cut second line.
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, box) => FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
+                    width: box.maxWidth,
+                    child: Text(
+                      gift.name,
+                      style: AppText.rowTitleStrong.copyWith(
+                        fontSize: 14.5,
+                        letterSpacing: -0.17,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            if (gift.isWaiting)
+              DsPill.pending(label: s.prizeWaiting, height: 24, fontSize: 13)
+            else if (gift.affordable)
+              DsPill.coins(
+                label: '${gift.cost}',
+                leading: coin,
+                height: 24,
+                fontSize: 13,
+              )
+            else ...[
+              DsProgressBar(
+                progress: gift.progress,
+                height: 5,
+                color: AppColors.coin,
+              ),
+              const SizedBox(height: 7),
+              Row(
+                children: [
+                  const Opacity(opacity: 0.55, child: coin),
+                  const SizedBox(width: 5),
+                  // "1240 / 3000" still fits the 100pt card.
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '${gift.coins} / ${gift.cost}',
+                        maxLines: 1,
+                        style: AppText.caption.nums,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

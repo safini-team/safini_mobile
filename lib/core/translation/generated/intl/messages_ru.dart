@@ -1390,6 +1390,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "rewardFieldLabel": MessageLookupByLibrary.simpleMessage("Награда"),
     "rewardStore": MessageLookupByLibrary.simpleMessage("Магазин наград"),
+    "rewardsForYou": MessageLookupByLibrary.simpleMessage("Награды для тебя"),
     "roleLabel": MessageLookupByLibrary.simpleMessage("Роль"),
     "roleOwner": MessageLookupByLibrary.simpleMessage("Владелец"),
     "roleParent": MessageLookupByLibrary.simpleMessage("Родитель"),
@@ -1417,6 +1418,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "seeAllApps": MessageLookupByLibrary.simpleMessage(
       "Все приложения на телефоне",
     ),
+    "seeAllRewards": MessageLookupByLibrary.simpleMessage("Все"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Выберите язык"),
     "sendWish": MessageLookupByLibrary.simpleMessage("Отправить"),
     "sentForApproval": MessageLookupByLibrary.simpleMessage(
