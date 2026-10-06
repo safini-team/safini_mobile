@@ -10,6 +10,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  version-guard:
+    name: Store version stays on main
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Compare pubspec.yaml version to origin/main
+        env:
+          VERSION_CHECK_PR: ${{ github.event_name == 'pull_request' && '1' || '0' }}
+        run: make version-check
+
   analyze-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
