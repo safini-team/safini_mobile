@@ -67,10 +67,14 @@ class TodayApp {
     required this.usedMinutes,
     required this.limitMinutes,
     this.iconUrl,
+    this.slug,
   });
 
   final String name;
   final String emoji;
+
+  /// The rule slug a limit is saved under; null for a row that cannot take one.
+  final String? slug;
 
   /// The child's own icon for this app; [emoji] stands in until it loads.
   final String? iconUrl;
@@ -169,6 +173,7 @@ class ParentTodayView extends StatelessWidget {
     required this.onOpenReview,
     required this.onApproveReview,
     required this.onOpenLimits,
+    this.onOpenApp,
     this.onDeclineReview,
     this.onRefresh,
     this.banner,
@@ -184,6 +189,9 @@ class ParentTodayView extends StatelessWidget {
   /// Prize asks and wishes only; a task is sent back from its review sheet.
   final ValueChanged<TodayReview>? onDeclineReview;
   final VoidCallback onOpenLimits;
+
+  /// A tapped app row in "Where the time went" or "Last 7 days".
+  final ValueChanged<TodayApp>? onOpenApp;
   final Future<void> Function()? onRefresh;
 
   /// Above the screen-time card: the getting-started checklist while a new
@@ -300,6 +308,7 @@ class ParentTodayView extends StatelessWidget {
                       iconUrl: app.iconUrl,
                       usedMinutes: app.usedMinutes,
                       isOver: app.isOver,
+                      onTap: _tapFor(app),
                     ),
                 ],
               ),
@@ -326,6 +335,7 @@ class ParentTodayView extends StatelessWidget {
                           name: app.name,
                           iconUrl: app.iconUrl,
                           usedMinutes: app.usedMinutes,
+                          onTap: _tapFor(app),
                         ),
                     ],
                   ),
@@ -336,6 +346,12 @@ class ParentTodayView extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  VoidCallback? _tapFor(TodayApp app) {
+    final open = onOpenApp;
+    if (open == null || app.slug == null) return null;
+    return () => open(app);
   }
 }
 

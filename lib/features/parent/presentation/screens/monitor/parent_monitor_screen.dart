@@ -16,6 +16,7 @@ import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
 import 'package:safini/features/onboarding/getting_started_host.dart';
 import 'package:safini/features/onboarding/onboarding_store.dart';
+import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
@@ -24,6 +25,8 @@ import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dar
 import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/pending_review_counts.dart';
+import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
+import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet.dart';
 import 'package:safini/features/parent/presentation/widgets/layout/parent_monitor_states.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/review_sheet.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -113,6 +116,10 @@ class ParentMonitorScreen extends StatelessWidget {
   }
 }
 
+/// One limit sheet at a time: the rules load before it opens, so a second tap
+/// in that gap would stack another.
+bool _openingApp = false;
+
 class _ParentMonitorView extends StatelessWidget {
   const _ParentMonitorView({this.reviewKey});
 
@@ -201,6 +208,7 @@ class _ParentMonitorView extends StatelessWidget {
               onOpenSettings: () =>
                   context.router.push(const NamedRoute('parentSettings')),
               onOpenLimits: () => context.read<ParentHomeCubit>().selectTab(2),
+              onOpenApp: (app) => _openAppLimit(context, state, app),
               onOpenReview: (review) => switch (review.kind) {
                 TodayReviewKind.task => _openReview(context, review.id),
                 // Both answers are on the card itself.
@@ -245,6 +253,70 @@ class _ParentMonitorView extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// The same sheet the Limits tab opens, over Today: the app's rule when it
+  /// has one, otherwise a draft that is saved only when the parent saves it.
+  Future<void> _openAppLimit(
+    BuildContext context,
+    ParentMonitorLoaded state,
+    TodayApp app,
+  ) async {
+    final slug = app.slug;
+    final child = state.selectedChild;
+    if (slug == null || child == null || _openingApp) return;
+    _openingApp = true;
+    final cubit = getIt<ParentAppsCubit>();
+    try {
+      await cubit.loadAppLimits(childId: child.id);
+      if (!context.mounted) return;
+      final rule = cubit.ruleForSlug(slug);
+      // A week row's minutes are the whole week; the sheet measures today.
+      final today =
+          state.deviceUsage?.apps
+              .where((usage) => usage.appSlug == slug)
+              .firstOrNull
+              ?.usedMinutes ??
+          rule?.usedMinutes ??
+          0;
+      await showAppLimitSheet(
+        context,
+        cubit: cubit,
+        childName: child.nickname,
+        isNew: rule == null,
+        app: rule == null
+            ? LimitsApp(
+                slug: slug,
+                name: app.name,
+                emoji: app.emoji,
+                usedMinutes: today,
+                limitMinutes: 60,
+                isLimited: true,
+                canRedeem: true,
+                iconUrl: app.iconUrl,
+              )
+            : LimitsApp(
+                slug: rule.appSlug,
+                name: rule.displayName.isEmpty ? app.name : rule.displayName,
+                emoji: app.emoji,
+                usedMinutes: today,
+                limitMinutes: rule.dailyLimitMinutes,
+                isBlocked: rule.isBlocked,
+                isLimited: rule.isLimited,
+                canRedeem: rule.canRedeem,
+                redeemCoinCost: rule.redeemCoinCost,
+                redeemRewardMinutes: rule.redeemRewardMinutes,
+                iconUrl: rule.iconUrl ?? app.iconUrl,
+              ),
+      );
+      // A new or changed limit moves the red bars on this screen.
+      if (context.mounted) {
+        context.read<ParentMonitorCubit>().loadMonitorData();
+      }
+    } finally {
+      _openingApp = false;
+      await cubit.close();
+    }
   }
 
   void _openReview(BuildContext context, String taskId) {
@@ -348,6 +420,7 @@ class _ParentMonitorView extends StatelessWidget {
         usedMinutes: (limit['used'] as int?) ?? 0,
         limitMinutes: (limit['limit'] as int?) ?? 0,
         iconUrl: limit['icon'] as String?,
+        slug: limit['slug'] as String?,
       );
     }).toList()..sort((a, b) => b.usedMinutes.compareTo(a.usedMinutes));
 
@@ -366,6 +439,7 @@ class _ParentMonitorView extends StatelessWidget {
                     ? app.dailyLimitMinutes ?? 0
                     : 0,
                 iconUrl: app.iconUrl,
+                slug: app.appSlug,
               ),
           ];
 
@@ -465,6 +539,7 @@ class _ParentMonitorView extends StatelessWidget {
                 usedMinutes: app.usedMinutes,
                 limitMinutes: 0,
                 iconUrl: app.iconUrl,
+                slug: app.appSlug,
               ),
           ],
         ),

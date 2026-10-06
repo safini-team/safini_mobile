@@ -15,6 +15,7 @@ class AppTimeRow {
     required this.usedMinutes,
     this.iconUrl,
     this.isOver = false,
+    this.onTap,
   });
 
   final String name;
@@ -23,6 +24,9 @@ class AppTimeRow {
 
   /// Past the parent's limit: the minutes and the bar turn red.
   final bool isOver;
+
+  /// Opens this app's limit. Null leaves the row plain.
+  final VoidCallback? onTap;
 }
 
 /// Every app the child spent time in, most used first. The first [collapsed]
@@ -101,7 +105,7 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final row = Padding(
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
         children: [
@@ -151,8 +155,14 @@ class _Row extends StatelessWidget {
               ],
             ),
           ),
+          if (app.onTap != null) ...[
+            const SizedBox(width: 8),
+            AppIcons.chevronRight(),
+          ],
         ],
       ),
     );
+    final onTap = app.onTap;
+    return onTap == null ? row : Pressable.row(onTap: onTap, child: row);
   }
 }
