@@ -35,6 +35,8 @@ class _TourHarnessState extends State<_TourHarness> {
       gifts = true;
     }),
     tabBarKey: tabKey,
+    // Mirrors the real bars: four parent tabs, five child tabs.
+    tabCount: widget.role == TourRole.parent ? 4 : 5,
     child: Scaffold(
       body: Stack(
         children: [
@@ -131,6 +133,35 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await _pumpTour(tester, TourRole.child, 'child-two');
     expect(find.text('Your Today page'), findsOneWidget);
+  });
+
+  testWidgets('child walks through all five tabs, ending on Me', (
+    tester,
+  ) async {
+    await _pumpTour(tester, TourRole.child, 'five-tabs-child');
+    final harness = tester.state<_TourHarnessState>(find.byType(_TourHarness));
+    expect(find.text('Your Today page'), findsOneWidget);
+    expect(find.text('1 of 5'), findsOneWidget);
+    expect(harness.tab, 0);
+
+    const titles = [
+      'Your tasks',
+      'Spend your coins',
+      'Your friends',
+      'Your space',
+    ];
+    for (var i = 0; i < titles.length; i++) {
+      await tester.tap(find.byKey(const ValueKey('tour-next')));
+      await tester.pump();
+      expect(find.text(titles[i]), findsOneWidget);
+      expect(find.text('${i + 2} of 5'), findsOneWidget);
+      expect(harness.tab, i + 1);
+    }
+
+    await tester.tap(find.byKey(const ValueKey('tour-next')));
+    await tester.pump();
+    expect(find.text('Skip tour'), findsNothing);
+    expect(store.tourStep('child', 'five-tabs-child'), 5);
   });
 
   testWidgets('an interrupted tour resumes at Gifts inside Limits', (
