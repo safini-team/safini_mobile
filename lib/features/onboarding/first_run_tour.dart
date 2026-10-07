@@ -5,6 +5,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/onboarding/fini.dart';
 import 'package:safini/features/onboarding/onboarding_store.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,10 +22,16 @@ class FirstRunTour extends StatefulWidget {
     required this.selectedTab,
     required this.onSelectTab,
     required this.tabBarKey,
+    required this.tabCount,
     required this.child,
     this.reviewKey,
     this.onOpenGifts,
   });
+
+  /// How many tabs the bottom bar actually shows (parent 4, child 5). The
+  /// spotlight used to divide the bar by a hard-coded 4, so on the child's
+  /// 5-tab bar it drifted right and ran off-screen on the last step.
+  final int tabCount;
 
   final TourRole role;
   final String? userId;
@@ -177,12 +184,24 @@ class _FirstRunTourState extends State<FirstRunTour> {
                 final review = step == 1 && widget.role == TourRole.parent
                     ? _rectFor(widget.reviewKey, context)
                     : null;
-                final tabWidth = (bar?.width ?? size.width) / 4;
-                final tab = _tabFor(step);
+                // The tabs share the bar's width minus its side padding.
+                final viewPadding = MediaQuery.viewPaddingOf(context);
+                final rowLeft =
+                    (bar?.left ?? 0) +
+                    DsTabBar.horizontalPadding +
+                    viewPadding.left;
+                final rowWidth =
+                    (bar?.width ?? size.width) -
+                    2 * DsTabBar.horizontalPadding -
+                    viewPadding.left -
+                    viewPadding.right;
+                final tabCount = math.max(1, widget.tabCount);
+                final tabWidth = rowWidth / tabCount;
+                final tab = _tabFor(step).clamp(0, tabCount - 1);
                 final focus =
                     review ??
                     Rect.fromLTWH(
-                      (bar?.left ?? 0) + tabWidth * tab + 4,
+                      rowLeft + tabWidth * tab + 4,
                       (bar?.top ?? size.height - 88) + 3,
                       tabWidth - 8,
                       math.min((bar?.height ?? 76) - 6, 78),
