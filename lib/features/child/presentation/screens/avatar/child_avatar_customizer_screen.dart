@@ -50,11 +50,6 @@ class _AvatarScreen extends StatelessWidget {
         final cubit = context.read<AvatarCubit>();
         final coins = context.watch<CoinsCubit>().state;
 
-        // Active cosmetic items (non-character tabs)
-        final cosmeticItems = state.avatarItems
-            .where((item) => item.category != AvatarCategory.face)
-            .toList();
-
         final visibleTabs = [
           AvatarCategory.character,
           AvatarCategory.head,
@@ -114,19 +109,12 @@ class _AvatarScreen extends StatelessWidget {
                         child: state.selectedCategory == AvatarCategory.character
                             ? _CharacterGrid(
                                 selectedId: state.characterId,
-                                onSelect: cubit.selectCharacter,
-                              )
-                            : _CosmeticSection(
-                                category: state.selectedCategory,
-                                items: cosmeticItems
-                                    .where(
-                                      (i) =>
-                                          i.category == state.selectedCategory,
-                                    )
-                                    .toList(),
+                                ownedCharacterIds: state.ownedCharacterIds,
                                 coins: coins,
-                                onEquip: (id) => cubit.equipItem(id),
-                              ),
+                                onSelect: cubit.selectCharacter,
+                                onPurchase: cubit.purchaseCharacter,
+                              )
+                            : const _ComingSoonSection(),
                       ),
                     ],
                   ),
@@ -276,11 +264,17 @@ class _TabChip extends StatelessWidget {
 class _CharacterGrid extends StatelessWidget {
   const _CharacterGrid({
     required this.selectedId,
+    required this.ownedCharacterIds,
+    required this.coins,
     required this.onSelect,
+    required this.onPurchase,
   });
 
   final String? selectedId;
+  final Set<String> ownedCharacterIds;
+  final int coins;
   final ValueChanged<String> onSelect;
+  final ValueChanged<String> onPurchase;
 
   @override
   Widget build(BuildContext context) {
@@ -294,33 +288,100 @@ class _CharacterGrid extends StatelessWidget {
         crossAxisCount: 4,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        mainAxisExtent: 96,
+        mainAxisExtent: 108,
       ),
       itemCount: safiniiCharacters.length,
       itemBuilder: (context, index) {
         final character = safiniiCharacters[index];
         final isSelected = character.id == effectiveId;
+        final cost = characterPrices[character.id];
+        final owned = cost == null || ownedCharacterIds.contains(character.id);
+        final effectiveCost = cost ?? 0;
+        final affordable = owned || coins >= effectiveCost;
 
         return Pressable(
-          onTap: () => onSelect(character.id),
+          onTap: owned
+              ? () => onSelect(character.id)
+              : affordable
+              ? () => onPurchase(character.id)
+              : null,
           scale: 0.93,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-              color: isSelected ? AppColors.primaryTint : AppColors.fillAlt,
-              borderRadius: BorderRadius.circular(AppRadius.control),
-              border: isSelected
-                  ? Border.all(color: AppColors.primary, width: 2.5)
-                  : null,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.control - 2),
-              child: SafiniAvatar(
-                characterId: character.id,
-                size: 80,
-                showPlaceholderRing: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: double.infinity,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primaryTint
+                      : owned
+                      ? AppColors.fillAlt
+                      : AppColors.fillAlt.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(AppRadius.control),
+                  border: isSelected
+                      ? Border.all(color: AppColors.primary, width: 2.5)
+                      : null,
+                ),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppRadius.control - 2),
+                      child: Opacity(
+                        opacity: owned ? 1.0 : 0.45,
+                        child: SafiniAvatar(
+                          characterId: character.id,
+                          size: 80,
+                          showPlaceholderRing: false,
+                        ),
+                      ),
+                    ),
+                    if (!owned)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.control - 2,
+                            ),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.lock_rounded,
+                              color: Colors.white,
+                              size: 22,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black54,
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
+              if (cost != null && !owned) ...[
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const DsCoinToken(size: 10),
+                    const SizedBox(width: 2),
+                    Text(
+                      '$cost',
+                      style: AppText.micro.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: affordable ? AppColors.ink : AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
         );
       },
@@ -328,173 +389,39 @@ class _CharacterGrid extends StatelessWidget {
   }
 }
 
-// ─── Cosmetic Section ────────────────────────────────────────────────────────
+// ─── Coming Soon ──────────────────────────────────────────────────────────────
 
-class _CosmeticSection extends StatelessWidget {
-  const _CosmeticSection({
-    required this.category,
-    required this.items,
-    required this.coins,
-    required this.onEquip,
-  });
-
-  final AvatarCategory category;
-  final List<AvatarGridItem> items;
-  final int coins;
-  final ValueChanged<String> onEquip;
+class _ComingSoonSection extends StatelessWidget {
+  const _ComingSoonSection();
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    if (items.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32),
-          child: Text(
-            s.noCosmeticsYet,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+      decoration: BoxDecoration(
+        color: AppColors.fill,
+        borderRadius: BorderRadius.circular(AppRadius.feature),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('🚧', style: TextStyle(fontSize: 40)),
+          const SizedBox(height: 12),
+          Text(
+            s.comingSoon,
+            style: AppText.section.copyWith(color: AppColors.ink),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            s.comingSoonSubtitle,
             style: AppText.meta.copyWith(color: AppColors.textMuted),
+            textAlign: TextAlign.center,
           ),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        DsGroup(
-          shadow: AppShadows.flat,
-          children: [
-            for (final item in items)
-              _CosmeticRow(
-                item: item,
-                coins: coins,
-                onTap: () => onEquip(item.id),
-              ),
-          ],
-        ),
-        DsFootnote(s.extrasFootnote),
-      ],
-    );
-  }
-}
-
-String _cosmeticTitle(S s, AvatarCategory category) => switch (category) {
-  AvatarCategory.head => s.extraHead,
-  AvatarCategory.accessory => s.extraAccessory,
-  AvatarCategory.vehicle => s.extraVehicle,
-  AvatarCategory.outfits => s.extraOutfit,
-  AvatarCategory.hair => s.extraHair,
-  AvatarCategory.back => s.extraBackpack,
-  _ => s.extrasSection,
-};
-
-class _CosmeticRow extends StatelessWidget {
-  const _CosmeticRow({
-    required this.item,
-    required this.coins,
-    required this.onTap,
-  });
-
-  final AvatarGridItem item;
-  final int coins;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    final cost = item.cost;
-    final owned = cost == null;
-    final affordable = owned || coins >= cost;
-
-    // Prefer asset-based preview; fall back to emoji tile.
-    final Widget leading = item.assetKey != null
-        ? _CosmeticPreviewTile(
-            slot: item.category.slotKey,
-            assetKey: item.assetKey!,
-            emoji: item.emoji,
-            opacity: affordable ? 1.0 : 0.4,
-          )
-        : DsEmojiTile(
-            emoji: item.emoji,
-            size: 40,
-            radius: AppRadius.md,
-            background: AppColors.fillAlt,
-            fontSize: 20,
-            opacity: affordable ? 1 : 0.4,
-          );
-
-    return DsRow(
-      onTap: affordable && !item.isLocked ? onTap : null,
-      title: _cosmeticTitle(s, item.category),
-      titleColor: affordable ? AppColors.ink : AppColors.textMuted,
-      subtitle: item.isEquipped
-          ? s.wornLabel
-          : owned
-          ? s.yoursLabel
-          : s.unlockOnceKeepForever,
-      subtitleStyle: AppText.caption,
-      leading: leading,
-      trailing: item.isEquipped
-          ? DsPill.paid(label: s.wornLabel, height: 24, fontSize: 13)
-          : owned
-          ? DsPill.tint(label: s.wearLabel, height: 24)
-          : affordable
-          ? DsPill.tint(
-              label: '$cost',
-              leading: const DsCoinToken(size: 14),
-              height: 24,
-            )
-          : DsPill.muted(
-              label: '$cost',
-              leading: const Opacity(
-                opacity: 0.55,
-                child: DsCoinToken(size: 14),
-              ),
-              height: 24,
-              fontSize: 13,
-            ),
-    );
-  }
-}
-
-/// Small asset preview tile for a cosmetic item.
-/// Falls back to the emoji tile when the PNG isn't bundled yet.
-class _CosmeticPreviewTile extends StatelessWidget {
-  const _CosmeticPreviewTile({
-    super.key,
-    required this.slot,
-    required this.assetKey,
-    required this.emoji,
-    this.opacity = 1.0,
-  });
-
-  final String slot;
-  final String assetKey;
-  final String emoji;
-  final double opacity;
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(
-      opacity: opacity,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: AppColors.fillAlt,
-          borderRadius: BorderRadius.circular(AppRadius.md),
-        ),
-        child: Image.asset(
-          'assets/avatar/cosmetics/$slot/$assetKey.png',
-          fit: BoxFit.contain,
-          errorBuilder: (_, __, ___) => Center(
-            child: Text(
-              emoji,
-              style: const TextStyle(fontSize: 20, height: 1.15),
-            ),
-          ),
-        ),
+        ],
       ),
     );
   }
 }
+

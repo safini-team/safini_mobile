@@ -137,6 +137,7 @@
     }
   },
   "comingSoon": "Coming soon!",
+  "comingSoonSubtitle": "We're adding more fun stuff. Check back later!",
   "coinsCount": "{count, plural, =1{1 coin} other{{count} coins}}",
   "@coinsCount": {
     "placeholders": {

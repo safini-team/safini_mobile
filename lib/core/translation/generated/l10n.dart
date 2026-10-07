@@ -807,6 +807,16 @@ class S {
     return Intl.message('Coming soon!', name: 'comingSoon', desc: '', args: []);
   }
 
+  /// `We're adding more fun stuff. Check back later!`
+  String get comingSoonSubtitle {
+    return Intl.message(
+      'We\'re adding more fun stuff. Check back later!',
+      name: 'comingSoonSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{count, plural, =1{1 coin} other{{count} coins}}`
   String coinsCount(int count) {
     return Intl.plural(

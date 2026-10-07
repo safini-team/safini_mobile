@@ -449,6 +449,25 @@ const List<SafiniCharacter> safiniiCharacters = [
   ),
 ];
 
+/// Characters char_01–char_04 are always free.
+/// All other characters require coins to unlock.
+/// Key = character id, value = coin cost.
+const Map<String, int> characterPrices = {
+  'char_05': 50, 'char_06': 50, 'char_07': 50, 'char_08': 50,
+  'char_09': 50, 'char_10': 50,
+  'char_11': 80, 'char_12': 80, 'char_13': 80, 'char_14': 80,
+  'char_15': 80, 'char_16': 80, 'char_17': 80, 'char_18': 80,
+  'char_19': 80, 'char_20': 80,
+  'char_21': 120, 'char_22': 120, 'char_23': 120, 'char_24': 120,
+  'char_25': 120, 'char_26': 120, 'char_27': 120, 'char_28': 120,
+  'char_29': 120,
+};
+
+/// Characters that are always unlocked without any coin cost.
+const Set<String> freeCharacterIds = {
+  'char_01', 'char_02', 'char_03', 'char_04',
+};
+
 const String defaultCharacterId = 'char_01';
 
 SafiniCharacter? characterById(String id) {

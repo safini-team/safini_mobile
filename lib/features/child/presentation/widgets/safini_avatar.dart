@@ -39,21 +39,19 @@ class SafiniAvatar extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Background circle
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: character.placeholderColor.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-                border: showPlaceholderRing
-                    ? Border.all(
-                        color: const Color(0xFFF07830),
-                        width: 2.5,
-                      )
-                    : null,
+          // Placeholder ring (selection indicator in the character grid)
+          if (showPlaceholderRing)
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFFF07830),
+                    width: 2.5,
+                  ),
+                ),
               ),
             ),
-          ),
 
           // Vehicle layer (behind character)
           if (vehicleItemId != null)

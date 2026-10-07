@@ -354,6 +354,9 @@ class AvatarCubit extends Cubit<AvatarState> {
   String? _characterId;
   bool _characterIdLoaded = false;
 
+  /// Characters this child has purchased. Persisted in avatar_state.owned_characters.
+  Set<String> _ownedCharacters = {};
+
   AvatarCubit(this._coins, this._dio, this._profileController)
     : super(const AvatarState.initial()) {
     loadItems();
@@ -392,12 +395,15 @@ class AvatarCubit extends Cubit<AvatarState> {
         _characterId = _extractCharacterId(avatarState);
         _characterIdLoaded = true;
       }
+      final owned = _extractOwnedCharacters(avatarState);
+      _ownedCharacters = owned;
       emit(
         state.copyWith(
           avatarItems: _parseAvatarItems(data['avatar_items'], equipped),
           level: _intValue(child, ['level']) ?? 0,
           selectedFaceEmoji: _extractFaceEmoji(avatarState),
           characterId: _extractCharacterId(avatarState),
+          ownedCharacterIds: owned,
         ),
       );
     } catch (_) {
@@ -423,12 +429,44 @@ class AvatarCubit extends Cubit<AvatarState> {
     return null;
   }
 
+  /// Reads persisted owned character IDs from avatar_state, always including
+  /// the four free characters.
+  Set<String> _extractOwnedCharacters(dynamic raw) {
+    final map = _asMap(raw);
+    final list = map['owned_characters'];
+    final purchased = <String>{};
+    if (list is List) {
+      for (final id in list.whereType<String>()) {
+        purchased.add(id);
+      }
+    }
+    return {...freeCharacterIds, ...purchased};
+  }
+
+  /// Purchases a locked character, deducts coins, then selects it.
+  Future<void> purchaseCharacter(String characterId) async {
+    final cost = characterPrices[characterId];
+    if (cost == null) return;
+    if (_coins.state < cost) return;
+    _coins.subtract(cost);
+    _ownedCharacters = {..._ownedCharacters, characterId};
+    emit(state.copyWith(
+      characterId: characterId,
+      ownedCharacterIds: _ownedCharacters,
+    ));
+    await _persistCharacterState(characterId);
+  }
+
   /// Selects an illustrated character and persists it.
   ///
   /// Merges character_id into the existing avatar_state without disturbing
   /// any other fields (equipped, emojis) — SAF-131 protection.
   Future<void> selectCharacter(String characterId) async {
     emit(state.copyWith(characterId: characterId));
+    await _persistCharacterState(characterId);
+  }
+
+  Future<void> _persistCharacterState(String characterId) async {
     final childId = await _resolveChildId();
     if (childId == null) return;
     if (!_equippedLoaded || !_characterIdLoaded) {
@@ -440,6 +478,7 @@ class AvatarCubit extends Cubit<AvatarState> {
       _characterIdLoaded = true;
     }
     _characterId = characterId;
+    final purchased = _ownedCharacters.difference(freeCharacterIds).toList();
     try {
       await _dio.patch(
         ApiConst.childAvatar(childId),
@@ -448,6 +487,7 @@ class AvatarCubit extends Cubit<AvatarState> {
             'character_id': characterId,
             'equipped': _equipped,
             'emojis': {'face': state.selectedFaceEmoji},
+            if (purchased.isNotEmpty) 'owned_characters': purchased,
           },
         },
       );

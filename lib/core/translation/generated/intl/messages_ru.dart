@@ -497,6 +497,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "coinsReward": m21,
     "coinsText": MessageLookupByLibrary.simpleMessage("Монеты"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("Скоро будет!"),
+    "comingSoonSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Мы добавляем больше интересного. Загляни позже!",
+    ),
     "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
       "Выполняйте ежедневные квесты, чтобы заработать больше монет!",
     ),

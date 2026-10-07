@@ -510,6 +510,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "coinsReward": m21,
     "coinsText": MessageLookupByLibrary.simpleMessage("Tangalar"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("Tez orada!"),
+    "comingSoonSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Ko\'proq qiziqarli narsalar qo\'shmoqdamiz. Keyinroq qayta kir!",
+    ),
     "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
       "Koʻproq tanga uchun kunlik topshiriqlarni bajar!",
     ),

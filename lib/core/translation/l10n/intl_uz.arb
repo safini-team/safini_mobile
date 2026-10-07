@@ -95,6 +95,7 @@
   "notEnoughCoins": "Tanga yetarli emas!",
   "youNeedMoreCoins": "{count, plural, other{Sizga yana {count} tanga kerak.}}",
   "comingSoon": "Tez orada!",
+  "comingSoonSubtitle": "Ko'proq qiziqarli narsalar qo'shmoqdamiz. Keyinroq qayta kir!",
   "coinsCount": "{count, plural, other{{count} tanga}}",
   "earnMoreCoins": "Koʻproq tanga ishlab top",
   "completeDailyQuests": "Koʻproq tanga uchun kunlik topshiriqlarni bajar!",

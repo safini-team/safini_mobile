@@ -9,7 +9,6 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
 import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
-import 'package:safini/features/child/presentation/widgets/utils/avatar_character_catalog.dart';
 
 class MeBadge {
   const MeBadge({required this.emoji, required this.label, this.earned = true});
