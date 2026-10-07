@@ -1495,9 +1495,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "stepsToday": MessageLookupByLibrary.simpleMessage("Шагов сегодня"),
     "stopRecording": MessageLookupByLibrary.simpleMessage("Стоп"),
     "store": MessageLookupByLibrary.simpleMessage("Магазин"),
-    "storeAppTimeTab": MessageLookupByLibrary.simpleMessage(
-      "Время в приложениях",
-    ),
+    "storeAppTimeTab": MessageLookupByLibrary.simpleMessage("Время"),
     "storeAvatarTab": MessageLookupByLibrary.simpleMessage("Аватар"),
     "storeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Твои монеты, твой выбор",
