@@ -550,7 +550,7 @@
   "yoursLabel": "Твоё",
   "toGo": "ещё {count}",
   "nothingInStore": "В магазине пока пусто.",
-  "storeAppTimeTab": "Время в приложениях",
+  "storeAppTimeTab": "Время",
   "storeAvatarTab": "Аватар",
   "appTimeItem": "{app} · {minutes} м",
   "appTimeMinutes": "{minutes} м",
