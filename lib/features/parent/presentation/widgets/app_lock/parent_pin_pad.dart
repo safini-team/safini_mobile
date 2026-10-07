@@ -17,7 +17,14 @@ class ParentPinPad extends StatefulWidget {
     this.error,
     this.enabled = true,
     this.clearToken,
+    this.fillHeight = false,
   });
+
+  /// When the pad is given a bounded height, use the spare room to push the
+  /// keypad down toward the thumb zone while the title and dots stay on top.
+  /// Two thirds of the free space go above the keypad, one third below it,
+  /// so it sits low without hugging the bottom edge.
+  final bool fillHeight;
 
   final String title;
   final String? subtitle;
@@ -102,10 +109,12 @@ class _ParentPinPadState extends State<ParentPinPad> {
                 ),
         ),
         const SizedBox(height: 12),
+        if (widget.fillHeight) const Spacer(flex: 2),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
           child: _Keypad(enabled: live, onDigit: _digit, onDelete: _delete),
         ),
+        if (widget.fillHeight) const Spacer(),
       ],
     );
   }

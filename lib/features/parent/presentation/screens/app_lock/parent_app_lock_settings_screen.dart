@@ -135,15 +135,39 @@ class _ParentAppLockSettingsScreenState
                             });
                           },
                         )
-                      : SingleChildScrollView(
-                          padding: const EdgeInsets.only(top: 18),
-                          child: ParentPinPad(
-                            title: _title(s),
-                            error: parentAppLockErrorText(s, state.error),
-                            enabled: !state.busy,
-                            clearToken: Object.hash(_step, state.error),
-                            onCompleted: _onPin,
-                          ),
+                      // Same layout as the lock gate: the keypad drops toward
+                      // the thumb zone; still scrolls on short screens.
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            final padding = EdgeInsets.only(
+                              top: 18,
+                              bottom:
+                                  12 + MediaQuery.of(context).padding.bottom,
+                            );
+                            return SingleChildScrollView(
+                              padding: padding,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      (constraints.maxHeight - padding.vertical)
+                                          .clamp(0.0, double.infinity),
+                                ),
+                                child: IntrinsicHeight(
+                                  child: ParentPinPad(
+                                    fillHeight: true,
+                                    title: _title(s),
+                                    error: parentAppLockErrorText(
+                                      s,
+                                      state.error,
+                                    ),
+                                    enabled: !state.busy,
+                                    clearToken: Object.hash(_step, state.error),
+                                    onCompleted: _onPin,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                 ),
               ),
