@@ -142,22 +142,40 @@ class _ParentAppLockGateState extends State<ParentAppLockGate> {
                       ),
                     ),
                   ] else ...[
+                    // Fill the free height so the keypad drops toward the thumb
+                    // zone; still scrolls on short screens.
                     Expanded(
-                      child: SingleChildScrollView(
-                        child: ParentPinPad(
-                          title: s.appLockEnterPin,
-                          error: parentAppLockErrorText(s, state.error),
-                          enabled: !state.busy,
-                          clearToken: Object.hash(
-                            state.error,
-                            state.failedAttempts,
-                            state.lockoutUntil,
-                            state.busy,
-                          ),
-                          onCompleted: (pin) {
-                            context.read<ParentAppLockCubit>().unlock(pin);
-                          },
-                        ),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) =>
+                            SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
+                                ),
+                                child: IntrinsicHeight(
+                                  child: ParentPinPad(
+                                    fillHeight: true,
+                                    title: s.appLockEnterPin,
+                                    error: parentAppLockErrorText(
+                                      s,
+                                      state.error,
+                                    ),
+                                    enabled: !state.busy,
+                                    clearToken: Object.hash(
+                                      state.error,
+                                      state.failedAttempts,
+                                      state.lockoutUntil,
+                                      state.busy,
+                                    ),
+                                    onCompleted: (pin) {
+                                      context
+                                          .read<ParentAppLockCubit>()
+                                          .unlock(pin);
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
                       ),
                     ),
                     Padding(
