@@ -146,4 +146,34 @@ void main() {
     expect(find.text('App 5'), findsOneWidget);
     expect(find.textContaining('Show'), findsNothing);
   });
+
+  testWidgets('a row with a limit to open is tappable', (tester) async {
+    final opened = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [S.delegate],
+        supportedLocales: S.delegate.supportedLocales,
+        locale: const Locale('en'),
+        home: Scaffold(
+          body: AppTimeList(
+            apps: [
+              AppTimeRow(
+                name: 'Roblox',
+                usedMinutes: 40,
+                onTap: () => opened.add('Roblox'),
+              ),
+              const AppTimeRow(name: 'Chrome', usedMinutes: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Roblox'));
+    await tester.tap(find.text('Chrome'));
+    await tester.pumpAndSettle();
+
+    expect(opened, ['Roblox']);
+  });
 }

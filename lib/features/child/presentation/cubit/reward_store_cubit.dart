@@ -186,6 +186,13 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
 
   void selectTab(StoreTab tab) => emit(state.copyWith(selectedTab: tab));
 
+  /// Shows [tab] and asks the Store to open [id]'s sheet, e.g. for a reward
+  /// tapped on Today.
+  void openItem(StoreTab tab, String id) =>
+      emit(state.copyWith(selectedTab: tab, openItemId: id));
+
+  void clearOpenItem() => emit(state.copyWith(clearOpenItem: true));
+
   /// Just the prizes, e.g. when a push says a parent changed them.
   Future<void> reloadPrizes() async {
     final childId = await _resolveChildId();

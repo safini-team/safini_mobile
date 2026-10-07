@@ -8,6 +8,7 @@ import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
 import 'package:safini/features/models/domain/models/screen_time_status.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
+import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
 /// Backend-facing service the **child** device uses for the blocking feature.
 ///
@@ -55,6 +56,45 @@ class ChildAppRulesService {
       return Left(mapDioError(e, 'Unable to load app rules.'));
     } catch (e) {
       debugPrint('[ChildAppRulesService] fetchAppRules error: $e');
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  /// The same rows as [fetchAppRules] with the daily budget they sit under,
+  /// for "My limits" on the kid's Today.
+  Future<Either<Failure, ChildAppUsageSnapshot>> fetchUsageSnapshot(
+    String childId,
+  ) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiConst.childAppUsage(childId),
+      );
+      final data = response.data ?? const <String, dynamic>{};
+      final rawScreenTime = data['screen_time'];
+      final apps = data['apps'];
+      return Right(
+        ChildAppUsageSnapshot(
+          screenTime: rawScreenTime is Map
+              ? ScreenTimeModel.fromJson(
+                  rawScreenTime.map((k, v) => MapEntry(k.toString(), v)),
+                )
+              : ScreenTimeModel.none,
+          apps: apps is List
+              ? apps
+                    .whereType<Map>()
+                    .map(
+                      (e) => ChildAppUsageModel.fromJson(
+                        e.map((k, v) => MapEntry(k.toString(), v)),
+                      ),
+                    )
+                    .toList()
+              : const [],
+        ),
+      );
+    } on DioException catch (e) {
+      return Left(mapDioError(e, 'Unable to load app limits.'));
+    } catch (e) {
+      debugPrint('[ChildAppRulesService] fetchUsageSnapshot error: $e');
       return Left(ServerFailure(e.toString()));
     }
   }

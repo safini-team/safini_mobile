@@ -7,6 +7,7 @@ import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
+import 'package:safini/features/child/presentation/widgets/kid_usage_section.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
@@ -440,11 +441,73 @@ class SampleData {
     avatarColor: const Color(0xFF1A5C4A),
     level: 4,
     teaser: const TodayTeaser(
-      name: '30 extra minutes of Roblox',
-      emoji: '🎮',
+      name: 'YouTube · +15 m',
+      emoji: '⏱️',
       cost: 320,
       coins: 240,
     ),
+    gifts: const [
+      TodayGift(
+        id: 'w1',
+        name: 'Ice cream after school',
+        emoji: '🍦',
+        cost: 60,
+        coins: 240,
+      ),
+      TodayGift(
+        id: 'w2',
+        name: 'Pick the film on Friday',
+        emoji: '🎬',
+        cost: 120,
+        coins: 240,
+        isWaiting: true,
+      ),
+      TodayGift(
+        id: 'w4',
+        name: 'Trip to the pool',
+        emoji: '🏊',
+        cost: 320,
+        coins: 240,
+      ),
+    ],
+    budget: const KidBudget(
+      limitMinutes: 120,
+      usedMinutes: 85,
+      remainingMinutes: 35,
+    ),
+    usageMinutes: 113,
+    usageApps: const [
+      KidAppUsage(
+        name: 'Roblox',
+        usedMinutes: 30,
+        limitMinutes: 30,
+        remainingMinutes: 0,
+        canRedeem: true,
+      ),
+      KidAppUsage(
+        name: 'Minecraft',
+        usedMinutes: 37,
+        limitMinutes: 45,
+        remainingMinutes: 8,
+      ),
+      KidAppUsage(
+        name: 'YouTube',
+        usedMinutes: 18,
+        limitMinutes: 30,
+        bonusMinutes: 15,
+        remainingMinutes: 27,
+        canRedeem: true,
+      ),
+      KidAppUsage(
+        name: 'TikTok',
+        usedMinutes: 0,
+        limitMinutes: 0,
+        remainingMinutes: 0,
+        isBlocked: true,
+      ),
+      KidAppUsage(name: 'Duolingo', usedMinutes: 16),
+      KidAppUsage(name: 'Telegram', usedMinutes: 12),
+    ],
   );
 
   static ChildTasksData kidTasks(S s) => ChildTasksData(

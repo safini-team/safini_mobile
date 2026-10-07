@@ -26,7 +26,8 @@ class ChildRewardStoreScreen extends StatelessWidget {
               curr.missingCoins != prev.missingCoins) ||
           (curr.purchaseError != null &&
               curr.purchaseError != prev.purchaseError) ||
-          (curr.notice != null && curr.notice != prev.notice),
+          (curr.notice != null && curr.notice != prev.notice) ||
+          (curr.openItemId != null && curr.openItemId != prev.openItemId),
       listener: (ctx, state) {
         if (state.missingCoins case final missing?) {
           AppSnackBar.error(ctx, S.of(ctx).moreCoinsNeeded(missing));
@@ -39,6 +40,20 @@ class ChildRewardStoreScreen extends StatelessWidget {
         if (state.notice case final notice?) {
           AppSnackBar.success(ctx, notice);
           ctx.read<RewardStoreCubit>().clearNotice();
+        }
+        // A reward tapped on Today: open its sheet, as if tapped here.
+        if (state.openItemId case final id?) {
+          ctx.read<RewardStoreCubit>().clearOpenItem();
+          final s = S.of(ctx);
+          final coins = ctx.read<CoinsCubit>().state;
+          final card = _ChildStoreScreen.cardsFor(
+            state,
+            coins,
+            s,
+          ).where((c) => c.id == id).firstOrNull;
+          if (card != null) {
+            _ChildStoreScreen.open(ctx, state, card, coins, s);
+          }
         }
       },
       // A parent added, handed over or declined a prize.
@@ -84,7 +99,6 @@ class _ChildStoreScreen extends StatelessWidget {
         }
 
         final tab = state.selectedTab;
-        final onAppTime = tab == StoreTab.appTime;
         final onPrizes = tab == StoreTab.prizes;
         final cards = onPrizes
             ? [
@@ -154,6 +168,7 @@ class _ChildStoreScreen extends StatelessWidget {
                     pending: state.pendingPurchases.contains(item.id),
                   ),
               ];
+        final cards = cardsFor(state, coins, s);
 
         return ChildStoreView(
           data: ChildStoreData(
@@ -179,14 +194,91 @@ class _ChildStoreScreen extends StatelessWidget {
                 : null,
           ),
           onSelectTab: (index) => cubit.selectTab(StoreTab.values[index]),
-          onOpenCard: (card) => _open(context, state, card, coins, s),
+          onOpenCard: (card) => open(context, state, card, coins, s),
           onRefresh: () => cubit.loadStore(),
         );
       },
     );
   }
 
-  Future<void> _open(
+  /// The tiles on the selected tab.
+  static List<StoreCardData> cardsFor(
+    RewardStoreState state,
+    int coins,
+    S s,
+  ) {
+    final tab = state.selectedTab;
+    final onAppTime = tab == StoreTab.appTime;
+    final onPrizes = tab == StoreTab.prizes;
+    return onPrizes
+        ? [
+            for (final prize in state.prizes)
+              StoreCardData(
+                id: prize.id,
+                emoji: prize.displayEmoji,
+                name: prize.title,
+                cost: prize.coinCost,
+                affordable: prize.isWaiting || coins >= prize.coinCost,
+                waiting: prize.isWaiting,
+                badge: prize.isWaiting ? s.prizeWaiting : null,
+                pending: state.pendingPurchases.contains(prize.id),
+              ),
+            // A wish is not in the store yet, so it has no price to pay;
+            // it shows the price the child suggested, waiting.
+            for (final wish in state.openWishes)
+              StoreCardData(
+                id: 'wish:${wish.id}',
+                emoji: wish.displayEmoji,
+                name: wish.title,
+                detail: s.wishLabel,
+                cost: wish.coinCost,
+                affordable: true,
+                waiting: true,
+                badge: s.prizeWaiting,
+              ),
+          ]
+        : onAppTime
+        ? [
+            for (final item in state.appTimeItems)
+              StoreCardData(
+                id: item.id,
+                emoji: '⏱️',
+                name: item.title,
+                detail: s.appTimeMinutes(item.minutes),
+                fullName: s.appTimeItem(item.title, item.minutes),
+                cost: item.cost,
+                affordable: item.isEnabled && coins >= item.cost,
+                badge:
+                    defaultTargetPlatform != TargetPlatform.iOS &&
+                        item.remainingMinutes > 0
+                    ? s.minutesLeftShort(item.remainingMinutes)
+                    : null,
+                pending: state.pendingPurchases.contains(item.id),
+                packageName: item.packageName,
+                iconUrl: item.iconUrl,
+              ),
+          ]
+        : [
+            for (final item in state.avatarItems)
+              StoreCardData(
+                id: item.id,
+                emoji: item.emoji,
+                // The API sends the real name ("Cosmic Cape"); only fall
+                // back to the generic label when it omitted one. Being worn
+                // is a state, so it belongs on the badge, not the name.
+                name: item.name.isNotEmpty ? item.name : s.avatarItem,
+                cost: item.cost ?? 0,
+                owned: item.isEquipped || item.isFree,
+                affordable: item.cost == null || coins >= (item.cost ?? 0),
+                badge: item.isEquipped
+                    ? s.wornLabel
+                    : (item.isLocked ? item.lockLabel : null),
+                pending: state.pendingPurchases.contains(item.id),
+              ),
+          ];
+  }
+
+  static Future<void> open(
     BuildContext context,
     RewardStoreState state,
     StoreCardData card,
