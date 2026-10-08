@@ -23,6 +23,9 @@ import 'package:safini/features/parent/parent_injection.dart';
 import 'package:safini/features/child/friends/friend.dart';
 import 'package:safini/features/prizes/prize.dart';
 import 'package:safini/features/signout/signout_request.dart';
+import 'package:safini/features/subscription/family_plan.dart';
+import 'package:safini/features/subscription/pro_cubit.dart';
+import 'package:safini/features/subscription/pro_store.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -93,6 +96,21 @@ Future<void> configureDependencies({bool firebaseReady = false}) async {
   }
   if (!getIt.isRegistered<FriendsApi>()) {
     getIt.registerLazySingleton<FriendsApi>(() => FriendsApi(getIt<Dio>()));
+  }
+
+  // Safini Pro (SAF-213). One cubit for the whole parent session, so a
+  // renewal or a purchase finished on another screen updates the plan.
+  // Only iOS sells; Android reads the plan and buys nothing (SAF-216).
+  if (!getIt.isRegistered<ProCubit>()) {
+    getIt.registerLazySingleton<PlanApi>(() => PlanApi(getIt<Dio>()));
+    getIt.registerLazySingleton<ProCubit>(
+      () => ProCubit(
+        api: getIt<PlanApi>(),
+        store: !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS
+            ? AppStoreProStore()
+            : null,
+      ),
+    );
   }
 
   if (!getIt.isRegistered<VersionPolicyClient>()) {

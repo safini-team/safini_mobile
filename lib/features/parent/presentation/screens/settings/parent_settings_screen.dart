@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/foreground_notifications.dart';
 import 'package:safini/core/notifications/notification_preferences.dart';
@@ -23,6 +24,8 @@ import 'package:safini/features/common/auth/presentation/account_deletion_flow.d
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/app_lock/parent_app_lock_state.dart';
+import 'package:safini/features/subscription/family_plan.dart';
+import 'package:safini/features/subscription/pro_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Parent · Settings, pushed from My family. Follows the artboard, including
@@ -60,6 +63,7 @@ class ParentSettingsScreen extends StatelessWidget {
                       radius: AppRadius.card,
                       shadow: AppShadows.flat,
                       children: [
+                        if (getIt<ProCubit>().canSell) const _ProRow(),
                         DsRow(
                           onTap: () => _editProfile(context),
                           title: s.editProfile,
@@ -193,6 +197,43 @@ class ParentSettingsScreen extends StatelessWidget {
     );
 
     if (confirmed == true) await auth.signOut();
+  }
+}
+
+/// Safini Pro and the family's plan; opens the paywall (SAF-213).
+class _ProRow extends StatelessWidget {
+  const _ProRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+
+    return BlocBuilder<ProCubit, ProState>(
+      bloc: getIt<ProCubit>(),
+      buildWhen: (previous, next) => previous.plan != next.plan,
+      builder: (context, state) {
+        final plan = state.plan;
+        final expires = plan?.expiresAt;
+        final date = expires == null
+            ? null
+            : DateFormat.yMMMd(locale).format(expires.toLocal());
+        final String? subtitle = switch (plan) {
+          null => null,
+          FamilyPlan(isPro: false) => s.proSettingsFree,
+          FamilyPlan(willRenew: true) when date != null => s.proRenewsOn(date),
+          _ when date != null => s.proActiveUntil(date),
+          _ => null,
+        };
+        return DsRow(
+          onTap: () => context.router.push(const NamedRoute('paywall')),
+          title: s.proTitle,
+          subtitle: subtitle,
+          verticalPadding: 15,
+          trailing: AppIcons.chevronRight(),
+        );
+      },
+    );
   }
 }
 

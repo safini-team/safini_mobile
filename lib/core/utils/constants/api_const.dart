@@ -22,6 +22,14 @@ class ApiConst {
   static const String notificationPreferences =
       '/v1/me/notification-preferences';
   static const String currentFamily = '/v1/families/current';
+
+  /// GET - the family's Safini Pro plan, whoever paid and however (SAF-208).
+  static const String familySubscription =
+      '/v1/families/current/subscription';
+
+  /// POST - an App Store purchase or restore, as StoreKit's signed
+  /// transaction, so the server makes the family Pro (SAF-211).
+  static const String appleTransactions = '/v1/billing/apple/transactions';
   static const String children = '/v1/families/current/children';
 
   static String childById(String childId) => '/v1/children/$childId';

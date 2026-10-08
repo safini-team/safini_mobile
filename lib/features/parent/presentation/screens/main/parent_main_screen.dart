@@ -8,6 +8,7 @@ import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/features/subscription/pro_cubit.dart';
 import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_shell.dart';
@@ -57,6 +58,9 @@ class _ParentMainScreenState extends State<ParentMainScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _push.attach();
+    // Reads this family's plan and picks up App Store renewals and purchases
+    // that were left unfinished.
+    getIt<ProCubit>().start();
   }
 
   @override
