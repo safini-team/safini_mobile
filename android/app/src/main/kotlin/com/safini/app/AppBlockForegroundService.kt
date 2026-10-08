@@ -30,6 +30,14 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     private var purchase = false
     private var backfilling = false
     private val waiters = mutableListOf<(Throwable?) -> Unit>()
+    private val uploadSoon = Runnable { uploadInstalledApps() }
+    private val packageChanges = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            // Install + replace fire back to back; one scan covers both.
+            handler.removeCallbacks(uploadSoon)
+            handler.postDelayed(uploadSoon, 2_000)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -39,6 +47,15 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         overlay = BlockOverlay(this, this)
         tracker = ForegroundTracker(store)
         notification()
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_PACKAGE_ADDED)
+            addAction(Intent.ACTION_PACKAGE_REMOVED)
+            addAction(Intent.ACTION_PACKAGE_CHANGED)
+            addAction(Intent.ACTION_PACKAGE_REPLACED)
+            addDataScheme("package")
+        }
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(packageChanges, filter, Context.RECEIVER_NOT_EXPORTED)
+        else registerReceiver(packageChanges, filter)
         handler.post(tick)
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -59,6 +76,8 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         if (!stopped) store.persist()
         stopped = true
         handler.removeCallbacks(tick)
+        handler.removeCallbacks(uploadSoon)
+        runCatching { unregisterReceiver(packageChanges) }
         removeOverlay()
         network.shutdownNow()
         waiters.toList().forEach { it(IllegalStateException("App limits stopped.")) }
@@ -225,7 +244,17 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
                 syncing = false
                 val callbacks = waiters.toList(); waiters.clear()
                 callbacks.forEach { it(response.exceptionOrNull()) }
+                uploadInstalledApps()
             }
+        }
+    }
+
+    /** Cheap when unchanged; renders icons only when a PUT is due. */
+    fun uploadInstalledApps() {
+        if (stopped) return
+        network.execute {
+            if (stopped) return@execute
+            runCatching { InstalledAppsSync.uploadIfDue(this, client, store) }
         }
     }
 

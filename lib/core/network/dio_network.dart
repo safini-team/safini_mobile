@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/network/app_client_headers.dart';
 import 'package:safini/core/network/auth_token_provider.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
 
@@ -12,6 +13,7 @@ class DioNetwork {
 
   static void initDio() {
     appAPI = Dio(_baseOptions(ApiConst.baseUrl));
+    appAPI.interceptors.add(AppClientHeadersInterceptor());
     appAPI.interceptors.add(_authInterceptor());
   }
 

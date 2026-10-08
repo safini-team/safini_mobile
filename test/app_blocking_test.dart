@@ -30,6 +30,9 @@ class NativeFake extends AppBlockService {
   bool failStart = false;
   bool running = true;
   int starts = 0;
+  int installedSyncs = 0;
+  bool installedSyncOk = true;
+  List<InstalledApp> apps = const [];
   @override
   bool get isSupported => true;
   @override
@@ -51,16 +54,26 @@ class NativeFake extends AppBlockService {
   }
 
   @override
-  Future<List<InstalledApp>> installedApps() async => [];
+  Future<List<InstalledApp>> installedApps() async => apps;
+
+  @override
+  Future<bool> syncInstalledApps() async {
+    installedSyncs++;
+    return installedSyncOk;
+  }
 }
 
 class RulesFake extends ChildAppRulesService {
   RulesFake() : super(Dio());
+  int uploads = 0;
   @override
   Future<Either<Failure, Unit>> reportInstalledApps(
     String id,
     List<InstalledApp> apps,
-  ) async => const Right(unit);
+  ) async {
+    uploads++;
+    return const Right(unit);
+  }
 }
 
 class ProfileFake implements ProfileController {
@@ -180,30 +193,27 @@ void main() {
       await coins.close();
     },
   );
-  test(
-    'Android shop buys through native enforcement and applies authoritative balance',
-    () async {
-      final native = PurchaseNativeFake();
-      getIt.registerSingleton<AppBlockService>(native);
-      addTearDown(() => getIt.unregister<AppBlockService>());
-      final methods = <String>[];
-      final coins = CoinsCubit();
-      final cubit = RewardStoreCubit(
-        coins,
-        storeDio(blocked: false, methods: methods),
-        ProfileFake(),
-      );
-      await cubit.stream.firstWhere((state) => !state.isLoading);
-      await cubit.purchaseAppTimeItem('roblox');
-      expect(native.accepted, ['roblox', 100, 5]);
-      expect(coins.state, 900);
-      expect(cubit.state.appTimeItems.single.remainingMinutes, 5);
-      // The store and its prizes are read; the purchase itself went native.
-      expect(methods, ['GET', 'GET']);
-      await cubit.close();
-      await coins.close();
-    },
-  );
+  test('Android shop buys through native enforcement and applies authoritative balance', () async {
+    final native = PurchaseNativeFake();
+    getIt.registerSingleton<AppBlockService>(native);
+    addTearDown(() => getIt.unregister<AppBlockService>());
+    final methods = <String>[];
+    final coins = CoinsCubit();
+    final cubit = RewardStoreCubit(
+      coins,
+      storeDio(blocked: false, methods: methods),
+      ProfileFake(),
+    );
+    await cubit.stream.firstWhere((state) => !state.isLoading);
+    await cubit.purchaseAppTimeItem('roblox');
+    expect(native.accepted, ['roblox', 100, 5]);
+    expect(coins.state, 900);
+    expect(cubit.state.appTimeItems.single.remainingMinutes, 5);
+    // The store and its prizes are read; the purchase itself went native.
+    expect(methods, ['GET', 'GET']);
+    await cubit.close();
+    await coins.close();
+  });
   test(
     'manual block, unlimited and redemption flags round trip independently',
     () {
@@ -228,6 +238,51 @@ void main() {
       );
     },
   );
+  test('start and resume both ask native to refresh installed apps', () async {
+    final native = NativeFake();
+    final rules = RulesFake();
+    final cubit = ChildAppBlockCubit(native, rules, ProfileFake());
+    await cubit.start();
+    expect(native.installedSyncs, 1);
+    expect(rules.uploads, 0);
+    await cubit.onResumed();
+    expect(native.installedSyncs, 2);
+    expect(rules.uploads, 0);
+    await cubit.close();
+  });
+
+  test(
+    'a failed native installed-apps PUT falls back to the bearer upload',
+    () async {
+      final native = NativeFake()
+        ..installedSyncOk = false
+        ..apps = [
+          const InstalledApp(
+            packageName: 'com.roblox.client',
+            appName: 'Roblox',
+          ),
+        ];
+      final rules = RulesFake();
+      final cubit = ChildAppBlockCubit(native, rules, ProfileFake());
+      await cubit.start();
+      expect(native.installedSyncs, 1);
+      expect(rules.uploads, 1);
+      await cubit.onResumed();
+      expect(native.installedSyncs, 2);
+      expect(rules.uploads, 2);
+      await cubit.close();
+    },
+  );
+
+  test('an empty fallback list is not uploaded', () async {
+    final native = NativeFake()..installedSyncOk = false;
+    final rules = RulesFake();
+    final cubit = ChildAppBlockCubit(native, rules, ProfileFake());
+    await cubit.start();
+    expect(rules.uploads, 0);
+    await cubit.close();
+  });
+
   test('permission revocation on resume never remains active', () async {
     final native = NativeFake();
     final cubit = ChildAppBlockCubit(native, RulesFake(), ProfileFake());

@@ -54,6 +54,20 @@ class EnforcementStore(context: Context) : FrontApp {
         get() = prefs.getBoolean("device_admin_seen", false)
         set(value) { prefs.edit().putBoolean("device_admin_seen", value).apply() }
 
+    fun installedAppsFingerprint(): String? = prefs.getString("installed_apps_fingerprint", null)
+    fun installedAppsSuccessAt(): Long? = prefs.getLong("installed_apps_success_at", 0L).takeIf { it > 0 }
+    fun installedAppsAttemptAt(): Long? = prefs.getLong("installed_apps_attempt_at", 0L).takeIf { it > 0 }
+    fun markInstalledAppsAttempt(at: Long) {
+        prefs.edit().putLong("installed_apps_attempt_at", at).commit()
+    }
+    fun markInstalledAppsSuccess(fingerprint: String, at: Long) {
+        prefs.edit()
+            .putString("installed_apps_fingerprint", fingerprint)
+            .putLong("installed_apps_success_at", at)
+            .putLong("installed_apps_attempt_at", at)
+            .commit()
+    }
+
     fun day(at: Long): String = Instant.ofEpochMilli(at).atZone(zone()).toLocalDate().toString()
     /** Family-local midnight [days] days before the day of [at]. */
     fun startOfDay(at: Long, days: Long = 0): Long =

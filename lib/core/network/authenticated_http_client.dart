@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'package:safini/core/network/app_client_headers.dart';
 import 'package:safini/core/network/auth_token_provider.dart';
 
 class AuthSessionUnavailableException implements Exception {
@@ -14,11 +15,16 @@ class AuthSessionUnavailableException implements Exception {
 /// Small HTTP facade that applies the same auth policy as the shared Dio
 /// client: proactive refresh, one refresh on 401, and one retry.
 class AuthenticatedHttpClient {
-  AuthenticatedHttpClient(this._tokens, {http.Client? client})
-    : _client = client ?? http.Client();
+  AuthenticatedHttpClient(
+    this._tokens, {
+    http.Client? client,
+    AppClientHeaders? headers,
+  }) : _client = client ?? http.Client(),
+       _appHeaders = headers ?? AppClientHeaders.shared;
 
   final AuthTokenProvider _tokens;
   final http.Client _client;
+  final AppClientHeaders _appHeaders;
 
   Future<http.Response> get(Uri url, {Map<String, String>? headers}) =>
       _send((token) => _client.get(url, headers: _headers(headers, token)));
@@ -82,6 +88,7 @@ class AuthenticatedHttpClient {
   Future<http.Response> _send(
     Future<http.Response> Function(String token) request,
   ) async {
+    await _appHeaders.resolve();
     final token = await _tokens.getAccessToken();
     if (token == null || token.isEmpty) {
       throw const AuthSessionUnavailableException();
@@ -104,7 +111,11 @@ class AuthenticatedHttpClient {
   }
 
   Map<String, String> _headers(Map<String, String>? headers, String token) =>
-      <String, String>{...?headers, 'Authorization': 'Bearer $token'};
+      <String, String>{
+        ..._appHeaders.cached,
+        ...?headers,
+        'Authorization': 'Bearer $token',
+      };
 
   void close() => _client.close();
 }

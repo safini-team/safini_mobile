@@ -20,9 +20,9 @@ void main() {
     reply = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(AppBlockService.channel, (call) async {
-      calls.add(call);
-      return reply;
-    });
+          calls.add(call);
+          return reply;
+        });
   });
 
   tearDown(() {
@@ -36,10 +36,11 @@ void main() {
     expect(await android.hasOverlayPermission(), isFalse);
     reply = true;
     expect(await android.hasUsageAccess(), isTrue);
-    expect(
-      calls.map((c) => c.method),
-      ['hasUsageAccess', 'hasOverlayPermission', 'hasUsageAccess'],
-    );
+    expect(calls.map((c) => c.method), [
+      'hasUsageAccess',
+      'hasOverlayPermission',
+      'hasUsageAccess',
+    ]);
   });
 
   test('a null answer from native counts as "not granted"', () async {
@@ -129,6 +130,15 @@ void main() {
     });
   });
 
+  test('syncInstalledApps asks native and treats a miss as failed', () async {
+    reply = true;
+    expect(await android.syncInstalledApps(), isTrue);
+    expect(calls.single.method, 'syncInstalledApps');
+    calls.clear();
+    reply = null;
+    expect(await android.syncInstalledApps(), isFalse);
+  });
+
   test('a platform without the native side is never called', () async {
     await elsewhere.startService();
     await elsewhere.syncNow();
@@ -136,6 +146,7 @@ void main() {
     await elsewhere.configure({'childId': 'child-1'});
     expect(await elsewhere.installedApps(), isEmpty);
     expect(await elsewhere.appIcon('com.roblox.client'), isNull);
+    expect(await elsewhere.syncInstalledApps(), isTrue);
     expect(calls, isEmpty);
 
     // Permission checks answer "granted" off Android on purpose: the child

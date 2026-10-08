@@ -47,25 +47,48 @@ class EnforcementClient(private val context: Context) {
     }
     fun request(path: String, body: JSONObject?, method: String = "POST"): JSONObject {
         val base = prefs.getString("url", null) ?: error("Open Safini to connect app limits.")
-        val connection = URL(base+path).openConnection() as HttpURLConnection
+        return requestUrl(base + path, body, method, revokeOn401 = true)
+    }
+
+    /** PUT /v1/children/{id}/installed-apps with the device token, not the enforcement prefix. */
+    fun putInstalledApps(body: JSONObject): JSONObject {
+        val base = prefs.getString("url", null) ?: error("Open Safini to connect app limits.")
+        val url = base.removeSuffix("/enforcement") + "/installed-apps"
+        // A 401 here must not drop the pairing: older APIs only accept a bearer
+        // on this route, while enforcement /sync still uses the device token.
+        return requestUrl(url, body, "PUT", revokeOn401 = false, timeoutMs = 30_000)
+    }
+
+    private fun requestUrl(
+        url: String,
+        body: JSONObject?,
+        method: String,
+        revokeOn401: Boolean,
+        timeoutMs: Int = 10_000,
+    ): JSONObject {
+        val connection = URL(url).openConnection() as HttpURLConnection
         try {
             connection.requestMethod = method
-            connection.connectTimeout = 10000
-            connection.readTimeout = 10000
+            connection.connectTimeout = timeoutMs
+            connection.readTimeout = timeoutMs
             connection.instanceFollowRedirects = false
             connection.setRequestProperty("X-Safini-Device-Token", token())
             connection.setRequestProperty("Content-Type", "application/json")
+            for ((name, value) in AppClientHeaders.from(context)) {
+                connection.setRequestProperty(name, value)
+            }
             if (body != null) {
                 connection.doOutput = true
-                connection.outputStream.use { it.write(body.toString().toByteArray()) }
+                connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
             }
             val status = connection.responseCode
             if (status !in 200..299) {
                 // Do not log headers, credentials or child data.
-                if (status == 401) prefs.edit().remove("expiresAt").commit()
+                if (status == 401 && revokeOn401) prefs.edit().remove("expiresAt").commit()
                 throw EnforcementHttpException(status, if (status == 409) "Purchase unavailable. Check your balance and parent limits in Safini." else "Unable to connect ($status). Open Safini or try again.")
             }
-            return JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
+            val text = connection.inputStream.bufferedReader().use { it.readText() }
+            return if (text.isBlank()) JSONObject() else JSONObject(text)
         } finally { connection.disconnect() }
     }
     fun purchaseId(slug: String): String {
