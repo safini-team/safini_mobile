@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/widgets/language_sheet.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm, formatHmTight;
 
@@ -113,6 +114,10 @@ void main() {
       expect(codes, expected);
       expect(S.delegate.isSupported(const Locale('kk')), isTrue);
       expect(S.delegate.isSupported(const Locale('tg')), isFalse);
+    });
+
+    test('every language picker lists RU, EN, KG, UZ, KZ', () {
+      expect(appLanguages.map((l) => l.code), ['ru', 'en', 'ky', 'uz', 'kk']);
     });
 
     test('every locale has the same key set', () {

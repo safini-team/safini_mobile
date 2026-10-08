@@ -59,7 +59,7 @@ it disappears on resume once they are allowed. Protection alerts have no switch.
 
 `PushNotifications.createChannels` creates `safini_protection`, `safini_tasks`
 (both high importance), `safini_screen_time`, `safini_family` and
-`safini_reminders`, named in en/ru/uz. Importance cannot be raised after a
+`safini_reminders`, named in en/ru/uz/ky/kk. Importance cannot be raised after a
 channel exists, so it is decided there for good. `ic_stat_safini` is the Time
 Coin's ring and tick as a silhouette, set as FCM's default icon and on the
 enforcement service's ongoing notification; the launcher icon it replaces drew
