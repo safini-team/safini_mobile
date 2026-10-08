@@ -2,6 +2,7 @@ package com.safini.app
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -54,5 +55,13 @@ class InstalledAppsSyncTest {
         assertTrue(upload(store, t0))
         assertTrue(upload(store, t0 + minute))
         assertEquals(1, puts.size)
+    }
+
+    @Test fun anEmptyIconListIsNeverUploaded() {
+        val store = MemoryStore()
+        assertFalse(upload(store, t0, apps = emptyList()))
+        assertTrue(puts.isEmpty())
+        assertNull(store.successAt)
+        assertEquals(t0, store.attemptAt)
     }
 }

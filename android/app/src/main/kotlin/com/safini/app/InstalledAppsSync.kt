@@ -59,6 +59,8 @@ object InstalledAppsSync {
         store.markInstalledAppsAttempt(now)
         return try {
             val apps = listApps()
+            // Like an empty scan, an empty icon pass must not replace the parent's list.
+            if (apps.isEmpty()) return false
             InstalledAppsUpload.putSnapshot(apps) { attach -> put(apps, attach) }
             store.markInstalledAppsSuccess(fingerprint, now)
             true
