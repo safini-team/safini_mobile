@@ -1659,6 +1659,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Tips for Parents"),
     "toGo": m86,
+    "todayOffline": MessageLookupByLibrary.simpleMessage("No connection"),
+    "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
+      "Your tasks show up once you are online. Pull down to try again.",
+    ),
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Today\'s Quests"),
     "tourChildFriendsBody": MessageLookupByLibrary.simpleMessage(
       "Add a friend with their 6-digit Safini ID and see how they are doing.",

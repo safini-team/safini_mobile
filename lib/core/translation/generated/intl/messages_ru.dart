@@ -1689,6 +1689,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Советы родителям"),
     "toGo": m86,
+    "todayOffline": MessageLookupByLibrary.simpleMessage("Нет связи"),
+    "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
+      "Задания появятся, когда будет интернет. Потяни вниз, чтобы обновить.",
+    ),
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Сегодняшние задания"),
     "tourChildFriendsBody": MessageLookupByLibrary.simpleMessage(
       "Добавь друга по его 6-значному ID Safini и посмотри, как у него дела.",

@@ -3825,6 +3825,27 @@ class S {
     );
   }
 
+  /// `No connection`
+  String get todayOffline {
+    return Intl.message(
+      'No connection',
+      name: 'todayOffline',
+      desc:
+          'Child Today headline and card title when today\'s tasks could not be loaded.',
+      args: [],
+    );
+  }
+
+  /// `Your tasks show up once you are online. Pull down to try again.`
+  String get todayOfflineBody {
+    return Intl.message(
+      'Your tasks show up once you are online. Pull down to try again.',
+      name: 'todayOfflineBody',
+      desc: 'Child Today card body when today\'s tasks could not be loaded.',
+      args: [],
+    );
+  }
+
   /// `Your parent reviews them next. Coins land after that.`
   String get parentReviewsNext {
     return Intl.message(

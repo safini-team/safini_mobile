@@ -543,6 +543,8 @@
   "allDoneTodayBody": "Все задания одобрены, монеты уже в кошельке.",
   "nothingForToday": "На сегодня заданий нет",
   "nothingForTodayBody": "Заданий пока нет. Отдыхай.",
+  "todayOffline": "Нет связи",
+  "todayOfflineBody": "Задания появятся, когда будет интернет. Потяни вниз, чтобы обновить.",
   "parentReviewsNext": "Родитель проверит их дальше. Монеты придут после этого.",
   "childTasksSubtitle": "{done} из {total} сегодня · {coins} монет ждут",
   "nothingHereYet": "Здесь пока пусто",

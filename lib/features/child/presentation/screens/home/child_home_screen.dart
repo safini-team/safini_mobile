@@ -184,6 +184,7 @@ class _ChildTodayScreen extends StatelessWidget {
                 time.limits?.screenTime.usageAvailable ??
                 time.usage?.usageAvailable ??
                 true,
+            loadFailed: quests.loadFailed,
           ),
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
           onOpenGifts: () => _openGifts(context, store),

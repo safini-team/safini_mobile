@@ -14,6 +14,7 @@ ChildTodayData _data({
   int questsTotal = 2,
   int awaiting = 0,
   TodayQuest? next,
+  bool loadFailed = false,
 }) {
   return ChildTodayData(
     greeting: 'Good evening',
@@ -25,6 +26,7 @@ ChildTodayData _data({
     openCoins: 50,
     next: next,
     holdToComplete: true,
+    loadFailed: loadFailed,
   );
 }
 
@@ -72,6 +74,31 @@ void main() {
       expect(_data(questsTotal: 0).rest, TodayRest.empty);
     });
 
+    test('is offline, not empty, when the tasks could not load', () {
+      expect(_data(questsTotal: 0, loadFailed: true).rest, TodayRest.offline);
+      expect(_data(questsDone: 2, loadFailed: true).rest, TodayRest.allDone);
+    });
+  });
+
+  testWidgets('a failed load never tells the child the day is empty', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        ChildTodayView(
+          data: _data(questsTotal: 0, loadFailed: true),
+          onOpenStore: () {},
+          onOpenTasks: () {},
+          onOpenQuest: (_) {},
+          onSendQuest: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('No connection'), findsWidgets);
+    expect(find.text('Nothing for today'), findsNothing);
+    expect(find.text('Nothing left'), findsNothing);
   });
 
   testWidgets('an approved day says so instead of blaming the parent', (

@@ -1752,6 +1752,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ota-onalar uchun maslahatlar",
     ),
     "toGo": m86,
+    "todayOffline": MessageLookupByLibrary.simpleMessage("Aloqa yoʻq"),
+    "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
+      "Internet boʻlganda vazifalar chiqadi. Yangilash uchun pastga tort.",
+    ),
     "todaysQuests": MessageLookupByLibrary.simpleMessage(
       "Bugungi topshiriqlar",
     ),

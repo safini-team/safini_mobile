@@ -12,6 +12,7 @@ import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/common/auth/data/auth_apple_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
+import 'package:safini/features/common/auth/data/me_cache.dart';
 import 'package:safini/features/common/auth/data/user_me_service.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
@@ -33,14 +34,28 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
     this._appleAuth,
     this._emailAuth,
     this._meService,
-    this._tokens,
-  ) : super(const AuthSessionState.initial());
+    this._tokens, {
+    MeCache? meCache,
+    String? Function()? currentUserId,
+  }) : _meCache = meCache ?? MeCache(null),
+       _currentUserId = currentUserId ?? _supabaseUserId,
+       super(const AuthSessionState.initial());
 
   final AuthGoogleSignInService _googleAuth;
   final AuthAppleSignInService _appleAuth;
   final AuthEmailSignInService _emailAuth;
   final UserMeService _meService;
   final AuthTokenProvider _tokens;
+  final MeCache _meCache;
+  final String? Function() _currentUserId;
+
+  static String? _supabaseUserId() {
+    try {
+      return Supabase.instance.client.auth.currentUser?.id;
+    } catch (_) {
+      return null;
+    }
+  }
 
   // ── App-start path ──────────────────────────────────────────────────────
 
@@ -191,6 +206,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
 
     try {
       final me = await _meService.fetchMe();
+      await _meCache.save(me);
       emit(
         AuthSessionState(
           status: AuthSessionStatus.authenticated,
@@ -219,6 +235,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
         ),
       );
     } on NetworkException catch (e) {
+      if (_emitCachedProfile()) return;
       emit(
         state.copyWith(
           status: AuthSessionStatus.profileError,
@@ -229,6 +246,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
       );
     } on UnexpectedResponseException catch (e) {
       debugPrint('Unexpected /v1/me response: $e');
+      if (_emitCachedProfile()) return;
       emit(
         AuthSessionState(
           status: AuthSessionStatus.authenticated,
@@ -247,6 +265,19 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
         ),
       );
     }
+  }
+
+  bool _emitCachedProfile() {
+    final cached = _meCache.readFor(_currentUserId());
+    if (cached == null) return false;
+    emit(
+      AuthSessionState(
+        status: AuthSessionStatus.authenticated,
+        userId: cached.userId,
+        accountType: cached.accountType,
+      ),
+    );
+    return true;
   }
 
   /// Retry fetching the profile with the current session token.
@@ -304,6 +335,7 @@ class AuthSessionCubit extends Cubit<AuthSessionState> {
   }
 
   Future<void> _clearAuthState() async {
+    await _meCache.clear();
     if (getIt.isRegistered<SharedPreferences>()) {
       await getIt<SharedPreferences>().remove(AppConstants.accessToken);
     }
