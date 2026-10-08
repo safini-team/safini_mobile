@@ -10,7 +10,6 @@ class ChildAppBlockCubit extends Cubit<AppBlockState> {
   final ChildAppRulesService _rulesService;
   final ProfileController _profileController;
   bool _busy = false;
-  bool _uploaded = false;
   ChildAppBlockCubit(
     this._blockService,
     this._rulesService,
@@ -79,10 +78,13 @@ class ChildAppBlockCubit extends Cubit<AppBlockState> {
       if (!isClosed) {
         emit(state.copyWith(status: AppBlockStatus.active, isChecking: false));
       }
-      if (!_uploaded) {
+      // Native owns the background path. A failed native PUT (older API that
+      // still wants a bearer on this route) falls back while the UI is open.
+      if (!await _blockService.syncInstalledApps()) {
         final apps = await _blockService.installedApps();
-        final result = await _rulesService.reportInstalledApps(id, apps);
-        _uploaded = result.isRight();
+        if (apps.isNotEmpty) {
+          await _rulesService.reportInstalledApps(id, apps);
+        }
       }
     } catch (e) {
       // A network failure retains the native service's cached budgets.

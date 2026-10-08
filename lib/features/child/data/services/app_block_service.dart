@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:safini/features/models/domain/models/installed_app.dart';
@@ -56,6 +57,22 @@ class AppBlockService {
   Future<void> startService() => _call('startService');
   Future<void> syncNow() => _call('syncNow');
   Future<void> stopService() => _call('stopService');
+
+  /// Native installed-apps PUT when the package set changed or the periodic
+  /// refresh is due. True when the server list is fresh (uploaded or skipped).
+  /// False when the native path failed, so Flutter can fall back to a bearer
+  /// PUT while the child UI is open. iOS returns true so it never uploads an
+  /// empty list.
+  Future<bool> syncInstalledApps() async {
+    if (!isSupported) return true;
+    try {
+      return await channel.invokeMethod<bool>('syncInstalledApps') ?? false;
+    } on PlatformException {
+      return false;
+    } on MissingPluginException {
+      return false;
+    }
+  }
 
   /// Every launchable app on this phone, with its launcher icon. Rendering
   /// the icons takes native a second or two; it happens off the UI thread.
