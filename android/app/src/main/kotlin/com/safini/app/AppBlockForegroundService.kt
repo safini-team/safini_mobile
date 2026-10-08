@@ -8,7 +8,6 @@ import android.content.pm.ServiceInfo
 import android.os.*
 import android.provider.Settings
 import org.json.JSONObject
-import java.util.concurrent.Executors
 
 /** Native enforcement and sync continue even when Flutter is suspended. */
 class AppBlockForegroundService : Service(), BlockOverlay.Host {
@@ -18,7 +17,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             private set
     }
     private val handler = Handler(Looper.getMainLooper())
-    private val network = Executors.newSingleThreadExecutor()
+    private val threads = ServiceThreads()
     private lateinit var store: EnforcementStore
     private lateinit var client: EnforcementClient
     private lateinit var overlay: BlockOverlay
@@ -79,7 +78,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         handler.removeCallbacks(uploadSoon)
         runCatching { unregisterReceiver(packageChanges) }
         removeOverlay()
-        network.shutdownNow()
+        threads.shutdownNow()
         waiters.toList().forEach { it(IllegalStateException("App limits stopped.")) }
         waiters.clear()
         if (instance === this) instance = null
@@ -231,7 +230,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             .put("usage_access", usageAccess(this)).put("overlay_permission", Settings.canDrawOverlays(this))
             .put("service_running", true).put("manufacturer", Build.MANUFACTURER.take(80))
             .put("device_admin_active", deviceAdminFlag())
-        network.execute {
+        threads.network.execute {
             val response = runCatching { client.request("/sync", body) }
             handler.post {
                 if (stopped) return@post
@@ -252,7 +251,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     /** Cheap when unchanged; renders icons only when a PUT is due. */
     fun uploadInstalledApps() {
         if (stopped) return
-        network.execute {
+        threads.uploads.execute {
             if (stopped) return@execute
             runCatching { InstalledAppsSync.uploadIfDue(this, client, store) }
         }
@@ -264,7 +263,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         backfilling = true
         val until = store.trackedFrom
         val since = store.startOfDay(until, UsageBackfill.DAYS.toLong())
-        network.execute {
+        threads.network.execute {
             val found = runCatching { UsageBackfill.read(this, since, until) }
             handler.post {
                 backfilling = false
@@ -286,7 +285,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         purchase = true
         syncNow { syncError ->
             if (syncError != null) { purchase = false; done(null, syncError) }
-            else network.execute {
+            else threads.network.execute {
                 val result = runCatching {
                     client.request("/redeem", JSONObject().put("app_slug", slug)
                         .put("request_id", client.purchaseId(slug)).put("expected_coin_cost", cost)
