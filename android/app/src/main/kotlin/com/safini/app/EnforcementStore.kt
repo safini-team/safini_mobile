@@ -207,6 +207,6 @@ const val BACKFILL_NONE = 0
 const val BACKFILL_READ = 1
 const val BACKFILL_SENT = 2
 
-/** Device default for the block screen until Flutter sends the app language. Uzbek is never inferred. */
+/** Device default for the block screen until Flutter sends the app language. Uzbek, Kyrgyz and Kazakh are never inferred. */
 internal fun resolvePhoneLanguage(languageCodes: Iterable<String>): String =
     languageCodes.firstOrNull { it == "ru" || it == "en" } ?: "ru"

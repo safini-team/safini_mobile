@@ -931,6 +931,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "joinFamilySubtitle": MessageLookupByLibrary.simpleMessage(
       "Use an invite code from the other parent",
     ),
+    "kazakh": MessageLookupByLibrary.simpleMessage("Kazakh"),
     "keepHolding": MessageLookupByLibrary.simpleMessage("Keep holding…"),
     "kidAppBlocked": MessageLookupByLibrary.simpleMessage("Blocked"),
     "kidAppBlockedBody": MessageLookupByLibrary.simpleMessage(
@@ -990,6 +991,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Kids earn Time Coins to unlock extra minutes for these apps.",
     ),
+    "kyrgyz": MessageLookupByLibrary.simpleMessage("Kyrgyz"),
     "laneActive": MessageLookupByLibrary.simpleMessage("Active"),
     "laneDone": MessageLookupByLibrary.simpleMessage("Done"),
     "laneToReview": MessageLookupByLibrary.simpleMessage("To review"),

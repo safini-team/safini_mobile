@@ -189,6 +189,16 @@ class S {
     return Intl.message('Uzbek', name: 'uzbek', desc: '', args: []);
   }
 
+  /// `Kyrgyz`
+  String get kyrgyz {
+    return Intl.message('Kyrgyz', name: 'kyrgyz', desc: '', args: []);
+  }
+
+  /// `Kazakh`
+  String get kazakh {
+    return Intl.message('Kazakh', name: 'kazakh', desc: '', args: []);
+  }
+
   /// `My Profile`
   String get myProfile {
     return Intl.message('My Profile', name: 'myProfile', desc: '', args: []);
@@ -7465,6 +7475,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'kk'),
+      Locale.fromSubtags(languageCode: 'ky'),
       Locale.fromSubtags(languageCode: 'ru'),
       Locale.fromSubtags(languageCode: 'uz'),
     ];

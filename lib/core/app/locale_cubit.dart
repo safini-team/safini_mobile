@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// App language: Uzbek (Latin), Russian, English.
+/// App language: Uzbek (Latin), Russian, English, Kyrgyz, Kazakh.
 ///
 /// State is the *override*: `null` means "follow the phone" via [resolve].
-/// Auto-mapping from the device is Russian or English only. Uzbek is never
-/// inferred from the OS; it is available only from the in-app picker.
+/// Auto-mapping from the device is Russian or English only. Uzbek, Kyrgyz and
+/// Kazakh are never inferred from the OS; they come only from the in-app
+/// picker.
 ///
 /// Once a language is picked or assigned to a signed-in account, it is stored
 /// under that user id so logout then login restores it instead of following
@@ -17,12 +18,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocaleCubit extends Cubit<Locale?> {
   LocaleCubit(this._prefs) : super(_saved(_prefs));
 
-  static const List<String> supported = ['uz', 'ru', 'en'];
+  static const List<String> supported = ['uz', 'ru', 'en', 'ky', 'kk'];
 
   /// Device languages that may become the app default without a picker tap.
   static const List<String> autoFromDevice = ['ru', 'en'];
 
-  /// Fallback when the device is neither Russian nor English (including Uzbek).
+  /// Fallback when the device is neither Russian nor English (including the
+  /// picker-only languages).
   static const Locale parentDefault = Locale('ru');
 
   static const String _key = 'app_locale';
@@ -52,7 +54,7 @@ class LocaleCubit extends Cubit<Locale?> {
   }
 
   /// Picks the language for a device that reports [deviceLocales], in its own
-  /// order of preference. Uzbek entries are skipped. Falls back to
+  /// order of preference. Picker-only languages are skipped. Falls back to
   /// [parentDefault] when neither Russian nor English appears.
   ///
   /// Wired into `MaterialApp.localeListResolutionCallback`, so it re-runs
@@ -67,9 +69,10 @@ class LocaleCubit extends Cubit<Locale?> {
     return parentDefault;
   }
 
-  /// [override] is a picker or account pin, including Uzbek. Flutter still
-  /// calls [localeListResolutionCallback] with that override as the only
-  /// preferred locale, so it must not go through the device mapper.
+  /// [override] is a picker or account pin, including a picker-only
+  /// language. Flutter still calls [localeListResolutionCallback] with that
+  /// override as the only preferred locale, so it must not go through the
+  /// device mapper.
   static Locale resolvePreferred(List<Locale>? preferred, Locale? override) {
     if (override != null) return override;
     return resolve(preferred);

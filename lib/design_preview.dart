@@ -60,7 +60,7 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
       home: _Gallery(
         locale: _locale,
         onCycleLocale: () => setState(() {
-          const order = ['en', 'ru', 'uz'];
+          const order = ['en', 'ru', 'uz', 'ky', 'kk'];
           final next =
               order[(order.indexOf(_locale.languageCode) + 1) % order.length];
           _locale = Locale(next);

@@ -129,7 +129,7 @@ Future<void> _expectNoEnglish(
 void main() {
   setUpAll(() {
     _byLocale = {
-      for (final l in ['en', 'ru', 'uz']) l: _arb(l),
+      for (final l in ['en', 'ru', 'uz', 'ky', 'kk']) l: _arb(l),
     };
 
     // Only plain strings can be matched verbatim; ICU templates render with
@@ -141,7 +141,7 @@ void main() {
     });
   });
 
-  for (final locale in ['ru', 'uz']) {
+  for (final locale in ['ru', 'uz', 'ky', 'kk']) {
     group('$locale renders no English chrome', () {
       testWidgets('Parent Today', (tester) async {
         await _expectNoEnglish(
