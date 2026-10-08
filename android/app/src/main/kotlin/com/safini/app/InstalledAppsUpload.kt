@@ -43,8 +43,9 @@ object InstalledAppsUpload {
      * Upload when the package set (or an update time) changed, or when the
      * last successful PUT is old enough that the parent's "Synced" stamp
      * should move, even if the list is unchanged. Identical lists inside the
-     * periodic window are skipped. Failures retry on a longer interval so a
-     * 401 from an older API does not hammer once a minute.
+     * periodic window are skipped. Failures retry on a longer interval, even
+     * when the list changed since, so an offline phone or a 401 from an older
+     * API does not render every icon once a minute.
      */
     fun shouldUpload(
         fingerprint: String,
@@ -61,10 +62,14 @@ object InstalledAppsUpload {
         val changed = lastSuccessFingerprint != null && fingerprint != lastSuccessFingerprint
         val due = lastSuccessAt == null || now - lastSuccessAt >= periodicMs
         if (!changed && !due) return false
-        val wait = if (changed) changeDebounceMs else retryMs
+        val wait = if (changed && lastAttemptSucceeded(lastSuccessAt, lastAttemptAt)) changeDebounceMs else retryMs
         if (lastAttemptAt != null && now - lastAttemptAt < wait) return false
         return true
     }
+
+    /** A success stamps the attempt with the same time, so a later attempt is one that failed. */
+    fun lastAttemptSucceeded(lastSuccessAt: Long?, lastAttemptAt: Long?): Boolean =
+        lastSuccessAt != null && (lastAttemptAt == null || lastAttemptAt <= lastSuccessAt)
 
     fun iconBatch(pending: List<String>, sizes: Map<String, Int>, limit: Int = ICON_BATCH_BYTES): Set<String> {
         val batch = linkedSetOf<String>()
