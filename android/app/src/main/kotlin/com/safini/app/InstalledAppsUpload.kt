@@ -112,7 +112,7 @@ object InstalledAppsUpload {
             val response = put(toRequest(payload, attach))
             sent.addAll(attach)
             val pending = missingHashes(response).filter { it in icons && it !in sent }
-            if (pending.isEmpty) break
+            if (pending.isEmpty()) break
             attach = iconBatch(pending, icons)
         }
     }
