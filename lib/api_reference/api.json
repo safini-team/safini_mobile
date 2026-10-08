@@ -1019,6 +1019,75 @@
         ]
       }
     },
+    "/v1/families/current/subscription": {
+      "get": {
+        "tags": [
+          "families"
+        ],
+        "summary": "Get Current Family Subscription",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Tells any parent in the family whether it has Safini Pro right now, and through which purchase. Pro belongs to the family, so a second parent sees the plan the first one bought.\n\n**Frontend note:** Gate Pro features on `plan`. `status` explains a lapse (`in_billing_retry` means the card failed: send the parent to `manage_url`). `manage_url` is set only for App Store purchases, which Apple lets a subscriber manage only in its own settings.",
+        "operationId": "get_current_subscription_v1_families_current_subscription_get",
+        "responses": {
+          "200": {
+            "description": "Current family subscription.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Current Subscription V1 Families Current Subscription Get"
+                },
+                "example": {
+                  "plan": "pro",
+                  "status": "active",
+                  "source": "apple",
+                  "product_id": "pro.yearly",
+                  "is_trial": false,
+                  "expires_at": "2027-10-06T12:00:00Z",
+                  "will_renew": true,
+                  "manage_url": "https://apps.apple.com/account/subscriptions"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/families/current/parent-invite-code": {
       "post": {
         "tags": [
@@ -8078,6 +8147,192 @@
         }
       }
     },
+    "/v1/billing/apple/transactions": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Record App Store Purchase",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Makes the parent's family Pro the moment the App Store charges them, and restores Pro after a reinstall or on a new phone. Apple's signature is verified on the server; the app is never trusted to say a family paid.\n\n**Frontend note:** Buy with `appAccountToken` set to the family id, then post `transaction.jwsRepresentation` after every verified purchase, restore and `Transaction.updates` entry, and only then call `transaction.finish()`. Sandbox (TestFlight, App Review) works too. 409 means the purchase was made for another family. The response is the same plan as `GET /v1/families/current/subscription`.",
+        "operationId": "record_apple_transaction_v1_billing_apple_transactions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppleTransactionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Family plan after the purchase.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Record Apple Transaction V1 Billing Apple Transactions Post"
+                },
+                "example": {
+                  "plan": "pro",
+                  "status": "active",
+                  "source": "apple",
+                  "product_id": "pro.monthly",
+                  "is_trial": true,
+                  "expires_at": "2026-10-15T12:00:00Z",
+                  "will_renew": true,
+                  "manage_url": "https://apps.apple.com/account/subscriptions"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/billing/apple/notifications": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "App Store Server Notifications V2",
+        "description": "**Auth:** Public. No bearer token is required.\n\n**Business requirement:** Apple reports every renewal, failed charge, grace period, refund and lapse here, so a family's plan stays right while the app is closed. Only payloads signed by Apple for this app are applied; a replayed notification is a no-op.\n\n**Frontend note:** Not for the app. Set this URL as the production and sandbox Server Notifications URL (Version 2) in App Store Connect.",
+        "operationId": "apple_notification_v1_billing_apple_notifications_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppleNotificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Notification accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "type": "object",
+                  "title": "Response Apple Notification V1 Billing Apple Notifications Post"
+                },
+                "example": {
+                  "ok": true
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/waiting-list": {
       "post": {
         "tags": [
@@ -8426,6 +8681,55 @@
           "source": "client",
           "usage_date": "2026-03-26",
           "used_minutes": 48
+        }
+      },
+      "AppleNotificationRequest": {
+        "properties": {
+          "signedPayload": {
+            "type": "string",
+            "maxLength": 64000,
+            "minLength": 1,
+            "title": "Signedpayload"
+          }
+        },
+        "type": "object",
+        "required": [
+          "signedPayload"
+        ],
+        "title": "AppleNotificationRequest"
+      },
+      "AppleTransactionRequest": {
+        "properties": {
+          "signed_transaction": {
+            "type": "string",
+            "maxLength": 64000,
+            "minLength": 1,
+            "title": "Signed Transaction",
+            "description": "StoreKit 2 `Transaction.jwsRepresentation`."
+          },
+          "signed_renewal_info": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed Renewal Info",
+            "description": "Optional `Product.SubscriptionInfo.RenewalInfo` JWS for the same subscription, so `will_renew` is known right away."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "signed_transaction"
+        ],
+        "title": "AppleTransactionRequest",
+        "example": {
+          "signed_renewal_info": "eyJhbGciOiJFUzI1NiIsIng1YyI6WyJNSUlF...",
+          "signed_transaction": "eyJhbGciOiJFUzI1NiIsIng1YyI6WyJNSUlF..."
         }
       },
       "ApproveRequest": {
@@ -10331,6 +10635,10 @@
     {
       "name": "prizes",
       "description": "Real-world rewards a parent prices in Time Coins, the child's asks and wishes, and the parent's answer."
+    },
+    {
+      "name": "billing",
+      "description": "Safini Pro purchases: App Store transactions from the app and Apple's server notifications."
     },
     {
       "name": "ai",
