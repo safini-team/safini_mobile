@@ -1019,6 +1019,75 @@
         ]
       }
     },
+    "/v1/families/current/subscription": {
+      "get": {
+        "tags": [
+          "families"
+        ],
+        "summary": "Get Current Family Subscription",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Tells any parent in the family whether it has Safini Pro right now, and through which purchase. Pro belongs to the family, so a second parent sees the plan the first one bought.\n\n**Frontend note:** Gate Pro features on `plan`. `status` explains a lapse (`in_billing_retry` means the card failed: send the parent to `manage_url`). `manage_url` is set only for App Store purchases, which Apple lets a subscriber manage only in its own settings.",
+        "operationId": "get_current_subscription_v1_families_current_subscription_get",
+        "responses": {
+          "200": {
+            "description": "Current family subscription.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Current Subscription V1 Families Current Subscription Get"
+                },
+                "example": {
+                  "plan": "pro",
+                  "status": "active",
+                  "source": "apple",
+                  "product_id": "pro.yearly",
+                  "is_trial": false,
+                  "expires_at": "2027-10-06T12:00:00Z",
+                  "will_renew": true,
+                  "manage_url": "https://apps.apple.com/account/subscriptions"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/families/current/parent-invite-code": {
       "post": {
         "tags": [
