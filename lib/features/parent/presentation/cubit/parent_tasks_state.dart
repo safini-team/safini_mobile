@@ -100,6 +100,9 @@ class ParentTaskActionError extends ParentTasksState {
   final String message;
   final bool isConflict;
   final bool isUnauthorized;
+
+  /// A free-plan limit; the Safini Pro sheet already explained it.
+  final bool isFreeLimit;
   final List<TaskVoiceTarget> pendingVoice;
 
   const ParentTaskActionError({
@@ -107,6 +110,7 @@ class ParentTaskActionError extends ParentTasksState {
     required this.message,
     this.isConflict = false,
     this.isUnauthorized = false,
+    this.isFreeLimit = false,
     this.pendingVoice = const [],
   });
 }

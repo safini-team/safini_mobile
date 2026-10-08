@@ -890,5 +890,11 @@
   "proNothingToRestore": "Бұл Apple ID-де Safini Pro жазылымы жоқ.",
   "proPending": "Растау күтілуде. Расталғаннан кейін Pro қосылады.",
   "proFailed": "Сатып алу орындалмады. Қайталап көріңіз.",
-  "proOtherFamily": "Бұл Apple ID жазылымы Safini-дегі басқа отбасына тиесілі."
+  "proOtherFamily": "Бұл Apple ID жазылымы Safini-дегі басқа отбасына тиесілі.",
+  "freeLimitTitle": "Тегін жоспардың шегі",
+  "freeLimitChildren": "Тегін жоспарда бір бала. Safini Pro арқылы отбасындағы барлық балаларды қоса аласыз.",
+  "freeLimitApps": "Тегін жоспарда әр балаға үш қолданбаны шектеуге болады. Safini Pro арқылы барлық қолданбаларды шектей аласыз.",
+  "freeLimitTasks": "Тегін жоспарда әр балаға үш тапсырма қайталанады. Safini Pro арқылы барлық тапсырмалар қайталана алады.",
+  "freeLimitSeePro": "Safini Pro туралы",
+  "freeLimitAndroid": "Safini Pro жақында Android-та пайда болады."
 }

@@ -1065,5 +1065,11 @@
   "proNothingToRestore": "No Safini Pro subscription on this Apple ID.",
   "proPending": "Waiting for approval. Pro turns on once it's approved.",
   "proFailed": "The purchase didn't go through. Try again.",
-  "proOtherFamily": "This Apple ID's subscription belongs to another Safini family."
+  "proOtherFamily": "This Apple ID's subscription belongs to another Safini family.",
+  "freeLimitTitle": "That's the free plan's limit",
+  "freeLimitChildren": "The free plan has one child. With Safini Pro you can add every child in your family.",
+  "freeLimitApps": "The free plan limits three apps per child. With Safini Pro you can limit every app.",
+  "freeLimitTasks": "The free plan repeats three tasks per child. With Safini Pro every task can repeat.",
+  "freeLimitSeePro": "See Safini Pro",
+  "freeLimitAndroid": "Safini Pro is coming to Android soon."
 }

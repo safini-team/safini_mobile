@@ -757,6 +757,24 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ақылды балаларға қауіпсіз экран уақыты 🌟",
     ),
     "free": MessageLookupByLibrary.simpleMessage("ТЕГІН"),
+    "freeLimitAndroid": MessageLookupByLibrary.simpleMessage(
+      "Safini Pro жақында Android-та пайда болады.",
+    ),
+    "freeLimitApps": MessageLookupByLibrary.simpleMessage(
+      "Тегін жоспарда әр балаға үш қолданбаны шектеуге болады. Safini Pro арқылы барлық қолданбаларды шектей аласыз.",
+    ),
+    "freeLimitChildren": MessageLookupByLibrary.simpleMessage(
+      "Тегін жоспарда бір бала. Safini Pro арқылы отбасындағы барлық балаларды қоса аласыз.",
+    ),
+    "freeLimitSeePro": MessageLookupByLibrary.simpleMessage(
+      "Safini Pro туралы",
+    ),
+    "freeLimitTasks": MessageLookupByLibrary.simpleMessage(
+      "Тегін жоспарда әр балаға үш тапсырма қайталанады. Safini Pro арқылы барлық тапсырмалар қайталана алады.",
+    ),
+    "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
+      "Тегін жоспардың шегі",
+    ),
     "fri": MessageLookupByLibrary.simpleMessage("ЖМ"),
     "friends": MessageLookupByLibrary.simpleMessage("Достар"),
     "friendsAdd": MessageLookupByLibrary.simpleMessage("Дос қосу"),

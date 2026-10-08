@@ -919,5 +919,11 @@
   "proNothingToRestore": "Bu Apple ID da Safini Pro obunasi yoʻq.",
   "proPending": "Tasdiq kutilmoqda. Tasdiqlangach Pro yoqiladi.",
   "proFailed": "Xarid amalga oshmadi. Qayta urinib koʻring.",
-  "proOtherFamily": "Bu Apple ID obunasi Safinidagi boshqa oilaga tegishli."
+  "proOtherFamily": "Bu Apple ID obunasi Safinidagi boshqa oilaga tegishli.",
+  "freeLimitTitle": "Bepul tarif chegarasi",
+  "freeLimitChildren": "Bepul tarifda bitta farzand. Safini Pro bilan oiladagi barcha farzandlarni qoʻshishingiz mumkin.",
+  "freeLimitApps": "Bepul tarifda har bir farzand uchun uchta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
+  "freeLimitTasks": "Bepul tarifda har bir farzand uchun uchta vazifa takrorlanadi. Safini Pro bilan barcha vazifalar takrorlanishi mumkin.",
+  "freeLimitSeePro": "Safini Pro haqida",
+  "freeLimitAndroid": "Safini Pro tez orada Androidda paydo boʻladi."
 }

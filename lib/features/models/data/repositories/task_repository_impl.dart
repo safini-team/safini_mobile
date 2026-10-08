@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 import '../../domain/models/task_model.dart';
 import '../../domain/models/task_voice.dart';
 import '../../domain/repositories/i_task_repository.dart';
@@ -304,6 +305,16 @@ class TaskRepositoryImpl implements ITaskRepository {
     final status = e.response?.statusCode;
     if (status == 401) {
       return const UnauthorizedFailure('Missing, expired, or invalid token.');
+    }
+    final limit = FreeLimit.fromResponse(
+      status,
+      e.response?.headers.value(FreeLimit.header),
+    );
+    if (limit != null) {
+      return FreeLimitFailure(
+        limit,
+        _extractErrorMessage(e.response?.data, defaultMessage: defaultMessage),
+      );
     }
     if (status == 403) {
       return const ServerFailure('Access to this resource is not allowed.');

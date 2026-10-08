@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:safini/core/network/auth_token_provider.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 class AuthSessionUnavailableException implements Exception {
   const AuthSessionUnavailableException();
@@ -88,7 +89,7 @@ class AuthenticatedHttpClient {
     }
 
     final response = await request(token);
-    if (response.statusCode != 401) return response;
+    if (response.statusCode != 401) return _reported(response);
 
     String? refreshed;
     try {
@@ -100,7 +101,15 @@ class AuthenticatedHttpClient {
     }
     if (refreshed == null || refreshed.isEmpty) return response;
 
-    return request(refreshed);
+    return _reported(await request(refreshed));
+  }
+
+  http.Response _reported(http.Response response) {
+    FreeLimitAlerts.instance.check(
+      response.statusCode,
+      response.headers[FreeLimit.header],
+    );
+    return response;
   }
 
   Map<String, String> _headers(Map<String, String>? headers, String token) =>

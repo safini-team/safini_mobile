@@ -32,6 +32,7 @@ import 'package:safini/features/parent/presentation/screens/family/parent_family
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_view.dart';
 import 'package:safini/features/subscription/family_plan.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 import 'package:safini/features/subscription/paywall_screen.dart';
 import 'package:safini/features/subscription/pro_cubit.dart';
 import 'package:safini/features/subscription/pro_store.dart';
@@ -75,6 +76,34 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
   }
 }
 
+/// Opens the free-plan sheet over an empty parent screen.
+class _FreeLimitPreview extends StatefulWidget {
+  const _FreeLimitPreview({required this.canBuy});
+
+  final bool canBuy;
+
+  @override
+  State<_FreeLimitPreview> createState() => _FreeLimitPreviewState();
+}
+
+class _FreeLimitPreviewState extends State<_FreeLimitPreview> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showFreeLimitSheet(
+        context,
+        FreeLimit.children,
+        canBuy: widget.canBuy,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.expand();
+}
+
 class _Entry {
   const _Entry(this.label, this.background, this.builder);
 
@@ -107,6 +136,16 @@ class _GalleryState extends State<_Gallery> {
       'Safini Pro · active',
       AppColors.bgParent,
       (context) => PaywallScreen(cubit: _PreviewPro.active),
+    ),
+    _Entry(
+      'Free limit · iPhone',
+      AppColors.bgParent,
+      (context) => const _FreeLimitPreview(canBuy: true),
+    ),
+    _Entry(
+      'Free limit · Android',
+      AppColors.bgParent,
+      (context) => const _FreeLimitPreview(canBuy: false),
     ),
     _Entry(
       'Parent Today',

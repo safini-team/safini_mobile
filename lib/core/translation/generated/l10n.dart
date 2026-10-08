@@ -7732,6 +7732,66 @@ class S {
       args: [],
     );
   }
+
+  /// `That's the free plan's limit`
+  String get freeLimitTitle {
+    return Intl.message(
+      'That\'s the free plan\'s limit',
+      name: 'freeLimitTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan has one child. With Safini Pro you can add every child in your family.`
+  String get freeLimitChildren {
+    return Intl.message(
+      'The free plan has one child. With Safini Pro you can add every child in your family.',
+      name: 'freeLimitChildren',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan limits three apps per child. With Safini Pro you can limit every app.`
+  String get freeLimitApps {
+    return Intl.message(
+      'The free plan limits three apps per child. With Safini Pro you can limit every app.',
+      name: 'freeLimitApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan repeats three tasks per child. With Safini Pro every task can repeat.`
+  String get freeLimitTasks {
+    return Intl.message(
+      'The free plan repeats three tasks per child. With Safini Pro every task can repeat.',
+      name: 'freeLimitTasks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See Safini Pro`
+  String get freeLimitSeePro {
+    return Intl.message(
+      'See Safini Pro',
+      name: 'freeLimitSeePro',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safini Pro is coming to Android soon.`
+  String get freeLimitAndroid {
+    return Intl.message(
+      'Safini Pro is coming to Android soon.',
+      name: 'freeLimitAndroid',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

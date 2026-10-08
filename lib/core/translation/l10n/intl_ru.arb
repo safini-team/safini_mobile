@@ -1019,5 +1019,11 @@
   "proNothingToRestore": "На этом Apple ID нет подписки Safini Pro.",
   "proPending": "Ждём подтверждения. Pro включится сразу после него.",
   "proFailed": "Покупка не прошла. Попробуйте ещё раз.",
-  "proOtherFamily": "Подписка этого Apple ID принадлежит другой семье в Safini."
+  "proOtherFamily": "Подписка этого Apple ID принадлежит другой семье в Safini.",
+  "freeLimitTitle": "Это предел бесплатного плана",
+  "freeLimitChildren": "В бесплатном плане один ребёнок. С Safini Pro можно добавить всех детей в семье.",
+  "freeLimitApps": "В бесплатном плане можно ограничить три приложения на ребёнка. С Safini Pro можно ограничить все приложения.",
+  "freeLimitTasks": "В бесплатном плане повторяются три задания на ребёнка. С Safini Pro повторять можно все задания.",
+  "freeLimitSeePro": "Подробнее о Safini Pro",
+  "freeLimitAndroid": "Safini Pro скоро появится на Android."
 }
