@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -50,8 +49,11 @@ class VersionUpdateLauncher {
     return launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
+  static bool get _isAndroid =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
   static Future<bool> _playImmediate() async {
-    if (kIsWeb || !Platform.isAndroid) return false;
+    if (!_isAndroid) return false;
     try {
       final info = await InAppUpdate.checkForUpdate();
       if (info.updateAvailability != UpdateAvailability.updateAvailable) {
@@ -67,16 +69,22 @@ class VersionUpdateLauncher {
   }
 
   static Future<bool> _playFlexible() async {
-    if (kIsWeb || !Platform.isAndroid) return false;
+    if (!_isAndroid) return false;
     try {
       final info = await InAppUpdate.checkForUpdate();
+      if (info.installStatus == InstallStatus.downloaded) {
+        _installDownloaded();
+        return true;
+      }
       if (info.updateAvailability != UpdateAvailability.updateAvailable) {
         return false;
       }
       if (!info.flexibleUpdateAllowed) return false;
+      // Resolves only once Play reports DOWNLOADED, and that status event is
+      // emitted before it resolves, so a listener attached afterwards misses it.
       final result = await InAppUpdate.startFlexibleUpdate();
       if (result != AppUpdateResult.success) return false;
-      unawaited(_completeFlexibleWhenReady());
+      _installDownloaded();
       return true;
     } catch (error) {
       debugPrint('Play flexible update unavailable: $error');
@@ -84,20 +92,12 @@ class VersionUpdateLauncher {
     }
   }
 
-  static Future<void> _completeFlexibleWhenReady() async {
-    try {
-      await for (final status in InAppUpdate.installUpdateListener) {
-        if (status == InstallStatus.downloaded) {
-          await InAppUpdate.completeFlexibleUpdate();
-          return;
-        }
-        if (status == InstallStatus.failed ||
-            status == InstallStatus.canceled) {
-          return;
-        }
-      }
-    } catch (error) {
-      debugPrint('Play flexible complete failed: $error');
-    }
+  static void _installDownloaded() {
+    // The plugin never answers this call; Play restarts the app instead.
+    unawaited(
+      InAppUpdate.completeFlexibleUpdate().catchError((Object error) {
+        debugPrint('Play flexible install failed: $error');
+      }),
+    );
   }
 }
