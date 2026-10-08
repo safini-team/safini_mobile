@@ -982,6 +982,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "joinFamilySubtitle": MessageLookupByLibrary.simpleMessage(
       "Ikkinchi ota-onaning kodidan foydalaning",
     ),
+    "kazakh": MessageLookupByLibrary.simpleMessage("Qozoq"),
     "keepHolding": MessageLookupByLibrary.simpleMessage("Ushlab turing…"),
     "kidAppBlocked": MessageLookupByLibrary.simpleMessage("Yopiq"),
     "kidAppBlockedBody": MessageLookupByLibrary.simpleMessage(
@@ -1045,6 +1046,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Bolalar bu ilovalarda qoʻshimcha daqiqalar ochish uchun Vaqt tangalarini ishlab topadi.",
     ),
+    "kyrgyz": MessageLookupByLibrary.simpleMessage("Qirgʻiz"),
     "laneActive": MessageLookupByLibrary.simpleMessage("Faol"),
     "laneDone": MessageLookupByLibrary.simpleMessage("Bajarilgan"),
     "laneToReview": MessageLookupByLibrary.simpleMessage("Tekshirish"),
@@ -1821,6 +1823,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ota-onalar uchun maslahatlar",
     ),
     "toGo": m91,
+    "todayOffline": MessageLookupByLibrary.simpleMessage("Aloqa yoʻq"),
+    "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
+      "Internet boʻlganda vazifalar chiqadi. Yangilash uchun pastga tort.",
+    ),
     "todaysQuests": MessageLookupByLibrary.simpleMessage(
       "Bugungi topshiriqlar",
     ),

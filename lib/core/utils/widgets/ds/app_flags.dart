@@ -1,12 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Country flags for the three app languages, drawn as SVG rather than emoji:
+/// Country flags for the app languages, drawn as SVG rather than emoji:
 /// emoji flags look different on every Android skin and on iPhone, and some
 /// launchers render them as two letters.
 ///
 /// English is the Union flag, Russian the tricolour, Uzbek the national flag
-/// with its crescent and twelve stars. All share a 3:2 box.
+/// with its crescent and twelve stars. Kyrgyz and Kazakh are simplified to
+/// read at 21px: the sun and tunduk, and the sun, eagle and hoist ornament.
+/// All share a 3:2 box.
 class AppFlag extends StatelessWidget {
   const AppFlag(this.languageCode, {super.key, this.width = 24});
 
@@ -55,8 +57,70 @@ class AppFlag extends StatelessWidget {
       '"/>'
       '</svg>';
 
+  static const String _kg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">'
+      '<rect width="30" height="20" fill="#E8112D"/>'
+      '<path fill="#FFEF00" d="'
+      'M21.10 10.00L18.29 9.74L18.29 10.26ZM21.02 10.95L18.29 10.26L18.21 10.77Z'
+      'M20.80 11.89L18.21 10.77L18.05 11.26ZM20.44 12.77L18.05 11.26L17.81 11.72Z'
+      'M19.94 13.59L17.81 11.72L17.51 12.14ZM19.31 14.31L17.51 12.14L17.14 12.51Z'
+      'M18.59 14.94L17.14 12.51L16.72 12.81ZM17.77 15.44L16.72 12.81L16.26 13.05Z'
+      'M16.89 15.80L16.26 13.05L15.77 13.21ZM15.95 16.02L15.77 13.21L15.26 13.29Z'
+      'M15.00 16.10L15.26 13.29L14.74 13.29ZM14.05 16.02L14.74 13.29L14.23 13.21Z'
+      'M13.11 15.80L14.23 13.21L13.74 13.05ZM12.23 15.44L13.74 13.05L13.28 12.81Z'
+      'M11.41 14.94L13.28 12.81L12.86 12.51ZM10.69 14.31L12.86 12.51L12.49 12.14Z'
+      'M10.06 13.59L12.49 12.14L12.19 11.72ZM9.56 12.77L12.19 11.72L11.95 11.26Z'
+      'M9.20 11.89L11.95 11.26L11.79 10.77ZM8.98 10.95L11.79 10.77L11.71 10.26Z'
+      'M8.90 10.00L11.71 10.26L11.71 9.74ZM8.98 9.05L11.71 9.74L11.79 9.23Z'
+      'M9.20 8.11L11.79 9.23L11.95 8.74ZM9.56 7.23L11.95 8.74L12.19 8.28Z'
+      'M10.06 6.41L12.19 8.28L12.49 7.86ZM10.69 5.69L12.49 7.86L12.86 7.49Z'
+      'M11.41 5.06L12.86 7.49L13.28 7.19ZM12.23 4.56L13.28 7.19L13.74 6.95Z'
+      'M13.11 4.20L13.74 6.95L14.23 6.79ZM14.05 3.98L14.23 6.79L14.74 6.71Z'
+      'M15.00 3.90L14.74 6.71L15.26 6.71ZM15.95 3.98L15.26 6.71L15.77 6.79Z'
+      'M16.89 4.20L15.77 6.79L16.26 6.95ZM17.77 4.56L16.26 6.95L16.72 7.19Z'
+      'M18.59 5.06L16.72 7.19L17.14 7.49ZM19.31 5.69L17.14 7.49L17.51 7.86Z'
+      'M19.94 6.41L17.51 7.86L17.81 8.28ZM20.44 7.23L17.81 8.28L18.05 8.74Z'
+      'M20.80 8.11L18.05 8.74L18.21 9.23ZM21.02 9.05L18.21 9.23L18.29 9.74Z'
+      '"/>'
+      '<circle cx="15" cy="10" r="3.4" fill="#FFEF00"/>'
+      '<circle cx="15" cy="10" r="2.55" fill="#E8112D"/>'
+      '<circle cx="15" cy="10" r="2.05" fill="#FFEF00"/>'
+      '<path d="M13.1 9.1Q15 7.6 16.9 9.1M12.95 10.2Q15 8.6 17.05 10.2M13.1 11.3Q15 9.7 16.9 11.3" '
+      'fill="none" stroke="#E8112D" stroke-width="0.32"/>'
+      '</svg>';
+
+  static const String _kz =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">'
+      '<rect width="30" height="20" fill="#00AFCA"/>'
+      '<path fill="#FEC50C" d="'
+      'M19.40 8.40L17.99 8.11L17.99 8.69ZM19.32 9.26L17.99 8.69L17.87 9.27Z'
+      'M19.07 10.08L17.87 9.27L17.65 9.81ZM18.66 10.84L17.65 9.81L17.32 10.30Z'
+      'M18.11 11.51L17.32 10.30L16.90 10.72ZM17.44 12.06L16.90 10.72L16.41 11.05Z'
+      'M16.68 12.47L16.41 11.05L15.87 11.27ZM15.86 12.72L15.87 11.27L15.29 11.39Z'
+      'M15.00 12.80L15.29 11.39L14.71 11.39ZM14.14 12.72L14.71 11.39L14.13 11.27Z'
+      'M13.32 12.47L14.13 11.27L13.59 11.05ZM12.56 12.06L13.59 11.05L13.10 10.72Z'
+      'M11.89 11.51L13.10 10.72L12.68 10.30ZM11.34 10.84L12.68 10.30L12.35 9.81Z'
+      'M10.93 10.08L12.35 9.81L12.13 9.27ZM10.68 9.26L12.13 9.27L12.01 8.69Z'
+      'M10.60 8.40L12.01 8.69L12.01 8.11ZM10.68 7.54L12.01 8.11L12.13 7.53Z'
+      'M10.93 6.72L12.13 7.53L12.35 6.99ZM11.34 5.96L12.35 6.99L12.68 6.50Z'
+      'M11.89 5.29L12.68 6.50L13.10 6.08ZM12.56 4.74L13.10 6.08L13.59 5.75Z'
+      'M13.32 4.33L13.59 5.75L14.13 5.53ZM14.14 4.08L14.13 5.53L14.71 5.41Z'
+      'M15.00 4.00L14.71 5.41L15.29 5.41ZM15.86 4.08L15.29 5.41L15.87 5.53Z'
+      'M16.68 4.33L15.87 5.53L16.41 5.75ZM17.44 4.74L16.41 5.75L16.90 6.08Z'
+      'M18.11 5.29L16.90 6.08L17.32 6.50ZM18.66 5.96L17.32 6.50L17.65 6.99Z'
+      'M19.07 6.72L17.65 6.99L17.87 7.53ZM19.32 7.54L17.87 7.53L17.99 8.11Z'
+      '"/>'
+      '<circle cx="15" cy="8.4" r="2.6" fill="#FEC50C"/>'
+      '<path fill="#FEC50C" d="M8.6 12.6Q11.8 11.2 15 13.6Q18.2 11.2 21.4 12.6Q18.6 13.4 15 15.4Q11.4 13.4 8.6 12.6Z"/>'
+      '<rect x="1.6" y="1.4" width="1.3" height="17.2" fill="#FEC50C"/>'
+      '<path fill="#00AFCA" d="M2.25 2.6l0.4 0.9-0.4 0.9-0.4-0.9ZM2.25 6.4l0.4 0.9-0.4 0.9-0.4-0.9Z'
+      'M2.25 10.2l0.4 0.9-0.4 0.9-0.4-0.9ZM2.25 14l0.4 0.9-0.4 0.9-0.4-0.9Z"/>'
+      '</svg>';
+
   static String svgFor(String languageCode) => switch (languageCode) {
     'uz' => _uz,
+    'ky' => _kg,
+    'kk' => _kz,
     'ru' => _ru,
     _ => _gb,
   };

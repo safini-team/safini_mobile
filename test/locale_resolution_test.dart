@@ -135,12 +135,20 @@ void main() {
       expect(cubit.hasExplicitChoice, isTrue);
     });
 
-    test('ignores a stored language we no longer ship', () async {
-      // Anyone upgrading from the build that still shipped Kazakh.
+    test('ignores a stored language we do not ship', () async {
       final cubit = LocaleCubit(
-        await _prefs({'app_locale': 'kk', 'app_locale_chosen': true}),
+        await _prefs({'app_locale': 'de', 'app_locale_chosen': true}),
       );
       expect(cubit.state, isNull);
+    });
+
+    test('restores an explicit Kyrgyz or Kazakh pick', () async {
+      for (final code in ['ky', 'kk']) {
+        final cubit = LocaleCubit(
+          await _prefs({'app_locale': code, 'app_locale_chosen': true}),
+        );
+        expect(cubit.state?.languageCode, code);
+      }
     });
 
     test(

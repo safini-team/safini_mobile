@@ -20,6 +20,8 @@
   "english": "English",
   "russian": "Russian",
   "uzbek": "Uzbek",
+  "kyrgyz": "Kyrgyz",
+  "kazakh": "Kazakh",
   "myProfile": "My Profile",
   "save": "Save",
   "coins": "Coins",
@@ -568,6 +570,14 @@
   "nothingForTodayBody": "No tasks yet. Enjoy the day.",
   "@nothingForTodayBody": {
     "description": "Child Today card body when the day has no tasks at all."
+  },
+  "todayOffline": "No connection",
+  "@todayOffline": {
+    "description": "Child Today headline and card title when today's tasks could not be loaded."
+  },
+  "todayOfflineBody": "Your tasks show up once you are online. Pull down to try again.",
+  "@todayOfflineBody": {
+    "description": "Child Today card body when today's tasks could not be loaded."
   },
   "parentReviewsNext": "Your parent reviews them next. Coins land after that.",
   "childTasksSubtitle": "{done} of {total} done today · {coins} coins waiting",

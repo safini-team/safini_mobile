@@ -953,6 +953,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "joinFamilySubtitle": MessageLookupByLibrary.simpleMessage(
       "Используйте код от второго родителя",
     ),
+    "kazakh": MessageLookupByLibrary.simpleMessage("Казахский"),
     "keepHolding": MessageLookupByLibrary.simpleMessage("Держи…"),
     "kidAppBlocked": MessageLookupByLibrary.simpleMessage("Закрыто"),
     "kidAppBlockedBody": MessageLookupByLibrary.simpleMessage(
@@ -1012,6 +1013,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
     ),
+    "kyrgyz": MessageLookupByLibrary.simpleMessage("Кыргызский"),
     "laneActive": MessageLookupByLibrary.simpleMessage("Активные"),
     "laneDone": MessageLookupByLibrary.simpleMessage("Готово"),
     "laneToReview": MessageLookupByLibrary.simpleMessage("На проверку"),
@@ -1760,6 +1762,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Советы родителям"),
     "toGo": m91,
+    "todayOffline": MessageLookupByLibrary.simpleMessage("Нет связи"),
+    "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
+      "Задания появятся, когда будет интернет. Потяни вниз, чтобы обновить.",
+    ),
     "todaysQuests": MessageLookupByLibrary.simpleMessage("Сегодняшние задания"),
     "tourChildFriendsBody": MessageLookupByLibrary.simpleMessage(
       "Добавь друга по его 6-значному ID Safini и посмотри, как у него дела.",

@@ -277,7 +277,8 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         }
     }
 
-    private fun text(en: String, ru: String, uz: String): String = when (store.language) { "ru" -> ru; "uz" -> uz; else -> en }
+    private fun text(en: String, ru: String, uz: String, ky: String, kk: String): String =
+        when (store.language) { "ru" -> ru; "uz" -> uz; "ky" -> ky; "kk" -> kk; else -> en }
     private fun showOverlay(pkg: String, now: Long) {
         overlay.show(pkg, store.blockFacts(pkg, now) ?: return)
         store.covered = true
@@ -304,7 +305,15 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         manager.createNotificationChannel(NotificationChannel("safini_limits", "Safini", NotificationManager.IMPORTANCE_LOW))
         val pending = PendingIntent.getActivity(this, 0, packageManager.getLaunchIntentForPackage(packageName), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = Notification.Builder(this, "safini_limits").setContentTitle("Safini")
-            .setContentText(text("Keeping your app limits", "Контроль времени приложений", "Ilova vaqtini nazorat qilish"))
+            .setContentText(
+                text(
+                    "Keeping your app limits",
+                    "Контроль времени приложений",
+                    "Ilova vaqtini nazorat qilish",
+                    "Колдонмо убактысын көзөмөлдөө",
+                    "Қолданба уақытын бақылау",
+                ),
+            )
             .setSmallIcon(R.drawable.ic_stat_safini).setColor(getColor(R.color.safini_pine)).setOngoing(true).setContentIntent(pending).build()
         if (Build.VERSION.SDK_INT >= 34) startForeground(4711, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
         else startForeground(4711, notification)

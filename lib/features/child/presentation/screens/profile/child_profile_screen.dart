@@ -62,9 +62,7 @@ class _ChildMeScreen extends StatelessWidget {
             accessoryEmoji: state.equippedBadgeEmoji.isEmpty
                 ? null
                 : state.equippedBadgeEmoji,
-            levelLine: state.levelLabel.isEmpty
-                ? s.levelValue(state.level)
-                : state.levelLabel,
+            levelLine: s.levelHero(state.level),
             xpProgress: state.xpProgress,
             xpCaption: s.percentToNextLevel((state.xpProgress * 100).round()),
             coins: coins,

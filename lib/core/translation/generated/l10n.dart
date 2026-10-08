@@ -189,6 +189,16 @@ class S {
     return Intl.message('Uzbek', name: 'uzbek', desc: '', args: []);
   }
 
+  /// `Kyrgyz`
+  String get kyrgyz {
+    return Intl.message('Kyrgyz', name: 'kyrgyz', desc: '', args: []);
+  }
+
+  /// `Kazakh`
+  String get kazakh {
+    return Intl.message('Kazakh', name: 'kazakh', desc: '', args: []);
+  }
+
   /// `My Profile`
   String get myProfile {
     return Intl.message('My Profile', name: 'myProfile', desc: '', args: []);
@@ -3821,6 +3831,27 @@ class S {
       'No tasks yet. Enjoy the day.',
       name: 'nothingForTodayBody',
       desc: 'Child Today card body when the day has no tasks at all.',
+      args: [],
+    );
+  }
+
+  /// `No connection`
+  String get todayOffline {
+    return Intl.message(
+      'No connection',
+      name: 'todayOffline',
+      desc:
+          'Child Today headline and card title when today\'s tasks could not be loaded.',
+      args: [],
+    );
+  }
+
+  /// `Your tasks show up once you are online. Pull down to try again.`
+  String get todayOfflineBody {
+    return Intl.message(
+      'Your tasks show up once you are online. Pull down to try again.',
+      name: 'todayOfflineBody',
+      desc: 'Child Today card body when today\'s tasks could not be loaded.',
       args: [],
     );
   }
@@ -7709,6 +7740,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'kk'),
+      Locale.fromSubtags(languageCode: 'ky'),
       Locale.fromSubtags(languageCode: 'ru'),
       Locale.fromSubtags(languageCode: 'uz'),
     ];

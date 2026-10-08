@@ -45,10 +45,10 @@ class QuestCubit extends Cubit<QuestState> {
     tasksResult.fold(
       (_) => emit(
         state.copyWith(
-          quests: const [],
           childNickname: nickname,
           doneToday: doneToday,
           isLoading: false,
+          loadFailed: true,
         ),
       ),
       (response) => emit(
@@ -62,6 +62,7 @@ class QuestCubit extends Cubit<QuestState> {
           childNickname: nickname,
           doneToday: doneToday,
           isLoading: false,
+          loadFailed: false,
         ),
       ),
     );

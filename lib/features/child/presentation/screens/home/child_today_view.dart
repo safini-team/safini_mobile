@@ -79,7 +79,7 @@ class TodayGift {
 }
 
 /// Why the child has nothing to start right now.
-enum TodayRest { withParent, allDone, empty }
+enum TodayRest { withParent, allDone, empty, offline }
 
 class ChildTodayData {
   const ChildTodayData({
@@ -104,6 +104,7 @@ class ChildTodayData {
     this.usageMinutes = 0,
     this.budget,
     this.usageAvailable = true,
+    this.loadFailed = false,
   });
 
   final String greeting;
@@ -154,6 +155,9 @@ class ChildTodayData {
   /// False on an iPhone: limits are known, minutes are not.
   final bool usageAvailable;
 
+  /// Today's tasks could not be fetched, so an empty list proves nothing.
+  final bool loadFailed;
+
   bool get hasUsage => budget != null || usageApps.isNotEmpty;
 
   double get ringProgress =>
@@ -164,7 +168,11 @@ class ChildTodayData {
   /// What the day looks like once there is nothing left to start.
   TodayRest get rest => questsAwaitingReview > 0
       ? TodayRest.withParent
-      : (questsTotal > 0 ? TodayRest.allDone : TodayRest.empty);
+      : questsTotal > 0
+      ? TodayRest.allDone
+      : loadFailed
+      ? TodayRest.offline
+      : TodayRest.empty;
 
   String headline(S s) {
     if (next != null) {
@@ -177,6 +185,7 @@ class ChildTodayData {
       TodayRest.withParent => s.everythingIsWithParent,
       TodayRest.allDone => s.allDoneToday,
       TodayRest.empty => s.nothingForToday,
+      TodayRest.offline => s.todayOffline,
     };
   }
 }
@@ -264,7 +273,9 @@ class ChildTodayView extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: DsSectionHeader(
-            title: next == null ? s.nothingLeft : s.doThisNext,
+            title: next == null && data.rest != TodayRest.offline
+                ? s.nothingLeft
+                : s.doThisNext,
             trailingText: s.allTasks,
             onTrailingTap: onOpenTasks,
             top: 28,
@@ -580,6 +591,7 @@ class _Rest extends StatelessWidget {
       TodayRest.withParent => ('🎈', s.everythingSent, s.parentReviewsNext),
       TodayRest.allDone => ('🎉', s.allDoneToday, s.allDoneTodayBody),
       TodayRest.empty => ('🌤️', s.nothingForToday, s.nothingForTodayBody),
+      TodayRest.offline => ('📡', s.todayOffline, s.todayOfflineBody),
     };
 
     return DsCard(

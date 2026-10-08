@@ -113,12 +113,14 @@ class VersionGateCubit extends Cubit<VersionGateState> {
       minSupported: platform.minSupported,
       latestRecommended: platform.latestRecommended,
     );
-    if (tier == VersionGateTier.hard && !allowHard) {
+    final belowMin = tier == VersionGateTier.hard;
+    if (belowMin && !allowHard) {
       // Fetch failed: never hard-block. A last-good cache can still nudge.
       tier = VersionGateTier.soft;
     }
     final dismissed =
         tier == VersionGateTier.soft &&
+        !belowMin &&
         _store.isDismissed(platform.latestRecommended);
     _set(
       VersionGateState(

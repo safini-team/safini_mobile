@@ -25,6 +25,11 @@ class MeResponse {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+    'user_id': userId,
+    'account_type': accountType,
+  };
+
   @override
   String toString() =>
       'MeResponse(userId: $userId, accountType: $accountType)';

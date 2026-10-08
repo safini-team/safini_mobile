@@ -83,7 +83,7 @@ class DsTabBar extends StatelessWidget {
   static ({double label, double letterSpacing, double icon}) metricsFor(
     String languageCode,
   ) => switch (languageCode) {
-    'uz' => (label: 9.5, letterSpacing: 0, icon: 23),
+    'uz' || 'ky' || 'kk' => (label: 9.5, letterSpacing: 0, icon: 23),
     'ru' => (label: 10, letterSpacing: 0, icon: 23),
     _ => (label: 10.5, letterSpacing: 0.105, icon: 25),
   };
