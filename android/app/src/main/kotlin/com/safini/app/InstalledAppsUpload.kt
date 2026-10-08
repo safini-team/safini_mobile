@@ -56,6 +56,8 @@ object InstalledAppsUpload {
         retryMs: Long = RETRY_MS,
         changeDebounceMs: Long = CHANGE_DEBOUNCE_MS,
     ): Boolean {
+        // A transient empty scan must not replace the parent's real list.
+        if (fingerprint.isEmpty()) return false
         val changed = lastSuccessFingerprint != null && fingerprint != lastSuccessFingerprint
         val due = lastSuccessAt == null || now - lastSuccessAt >= periodicMs
         if (!changed && !due) return false

@@ -13,6 +13,19 @@ class InstalledAppsUploadTest {
         assertTrue(InstalledAppsUpload.shouldUpload("a", null, null, null, 0))
     }
 
+    @Test fun anEmptyScanDoesNotUpload() {
+        assertFalse(InstalledAppsUpload.shouldUpload("", null, null, null, 0))
+        assertFalse(
+            InstalledAppsUpload.shouldUpload(
+                fingerprint = "",
+                lastSuccessFingerprint = "a",
+                lastSuccessAt = 0,
+                lastAttemptAt = 0,
+                now = InstalledAppsUpload.PERIODIC_MS,
+            ),
+        )
+    }
+
     @Test fun identicalListInsideThePeriodicWindowIsSkipped() {
         assertFalse(
             InstalledAppsUpload.shouldUpload(
