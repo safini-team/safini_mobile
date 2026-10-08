@@ -7467,6 +7467,271 @@ class S {
       args: [time],
     );
   }
+
+  /// `Safini Pro`
+  String get proTitle {
+    return Intl.message('Safini Pro', name: 'proTitle', desc: '', args: []);
+  }
+
+  /// `Free plan`
+  String get proSettingsFree {
+    return Intl.message(
+      'Free plan',
+      name: 'proSettingsFree',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active until {date}`
+  String proActiveUntil(Object date) {
+    return Intl.message(
+      'Active until $date',
+      name: 'proActiveUntil',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Renews on {date}`
+  String proRenewsOn(Object date) {
+    return Intl.message(
+      'Renews on $date',
+      name: 'proRenewsOn',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `One plan for the whole family`
+  String get proHeadline {
+    return Intl.message(
+      'One plan for the whole family',
+      name: 'proHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Both parents and every child share it. Cancel anytime.`
+  String get proLede {
+    return Intl.message(
+      'Both parents and every child share it. Cancel anytime.',
+      name: 'proLede',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every child, not just one`
+  String get proFeatureChildren {
+    return Intl.message(
+      'Every child, not just one',
+      name: 'proFeatureChildren',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limits on every app, not just three`
+  String get proFeatureApps {
+    return Intl.message(
+      'Limits on every app, not just three',
+      name: 'proFeatureApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unlimited recurring tasks`
+  String get proFeatureTasks {
+    return Intl.message(
+      'Unlimited recurring tasks',
+      name: 'proFeatureTasks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One subscription for both parents`
+  String get proFeatureParents {
+    return Intl.message(
+      'One subscription for both parents',
+      name: 'proFeatureParents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yearly`
+  String get proYearly {
+    return Intl.message('Yearly', name: 'proYearly', desc: '', args: []);
+  }
+
+  /// `Monthly`
+  String get proMonthly {
+    return Intl.message('Monthly', name: 'proMonthly', desc: '', args: []);
+  }
+
+  /// `{price} per year`
+  String proPerYear(Object price) {
+    return Intl.message(
+      '$price per year',
+      name: 'proPerYear',
+      desc: '',
+      args: [price],
+    );
+  }
+
+  /// `{price} per month`
+  String proPerMonth(Object price) {
+    return Intl.message(
+      '$price per month',
+      name: 'proPerMonth',
+      desc: '',
+      args: [price],
+    );
+  }
+
+  /// `Save {percent}%`
+  String proSave(Object percent) {
+    return Intl.message(
+      'Save $percent%',
+      name: 'proSave',
+      desc: '',
+      args: [percent],
+    );
+  }
+
+  /// `Subscribe`
+  String get proSubscribe {
+    return Intl.message('Subscribe', name: 'proSubscribe', desc: '', args: []);
+  }
+
+  /// `Restore purchases`
+  String get proRestore {
+    return Intl.message(
+      'Restore purchases',
+      name: 'proRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Terms of Use`
+  String get proTerms {
+    return Intl.message('Terms of Use', name: 'proTerms', desc: '', args: []);
+  }
+
+  /// `Payment is charged to your Apple ID. The subscription renews automatically at the same price unless you cancel at least 24 hours before the period ends. Manage or cancel it in your App Store settings.`
+  String get proLegal {
+    return Intl.message(
+      'Payment is charged to your Apple ID. The subscription renews automatically at the same price unless you cancel at least 24 hours before the period ends. Manage or cancel it in your App Store settings.',
+      name: 'proLegal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your family has Safini Pro`
+  String get proActiveTitle {
+    return Intl.message(
+      'Your family has Safini Pro',
+      name: 'proActiveTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage subscription`
+  String get proManage {
+    return Intl.message(
+      'Manage subscription',
+      name: 'proManage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple couldn't charge your card. Update it to keep Pro.`
+  String get proPaymentIssue {
+    return Intl.message(
+      'Apple couldn\'t charge your card. Update it to keep Pro.',
+      name: 'proPaymentIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't reach the App Store.`
+  String get proStoreUnavailable {
+    return Intl.message(
+      'Couldn\'t reach the App Store.',
+      name: 'proStoreUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome to Safini Pro!`
+  String get proWelcome {
+    return Intl.message(
+      'Welcome to Safini Pro!',
+      name: 'proWelcome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safini Pro is restored.`
+  String get proRestored {
+    return Intl.message(
+      'Safini Pro is restored.',
+      name: 'proRestored',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Safini Pro subscription on this Apple ID.`
+  String get proNothingToRestore {
+    return Intl.message(
+      'No Safini Pro subscription on this Apple ID.',
+      name: 'proNothingToRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for approval. Pro turns on once it's approved.`
+  String get proPending {
+    return Intl.message(
+      'Waiting for approval. Pro turns on once it\'s approved.',
+      name: 'proPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The purchase didn't go through. Try again.`
+  String get proFailed {
+    return Intl.message(
+      'The purchase didn\'t go through. Try again.',
+      name: 'proFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This Apple ID's subscription belongs to another Safini family.`
+  String get proOtherFamily {
+    return Intl.message(
+      'This Apple ID\'s subscription belongs to another Safini family.',
+      name: 'proOtherFamily',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

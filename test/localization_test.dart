@@ -80,6 +80,7 @@ const Set<String> _sameAsEnglishByDesign = {
   'nameHintExample', // a person's name in the placeholder
   'storeAvatarTab', // "Avatar" is the same word in Uzbek
   'ok',
+  'proTitle', // the product name
 };
 
 void main() {
