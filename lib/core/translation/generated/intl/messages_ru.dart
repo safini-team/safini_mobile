@@ -943,6 +943,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "joinFamilySubtitle": MessageLookupByLibrary.simpleMessage(
       "Используйте код от второго родителя",
     ),
+    "kazakh": MessageLookupByLibrary.simpleMessage("Казахский"),
     "keepHolding": MessageLookupByLibrary.simpleMessage("Держи…"),
     "kidAppBlocked": MessageLookupByLibrary.simpleMessage("Закрыто"),
     "kidAppBlockedBody": MessageLookupByLibrary.simpleMessage(
@@ -1002,6 +1003,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
     ),
+    "kyrgyz": MessageLookupByLibrary.simpleMessage("Кыргызский"),
     "laneActive": MessageLookupByLibrary.simpleMessage("Активные"),
     "laneDone": MessageLookupByLibrary.simpleMessage("Готово"),
     "laneToReview": MessageLookupByLibrary.simpleMessage("На проверку"),

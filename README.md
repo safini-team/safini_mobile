@@ -23,7 +23,10 @@ Connect's private review information, not through source control.
 
 ## Localization
 
-Translation workflow and locale setup are documented in `commands/localization.md`.
+The app ships in Uzbek (Latin), Russian, English, Kyrgyz and Kazakh. Only
+Russian and English follow the phone language; the other three are used only
+after the user picks them in the language picker. Translation workflow and
+locale setup are documented in `commands/localization.md`.
 
 ## Store version
 

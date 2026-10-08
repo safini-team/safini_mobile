@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="protection_channel_name">Қорғаныс хабарландырулары</string>
+    <string name="notification_channel_tasks">Тапсырмалар</string>
+    <string name="notification_channel_screen_time">Экран уақыты</string>
+    <string name="notification_channel_family">Отбасы</string>
+    <string name="notification_channel_reminders">Еске салғыштар мен қорытындылар</string>
+
+    <string name="block_resting_title">%1$s демалып жатыр</string>
+    <string name="block_resting_body">Бүгінгі уақытың осы болды. Ол ертең қайта ашылады.</string>
+    <string name="block_coins_only_body">Бүгін оған тегін уақыт жоқ. Монеталарыңмен аш.</string>
+    <string name="block_unavailable_body">Ол бүгін жабық.</string>
+    <string name="block_today">Бүгін</string>
+    <string name="block_minutes_of">%1$d / %2$d мин</string>
+    <string name="block_back_in">%1$s кейін ашылады</string>
+    <string name="block_hours_minutes">%1$d сағ %2$d мин</string>
+    <string name="block_hours">%1$d сағ</string>
+    <string name="block_minutes">%1$d мин</string>
+    <string name="block_unlock">%1$d минут ашу</string>
+    <string name="block_earn_title">Немесе көбірек монета жина</string>
+    <string name="block_earn_subtitle">Safini-де тапсырма орында</string>
+    <string name="block_open_safini">Safini-ді ашу</string>
+    <string name="block_close_app">%1$s жабу</string>
+    <plurals name="block_confirm_title">
+        <item quantity="one">%d монета жұмсайсың ба?</item>
+        <item quantity="other">%d монета жұмсайсың ба?</item>
+    </plurals>
+    <plurals name="block_confirm_body">
+        <item quantity="one">Бұған %2$s ішінде тағы %1$d минут аласың. Бүгін пайдалан, түн ортасында күйіп кетеді.</item>
+        <item quantity="other">Бұған %2$s ішінде тағы %1$d минут аласың. Бүгін пайдалан, түн ортасында күйіп кетеді.</item>
+    </plurals>
+    <string name="block_now">Қазір</string>
+    <string name="block_after">Кейін</string>
+    <string name="block_confirm_yes">Иә, аш</string>
+    <string name="block_confirm_no">Қазір емес</string>
+    <string name="block_unlocking">Ашылуда…</string>
+    <plurals name="block_need_title">
+        <item quantity="one">Тағы %d монета</item>
+        <item quantity="other">Тағы %d монета</item>
+    </plurals>
+    <string name="block_need_body">Оларды жинау үшін Safini-де тапсырма орында.</string>
+    <string name="block_towards">%1$d минутқа дейін</string>
+    <string name="block_earn_coins">Safini-де монета жина</string>
+    <string name="block_paused_title">%1$s кідіртілді</string>
+    <string name="block_paused_body">Ата-анаң бұл қолданбаны кідіртті, сондықтан оны монетамен ашуға болмайды. Қайта қосуын сұра.</string>
+    <string name="block_day_title">Бүгінге осы</string>
+    <string name="block_day_body">Барлық экран уақытыңды пайдаландың. Бәрі ертең қайта ашылады.</string>
+    <plurals name="block_unlocked_title">
+        <item quantity="one">%d минут ашылды</item>
+        <item quantity="other">%d минут ашылды</item>
+    </plurals>
+    <plurals name="block_unlocked_body">
+        <item quantity="one">%d монета жұмсалды. Ойнай бер!</item>
+        <item quantity="other">%d монета жұмсалды. Ойнай бер!</item>
+    </plurals>
+    <string name="block_left">қалды</string>
+    <string name="block_back_to_app">Оралу: %1$s</string>
+    <string name="block_offline_title">Safini-мен байланыс жоқ</string>
+    <string name="block_offline_body">Монеталарың қауіпсіз. Интернетке қосылып, қайталап көр.</string>
+    <string name="block_failed_title">%1$s ашылмады</string>
+    <string name="block_failed_body">Ештеңе жұмсалмады. Монеталар мен лимиттерді тексеру үшін Safini-ді аш.</string>
+    <plurals name="block_still_coins">
+        <item quantity="one">Әлі %d монета</item>
+        <item quantity="other">Әлі %d монета</item>
+    </plurals>
+    <string name="block_try_again">Қайталау</string>
+    <string name="block_failed_hint">Байланысты, балансты және ата-анаңның лимиттерін тексер.</string>
+    <string name="block_task_instead">Немесе оны тапсырмамен тап</string>
+    <string name="block_task_meanwhile">Әзірге монета жина</string>
+    <string name="block_tasks_today">Бүгінгі тапсырмалар</string>
+    <plurals name="block_task_count">
+        <item quantity="one">%d тапсырма</item>
+        <item quantity="other">%d тапсырма</item>
+    </plurals>
+    <plurals name="block_coins">
+        <item quantity="one">%d монета</item>
+        <item quantity="other">%d монета</item>
+    </plurals>
+
+    <string name="device_admin_label">Safini қолданба лимиттері</string>
+    <string name="device_admin_description">Safini қолданба лимиттерін жоюға жол бермейді. Бұл қосулы тұрғанда Safini-ді алдымен мұны өшірмей жою мүмкін емес, ал өшірілсе ата-анаға хабарланады.</string>
+    <string name="device_admin_explanation">Қолданба лимиттерін ата-анасыз өшіре алмау үшін мұны қосыңыз. Safini телефонды ешқашан құлыптамайды, тазаламайды және басқарып алмайды.</string>
+    <string name="device_admin_disable_warning">Қолданба лимиттері бұл телефонды қорғамай қалады және ата-анаға хабарланады.</string>
+</resources>

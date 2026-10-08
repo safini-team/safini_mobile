@@ -347,7 +347,13 @@ class _ChildCard extends StatelessWidget {
                       children: [
                         DsStatusDot(online: child.paired),
                         const SizedBox(width: 6),
-                        Text(child.status(S.of(context)), style: AppText.meta),
+                        Flexible(
+                          child: Text(
+                            child.status(S.of(context)),
+                            style: AppText.meta,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ],
                     ),
                   ],

@@ -8,16 +8,21 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/app_flags.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 
-/// PRD v4 §9.3: Uzbek (Latin), Russian, English.
+/// PRD v4 §9.3: Uzbek (Latin), Russian, English, plus Kyrgyz and Kazakh
+/// (Cyrillic) for those markets.
 const List<({String code, String label})> appLanguages = [
   (code: 'uz', label: 'Oʻzbekcha'),
   (code: 'ru', label: 'Русский'),
   (code: 'en', label: 'English'),
+  (code: 'ky', label: 'Кыргызча'),
+  (code: 'kk', label: 'Қазақша'),
 ];
 
 String languageName(String code, S s) => switch (code) {
   'uz' => s.uzbek,
   'ru' => s.russian,
+  'ky' => s.kyrgyz,
+  'kk' => s.kazakh,
   _ => s.english,
 };
 
