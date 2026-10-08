@@ -8,6 +8,7 @@ import 'package:safini/core/utils/constants/app_constants.dart';
 import 'package:safini/features/common/auth/data/auth_apple_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
+import 'package:safini/features/common/auth/data/me_cache.dart';
 import 'package:safini/features/common/auth/data/me_response.dart';
 import 'package:safini/features/common/auth/data/user_me_service.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
@@ -85,6 +86,21 @@ class _SessionLostMeService extends UserMeService {
   Future<MeResponse> fetchMe() async {
     _tokens.hasSession = false;
     throw const UnauthorizedException('Account no longer exists');
+  }
+}
+
+class _ScriptedMeService extends UserMeService {
+  _ScriptedMeService(AuthTokenProvider tokens)
+    : super(AuthenticatedHttpClient(tokens));
+
+  MeResponse? me;
+  Exception failure = const NetworkException('offline');
+
+  @override
+  Future<MeResponse> fetchMe() async {
+    final value = me;
+    if (value == null) throw failure;
+    return value;
   }
 }
 
@@ -205,5 +221,92 @@ void main() {
 
     expect(googleAuth.signOutCalled, isTrue);
     expect(cubit.state.status, AuthSessionStatus.unauthenticated);
+  });
+  group('offline launch', () {
+    late SharedPreferences preferences;
+    late _FakeTokens tokens;
+    late _ScriptedMeService me;
+    String? currentUserId;
+
+    AuthSessionCubit build() {
+      final cubit = AuthSessionCubit(
+        _FakeGoogleAuth(),
+        _FakeAppleAuth(),
+        _FakeEmailAuth(),
+        me,
+        tokens,
+        meCache: MeCache(preferences),
+        currentUserId: () => currentUserId,
+      );
+      addTearDown(cubit.close);
+      return cubit;
+    }
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      preferences = await SharedPreferences.getInstance();
+      getIt.registerSingleton<SharedPreferences>(preferences);
+      tokens = _FakeTokens()
+        ..hasSession = true
+        ..currentAccessToken = 'persisted-session-token';
+      me = _ScriptedMeService(tokens);
+      currentUserId = 'child-user';
+    });
+
+    test('routes a signed-in user from the last profile', () async {
+      me.me = const MeResponse(userId: 'child-user', accountType: 'child');
+      await build().checkExistingSession();
+
+      me.me = null;
+      final offline = build();
+      await offline.checkExistingSession();
+
+      expect(offline.state.status, AuthSessionStatus.authenticated);
+      expect(offline.state.userId, 'child-user');
+      expect(offline.state.accountType, 'child');
+    });
+
+    test('a 5xx keeps the last profile instead of role selection', () async {
+      me.me = const MeResponse(userId: 'child-user', accountType: 'child');
+      await build().checkExistingSession();
+
+      me
+        ..me = null
+        ..failure = const UnexpectedResponseException(
+          502,
+          'GET /v1/me returned 502',
+        );
+      final degraded = build();
+      await degraded.checkExistingSession();
+
+      expect(degraded.state.status, AuthSessionStatus.authenticated);
+      expect(degraded.state.accountType, 'child');
+    });
+
+    test('never routes from another account\'s profile', () async {
+      me.me = const MeResponse(userId: 'parent-user', accountType: 'parent');
+      await build().checkExistingSession();
+
+      me.me = null;
+      currentUserId = 'child-user';
+      final offline = build();
+      await offline.checkExistingSession();
+
+      expect(offline.state.status, AuthSessionStatus.profileError);
+      expect(offline.state.canRetry, isTrue);
+    });
+
+    test('sign-out forgets the profile', () async {
+      me.me = const MeResponse(userId: 'child-user', accountType: 'child');
+      final cubit = build();
+      await cubit.checkExistingSession();
+      await cubit.signOut();
+
+      me.me = null;
+      final offline = build();
+      await offline.checkExistingSession();
+
+      expect(offline.state.status, AuthSessionStatus.profileError);
+    });
   });
 }

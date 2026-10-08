@@ -6,6 +6,7 @@ import 'package:safini/features/common/auth/data/auth_apple_sign_in_service.dart
 import 'package:safini/features/common/auth/data/auth_email_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/auth_google_sign_in_service.dart';
 import 'package:safini/features/common/auth/data/account_deletion_service.dart';
+import 'package:safini/features/common/auth/data/me_cache.dart';
 import 'package:safini/features/common/auth/data/user_me_service.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
@@ -57,6 +58,9 @@ void registerCommonDependencies(GetIt sl) {
       sl<AuthEmailSignInService>(),
       sl<UserMeService>(),
       sl<AuthTokenProvider>(),
+      meCache: MeCache(
+        sl.isRegistered<SharedPreferences>() ? sl<SharedPreferences>() : null,
+      ),
     ),
   );
   sl.registerLazySingleton<models_child.IChildRepository>(
