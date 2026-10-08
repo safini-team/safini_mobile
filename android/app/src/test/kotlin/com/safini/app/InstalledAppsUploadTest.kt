@@ -1,11 +1,9 @@
 package com.safini.app
 
-import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.util.Base64
 
 class InstalledAppsUploadTest {
     private val hour = 60 * 60 * 1000L
@@ -117,33 +115,24 @@ class InstalledAppsUploadTest {
             iconSha256 = "bb",
             iconPng = byteArrayOf(9),
         )
-        val puts = mutableListOf<JSONObject>()
-        InstalledAppsUpload.putSnapshot(listOf(youtube, phone)) { body ->
-            puts.add(body)
-            val apps = body.getJSONArray("apps")
-            if (puts.size == 1) {
-                assertFalse(apps.getJSONObject(0).has("icon_png"))
-                assertTrue(apps.getJSONObject(1).getBoolean("always_allowed"))
-                JSONObject().put("missing_icon_sha256", org.json.JSONArray().put("aa"))
-            } else {
-                JSONObject().put("missing_icon_sha256", org.json.JSONArray())
-            }
+        val attaches = mutableListOf<Set<String>>()
+        InstalledAppsUpload.putSnapshot(listOf(youtube, phone)) { attach ->
+            attaches.add(attach)
+            if (attaches.size == 1) listOf("aa") else emptyList()
         }
-        assertEquals(2, puts.size)
-        val second = puts.last().getJSONArray("apps").getJSONObject(0)
-        assertEquals("aa", second.getString("icon_sha256"))
-        assertEquals(Base64.getEncoder().encodeToString(byteArrayOf(1, 2, 3, 4)), second.getString("icon_png"))
-        assertFalse(puts.last().getJSONArray("apps").getJSONObject(1).has("icon_png"))
+        assertEquals(listOf(emptySet<String>(), setOf("aa")), attaches)
     }
 
     @Test fun aHashTheServerKeepsAskingForDoesNotLoop() {
         val app = InstalledAppRecord("com.app", "App", iconSha256 = "aa", iconPng = byteArrayOf(1))
-        val puts = mutableListOf<JSONObject>()
-        InstalledAppsUpload.putSnapshot(listOf(app)) { body ->
-            puts.add(body)
-            JSONObject().put("missing_icon_sha256", org.json.JSONArray().put("aa"))
+        val attaches = mutableListOf<Set<String>>()
+        InstalledAppsUpload.putSnapshot(listOf(app)) { attach ->
+            attaches.add(attach)
+            listOf("aa")
         }
-        assertEquals(2, puts.size)
+        assertEquals(2, attaches.size)
+        assertEquals(emptySet<String>(), attaches.first())
+        assertEquals(setOf("aa"), attaches.last())
     }
 }
 

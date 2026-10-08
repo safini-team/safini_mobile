@@ -99,7 +99,8 @@ object InstalledAppsUpload {
         return (0 until raw.length()).mapNotNull { raw.optString(it).takeIf { hash -> hash.isNotEmpty() } }
     }
 
-    fun putSnapshot(apps: List<InstalledAppRecord>, put: (JSONObject) -> JSONObject) {
+    /** [put] is given the icon hashes to attach and must return hashes the server still lacks. */
+    fun putSnapshot(apps: List<InstalledAppRecord>, put: (Set<String>) -> List<String>) {
         val payload = apps.take(MAX_APPS)
         val icons = payload.mapNotNull { app ->
             val hash = app.iconSha256
@@ -109,9 +110,9 @@ object InstalledAppsUpload {
         val sent = mutableSetOf<String>()
         var attach = emptySet<String>()
         while (true) {
-            val response = put(toRequest(payload, attach))
+            val missing = put(attach)
             sent.addAll(attach)
-            val pending = missingHashes(response).filter { it in icons && it !in sent }
+            val pending = missing.filter { it in icons && it !in sent }
             if (pending.isEmpty()) break
             attach = iconBatch(pending, icons)
         }

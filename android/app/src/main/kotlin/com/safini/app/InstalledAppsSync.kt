@@ -34,7 +34,10 @@ object InstalledAppsSync {
         ) return true
         store.markInstalledAppsAttempt(now)
         return try {
-            InstalledAppsUpload.putSnapshot(listApps(), put)
+            val apps = listApps()
+            InstalledAppsUpload.putSnapshot(apps) { attach ->
+                InstalledAppsUpload.missingHashes(put(InstalledAppsUpload.toRequest(apps, attach)))
+            }
             store.markInstalledAppsSuccess(fingerprint, now)
             true
         } catch (_: Exception) {
