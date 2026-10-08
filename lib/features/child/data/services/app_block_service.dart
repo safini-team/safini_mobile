@@ -59,10 +59,11 @@ class AppBlockService {
   Future<void> stopService() => _call('stopService');
 
   /// Native installed-apps PUT when the package set changed or the periodic
-  /// refresh is due. True when the server list is fresh (uploaded or skipped).
-  /// False when the native path failed, so Flutter can fall back to a bearer
-  /// PUT while the child UI is open. iOS returns true so it never uploads an
-  /// empty list.
+  /// refresh is due. True when the server list is fresh: uploaded now, or
+  /// skipped after an upload that went through. False when the native path
+  /// failed, including a skip inside the retry wait after a failed attempt, so
+  /// Flutter can fall back to a bearer PUT while the child UI is open. iOS
+  /// returns true so it never uploads an empty list.
   Future<bool> syncInstalledApps() async {
     if (!isSupported) return true;
     try {

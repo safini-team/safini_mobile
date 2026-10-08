@@ -95,6 +95,34 @@ class InstalledAppsUploadTest {
         )
     }
 
+    @Test fun aChangeThatFailedToUploadRetriesOnTheLongerIntervalNotEveryHeartbeat() {
+        assertFalse(
+            InstalledAppsUpload.shouldUpload(
+                fingerprint = "a\nb",
+                lastSuccessFingerprint = "a",
+                lastSuccessAt = 0,
+                lastAttemptAt = minute,
+                now = 3 * minute,
+            ),
+        )
+        assertTrue(
+            InstalledAppsUpload.shouldUpload(
+                fingerprint = "a\nb",
+                lastSuccessFingerprint = "a",
+                lastSuccessAt = 0,
+                lastAttemptAt = minute,
+                now = minute + InstalledAppsUpload.RETRY_MS,
+            ),
+        )
+    }
+
+    @Test fun onlyAnAttemptStampedWithTheSuccessCountsAsSucceeded() {
+        assertTrue(InstalledAppsUpload.lastAttemptSucceeded(lastSuccessAt = 5, lastAttemptAt = 5))
+        assertFalse(InstalledAppsUpload.lastAttemptSucceeded(lastSuccessAt = 5, lastAttemptAt = 6))
+        assertFalse(InstalledAppsUpload.lastAttemptSucceeded(lastSuccessAt = null, lastAttemptAt = 6))
+        assertFalse(InstalledAppsUpload.lastAttemptSucceeded(lastSuccessAt = null, lastAttemptAt = null))
+    }
+
     @Test fun fingerprintChangesWhenAnAppIsUpdated() {
         val before = InstalledAppsUpload.fingerprint(listOf(PackageStamp("com.game", 1)))
         val after = InstalledAppsUpload.fingerprint(listOf(PackageStamp("com.game", 2)))
