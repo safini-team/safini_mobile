@@ -9,6 +9,7 @@ import 'package:safini/features/parent/domain/models/parent_tasks_response_model
 import 'package:safini/features/parent/domain/repositories/i_parent_task_repository.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 class ParentTasksCubit extends Cubit<ParentTasksState> {
   final IParentTaskRepository _repository;
@@ -374,6 +375,7 @@ class ParentTasksCubit extends Cubit<ParentTasksState> {
       message: failure.message,
       isConflict: failure is ConflictFailure,
       isUnauthorized: failure is UnauthorizedFailure,
+      isFreeLimit: failure is FreeLimitFailure,
       pendingVoice: pendingVoice,
     );
   }

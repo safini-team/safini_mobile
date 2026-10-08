@@ -15,6 +15,7 @@ import 'package:safini/features/onboarding/pairing_connected.dart';
 import 'package:safini/features/onboarding/pairing_watch.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/widgets/family/family_sheets.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 /// Steps 1 and 2 of the onboarding artboards: the child's details, then the
 /// pairing code their phone needs.
@@ -374,7 +375,8 @@ class _AddChildPageState extends State<AddChildPage> {
     if (failure != null) {
       setState(() {
         _submitting = false;
-        _error = _messageFor(failure);
+        // The Safini Pro sheet already explains a free-plan limit.
+        _error = failure is FreeLimitFailure ? null : _messageFor(failure);
       });
       return;
     }

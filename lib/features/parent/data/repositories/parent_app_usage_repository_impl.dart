@@ -12,6 +12,7 @@ import 'package:safini/features/parent/domain/models/catalog_app_model.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_repository.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
   final AuthenticatedHttpClient _client;
@@ -174,6 +175,19 @@ class ParentAppUsageRepositoryImpl implements IParentAppUsageRepository {
     if (response.statusCode == 401) {
       return const Left(
         UnauthorizedFailure('Missing, expired, or invalid token.'),
+      );
+    }
+
+    final limit = FreeLimit.fromResponse(
+      response.statusCode,
+      response.headers[FreeLimit.header],
+    );
+    if (limit != null) {
+      return Left(
+        FreeLimitFailure(
+          limit,
+          _extractErrorMessage(response.body, 'Upgrade to Safini Pro.'),
+        ),
       );
     }
 

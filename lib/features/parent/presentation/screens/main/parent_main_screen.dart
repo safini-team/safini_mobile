@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
@@ -8,6 +10,7 @@ import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 import 'package:safini/features/subscription/pro_cubit.dart';
 import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
@@ -61,6 +64,24 @@ class _ParentMainScreenState extends State<ParentMainScreen>
     // Reads this family's plan and picks up App Store renewals and purchases
     // that were left unfinished.
     getIt<ProCubit>().start();
+    _freeLimits = FreeLimitAlerts.instance.stream.listen(_onFreeLimit);
+  }
+
+  StreamSubscription<FreeLimit>? _freeLimits;
+  bool _freeLimitShown = false;
+
+  /// A free-plan limit from any screen, even one pushed over this one. A
+  /// task for several children can hit it once per child; one sheet is
+  /// enough.
+  Future<void> _onFreeLimit(FreeLimit limit) async {
+    if (!mounted || _freeLimitShown) return;
+    _freeLimitShown = true;
+    await showFreeLimitSheet(
+      context,
+      limit,
+      canBuy: getIt<ProCubit>().canSell,
+    );
+    _freeLimitShown = false;
   }
 
   @override
@@ -79,6 +100,7 @@ class _ParentMainScreenState extends State<ParentMainScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _freeLimits?.cancel();
     _push.dispose();
     _home.close();
     super.dispose();

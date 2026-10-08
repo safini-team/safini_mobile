@@ -108,7 +108,7 @@ class _AppLimitSheetState extends State<_AppLimitSheet> {
               redeemRewardMinutes: _reward,
             );
       if (error != null) {
-        if (mounted) AppSnackBar.error(context, error);
+        if (mounted && error.isNotEmpty) AppSnackBar.error(context, error);
         return;
       }
     }

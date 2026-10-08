@@ -444,7 +444,7 @@ class _TaskSheetState extends State<TaskSheet> {
           // screen shows why; anything else stays so the parent can retry.
           if (state.isConflict) {
             Navigator.of(context).pop();
-          } else if (!state.isUnauthorized) {
+          } else if (!state.isUnauthorized && !state.isFreeLimit) {
             AppSnackBar.error(
               context,
               state.pendingVoice.isNotEmpty

@@ -17,6 +17,7 @@ import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/models/domain/models/unlink_child_result.dart';
 import 'package:safini/features/models/domain/repositories/i_family_repository.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 @Injectable(as: IFamilyRepository)
 class FamilyRepositoryImpl implements IFamilyRepository {
@@ -304,6 +305,11 @@ class FamilyRepositoryImpl implements IFamilyRepository {
         defaultMessage: 'Something went wrong. Please try again.',
       );
       final message = statusMessages?[response.statusCode] ?? defaultMessage;
+      final limit = FreeLimit.fromResponse(
+        response.statusCode,
+        response.headers[FreeLimit.header],
+      );
+      if (limit != null) return Left(FreeLimitFailure(limit, message));
       if (response.statusCode == 400 ||
           response.statusCode == 404 ||
           response.statusCode == 409 ||
