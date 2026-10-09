@@ -139,6 +139,7 @@
     }
   },
   "comingSoon": "Coming soon!",
+  "comingSoonSubtitle": "We're adding more fun stuff. Check back later!",
   "coinsCount": "{count, plural, =1{1 coin} other{{count} coins}}",
   "@coinsCount": {
     "placeholders": {
@@ -1027,6 +1028,14 @@
   "updateSoftBody": "A newer version is ready.",
   "updateCta": "Update",
   "updateDismiss": "Not now",
+  "avatarTabCharacters": "Characters",
+  "avatarTabHead": "Head",
+  "avatarTabAccessories": "Accessories",
+  "avatarTabVehicles": "Vehicles",
+  "noCosmeticsYet": "No items yet",
+  "extraHead": "Head",
+  "extraAccessory": "Accessory",
+  "extraVehicle": "Vehicle",
   "kidScreenTimeLeft": "{time} left today",
   "kidScreenTimeUp": "No free time left today",
   "kidScreenTimeDaily": "{time} a day",

@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
+import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
 import 'package:safini/features/child/presentation/widgets/kid_usage_section.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
@@ -100,6 +101,7 @@ class ChildTodayData {
     this.accessoryEmoji,
     this.avatarColor,
     this.level,
+    this.characterId,
     this.usageApps = const [],
     this.usageMinutes = 0,
     this.budget,
@@ -141,6 +143,10 @@ class ChildTodayData {
   final String? accessoryEmoji;
   final Color? avatarColor;
   final int? level;
+
+  /// v2: illustrated character ID. When set, [SafiniAvatar] is shown instead
+  /// of the legacy emoji disc.
+  final String? characterId;
 
   /// "My usage today": every app used today and every app the parent capped
   /// or blocked, limits first. Empty with no [budget] hides the section.
@@ -236,7 +242,7 @@ class ChildTodayView extends StatelessWidget {
             title: data.name,
             eyebrow: data.greeting,
             crossAxisAlignment: CrossAxisAlignment.center,
-            leading: data.faceEmoji == null
+            leading: (data.faceEmoji == null && data.characterId == null)
                 ? null
                 : Pressable(
                     onTap: onOpenProfile,
@@ -244,13 +250,19 @@ class ChildTodayView extends StatelessWidget {
                     child: Padding(
                       // Room for the level pill that hangs below the disc.
                       padding: const EdgeInsets.only(bottom: 6),
-                      child: ChildAvatar(
-                        faceEmoji: data.faceEmoji!,
-                        color: data.avatarColor ?? AppColors.avatarPalette[1],
-                        accessoryEmoji: data.accessoryEmoji,
-                        level: data.level,
-                        size: 54,
-                      ),
+                      child: data.characterId != null
+                          ? SafiniAvatar(
+                              characterId: data.characterId!,
+                              size: 54,
+                            )
+                          : ChildAvatar(
+                              faceEmoji: data.faceEmoji!,
+                              color:
+                                  data.avatarColor ?? AppColors.avatarPalette[1],
+                              accessoryEmoji: data.accessoryEmoji,
+                              level: data.level,
+                              size: 54,
+                            ),
                     ),
                   ),
             trailing: DsCoinBalance(

@@ -896,5 +896,14 @@
   "freeLimitApps": "Акысыз планда ар бир балага үч колдонмону чектөөгө болот. Safini Pro менен бардык колдонмолорду чектей аласыз.",
   "freeLimitTasks": "Акысыз планда ар бир балага үч тапшырма кайталанат. Safini Pro менен бардык тапшырмалар кайталана алат.",
   "freeLimitSeePro": "Safini Pro жөнүндө",
-  "freeLimitAndroid": "Safini Pro жакында Android'де пайда болот."
+  "freeLimitAndroid": "Safini Pro жакында Android'де пайда болот.",
+  "avatarTabCharacters": "Каармандар",
+  "avatarTabHead": "Баш кийим",
+  "avatarTabAccessories": "Аксессуарлар",
+  "avatarTabVehicles": "Транспорт",
+  "noCosmeticsYet": "Азырынча буюмдар жок",
+  "extraHead": "Баш кийим",
+  "extraAccessory": "Аксессуар",
+  "extraVehicle": "Транспорт",
+  "comingSoonSubtitle": "Дагы кызыктуу нерселерди кошуп жатабыз. Кийинчерээк кайра кел!"
 }

@@ -166,6 +166,7 @@ class _ChildTodayScreen extends StatelessWidget {
               for (final quest in open.skip(1).take(2))
                 _toTodayQuest(quest, s),
             ],
+            characterId: profile.characterId,
             faceEmoji: profile.equippedFaceEmoji,
             accessoryEmoji: profile.equippedBadgeEmoji.isEmpty
                 ? null

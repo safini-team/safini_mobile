@@ -64,6 +64,8 @@ flutter:
     - assets/logo/
     - assets/mascot/
     - assets/env/app.env
+    # Illustrated avatar characters (SAF-201): assets/avatar/characters/char_NN.webp
+    - assets/avatar/characters/
 
 flutter_launcher_icons:
   android: true

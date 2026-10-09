@@ -138,6 +138,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
         .map((item) {
           final map = item.map((key, value) => MapEntry(key.toString(), value));
           final key = _stringValue(map, ['item_key', 'id', 'avatar_item_id']);
+          final assetKey = _stringValue(map, ['asset_key', 'asset_id']);
+          final slot = _stringValue(map, ['slot', 'category']);
           final owned = map['is_owned'] == true || map['owned'] == true;
           final equipped =
               map['is_equipped'] == true || map['equipped'] == true;
@@ -145,6 +147,8 @@ class RewardStoreCubit extends Cubit<RewardStoreState> {
           return AvatarItem(
             id: key,
             name: _stringValue(map, ['name', 'display_name']),
+            assetKey: assetKey.isEmpty ? null : assetKey,
+            slot: slot.isEmpty ? null : slot,
             emoji: _emojiForAvatarKey(key),
             cost: owned ? null : _intValue(map, ['coin_cost', 'cost']),
             isEquipped: equipped,

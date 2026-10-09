@@ -139,6 +139,7 @@
     }
   },
   "comingSoon": "Скоро будет!",
+  "comingSoonSubtitle": "Мы добавляем больше интересного. Загляни позже!",
   "coinsCount": "{count, plural, one{{count} монета} few{{count} монеты} many{{count} монет} other{{count} монет}}",
   "@coinsCount": {
     "placeholders": {
@@ -981,6 +982,14 @@
   "updateSoftBody": "Вышла более новая версия.",
   "updateCta": "Обновить",
   "updateDismiss": "Позже",
+  "avatarTabCharacters": "Персонажи",
+  "avatarTabHead": "Голова",
+  "avatarTabAccessories": "Аксессуары",
+  "avatarTabVehicles": "Транспорт",
+  "noCosmeticsYet": "Пока нет предметов",
+  "extraHead": "Голова",
+  "extraAccessory": "Аксессуар",
+  "extraVehicle": "Транспорт",
   "kidScreenTimeLeft": "Сегодня осталось {time}",
   "kidScreenTimeUp": "На сегодня время закончилось",
   "kidScreenTimeDaily": "{time} в день",

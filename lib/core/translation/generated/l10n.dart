@@ -817,6 +817,16 @@ class S {
     return Intl.message('Coming soon!', name: 'comingSoon', desc: '', args: []);
   }
 
+  /// `We're adding more fun stuff. Check back later!`
+  String get comingSoonSubtitle {
+    return Intl.message(
+      'We\'re adding more fun stuff. Check back later!',
+      name: 'comingSoonSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{count, plural, =1{1 coin} other{{count} coins}}`
   String coinsCount(int count) {
     return Intl.plural(
@@ -7371,6 +7381,71 @@ class S {
   /// `Not now`
   String get updateDismiss {
     return Intl.message('Not now', name: 'updateDismiss', desc: '', args: []);
+  }
+
+  /// `Characters`
+  String get avatarTabCharacters {
+    return Intl.message(
+      'Characters',
+      name: 'avatarTabCharacters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Head`
+  String get avatarTabHead {
+    return Intl.message('Head', name: 'avatarTabHead', desc: '', args: []);
+  }
+
+  /// `Accessories`
+  String get avatarTabAccessories {
+    return Intl.message(
+      'Accessories',
+      name: 'avatarTabAccessories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicles`
+  String get avatarTabVehicles {
+    return Intl.message(
+      'Vehicles',
+      name: 'avatarTabVehicles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No items yet`
+  String get noCosmeticsYet {
+    return Intl.message(
+      'No items yet',
+      name: 'noCosmeticsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Head`
+  String get extraHead {
+    return Intl.message('Head', name: 'extraHead', desc: '', args: []);
+  }
+
+  /// `Accessory`
+  String get extraAccessory {
+    return Intl.message(
+      'Accessory',
+      name: 'extraAccessory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle`
+  String get extraVehicle {
+    return Intl.message('Vehicle', name: 'extraVehicle', desc: '', args: []);
   }
 
   /// `{time} left today`

@@ -411,6 +411,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "askedToRedoLabel": MessageLookupByLibrary.simpleMessage("Кайра аткарууга"),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Аватар буюму"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Буюмдар"),
+    "avatarTabAccessories": MessageLookupByLibrary.simpleMessage(
+      "Аксессуарлар",
+    ),
+    "avatarTabCharacters": MessageLookupByLibrary.simpleMessage("Каармандар"),
+    "avatarTabHead": MessageLookupByLibrary.simpleMessage("Баш кийим"),
+    "avatarTabVehicles": MessageLookupByLibrary.simpleMessage("Транспорт"),
     "averagePerDay": m10,
     "backToSignIn": MessageLookupByLibrary.simpleMessage("Кирүүгө кайтуу"),
     "badgeCoins": m11,
@@ -516,6 +522,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "coinsReward": m21,
     "coinsText": MessageLookupByLibrary.simpleMessage("Монеталар"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("Жакында!"),
+    "comingSoonSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Дагы кызыктуу нерселерди кошуп жатабыз. Кийинчерээк кайра кел!",
+    ),
     "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
       "Көбүрөөк монета топтоо үчүн күнүмдүк тапшырмаларды аткар!",
     ),
@@ -713,9 +722,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "expiresTonight": MessageLookupByLibrary.simpleMessage(
       "Бүгүн колдон, түн ортосунда күйүп кетет.",
     ),
+    "extraAccessory": MessageLookupByLibrary.simpleMessage("Аксессуар"),
     "extraBackpack": MessageLookupByLibrary.simpleMessage("Рюкзак"),
     "extraHair": MessageLookupByLibrary.simpleMessage("Чач"),
+    "extraHead": MessageLookupByLibrary.simpleMessage("Баш кийим"),
     "extraOutfit": MessageLookupByLibrary.simpleMessage("Кийим"),
+    "extraVehicle": MessageLookupByLibrary.simpleMessage("Транспорт"),
     "extrasFootnote": MessageLookupByLibrary.simpleMessage(
       "Кошумчалар бир жолу сатылып алынат. Тапшырмаларыңа таасир этпейт.",
     ),
@@ -1180,6 +1192,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noCodeAskThem": MessageLookupByLibrary.simpleMessage(
       "Кодуңуз жокпу? Алардан Safini\'ни ачып, «Менин үй-бүлөм» бөлүмүнө киришин сураңыз.",
+    ),
+    "noCosmeticsYet": MessageLookupByLibrary.simpleMessage(
+      "Азырынча буюмдар жок",
     ),
     "noDailyLimit": MessageLookupByLibrary.simpleMessage("Күнүмдүк лимит жок"),
     "noFamilySetupYet": MessageLookupByLibrary.simpleMessage(

@@ -419,6 +419,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "avatarItem": MessageLookupByLibrary.simpleMessage("Avatar buyumi"),
     "avatarItemsTab": MessageLookupByLibrary.simpleMessage("Avatar buyumlari"),
+    "avatarTabAccessories": MessageLookupByLibrary.simpleMessage(
+      "Aksessuarlar",
+    ),
+    "avatarTabCharacters": MessageLookupByLibrary.simpleMessage("Belgilar"),
+    "avatarTabHead": MessageLookupByLibrary.simpleMessage("Bosh kiyim"),
+    "avatarTabVehicles": MessageLookupByLibrary.simpleMessage("Transport"),
     "averagePerDay": m10,
     "backToSignIn": MessageLookupByLibrary.simpleMessage("Kirishga qaytish"),
     "badgeCoins": m11,
@@ -524,6 +530,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "coinsReward": m21,
     "coinsText": MessageLookupByLibrary.simpleMessage("Tangalar"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("Tez orada!"),
+    "comingSoonSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Koʻproq qiziqarli narsalar qoʻshmoqdamiz. Keyinroq qayta kir!",
+    ),
     "completeDailyQuests": MessageLookupByLibrary.simpleMessage(
       "Koʻproq tanga uchun kunlik topshiriqlarni bajar!",
     ),
@@ -721,9 +730,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "expiresTonight": MessageLookupByLibrary.simpleMessage(
       "Bugun ishlat, yarim tunda tugaydi.",
     ),
+    "extraAccessory": MessageLookupByLibrary.simpleMessage("Aksessuar"),
     "extraBackpack": MessageLookupByLibrary.simpleMessage("Ryukzak"),
     "extraHair": MessageLookupByLibrary.simpleMessage("Soch"),
+    "extraHead": MessageLookupByLibrary.simpleMessage("Bosh kiyim"),
     "extraOutfit": MessageLookupByLibrary.simpleMessage("Kiyim"),
+    "extraVehicle": MessageLookupByLibrary.simpleMessage("Transport"),
     "extrasFootnote": MessageLookupByLibrary.simpleMessage(
       "Qoʻshimchalar bir marta sotib olinadi. Vazifalarga taʼsir qilmaydi.",
     ),
@@ -1196,6 +1208,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noCodeAskThem": MessageLookupByLibrary.simpleMessage(
       "Kod yoʻqmi? Ulardan Safini va \"Mening oilam\" boʻlimini ochishni soʻrang.",
+    ),
+    "noCosmeticsYet": MessageLookupByLibrary.simpleMessage(
+      "Hali buyumlar yoʻq",
     ),
     "noDailyLimit": MessageLookupByLibrary.simpleMessage("Kunlik limit yoʻq"),
     "noFamilySetupYet": MessageLookupByLibrary.simpleMessage(

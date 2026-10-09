@@ -169,6 +169,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       final xp = _asInt(child['xp']);
       final nickname = (child['nickname'] ?? '').toString().trim();
 
+      final avatarStateMap = _asMapDynamic(child['avatar_state']);
+      final charId = avatarStateMap['character_id']?.toString().trim();
       emit(
         state.copyWith(
           name: nickname.isEmpty ? state.name : nickname,
@@ -176,8 +178,9 @@ class ProfileCubit extends Cubit<ProfileState> {
           dayStreak: _asInt(child['current_streak_days']),
           level: _asInt(child['level']),
           xpProgress: (xp % 100) / 100.0,
+          characterId: (charId != null && charId.isNotEmpty) ? charId : null,
           equippedFaceEmoji:
-              _avatarEmoji(_asMapDynamic(child['avatar_state']), 'face') ?? '😊',
+              _avatarEmoji(avatarStateMap, 'face') ?? '😊',
         ),
       );
       return true;
@@ -203,6 +206,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       '| coins=${child.coinsBalance}',
     );
     _coinsCubit.set(child.coinsBalance);
+    final avatarJson = _asMapDynamic(child.avatarState);
+    final charId = avatarJson['character_id']?.toString().trim();
     emit(
       state.copyWith(
         name: child.nickname,
@@ -210,10 +215,11 @@ class ProfileCubit extends Cubit<ProfileState> {
         dayStreak: child.currentStreakDays,
         level: child.level,
         xpProgress: (child.xp % 100) / 100.0,
-        equippedFaceEmoji: _avatarEmoji(child.avatarState, 'face') ?? '😊',
+        characterId: (charId != null && charId.isNotEmpty) ? charId : null,
+        equippedFaceEmoji: _avatarEmoji(avatarJson, 'face') ?? '😊',
         equippedBadgeEmoji:
-            _avatarEmoji(child.avatarState, 'outfit') ??
-            _avatarEmoji(child.avatarState, 'outfits') ??
+            _avatarEmoji(avatarJson, 'outfit') ??
+            _avatarEmoji(avatarJson, 'outfits') ??
             '🚀',
       ),
     );
@@ -225,6 +231,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       '| nickname=${child.nickname} | level=${child.level}',
     );
     _coinsCubit.set(child.coinsBalance);
+    final avatarJson = child.avatarState.toJson();
     emit(
       state.copyWith(
         name: child.nickname,
@@ -232,11 +239,11 @@ class ProfileCubit extends Cubit<ProfileState> {
         dayStreak: child.currentStreakDays,
         level: child.level,
         xpProgress: (child.xp % 100) / 100.0,
-        equippedFaceEmoji:
-            _avatarEmoji(child.avatarState.toJson(), 'face') ?? '😊',
+        characterId: child.avatarState.characterId,
+        equippedFaceEmoji: _avatarEmoji(avatarJson, 'face') ?? '😊',
         equippedBadgeEmoji:
-            _avatarEmoji(child.avatarState.toJson(), 'outfit') ??
-            _avatarEmoji(child.avatarState.toJson(), 'outfits') ??
+            _avatarEmoji(avatarJson, 'outfit') ??
+            _avatarEmoji(avatarJson, 'outfits') ??
             '🚀',
       ),
     );
@@ -325,6 +332,26 @@ class ProfileCubit extends Cubit<ProfileState> {
 
 // ─── Avatar Cubit ─────────────────────────────────────────────────────────────
 
+/// The `avatar_state` to PATCH: [base] (what the server holds) with the keys
+/// this save owns overwritten. `emojis` is merged key by key.
+Map<String, dynamic> mergeAvatarState(
+  Map<String, dynamic> base, {
+  String? characterId,
+  required Map<String, String> equipped,
+  required Map<String, String> emojis,
+}) {
+  final baseEmojis = base['emojis'];
+  return {
+    ...base,
+    'character_id': ?characterId,
+    'equipped': equipped,
+    'emojis': {
+      if (baseEmojis is Map) ...baseEmojis.cast<String, dynamic>(),
+      ...emojis,
+    },
+  };
+}
+
 class AvatarCubit extends Cubit<AvatarState> {
   final CoinsCubit _coins;
   final Dio _dio;
@@ -340,6 +367,16 @@ class AvatarCubit extends Cubit<AvatarState> {
   /// in-memory map is a guess, and PATCHing it would clear whatever the server
   /// actually holds.
   bool _equippedLoaded = false;
+
+  /// The whole `avatar_state` object as last read from the server. PATCH
+  /// replaces it wholesale, so every save starts from this and overwrites only
+  /// the keys it owns. Keys we do not know about (a newer build wrote them)
+  /// survive a save.
+  Map<String, dynamic> _avatarState = const {};
+
+  /// Current character_id from the server. Loaded alongside equipped on the
+  /// first fetch so a character change never wipes the equipped slots.
+  String? _characterId;
 
   AvatarCubit(this._coins, this._dio, this._profileController)
     : super(const AvatarState.initial()) {
@@ -376,12 +413,15 @@ class AvatarCubit extends Cubit<AvatarState> {
       if (child.isNotEmpty) {
         _equipped = equipped;
         _equippedLoaded = true;
+        _characterId = _extractCharacterId(avatarState);
+        _avatarState = _asMap(avatarState);
       }
       emit(
         state.copyWith(
           avatarItems: _parseAvatarItems(data['avatar_items'], equipped),
           level: _intValue(child, ['level']) ?? 0,
           selectedFaceEmoji: _extractFaceEmoji(avatarState),
+          characterId: _extractCharacterId(avatarState),
         ),
       );
     } catch (_) {
@@ -399,6 +439,53 @@ class AvatarCubit extends Cubit<AvatarState> {
     return this.state.selectedFaceEmoji;
   }
 
+  /// Reads the persisted character_id from `avatar_state`.
+  String? _extractCharacterId(dynamic raw) {
+    final state = _asMap(raw);
+    final charId = state['character_id']?.toString().trim();
+    if (charId != null && charId.isNotEmpty) return charId;
+    return null;
+  }
+
+  /// Selects an illustrated character and persists it. Everything else in
+  /// `avatar_state` (equipped slots, emojis, unknown keys) is sent back as
+  /// read, so a character change never wipes it (SAF-131).
+  Future<void> selectCharacter(String characterId) async {
+    emit(state.copyWith(characterId: characterId));
+    final childId = await _resolveChildId();
+    if (childId == null) return;
+    if (!await _ensureAvatarStateLoaded(childId)) return;
+    _characterId = characterId;
+    try {
+      await _dio.patch(
+        ApiConst.childAvatar(childId),
+        data: {
+          'avatar_state': mergeAvatarState(
+            _avatarState,
+            characterId: characterId,
+            equipped: _equipped,
+            emojis: {'face': state.selectedFaceEmoji},
+          ),
+        },
+      );
+    } catch (e) {
+      debugPrint('[AvatarCubit] saving character failed: $e');
+    }
+  }
+
+  /// Loads the child row once if `loadItems` has not managed to yet. PATCH
+  /// replaces avatar_state wholesale, so a save must never go out on a guess.
+  Future<bool> _ensureAvatarStateLoaded(String childId) async {
+    if (_equippedLoaded) return true;
+    final child = await _loadChildFromHome(childId);
+    if (child.isEmpty) return false;
+    _equipped = _extractEquipped(child['avatar_state']);
+    _characterId = _extractCharacterId(child['avatar_state']);
+    _avatarState = _asMap(child['avatar_state']);
+    _equippedLoaded = true;
+    return true;
+  }
+
   /// Selects a face emoji and persists it so the parent can see it.
   ///
   /// The face goes into the free-form `emojis` map only. `equipped` is sent
@@ -409,21 +496,17 @@ class AvatarCubit extends Cubit<AvatarState> {
     emit(state.copyWith(selectedFaceEmoji: emoji));
     final childId = await _resolveChildId();
     if (childId == null) return;
-    if (!_equippedLoaded) {
-      // PATCH replaces avatar_state wholesale, so never send a guess.
-      final child = await _loadChildFromHome(childId);
-      if (child.isEmpty) return;
-      _equipped = _extractEquipped(child['avatar_state']);
-      _equippedLoaded = true;
-    }
+    if (!await _ensureAvatarStateLoaded(childId)) return;
     try {
       await _dio.patch(
         ApiConst.childAvatar(childId),
         data: {
-          'avatar_state': {
-            'equipped': _equipped,
-            'emojis': {'face': emoji},
-          },
+          'avatar_state': mergeAvatarState(
+            _avatarState,
+            characterId: _characterId,
+            equipped: _equipped,
+            emojis: {'face': emoji},
+          ),
         },
       );
     } catch (e) {
@@ -469,34 +552,49 @@ class AvatarCubit extends Cubit<AvatarState> {
     dynamic raw,
     Map<String, String> equipped,
   ) {
-    if (raw is! List) return const [];
-    return raw
-        .whereType<Map>()
-        .map((item) {
-          final map = item.map((key, value) => MapEntry(key.toString(), value));
-          final key = _stringValue(map, ['item_key', 'id', 'avatar_item_id']);
-          final category = _categoryForKey(key);
-          final owned = map['is_owned'] == true || map['owned'] == true;
-          final isEquipped =
-              map['is_equipped'] == true ||
-              equipped[_slotForCategory(category)] == key;
-          return AvatarGridItem(
-            id: key,
-            emoji: _emojiForAvatarKey(key),
-            category: category,
-            cost: owned || isEquipped
-                ? null
-                : _intValue(map, ['coin_cost', 'cost']),
-            isEquipped: isEquipped,
-            isLocked: map['is_locked'] == true || map['locked'] == true,
-            lockLabel: map['lock_label']?.toString(),
-          );
-        })
-        .where((item) => item.id.isNotEmpty)
-        .toList();
+    final items = <AvatarGridItem>[];
+    if (raw is List) {
+      for (final item in raw.whereType<Map>()) {
+        final map = item.map((key, value) => MapEntry(key.toString(), value));
+        final key = _stringValue(map, ['item_key', 'id', 'avatar_item_id']);
+        if (key.isEmpty) continue;
+        final slotHint = _stringValue(map, ['slot', 'category']);
+        final category = _categoryForKey(key, slotHint: slotHint);
+        final assetKey = _stringValue(map, ['asset_key', 'asset_id']);
+        final owned = map['is_owned'] == true || map['owned'] == true;
+        final isEquipped =
+            map['is_equipped'] == true || equipped[category.slotKey] == key;
+        items.add(AvatarGridItem(
+          id: key,
+          assetKey: assetKey.isEmpty ? null : assetKey,
+          emoji: _emojiForAvatarKey(key),
+          category: category,
+          cost: owned || isEquipped
+              ? null
+              : _intValue(map, ['coin_cost', 'cost']),
+          isEquipped: isEquipped,
+          isLocked: map['is_locked'] == true || map['locked'] == true,
+          lockLabel: map['lock_label']?.toString(),
+        ));
+      }
+    }
+
+    return items;
   }
 
-  AvatarCategory _categoryForKey(String key) {
+  AvatarCategory _categoryForKey(String key, {String slotHint = ''}) {
+    // Prefer an explicit slot field from the API.
+    final hint = slotHint.toLowerCase();
+    if (hint == 'head') return AvatarCategory.head;
+    if (hint == 'accessory') return AvatarCategory.accessory;
+    if (hint == 'vehicle') return AvatarCategory.vehicle;
+    if (hint == 'hair') return AvatarCategory.hair;
+    if (hint == 'back') return AvatarCategory.back;
+    if (hint == 'outfit' || hint == 'outfits') return AvatarCategory.outfits;
+    if (hint == 'face') return AvatarCategory.face;
+
+    // Legacy items have no slot field; the new slots are never guessed from
+    // the key ('cap' would also match 'cosmic-cape').
     final value = key.toLowerCase();
     if (value.contains('face') ||
         value.contains('smile') ||
@@ -510,19 +608,6 @@ class AvatarCubit extends Cubit<AvatarState> {
       return AvatarCategory.back;
     }
     return AvatarCategory.outfits;
-  }
-
-  String _slotForCategory(AvatarCategory category) {
-    switch (category) {
-      case AvatarCategory.outfits:
-        return 'outfit';
-      case AvatarCategory.face:
-        return 'face';
-      case AvatarCategory.hair:
-        return 'hair';
-      case AvatarCategory.back:
-        return 'back';
-    }
   }
 
   String _emojiForAvatarKey(String key) {
@@ -574,15 +659,21 @@ class AvatarCubit extends Cubit<AvatarState> {
     final equipped = <String, String>{};
     final emojis = <String, String>{};
     for (final item in items.where((item) => item.isEquipped)) {
-      final slot = _slotForCategory(item.category);
+      final slot = item.category.slotKey;
       equipped[slot] = item.id;
       emojis[slot] = item.emoji;
     }
+    _equipped = equipped;
     try {
       await _dio.patch(
         ApiConst.childAvatar(childId),
         data: {
-          'avatar_state': {'equipped': equipped, 'emojis': emojis},
+          'avatar_state': mergeAvatarState(
+            _avatarState,
+            characterId: _characterId,
+            equipped: equipped,
+            emojis: emojis,
+          ),
         },
       );
     } catch (_) {}

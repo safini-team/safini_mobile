@@ -16,6 +16,7 @@ import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/language_sheet.dart';
 import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
 import 'package:safini/features/child/presentation/screens/dev/child_apps_debug_screen.dart';
@@ -59,6 +60,7 @@ class _ChildMeScreen extends StatelessWidget {
             name: state.name,
             faceEmoji: state.equippedFaceEmoji,
             avatarColor: AppColors.avatarPalette[1],
+            characterId: state.characterId,
             accessoryEmoji: state.equippedBadgeEmoji.isEmpty
                 ? null
                 : state.equippedBadgeEmoji,
@@ -98,11 +100,12 @@ class _ChildMeScreen extends StatelessWidget {
 
   Future<void> _openAvatar(BuildContext context) async {
     final cubit = context.read<ProfileCubit>();
+    final homeCubit = context.read<ChildHomeCubit>();
     final claim = context.read<ChildClaimCubit>();
-    await context.router.push(const NamedRoute('avatar'));
-    if (context.mounted) {
-      cubit.loadProfile(fallbackChild: claim.state.child);
-    }
+    final result = await context.router.push(const NamedRoute('avatar'));
+    if (!context.mounted) return;
+    cubit.loadProfile(fallbackChild: claim.state.child);
+    if (result is int) homeCubit.selectTab(result);
   }
 
   Future<void> _editName(BuildContext context, ProfileState state, S s) async {

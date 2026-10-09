@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/utils/child_avatar_look.dart';
+import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
 
 /// Round initial badge - the design's stand-in for a photo everywhere a person
 /// appears. White bold initial on the child's own colour.
@@ -71,15 +72,18 @@ class DsInitialAvatar extends StatelessWidget {
   }
 }
 
-/// The child's in-app face on their colour disc, with an optional equipped
-/// extra in a white bubble. Used on parent surfaces so kids never render as
-/// an OAuth profile photo.
+/// The child's avatar. Renders an illustrated [SafiniAvatar] when a
+/// [characterId] is set; falls back to the legacy emoji disc otherwise.
 class DsChildAvatar extends StatelessWidget {
   const DsChildAvatar({
     super.key,
     required this.color,
     this.faceEmoji,
     this.accessoryEmoji,
+    this.characterId,
+    this.headItemId,
+    this.accessoryItemId,
+    this.vehicleItemId,
     this.size = 38,
     this.showAccessory,
     this.accessoryOnTop = false,
@@ -98,6 +102,10 @@ class DsChildAvatar extends StatelessWidget {
       color: color,
       faceEmoji: look.faceEmoji,
       accessoryEmoji: look.accessoryEmoji,
+      characterId: look.characterId,
+      headItemId: look.headItemId,
+      accessoryItemId: look.accessoryItemId,
+      vehicleItemId: look.vehicleItemId,
       size: size,
       showAccessory: showAccessory,
       accessoryOnTop: accessoryOnTop,
@@ -107,6 +115,13 @@ class DsChildAvatar extends StatelessWidget {
   final Color color;
   final String? faceEmoji;
   final String? accessoryEmoji;
+
+  // v2 illustrated avatar fields
+  final String? characterId;
+  final String? headItemId;
+  final String? accessoryItemId;
+  final String? vehicleItemId;
+
   final double size;
 
   /// Defaults to on at 24px and above, so the kid picker still shows extras.
@@ -117,6 +132,16 @@ class DsChildAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use the illustrated renderer when a character has been selected.
+    if (characterId != null && characterId!.isNotEmpty) {
+      return SafiniAvatar(
+        characterId: characterId!,
+        headItemId: headItemId,
+        accessoryItemId: accessoryItemId,
+        vehicleItemId: vehicleItemId,
+        size: size,
+      );
+    }
     final k = size / 88;
     final face = (faceEmoji ?? '').trim().isEmpty
         ? ChildAvatarLook.defaultFaceEmoji
