@@ -12,6 +12,7 @@ import 'package:safini/features/models/domain/controllers/family_controller.dart
 import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/models/domain/models/parent_invite_code_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_state.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 class ParentFamilyCubit extends Cubit<ParentFamilyState> {
   static const _familyCacheKey = 'parent_family_cache';
@@ -230,7 +231,8 @@ class ParentFamilyCubit extends Cubit<ParentFamilyState> {
         emit(
           state.copyWith(
             isParentInviteCodeLoading: false,
-            errorMessage: failure.message,
+            // The Safini Pro sheet already explains a free-plan limit.
+            errorMessage: failure is FreeLimitFailure ? null : failure.message,
             canRetry: failure is UnauthorizedFailure,
             isUnauthorized: failure is UnauthorizedFailure,
             keepFamily: true,

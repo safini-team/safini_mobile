@@ -53,6 +53,7 @@ Widget _host(Widget child) => MaterialApp(
 void main() {
   group('reading a limit', () {
     test('only a 402 with a known limit is one', () {
+      expect(FreeLimit.fromResponse(402, 'parents'), FreeLimit.parents);
       expect(FreeLimit.fromResponse(402, 'children'), FreeLimit.children);
       expect(
         FreeLimit.fromResponse(402, 'controlled_apps'),
@@ -134,7 +135,7 @@ void main() {
       await open(tester, canBuy: true);
 
       expect(find.text("That's the free plan's limit"), findsOneWidget);
-      expect(find.textContaining('three apps per child'), findsOneWidget);
+      expect(find.textContaining('five apps per child'), findsOneWidget);
       expect(find.text('See Safini Pro'), findsOneWidget);
       expect(find.textContaining('coming to Android'), findsNothing);
     });
@@ -147,7 +148,7 @@ void main() {
       expect(find.text('See Safini Pro'), findsOneWidget);
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('per child'), findsNothing);
+      expect(find.textContaining('five apps per child'), findsNothing);
     });
   });
 }

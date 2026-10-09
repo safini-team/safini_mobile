@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Safini API",
-    "description": "Safini API powers the MVP for **earned screen time**. Parents create a family,\ndefine tasks and app-time rules, and children earn **Time Coins** by completing\nhealthy or educational actions.\n\n### Start here: auth and app bootstrap\n\n- Google sign-in happens in the mobile app through **Supabase Auth**\n- This backend does **not** expose a Google login endpoint\n- After sign-in, send `Authorization: Bearer <access_token>`\n- Your first protected call should be `GET /v1/me`\n- Route the app by `account_type`\n  - `parent` -> load the parent shell, then call `GET /v1/families/current`\n  - `child` -> load the child shell using `child_id`\n  - `null` -> show the role chooser\n\n```mermaid\nflowchart TD\n    A[\"Supabase Google sign-in\"] --> B[\"GET /v1/me\"]\n    B --> C{\"account_type\"}\n    C -->|parent| D[\"GET /v1/families/current\"]\n    C -->|child| E[\"GET /v1/children/{child_id}/home\"]\n    C -->|null| F[\"Show role chooser\"]\n    F --> G[\"POST /v1/families\"]\n    F --> H[\"POST /v1/families/join\"]\n    F --> I[\"POST /v1/children/claim\"]\n```\n\n### What this backend covers\n\n- Parent onboarding, second-parent join flow, and family setup\n- Child profiles, avatar state, and invite-code claiming\n- Daily tasks, manual proof submission, parent approval, and steps auto-approval\n- Controlled app rules, usage reporting, and app-time redemption\n- Wallet history, store items, and avatar purchases\n- Parent-made prizes (real-world rewards), the child's asks and wishes, and parent approval\n- Guarded MVP AI endpoints for task suggestions and the child AI friend\n\n### Main product flows\n\n1. **Parent onboarding**: create a family and add one or more children. A child starts with the\n   free avatar items and no tasks or app rules, so the parent adds both.\n2. **Additional parent join**: an existing parent calls `POST /v1/families/current/parent-invite-code`\n   and another trusted adult joins through `POST /v1/families/join` as an admin.\n3. **Child claim**: a child signs in, enters the child invite code, and links to one child profile.\n4. **Kid daily loop**: load today's tasks, submit proof or steps, earn Time Coins,\n   then spend coins on app time or avatar cosmetics.\n5. **Parent review loop**: any parent admin can review pending tasks, approve or reject them, and watch dashboards and wallet history update.\n\n### Supabase Auth for frontend and Flutter engineers\n\n- Public routes: `GET /ping`, `GET /v1/health/live`, `GET /v1/health/ready`,\n  `GET /v1/system/info`, and `GET /v1/system/version-policy`\n- Protected routes: all other business endpoints\n- Sign in with a normal Supabase Auth client flow\n- Read the current session access token\n  - React Native / web: `session.access_token`\n  - Flutter: `supabase.auth.currentSession?.accessToken`\n- Send the token as `Authorization: Bearer <access_token>`\n- On `401`, refresh the Supabase session and retry once\n\n### Response conventions\n\n- Database unavailability or a bounded database wait can return `503` with\n  `Retry-After: 1`. Retry reads after that delay. Do not blindly replay writes:\n  reuse the same idempotency key on endpoints that support one, otherwise\n  reconcile the resulting state before retrying.\n- IDs are UUID strings\n- Timestamps are ISO 8601 strings in UTC\n- Daily tasks, streaks, and app-time limits reset on the family's local\n  calendar day, derived from the family `timezone` (UTC when unset);\n  timestamps themselves remain UTC\n- Coins, XP, and minutes are integers\n- `GET /v1/me` is the bootstrap endpoint for routing the app\n- Parent users receive `family_id`; child users receive `child_id`\n- Proof uploads are represented by URLs or object keys; this API does not accept\n  raw binary uploads directly\n- The MVP tracks app-time grants and usage, but it does not yet enforce OS-level\n  app blocking",
+    "description": "Safini API powers the MVP for **earned screen time**. Parents create a family,\ndefine tasks and app-time rules, and children earn **Time Coins** by completing\nhealthy or educational actions.\n\n### Start here: auth and app bootstrap\n\n- Google sign-in happens in the mobile app through **Supabase Auth**\n- This backend does **not** expose a Google login endpoint\n- After sign-in, send `Authorization: Bearer <access_token>`\n- Your first protected call should be `GET /v1/me`\n- Route the app by `account_type`\n  - `parent` -> load the parent shell, then call `GET /v1/families/current`\n  - `child` -> load the child shell using `child_id`\n  - `null` -> show the role chooser\n\n```mermaid\nflowchart TD\n    A[\"Supabase Google sign-in\"] --> B[\"GET /v1/me\"]\n    B --> C{\"account_type\"}\n    C -->|parent| D[\"GET /v1/families/current\"]\n    C -->|child| E[\"GET /v1/children/{child_id}/home\"]\n    C -->|null| F[\"Show role chooser\"]\n    F --> G[\"POST /v1/families\"]\n    F --> H[\"POST /v1/families/join\"]\n    F --> I[\"POST /v1/children/claim\"]\n```\n\n### What this backend covers\n\n- Parent onboarding, second-parent join flow, and family setup\n- Child profiles, avatar state, and invite-code claiming\n- Daily tasks, manual proof submission, parent approval, and steps auto-approval\n- Controlled app rules, usage reporting, and app-time redemption\n- Wallet history, store items, and avatar purchases\n- Parent-made prizes (real-world rewards), the child's asks and wishes, and parent approval\n- Guarded MVP AI endpoints for task suggestions and the child AI friend\n\n### Main product flows\n\n1. **Parent onboarding**: create a family and add one or more children. A child starts with the\n   free avatar items and no tasks or app rules, so the parent adds both.\n2. **Additional parent join**: an existing parent calls `POST /v1/families/current/parent-invite-code`\n   and another trusted adult joins through `POST /v1/families/join` as an admin.\n3. **Child claim**: a child signs in, enters the child invite code, and links to one child profile.\n4. **Kid daily loop**: load today's tasks, submit proof or steps, earn Time Coins,\n   then spend coins on app time or avatar cosmetics.\n5. **Parent review loop**: any parent admin can review pending tasks, approve or reject them, and watch dashboards and wallet history update.\n\n### Supabase Auth for frontend and Flutter engineers\n\n- Public routes: `GET /ping`, `GET /v1/health/live`, `GET /v1/health/ready`,\n  `GET /v1/system/info`, and `GET /v1/system/version-policy`\n- Protected routes: all other business endpoints\n- Sign in with a normal Supabase Auth client flow\n- Read the current session access token\n  - React Native / web: `session.access_token`\n  - Flutter: `supabase.auth.currentSession?.accessToken`\n- Send the token as `Authorization: Bearer <access_token>`\n- On `401`, refresh the Supabase session and retry once\n\n### Mobile app identity headers\n\nEvery request from the Safini mobile app should send these optional headers.\nOlder builds that omit them keep working.\n\n- `X-App-Version`: version name, for example `1.0.9`\n- `X-App-Build`: build number, for example `33`\n- `X-App-Platform`: `android` or `ios`\n\nWhen present they appear on the API request log and on\n`safini_client_app_requests_total`. Child device syncs also store the latest\nvalues on `child_enforcement_devices`, and `GET /v1/children/{id}/enforcement/status`\nreturns them. The native Android foreground service may send\n`X-Safini-Device-Token` on `PUT /v1/children/{id}/installed-apps` instead of\na bearer token; the child's bearer token still works.\n\n### Response conventions\n\n- Database unavailability or a bounded database wait can return `503` with\n  `Retry-After: 1`. Retry reads after that delay. Do not blindly replay writes:\n  reuse the same idempotency key on endpoints that support one, otherwise\n  reconcile the resulting state before retrying.\n- IDs are UUID strings\n- Timestamps are ISO 8601 strings in UTC\n- Daily tasks, streaks, and app-time limits reset on the family's local\n  calendar day, derived from the family `timezone` (UTC when unset);\n  timestamps themselves remain UTC\n- Coins, XP, and minutes are integers\n- `GET /v1/me` is the bootstrap endpoint for routing the app\n- Parent users receive `family_id`; child users receive `child_id`\n- Proof uploads are represented by URLs or object keys; this API does not accept\n  raw binary uploads directly\n- The MVP tracks app-time grants and usage, but it does not yet enforce OS-level\n  app blocking",
     "version": "0.1.3"
   },
   "paths": {
@@ -1124,6 +1124,24 @@
               }
             }
           },
+          "402": {
+            "description": "The family is on the free plan and this would go past one of its limits: one parent, one child, five controlled apps per child, five recurring tasks per child (SAF-158). The `X-Safini-Limit` header names it: `parents`, `children`, `controlled_apps` or `recurring_tasks`. Offer Safini Pro.",
+            "headers": {
+              "X-Safini-Limit": {
+                "description": "`parents`, `children`, `controlled_apps` or `recurring_tasks`.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "The free plan has one child. Safini Pro adds every child."
+                }
+              }
+            }
+          },
           "401": {
             "description": "Missing, expired, or invalid Supabase bearer token.",
             "content": {
@@ -1224,6 +1242,24 @@
               "application/json": {
                 "example": {
                   "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "The family is on the free plan and this would go past one of its limits: one parent, one child, five controlled apps per child, five recurring tasks per child (SAF-158). The `X-Safini-Limit` header names it: `parents`, `children`, `controlled_apps` or `recurring_tasks`. Offer Safini Pro.",
+            "headers": {
+              "X-Safini-Limit": {
+                "description": "`parents`, `children`, `controlled_apps` or `recurring_tasks`.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "The free plan has one child. Safini Pro adds every child."
                 }
               }
             }
@@ -1373,6 +1409,24 @@
               "application/json": {
                 "example": {
                   "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "The family is on the free plan and this would go past one of its limits: one parent, one child, five controlled apps per child, five recurring tasks per child (SAF-158). The `X-Safini-Limit` header names it: `parents`, `children`, `controlled_apps` or `recurring_tasks`. Offer Safini Pro.",
+            "headers": {
+              "X-Safini-Limit": {
+                "description": "`parents`, `children`, `controlled_apps` or `recurring_tasks`.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "The free plan has one child. Safini Pro adds every child."
                 }
               }
             }
@@ -2907,6 +2961,24 @@
               }
             }
           },
+          "402": {
+            "description": "The family is on the free plan and this would go past one of its limits: one parent, one child, five controlled apps per child, five recurring tasks per child (SAF-158). The `X-Safini-Limit` header names it: `parents`, `children`, `controlled_apps` or `recurring_tasks`. Offer Safini Pro.",
+            "headers": {
+              "X-Safini-Limit": {
+                "description": "`parents`, `children`, `controlled_apps` or `recurring_tasks`.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "The free plan has one child. Safini Pro adds every child."
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -3154,6 +3226,24 @@
               "application/json": {
                 "example": {
                   "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "The family is on the free plan and this would go past one of its limits: one parent, one child, five controlled apps per child, five recurring tasks per child (SAF-158). The `X-Safini-Limit` header names it: `parents`, `children`, `controlled_apps` or `recurring_tasks`. Offer Safini Pro.",
+            "headers": {
+              "X-Safini-Limit": {
+                "description": "`parents`, `children`, `controlled_apps` or `recurring_tasks`.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "The free plan has one child. Safini Pro adds every child."
                 }
               }
             }
@@ -4341,7 +4431,7 @@
           "enforcement"
         ],
         "summary": "Sync",
-        "description": "Auth: X-Safini-Device-Token from child pairing. Business requirement: native background usage, rule synchronization and heartbeat. Frontend note: cumulative whole-minute totals keyed by family-local usage_date, retried safely; do not send deltas. `usage` carries configured apps only and is capped at what the child may spend; `device_usage` carries every app opened, keyed by package and uncapped, for `GET /children/{child_id}/device-usage`. `device_admin_active` is the optional uninstall-guard flag; omit it or send null until the guard has been on once for this pairing (the server reads null as unknown, an explicit false as attention required). Unknown fields are ignored so a newer client never breaks the heartbeat. Missing heartbeat means offline/unknown, not confirmed tampering. The snapshot's `tasks` lists up to three of today's open tasks (id, title, category, coin_reward), best paid first, for the block screen.",
+        "description": "Auth: X-Safini-Device-Token from child pairing. Business requirement: native background usage, rule synchronization and heartbeat. Frontend note: cumulative whole-minute totals keyed by family-local usage_date, retried safely; do not send deltas. `usage` carries configured apps only and is capped at what the child may spend; `device_usage` carries every app opened, keyed by package and uncapped, for `GET /children/{child_id}/device-usage`. `device_admin_active` is the optional uninstall-guard flag; omit it or send null until the guard has been on once for this pairing (the server reads null as unknown, an explicit false as attention required). Send `X-App-Version`, `X-App-Build` and `X-App-Platform` when the binary knows them; older builds may omit them. Unknown fields are ignored so a newer client never breaks the heartbeat. Missing heartbeat means offline/unknown, not confirmed tampering. The snapshot's `tasks` lists up to three of today's open tasks (id, title, category, coin_reward), best paid first, for the block screen.",
         "operationId": "sync_v1_children__child_id__enforcement_sync_post",
         "parameters": [
           {
@@ -4501,7 +4591,7 @@
           "enforcement"
         ],
         "summary": "Status",
-        "description": "Auth: parent or claimed child's Supabase bearer token. Business requirement: surface protection failures. Frontend note: poll every minute; offline after three missed heartbeats means unknown connectivity or stopped service, never proof of tampering. `signed_out` means the child signed out of Safini on the paired phone: limits are off until they sign back in.",
+        "description": "Auth: parent or claimed child's Supabase bearer token. Business requirement: surface protection failures. Frontend note: poll every minute; offline after three missed heartbeats means unknown connectivity or stopped service, never proof of tampering. `signed_out` means the child signed out of Safini on the paired phone: limits are off until they sign back in. `app_version`, `app_build`, `app_platform` and `app_reported_at` are the last identity the child device sent; they are null on older builds.",
         "operationId": "status_v1_children__child_id__enforcement_status_get",
         "security": [
           {
@@ -4940,6 +5030,24 @@
               "application/json": {
                 "example": {
                   "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "The family is on the free plan and this would go past one of its limits: one parent, one child, five controlled apps per child, five recurring tasks per child (SAF-158). The `X-Safini-Limit` header names it: `parents`, `children`, `controlled_apps` or `recurring_tasks`. Offer Safini Pro.",
+            "headers": {
+              "X-Safini-Limit": {
+                "description": "`parents`, `children`, `controlled_apps` or `recurring_tasks`.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "The free plan has one child. Safini Pro adds every child."
                 }
               }
             }
@@ -5385,7 +5493,7 @@
           "apps"
         ],
         "summary": "Replace Child Installed Apps",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Stores the full list of apps installed on the child's device so the parent can see the child's real apps instead of only the controlled-app catalog.\n\n**Frontend note:** Send the whole snapshot on every upload; it replaces the stored list rather than merging into it. Only the child's own device may write, so call this with the child's token, not the parent's. Android only in practice - iOS cannot enumerate installed apps, so an iPhone should not call this at all. Icons are uploaded lazily: send `icon_sha256` for every app, then upload again with `icon_png` for each hash the response lists in `missing_icon_sha256`, until that list is empty. An app keeps its previous icon until the new one's bytes arrive. Set `always_allowed` on the default dialer, default SMS app and system Settings.",
+        "description": "**Auth:** Required. Use the child's Supabase access token via `Authorization: Bearer <access_token>`, or a paired-device credential via `X-Safini-Device-Token` (the same header as `POST /v1/children/{id}/enforcement/sync`). The token must belong to this child; expired or revoked tokens are rejected. Parents cannot write.\n\n**Business requirement:** Stores the full list of apps installed on the child's device so the parent can see the child's real apps instead of only the controlled-app catalog.\n\n**Frontend note:** Send the whole snapshot on every upload; it replaces the stored list rather than merging into it. A repeated PUT with an unchanged list still bumps `updated_at`, so the parent's Synced date is the last confirmation, not the last install change. Only the child's own device may write: Flutter uses the child's bearer token; the native Android foreground service uses `X-Safini-Device-Token` so the list stays fresh while Safini is in the background. Do not send a parent token. Android only in practice - iOS cannot enumerate installed apps, so an iPhone should not call this at all. Send `X-App-Version`, `X-App-Build` and `X-App-Platform` when the binary knows them; older builds may omit them. Icons are uploaded lazily: send `icon_sha256` for every app, then upload again with `icon_png` for each hash the response lists in `missing_icon_sha256`, until that list is empty. An app keeps its previous icon until the new one's bytes arrive. Set `always_allowed` on the default dialer, default SMS app and system Settings.",
         "operationId": "replace_child_installed_apps_v1_children__child_id__installed_apps_put",
         "security": [
           {
@@ -5400,6 +5508,16 @@
             "schema": {
               "type": "string",
               "title": "Child Id"
+            }
+          },
+          {
+            "name": "x-safini-device-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Safini-Device-Token"
             }
           }
         ],
@@ -8333,6 +8451,114 @@
         }
       }
     },
+    "/v1/billing/promo-codes/redeem": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Redeem Promo Code",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent types a promo code the team shared and the whole family gets Safini Pro for the code's days. Nothing renews and nothing is charged; when it ends the family is back on the free plan, keeping everything it set up.\n\n**Frontend note:** Show the code box on the Safini Pro page. 200 returns the family plan (same shape as `GET /v1/families/current/subscription`, `source` is `promo`, `is_trial` is true, `expires_at` is when it ends). 404 means the code is unknown, switched off, deleted or expired. 409 means it is used up, this family already used it, or the family already has Pro; `detail` says which. 429 after 10 tries in 5 minutes.",
+        "operationId": "redeem_promo_code_v1_billing_promo_codes_redeem_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromoCodeRedeemRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Family plan after redeeming.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Redeem Promo Code V1 Billing Promo Codes Redeem Post"
+                },
+                "example": {
+                  "plan": "pro",
+                  "status": "active",
+                  "source": "promo",
+                  "product_id": "pro.promo",
+                  "is_trial": true,
+                  "expires_at": "2026-11-09T12:00:00Z",
+                  "will_renew": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/waiting-list": {
       "post": {
         "tags": [
@@ -9609,6 +9835,26 @@
           "bio": "Building healthier habits with earned screen time.",
           "display_name": "Safinio Parent",
           "timezone": "Asia/Bishkek"
+        }
+      },
+      "PromoCodeRedeemRequest": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Code",
+            "description": "As typed. Case and spaces are ignored."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "PromoCodeRedeemRequest",
+        "example": {
+          "code": "FRIENDS30"
         }
       },
       "ProofUploadUrlRequest": {

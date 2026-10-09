@@ -255,8 +255,9 @@ class _ParentMonitorView extends StatelessWidget {
     );
   }
 
-  /// The same sheet the Limits tab opens, over Today: the app's rule when it
-  /// has one, otherwise a draft that is saved only when the parent saves it.
+  /// The same sheet the Limits tab opens, over Today. An app with a limit opens
+  /// its settings; one without opens its last 7 days under "Add a limit". A
+  /// draft rule is saved only when the parent saves it.
   Future<void> _openAppLimit(
     BuildContext context,
     ParentMonitorLoaded state,
@@ -284,6 +285,11 @@ class _ParentMonitorView extends StatelessWidget {
         cubit: cubit,
         childName: child.nickname,
         isNew: rule == null,
+        // No limit yet: open on the app's week, under "Add a limit".
+        startEditing: rule != null && (rule.isLimited || rule.isBlocked),
+        week: state.screenTime.usageAvailable
+            ? state.weekUsage?.daysFor(slug)
+            : null,
         app: rule == null
             ? LimitsApp(
                 slug: slug,
@@ -291,7 +297,7 @@ class _ParentMonitorView extends StatelessWidget {
                 emoji: app.emoji,
                 usedMinutes: today,
                 limitMinutes: 60,
-                isLimited: true,
+                isLimited: false,
                 canRedeem: true,
                 iconUrl: app.iconUrl,
               )

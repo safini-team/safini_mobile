@@ -4737,26 +4737,6 @@ class S {
     );
   }
 
-  /// `Daily limit`
-  String get dailyLimitToggle {
-    return Intl.message(
-      'Daily limit',
-      name: 'dailyLimitToggle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Off means this app is never capped`
-  String get dailyLimitToggleHint {
-    return Intl.message(
-      'Off means this app is never capped',
-      name: 'dailyLimitToggleHint',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `No free time`
   String get noFreeTime {
     return Intl.message('No free time', name: 'noFreeTime', desc: '', args: []);
@@ -4765,16 +4745,6 @@ class S {
   /// `Price`
   String get priceLabel {
     return Intl.message('Price', name: 'priceLabel', desc: '', args: []);
-  }
-
-  /// `{cost} coins for {time}`
-  String priceUnit(Object cost, Object time) {
-    return Intl.message(
-      '$cost coins for $time',
-      name: 'priceUnit',
-      desc: '',
-      args: [cost, time],
-    );
   }
 
   /// `Use it today, it expires at midnight.`
@@ -5132,6 +5102,41 @@ class S {
     return Intl.message(
       'Block completely',
       name: 'blockCompletely',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a limit`
+  String get addLimitAction {
+    return Intl.message(
+      'Add a limit',
+      name: 'addLimitAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove limit`
+  String get removeLimit {
+    return Intl.message(
+      'Remove limit',
+      name: 'removeLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block`
+  String get blockSegment {
+    return Intl.message('Block', name: 'blockSegment', desc: '', args: []);
+  }
+
+  /// `Not used in the last 7 days`
+  String get notUsedLastSevenDays {
+    return Intl.message(
+      'Not used in the last 7 days',
+      name: 'notUsedLastSevenDays',
       desc: '',
       args: [],
     );
@@ -7608,10 +7613,10 @@ class S {
     );
   }
 
-  /// `Limits on every app, not just three`
+  /// `Limits on every app, not just five`
   String get proFeatureApps {
     return Intl.message(
-      'Limits on every app, not just three',
+      'Limits on every app, not just five',
       name: 'proFeatureApps',
       desc: '',
       args: [],
@@ -7628,10 +7633,10 @@ class S {
     );
   }
 
-  /// `One subscription for both parents`
+  /// `Room for a second parent`
   String get proFeatureParents {
     return Intl.message(
-      'One subscription for both parents',
+      'Room for a second parent',
       name: 'proFeatureParents',
       desc: '',
       args: [],
@@ -7828,20 +7833,20 @@ class S {
     );
   }
 
-  /// `The free plan limits three apps per child. With Safini Pro you can limit every app.`
+  /// `The free plan limits five apps per child. With Safini Pro you can limit every app.`
   String get freeLimitApps {
     return Intl.message(
-      'The free plan limits three apps per child. With Safini Pro you can limit every app.',
+      'The free plan limits five apps per child. With Safini Pro you can limit every app.',
       name: 'freeLimitApps',
       desc: '',
       args: [],
     );
   }
 
-  /// `The free plan repeats three tasks per child. With Safini Pro every task can repeat.`
+  /// `The free plan repeats five tasks per child. With Safini Pro every task can repeat.`
   String get freeLimitTasks {
     return Intl.message(
-      'The free plan repeats three tasks per child. With Safini Pro every task can repeat.',
+      'The free plan repeats five tasks per child. With Safini Pro every task can repeat.',
       name: 'freeLimitTasks',
       desc: '',
       args: [],
@@ -8046,6 +8051,16 @@ class S {
     return Intl.message(
       'Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.',
       name: 'proAndroidSoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan has one parent. With Safini Pro a second parent can join your family.`
+  String get freeLimitParents {
+    return Intl.message(
+      'The free plan has one parent. With Safini Pro a second parent can join your family.',
+      name: 'freeLimitParents',
       desc: '',
       args: [],
     );
