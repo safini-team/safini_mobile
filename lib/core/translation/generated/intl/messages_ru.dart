@@ -762,16 +762,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Safini Pro скоро появится на Android.",
     ),
     "freeLimitApps": MessageLookupByLibrary.simpleMessage(
-      "В бесплатном плане можно ограничить три приложения на ребёнка. С Safini Pro можно ограничить все приложения.",
+      "В бесплатном плане можно ограничить пять приложений на ребёнка. С Safini Pro можно ограничить все приложения.",
     ),
     "freeLimitChildren": MessageLookupByLibrary.simpleMessage(
       "В бесплатном плане один ребёнок. С Safini Pro можно добавить всех детей в семье.",
+    ),
+    "freeLimitParents": MessageLookupByLibrary.simpleMessage(
+      "В бесплатном плане один родитель. С Safini Pro к семье может присоединиться второй родитель.",
     ),
     "freeLimitSeePro": MessageLookupByLibrary.simpleMessage(
       "Подробнее о Safini Pro",
     ),
     "freeLimitTasks": MessageLookupByLibrary.simpleMessage(
-      "В бесплатном плане повторяются три задания на ребёнка. С Safini Pro повторять можно все задания.",
+      "В бесплатном плане повторяются пять заданий на ребёнка. С Safini Pro повторять можно все задания.",
     ),
     "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Это предел бесплатного плана",
@@ -1352,13 +1355,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Покупка не прошла. Попробуйте ещё раз.",
     ),
     "proFeatureApps": MessageLookupByLibrary.simpleMessage(
-      "Лимиты на все приложения, а не только на три",
+      "Лимиты на все приложения, а не только на пять",
     ),
     "proFeatureChildren": MessageLookupByLibrary.simpleMessage(
       "Все дети, а не только один",
     ),
     "proFeatureParents": MessageLookupByLibrary.simpleMessage(
-      "Одна подписка для обоих родителей",
+      "Второй родитель в семье",
     ),
     "proFeatureTasks": MessageLookupByLibrary.simpleMessage(
       "Неограниченные повторяющиеся задания",

@@ -773,16 +773,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Safini Pro жакында Android\'де пайда болот.",
     ),
     "freeLimitApps": MessageLookupByLibrary.simpleMessage(
-      "Акысыз планда ар бир балага үч колдонмону чектөөгө болот. Safini Pro менен бардык колдонмолорду чектей аласыз.",
+      "Акысыз планда ар бир балага беш колдонмону чектөөгө болот. Safini Pro менен бардык колдонмолорду чектей аласыз.",
     ),
     "freeLimitChildren": MessageLookupByLibrary.simpleMessage(
       "Акысыз планда бир бала. Safini Pro менен үй-бүлөдөгү бардык балдарды кошо аласыз.",
+    ),
+    "freeLimitParents": MessageLookupByLibrary.simpleMessage(
+      "Акысыз планда бир ата-эне. Safini Pro менен үй-бүлөгө экинчи ата-эне кошула алат.",
     ),
     "freeLimitSeePro": MessageLookupByLibrary.simpleMessage(
       "Safini Pro жөнүндө",
     ),
     "freeLimitTasks": MessageLookupByLibrary.simpleMessage(
-      "Акысыз планда ар бир балага үч тапшырма кайталанат. Safini Pro менен бардык тапшырмалар кайталана алат.",
+      "Акысыз планда ар бир балага беш тапшырма кайталанат. Safini Pro менен бардык тапшырмалар кайталана алат.",
     ),
     "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Акысыз пландын чеги",
@@ -1379,13 +1382,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Сатып алуу ишке ашкан жок. Кайра аракет кылыңыз.",
     ),
     "proFeatureApps": MessageLookupByLibrary.simpleMessage(
-      "Үч эле эмес, бардык колдонмолорго лимит",
+      "Беш эле эмес, бардык колдонмолорго лимит",
     ),
     "proFeatureChildren": MessageLookupByLibrary.simpleMessage(
       "Бир эле эмес, бардык балдар",
     ),
     "proFeatureParents": MessageLookupByLibrary.simpleMessage(
-      "Эки ата-эне үчүн бир жазылуу",
+      "Үй-бүлөгө экинчи ата-эне",
     ),
     "proFeatureTasks": MessageLookupByLibrary.simpleMessage(
       "Чексиз кайталануучу тапшырмалар",

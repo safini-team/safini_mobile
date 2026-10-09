@@ -11,6 +11,7 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 /// The free plan's limits (SAF-158). Past one the server answers `402` and
 /// names it in `X-Safini-Limit`.
 enum FreeLimit {
+  parents,
   children,
   controlledApps,
   recurringTasks;
@@ -20,6 +21,7 @@ enum FreeLimit {
   static FreeLimit? fromResponse(int? statusCode, String? limit) {
     if (statusCode != 402) return null;
     return switch (limit) {
+      'parents' => FreeLimit.parents,
       'children' => FreeLimit.children,
       'controlled_apps' => FreeLimit.controlledApps,
       'recurring_tasks' => FreeLimit.recurringTasks,
@@ -68,6 +70,7 @@ Future<void> showFreeLimitSheet(
     builder: (sheetContext) {
       final s = S.of(sheetContext);
       final body = switch (limit) {
+        FreeLimit.parents => s.freeLimitParents,
         FreeLimit.children => s.freeLimitChildren,
         FreeLimit.controlledApps => s.freeLimitApps,
         FreeLimit.recurringTasks => s.freeLimitTasks,

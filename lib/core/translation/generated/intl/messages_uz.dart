@@ -783,16 +783,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Safini Pro tez orada Androidda paydo boʻladi.",
     ),
     "freeLimitApps": MessageLookupByLibrary.simpleMessage(
-      "Bepul tarifda har bir farzand uchun uchta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
+      "Bepul tarifda har bir farzand uchun beshta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
     ),
     "freeLimitChildren": MessageLookupByLibrary.simpleMessage(
       "Bepul tarifda bitta farzand. Safini Pro bilan oiladagi barcha farzandlarni qoʻshishingiz mumkin.",
+    ),
+    "freeLimitParents": MessageLookupByLibrary.simpleMessage(
+      "Bepul tarifda bitta ota-ona. Safini Pro bilan oilaga ikkinchi ota-ona qoʻshilishi mumkin.",
     ),
     "freeLimitSeePro": MessageLookupByLibrary.simpleMessage(
       "Safini Pro haqida",
     ),
     "freeLimitTasks": MessageLookupByLibrary.simpleMessage(
-      "Bepul tarifda har bir farzand uchun uchta vazifa takrorlanadi. Safini Pro bilan barcha vazifalar takrorlanishi mumkin.",
+      "Bepul tarifda har bir farzand uchun beshta vazifa takrorlanadi. Safini Pro bilan barcha vazifalar takrorlanishi mumkin.",
     ),
     "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Bepul tarif chegarasi",
@@ -1397,13 +1400,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Xarid amalga oshmadi. Qayta urinib koʻring.",
     ),
     "proFeatureApps": MessageLookupByLibrary.simpleMessage(
-      "Faqat uchta emas, barcha ilovalarga cheklov",
+      "Faqat beshta emas, barcha ilovalarga cheklov",
     ),
     "proFeatureChildren": MessageLookupByLibrary.simpleMessage(
       "Faqat bitta emas, barcha bolalar",
     ),
     "proFeatureParents": MessageLookupByLibrary.simpleMessage(
-      "Ikkala ota-ona uchun bitta obuna",
+      "Oilaga ikkinchi ota-ona",
     ),
     "proFeatureTasks": MessageLookupByLibrary.simpleMessage(
       "Cheksiz takrorlanuvchi vazifalar",
