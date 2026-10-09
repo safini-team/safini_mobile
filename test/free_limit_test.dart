@@ -139,17 +139,15 @@ void main() {
       expect(find.textContaining('coming to Android'), findsNothing);
     });
 
-    testWidgets('on Android it says Pro is coming', (tester) async {
+    testWidgets('on Android it says buying is coming but still leads to '
+        'Safini Pro', (tester) async {
       await open(tester, canBuy: false);
 
-      expect(find.text('See Safini Pro'), findsNothing);
-      expect(
-        find.text('Safini Pro is coming to Android soon.'),
-        findsOneWidget,
-      );
-      await tester.tap(find.text('OK'));
+      expect(find.text('Safini Pro is coming to Android soon.'), findsOneWidget);
+      expect(find.text('See Safini Pro'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('three apps per child'), findsNothing);
+      expect(find.textContaining('per child'), findsNothing);
     });
   });
 }

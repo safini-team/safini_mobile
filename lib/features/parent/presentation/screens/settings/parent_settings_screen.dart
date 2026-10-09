@@ -63,7 +63,7 @@ class ParentSettingsScreen extends StatelessWidget {
                       radius: AppRadius.card,
                       shadow: AppShadows.flat,
                       children: [
-                        if (getIt<ProCubit>().canSell) const _ProRow(),
+                        const _ProRow(),
                         DsRow(
                           onTap: () => _editProfile(context),
                           title: s.editProfile,

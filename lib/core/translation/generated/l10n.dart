@@ -7955,6 +7955,101 @@ class S {
       args: [date],
     );
   }
+
+  /// `Promo code`
+  String get promoTitle {
+    return Intl.message('Promo code', name: 'promoTitle', desc: '', args: []);
+  }
+
+  /// `Enter code`
+  String get promoHint {
+    return Intl.message('Enter code', name: 'promoHint', desc: '', args: []);
+  }
+
+  /// `Apply`
+  String get promoApply {
+    return Intl.message('Apply', name: 'promoApply', desc: '', args: []);
+  }
+
+  /// `Promo code applied. Your family has Safini Pro.`
+  String get promoApplied {
+    return Intl.message(
+      'Promo code applied. Your family has Safini Pro.',
+      name: 'promoApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This promo code isn't valid.`
+  String get promoInvalid {
+    return Intl.message(
+      'This promo code isn\'t valid.',
+      name: 'promoInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This promo code has been used up.`
+  String get promoUsedUp {
+    return Intl.message(
+      'This promo code has been used up.',
+      name: 'promoUsedUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your family already used this promo code.`
+  String get promoAlreadyUsed {
+    return Intl.message(
+      'Your family already used this promo code.',
+      name: 'promoAlreadyUsed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your family already has Safini Pro.`
+  String get promoAlreadyPro {
+    return Intl.message(
+      'Your family already has Safini Pro.',
+      name: 'promoAlreadyPro',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Too many tries. Wait a few minutes and try again.`
+  String get promoTooMany {
+    return Intl.message(
+      'Too many tries. Wait a few minutes and try again.',
+      name: 'promoTooMany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't check the code. Try again.`
+  String get promoFailed {
+    return Intl.message(
+      'Couldn\'t check the code. Try again.',
+      name: 'promoFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.`
+  String get proAndroidSoon {
+    return Intl.message(
+      'Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.',
+      name: 'proAndroidSoon',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -15,7 +15,11 @@ enum ProNotice {
   pending,
   failed,
   otherFamily,
+  promoApplied,
 }
+
+/// Why a promo code did not work, from the API's 404, 409 or 429.
+enum PromoError { invalid, usedUp, alreadyUsed, alreadyPro, tooMany, failed }
 
 class ProState {
   const ProState({
@@ -172,6 +176,40 @@ class ProCubit extends Cubit<ProState> {
       _restoring = false;
       if (!isClosed) emit(state.withNotice(ProNotice.failed));
     }
+  }
+
+  /// Works on every platform: the code gives the family Pro on the server,
+  /// so nothing goes through a store. Null means it worked.
+  Future<PromoError?> redeemPromo(String code) async {
+    if (state.busy) return null;
+    if (code.trim().isEmpty) return PromoError.invalid;
+    emit(state.copyWith(busy: true));
+    try {
+      final plan = await _api.redeemPromo(code.trim());
+      if (!isClosed) emit(state.withNotice(ProNotice.promoApplied, plan: plan));
+      return null;
+    } on DioException catch (error) {
+      if (!isClosed) emit(state.copyWith(busy: false));
+      return _promoError(error);
+    } catch (_) {
+      if (!isClosed) emit(state.copyWith(busy: false));
+      return PromoError.failed;
+    }
+  }
+
+  static PromoError _promoError(DioException error) {
+    final response = error.response;
+    final data = response?.data;
+    final detail = data is Map ? '${data['detail']}' : '';
+    return switch (response?.statusCode) {
+      400 || 404 || 422 => PromoError.invalid,
+      429 => PromoError.tooMany,
+      // The API's three 409 sentences (app/services/promo_codes.py).
+      409 when detail.contains('already has') => PromoError.alreadyPro,
+      409 when detail.contains('already used') => PromoError.alreadyUsed,
+      409 => PromoError.usedUp,
+      _ => PromoError.failed,
+    };
   }
 
   Future<void> _onUpdates(List<StoreUpdate> updates) async {

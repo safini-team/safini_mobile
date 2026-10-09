@@ -55,8 +55,8 @@ class FreeLimitAlerts {
   }
 }
 
-/// What the parent sees past a limit. On iPhone it leads to the paywall; the
-/// Android app sells nothing (SAF-216).
+/// What the parent sees past a limit. It leads to the Safini Pro page on
+/// both platforms: Android sells nothing (SAF-216) but takes promo codes.
 Future<void> showFreeLimitSheet(
   BuildContext context,
   FreeLimit limit, {
@@ -85,24 +85,18 @@ Future<void> showFreeLimitSheet(
             Text(s.freeLimitAndroid, style: AppText.footnote),
           ],
           const SizedBox(height: 20),
-          if (buyHere) ...[
-            DsPrimaryButton(
-              label: s.freeLimitSeePro,
-              onTap: () {
-                Navigator.of(sheetContext).pop();
-                context.router.push(const NamedRoute('paywall'));
-              },
-            ),
-            const SizedBox(height: 10),
-            DsPrimaryButton.secondary(
-              label: s.cancel,
-              onTap: () => Navigator.of(sheetContext).pop(),
-            ),
-          ] else
-            DsPrimaryButton(
-              label: s.ok,
-              onTap: () => Navigator.of(sheetContext).pop(),
-            ),
+          DsPrimaryButton(
+            label: s.freeLimitSeePro,
+            onTap: () {
+              Navigator.of(sheetContext).pop();
+              context.router.push(const NamedRoute('paywall'));
+            },
+          ),
+          const SizedBox(height: 10),
+          DsPrimaryButton.secondary(
+            label: s.cancel,
+            onTap: () => Navigator.of(sheetContext).pop(),
+          ),
         ],
       );
     },

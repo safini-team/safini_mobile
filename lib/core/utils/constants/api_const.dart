@@ -30,6 +30,7 @@ class ApiConst {
   /// POST - an App Store purchase or restore, as StoreKit's signed
   /// transaction, so the server makes the family Pro (SAF-211).
   static const String appleTransactions = '/v1/billing/apple/transactions';
+  static const String promoRedeem = '/v1/billing/promo-codes/redeem';
   static const String children = '/v1/families/current/children';
 
   static String childById(String childId) => '/v1/children/$childId';
