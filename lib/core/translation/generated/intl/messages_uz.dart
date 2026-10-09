@@ -1409,6 +1409,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Oilangizda Safini Pro bor",
     ),
     "proActiveUntil": m68,
+    "proAndroidSoon": MessageLookupByLibrary.simpleMessage(
+      "Androidda Safini Pro sotib olish tez orada mumkin boʻladi. Promokodingiz bormi? Uni pastga kiriting.",
+    ),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Xarid amalga oshmadi. Qayta urinib koʻring.",
     ),
@@ -1478,6 +1481,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "proYearly": MessageLookupByLibrary.simpleMessage("Yillik"),
     "profile": MessageLookupByLibrary.simpleMessage("Profil"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Saqlandi"),
+    "promoAlreadyPro": MessageLookupByLibrary.simpleMessage(
+      "Oilangizda allaqachon Safini Pro bor.",
+    ),
+    "promoAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Oilangiz bu promokoddan allaqachon foydalangan.",
+    ),
+    "promoApplied": MessageLookupByLibrary.simpleMessage(
+      "Promokod qoʻllandi. Oilangizda Safini Pro bor.",
+    ),
+    "promoApply": MessageLookupByLibrary.simpleMessage("Qoʻllash"),
+    "promoFailed": MessageLookupByLibrary.simpleMessage(
+      "Kodni tekshirib boʻlmadi. Qayta urinib koʻring.",
+    ),
+    "promoHint": MessageLookupByLibrary.simpleMessage("Kodni kiriting"),
+    "promoInvalid": MessageLookupByLibrary.simpleMessage(
+      "Bu promokod yaroqsiz.",
+    ),
+    "promoTitle": MessageLookupByLibrary.simpleMessage("Promokod"),
+    "promoTooMany": MessageLookupByLibrary.simpleMessage(
+      "Juda koʻp urinish. Bir necha daqiqa kutib, qayta urinib koʻring.",
+    ),
+    "promoUsedUp": MessageLookupByLibrary.simpleMessage("Bu promokod tugagan."),
     "proofPhotoFailed": MessageLookupByLibrary.simpleMessage(
       "Rasmni yuklab boʻlmadi",
     ),

@@ -1342,6 +1342,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your family has Safini Pro",
     ),
     "proActiveUntil": m68,
+    "proAndroidSoon": MessageLookupByLibrary.simpleMessage(
+      "Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.",
+    ),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "The purchase didn\'t go through. Try again.",
     ),
@@ -1411,6 +1414,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "proYearly": MessageLookupByLibrary.simpleMessage("Yearly"),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Saved"),
+    "promoAlreadyPro": MessageLookupByLibrary.simpleMessage(
+      "Your family already has Safini Pro.",
+    ),
+    "promoAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Your family already used this promo code.",
+    ),
+    "promoApplied": MessageLookupByLibrary.simpleMessage(
+      "Promo code applied. Your family has Safini Pro.",
+    ),
+    "promoApply": MessageLookupByLibrary.simpleMessage("Apply"),
+    "promoFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t check the code. Try again.",
+    ),
+    "promoHint": MessageLookupByLibrary.simpleMessage("Enter code"),
+    "promoInvalid": MessageLookupByLibrary.simpleMessage(
+      "This promo code isn\'t valid.",
+    ),
+    "promoTitle": MessageLookupByLibrary.simpleMessage("Promo code"),
+    "promoTooMany": MessageLookupByLibrary.simpleMessage(
+      "Too many tries. Wait a few minutes and try again.",
+    ),
+    "promoUsedUp": MessageLookupByLibrary.simpleMessage(
+      "This promo code has been used up.",
+    ),
     "proofPhotoFailed": MessageLookupByLibrary.simpleMessage(
       "Couldn\'t load the photo",
     ),

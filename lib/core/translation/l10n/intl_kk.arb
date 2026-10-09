@@ -913,5 +913,16 @@
   "proTrialMonths": "{count, plural, other{{count} ай тегін}}",
   "proTrialYears": "{count, plural, other{{count} жыл тегін}}",
   "proLegalTrial": "Тегін кезеңде ештеңе алынбайды. Ол аяқталудан кемінде 24 сағат бұрын бас тартсаңыз, ештеңе төлемейсіз; әйтпесе жазылым тегін кезең аяқталғанда басталады.",
-  "proTrialUntil": "Тегін кезең {date} дейін"
+  "proTrialUntil": "Тегін кезең {date} дейін",
+  "promoTitle": "Промокод",
+  "promoHint": "Кодты енгізіңіз",
+  "promoApply": "Қолдану",
+  "promoApplied": "Промокод қолданылды. Отбасыңызда Safini Pro бар.",
+  "promoInvalid": "Бұл промокод жарамсыз.",
+  "promoUsedUp": "Бұл промокод таусылды.",
+  "promoAlreadyUsed": "Отбасыңыз бұл промокодты бұрын қолданған.",
+  "promoAlreadyPro": "Отбасыңызда Safini Pro бұрыннан бар.",
+  "promoTooMany": "Тым көп әрекет. Бірнеше минут күтіп, қайта көріңіз.",
+  "promoFailed": "Кодты тексеру мүмкін болмады. Қайта көріңіз.",
+  "proAndroidSoon": "Android-та Safini Pro сатып алу жақында мүмкін болады. Промокодыңыз бар ма? Оны төменге енгізіңіз."
 }

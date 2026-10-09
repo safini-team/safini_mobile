@@ -1042,5 +1042,16 @@
   "proTrialMonths": "{count, plural, one{{count} месяц бесплатно} few{{count} месяца бесплатно} many{{count} месяцев бесплатно} other{{count} месяца бесплатно}}",
   "proTrialYears": "{count, plural, one{{count} год бесплатно} few{{count} года бесплатно} many{{count} лет бесплатно} other{{count} года бесплатно}}",
   "proLegalTrial": "Во время бесплатного периода ничего не списывается. Отмените минимум за 24 часа до его конца, и вы ничего не заплатите; иначе подписка начнётся, когда он закончится.",
-  "proTrialUntil": "Бесплатный период до {date}"
+  "proTrialUntil": "Бесплатный период до {date}",
+  "promoTitle": "Промокод",
+  "promoHint": "Введите код",
+  "promoApply": "Применить",
+  "promoApplied": "Промокод применён. У вашей семьи Safini Pro.",
+  "promoInvalid": "Этот промокод недействителен.",
+  "promoUsedUp": "Этот промокод уже закончился.",
+  "promoAlreadyUsed": "Ваша семья уже использовала этот промокод.",
+  "promoAlreadyPro": "У вашей семьи уже есть Safini Pro.",
+  "promoTooMany": "Слишком много попыток. Подождите несколько минут и попробуйте снова.",
+  "promoFailed": "Не удалось проверить код. Попробуйте ещё раз.",
+  "proAndroidSoon": "Купить Safini Pro на Android скоро будет можно. Есть промокод? Введите его ниже."
 }

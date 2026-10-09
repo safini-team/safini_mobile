@@ -1088,5 +1088,16 @@
   "proTrialMonths": "{count, plural, one{{count} month free} other{{count} months free}}",
   "proTrialYears": "{count, plural, one{{count} year free} other{{count} years free}}",
   "proLegalTrial": "Nothing is charged during the free trial. Cancel at least 24 hours before it ends and you pay nothing; otherwise the subscription starts when the trial ends.",
-  "proTrialUntil": "Free trial until {date}"
+  "proTrialUntil": "Free trial until {date}",
+  "promoTitle": "Promo code",
+  "promoHint": "Enter code",
+  "promoApply": "Apply",
+  "promoApplied": "Promo code applied. Your family has Safini Pro.",
+  "promoInvalid": "This promo code isn't valid.",
+  "promoUsedUp": "This promo code has been used up.",
+  "promoAlreadyUsed": "Your family already used this promo code.",
+  "promoAlreadyPro": "Your family already has Safini Pro.",
+  "promoTooMany": "Too many tries. Wait a few minutes and try again.",
+  "promoFailed": "Couldn't check the code. Try again.",
+  "proAndroidSoon": "Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below."
 }

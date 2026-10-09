@@ -49,6 +49,25 @@ class _FakeApi extends PlanApi {
   @override
   Future<String> familyId() async => _familyId;
 
+  final promos = <String>[];
+
+  /// Thrown by the next redeem instead of answering.
+  Object? promoFails;
+
+  @override
+  Future<FamilyPlan> redeemPromo(String code) async {
+    promos.add(code);
+    final error = promoFails;
+    if (error != null) throw error;
+    return plan = const FamilyPlan(
+      isPro: true,
+      status: 'active',
+      source: 'promo',
+      productId: 'pro.promo',
+      isTrial: true,
+    );
+  }
+
   @override
   Future<FamilyPlan> recordAppleTransaction(String signedTransaction) async {
     posted.add(signedTransaction);
@@ -99,11 +118,12 @@ StoreUpdate _update(
   StoreUpdateKind kind = StoreUpdateKind.purchased,
 }) => StoreUpdate(kind: kind, productId: productId, signedTransaction: jws);
 
-DioException _status(int code) => DioException(
+DioException _status(int code, {String? detail}) => DioException(
   requestOptions: RequestOptions(path: '/v1/billing/apple/transactions'),
   response: Response(
     requestOptions: RequestOptions(path: '/v1/billing/apple/transactions'),
     statusCode: code,
+    data: detail == null ? null : {'detail': detail},
   ),
 );
 
@@ -355,6 +375,83 @@ void main() {
       expect(find.text('Your family has Safini Pro'), findsOneWidget);
       expect(find.text('Manage subscription'), findsOneWidget);
       expect(find.text('Subscribe'), findsNothing);
+    });
+  });
+
+  group('promo codes', () {
+    test('a code makes the family Pro', () async {
+      final (cubit, api, _) = await _started();
+
+      final error = await cubit.redeemPromo('  friends30 ');
+
+      expect(error, isNull);
+      expect(api.promos, ['friends30']);
+      expect(cubit.state.isPro, isTrue);
+      expect(cubit.state.notice, ProNotice.promoApplied);
+      expect(cubit.state.busy, isFalse);
+    });
+
+    test('says why a code did not work', () async {
+      final (cubit, api, _) = await _started();
+      final cases = {
+        _status(404): PromoError.invalid,
+        _status(409, detail: 'This promo code has been used up.'):
+            PromoError.usedUp,
+        _status(409, detail: 'Your family already used this promo code.'):
+            PromoError.alreadyUsed,
+        _status(409, detail: 'Your family already has Safini Pro.'):
+            PromoError.alreadyPro,
+        _status(429): PromoError.tooMany,
+        _status(503): PromoError.failed,
+      };
+      for (final MapEntry(key: failure, value: expected) in cases.entries) {
+        api.promoFails = failure;
+        expect(await cubit.redeemPromo('NOPE'), expected);
+        expect(cubit.state.busy, isFalse);
+      }
+      expect(await cubit.redeemPromo('   '), PromoError.invalid);
+      expect(cubit.state.isPro, isFalse);
+    });
+
+    testWidgets('Android has no plans to buy but takes a code', (tester) async {
+      tester.view.physicalSize = const Size(1170, 4800);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      final api = _FakeApi();
+      final cubit = ProCubit(api: api);
+      await cubit.start();
+
+      await tester.pumpWidget(_host(PaywallScreen(cubit: cubit)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Subscribe'), findsNothing);
+      expect(find.text('Restore purchases'), findsNothing);
+      expect(find.textContaining('coming soon'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'friends30');
+      await tester.tap(find.text('Apply'));
+      await tester.pumpAndSettle();
+
+      expect(api.promos, ['friends30']);
+      expect(find.text('Your family has Safini Pro'), findsOneWidget);
+      // Let the success snack bar run out.
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('a bad code says so under the box', (tester) async {
+      tester.view.physicalSize = const Size(1170, 4800);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      final (cubit, api, _) = await _started();
+      api.promoFails = _status(404);
+
+      await tester.pumpWidget(_host(PaywallScreen(cubit: cubit)));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'nope');
+      await tester.tap(find.text('Apply'));
+      await tester.pumpAndSettle();
+
+      expect(find.text("This promo code isn't valid."), findsOneWidget);
+      expect(cubit.state.isPro, isFalse);
     });
   });
 }

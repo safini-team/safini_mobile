@@ -1381,6 +1381,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Отбасыңызда Safini Pro бар",
     ),
     "proActiveUntil": m68,
+    "proAndroidSoon": MessageLookupByLibrary.simpleMessage(
+      "Android-та Safini Pro сатып алу жақында мүмкін болады. Промокодыңыз бар ма? Оны төменге енгізіңіз.",
+    ),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Сатып алу орындалмады. Қайталап көріңіз.",
     ),
@@ -1454,6 +1457,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "proYearly": MessageLookupByLibrary.simpleMessage("Жылдық"),
     "profile": MessageLookupByLibrary.simpleMessage("Профиль"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Сақталды"),
+    "promoAlreadyPro": MessageLookupByLibrary.simpleMessage(
+      "Отбасыңызда Safini Pro бұрыннан бар.",
+    ),
+    "promoAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Отбасыңыз бұл промокодты бұрын қолданған.",
+    ),
+    "promoApplied": MessageLookupByLibrary.simpleMessage(
+      "Промокод қолданылды. Отбасыңызда Safini Pro бар.",
+    ),
+    "promoApply": MessageLookupByLibrary.simpleMessage("Қолдану"),
+    "promoFailed": MessageLookupByLibrary.simpleMessage(
+      "Кодты тексеру мүмкін болмады. Қайта көріңіз.",
+    ),
+    "promoHint": MessageLookupByLibrary.simpleMessage("Кодты енгізіңіз"),
+    "promoInvalid": MessageLookupByLibrary.simpleMessage(
+      "Бұл промокод жарамсыз.",
+    ),
+    "promoTitle": MessageLookupByLibrary.simpleMessage("Промокод"),
+    "promoTooMany": MessageLookupByLibrary.simpleMessage(
+      "Тым көп әрекет. Бірнеше минут күтіп, қайта көріңіз.",
+    ),
+    "promoUsedUp": MessageLookupByLibrary.simpleMessage(
+      "Бұл промокод таусылды.",
+    ),
     "proofPhotoFailed": MessageLookupByLibrary.simpleMessage(
       "Фотоны жүктеу мүмкін болмады",
     ),
