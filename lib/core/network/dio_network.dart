@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/network/app_client_headers.dart';
 import 'package:safini/core/network/auth_token_provider.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 class DioNetwork {
   static const _authRetriedKey = 'safini.authRetried';
@@ -12,6 +14,7 @@ class DioNetwork {
 
   static void initDio() {
     appAPI = Dio(_baseOptions(ApiConst.baseUrl));
+    appAPI.interceptors.add(AppClientHeadersInterceptor());
     appAPI.interceptors.add(_authInterceptor());
   }
 
@@ -39,6 +42,10 @@ class DioNetwork {
         handler.next(options);
       },
       onError: (error, handler) async {
+        FreeLimitAlerts.instance.check(
+          error.response?.statusCode,
+          error.response?.headers.value(FreeLimit.header),
+        );
         final request = error.requestOptions;
         final alreadyRetried = request.extra[_authRetriedKey] == true;
         if (error.response?.statusCode != 401 || alreadyRetried) {

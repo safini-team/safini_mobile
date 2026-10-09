@@ -24,12 +24,16 @@ class RewardStoreState {
   /// A one-off line to confirm an ask or a wish went through.
   final String? notice;
 
+  /// A reward tapped on Today. The Store opens its sheet once, then clears it.
+  final String? openItemId;
+
   const RewardStoreState({
     required this.appTimeItems,
     required this.avatarItems,
     this.prizes = const [],
     this.openWishes = const [],
     this.notice,
+    this.openItemId,
     this.selectedTab = StoreTab.appTime,
     this.isLoading = false,
     this.hasLoadError = false,
@@ -49,7 +53,8 @@ class RewardStoreState {
       pendingPurchases = const {},
       prizes = const [],
       openWishes = const [],
-      notice = null;
+      notice = null,
+      openItemId = null;
 
   RewardStoreState copyWith({
     List<AppTimeItem>? appTimeItems,
@@ -66,6 +71,8 @@ class RewardStoreState {
     List<PrizeRequest>? openWishes,
     String? notice,
     bool clearNotice = false,
+    String? openItemId,
+    bool clearOpenItem = false,
   }) {
     return RewardStoreState(
       appTimeItems: appTimeItems ?? this.appTimeItems,
@@ -73,6 +80,7 @@ class RewardStoreState {
       prizes: prizes ?? this.prizes,
       openWishes: openWishes ?? this.openWishes,
       notice: clearNotice ? null : (notice ?? this.notice),
+      openItemId: clearOpenItem ? null : (openItemId ?? this.openItemId),
       selectedTab: selectedTab ?? this.selectedTab,
       isLoading: isLoading ?? this.isLoading,
       hasLoadError: hasLoadError ?? this.hasLoadError,

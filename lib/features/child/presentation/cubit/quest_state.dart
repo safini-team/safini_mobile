@@ -5,19 +5,22 @@ class QuestState {
   final String? childNickname;
   final int? doneToday;
   final bool isLoading;
+  final bool loadFailed;
 
   const QuestState({
     required this.quests,
     this.childNickname,
     this.doneToday,
     this.isLoading = false,
+    this.loadFailed = false,
   });
 
   const QuestState.initial()
       : quests = const [],
         childNickname = null,
         doneToday = null,
-        isLoading = true;
+        isLoading = true,
+        loadFailed = false;
 
   int get completedCount =>
       doneToday ?? quests.where((q) => q.isCompleted || q.isSubmitted).length;
@@ -29,12 +32,14 @@ class QuestState {
     String? childNickname,
     int? doneToday,
     bool? isLoading,
+    bool? loadFailed,
   }) {
     return QuestState(
       quests: quests ?? this.quests,
       childNickname: childNickname ?? this.childNickname,
       doneToday: doneToday ?? this.doneToday,
       isLoading: isLoading ?? this.isLoading,
+      loadFailed: loadFailed ?? this.loadFailed,
     );
   }
 }

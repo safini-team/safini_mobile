@@ -114,6 +114,9 @@ class MainActivity : FlutterActivity() {
                             }.start()
                         }
                         "installedApps" -> inBackground(result) { AppIcons.installedApps(this) }
+                        "syncInstalledApps" -> inBackground(result) {
+                            InstalledAppsSync.uploadIfDue(this, client, EnforcementStore(this))
+                        }
                         "appIcon" -> {
                             val app = call.argument<String>("packageName")!!
                             inBackground(result) { AppIcons.icon(this, app) }

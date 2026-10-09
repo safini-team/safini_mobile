@@ -6,6 +6,7 @@
 // Every screen here is fed the artboard's own sample data (the `state` object
 // in Safini.dc.html), so what renders should match the design pixel for pixel.
 // Not part of the shipped app - `main.dart` never imports it.
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:safini/core/theme/app_colors.dart';
@@ -30,6 +31,11 @@ import 'package:safini/features/parent/presentation/screens/apps/parent_limits_v
 import 'package:safini/features/parent/presentation/screens/family/parent_family_view.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart';
 import 'package:safini/features/parent/presentation/screens/tasks/parent_tasks_view.dart';
+import 'package:safini/features/subscription/family_plan.dart';
+import 'package:safini/features/subscription/free_limit.dart';
+import 'package:safini/features/subscription/paywall_screen.dart';
+import 'package:safini/features/subscription/pro_cubit.dart';
+import 'package:safini/features/subscription/pro_store.dart';
 
 void main() => runApp(const DesignPreviewApp());
 
@@ -60,7 +66,7 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
       home: _Gallery(
         locale: _locale,
         onCycleLocale: () => setState(() {
-          const order = ['en', 'ru', 'uz'];
+          const order = ['ru', 'en', 'ky', 'uz', 'kk'];
           final next =
               order[(order.indexOf(_locale.languageCode) + 1) % order.length];
           _locale = Locale(next);
@@ -68,6 +74,34 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
       ),
     );
   }
+}
+
+/// Opens the free-plan sheet over an empty parent screen.
+class _FreeLimitPreview extends StatefulWidget {
+  const _FreeLimitPreview({required this.canBuy});
+
+  final bool canBuy;
+
+  @override
+  State<_FreeLimitPreview> createState() => _FreeLimitPreviewState();
+}
+
+class _FreeLimitPreviewState extends State<_FreeLimitPreview> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showFreeLimitSheet(
+        context,
+        FreeLimit.children,
+        canBuy: widget.canBuy,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.expand();
 }
 
 class _Entry {
@@ -93,6 +127,26 @@ class _GalleryState extends State<_Gallery> {
   bool _switcherOpen = false;
 
   static final List<_Entry> _entries = [
+    _Entry(
+      'Safini Pro · paywall',
+      AppColors.bgParent,
+      (context) => PaywallScreen(cubit: _PreviewPro.free),
+    ),
+    _Entry(
+      'Safini Pro · active',
+      AppColors.bgParent,
+      (context) => PaywallScreen(cubit: _PreviewPro.active),
+    ),
+    _Entry(
+      'Free limit · iPhone',
+      AppColors.bgParent,
+      (context) => const _FreeLimitPreview(canBuy: true),
+    ),
+    _Entry(
+      'Free limit · Android',
+      AppColors.bgParent,
+      (context) => const _FreeLimitPreview(canBuy: false),
+    ),
     _Entry(
       'Parent Today',
       AppColors.bgParent,
@@ -461,4 +515,68 @@ class _Switcher extends StatelessWidget {
       ],
     );
   }
+}
+
+/// App Store prices as App Store Connect has them (SAF-212), without StoreKit.
+class _PreviewStore implements ProStore {
+  @override
+  Stream<List<StoreUpdate>> get updates => const Stream.empty();
+
+  @override
+  Future<List<ProOffer>> offers() async => const [
+    ProOffer(
+      productId: ProProducts.monthly,
+      price: r'$6.99',
+      rawPrice: 6.99,
+      currencyCode: 'USD',
+    ),
+    ProOffer(
+      productId: ProProducts.yearly,
+      price: r'$66.99',
+      rawPrice: 66.99,
+      currencyCode: 'USD',
+    ),
+  ];
+
+  @override
+  Future<void> buy(ProOffer offer, {required String accountToken}) async {}
+
+  @override
+  Future<void> restore() async {}
+
+  @override
+  Future<List<StoreUpdate>> unfinished() async => const [];
+
+  @override
+  Future<void> finish(StoreUpdate update) async {}
+}
+
+class _PreviewPlans extends PlanApi {
+  _PreviewPlans(this.plan) : super(Dio());
+
+  final FamilyPlan plan;
+
+  @override
+  Future<FamilyPlan> current() async => plan;
+}
+
+class _PreviewPro {
+  static final ProCubit free = ProCubit(
+    api: _PreviewPlans(FamilyPlan.free),
+    store: _PreviewStore(),
+  );
+
+  static final ProCubit active = ProCubit(
+    api: _PreviewPlans(
+      FamilyPlan(
+        isPro: true,
+        status: 'active',
+        source: 'apple',
+        productId: ProProducts.yearly,
+        willRenew: true,
+        expiresAt: DateTime(2027, 10, 8),
+      ),
+    ),
+    store: _PreviewStore(),
+  );
 }

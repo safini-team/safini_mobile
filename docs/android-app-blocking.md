@@ -62,7 +62,7 @@ pairing, expire after 30 days without sync, and cannot access general family API
 `BlockOverlay` draws the SAF-166 "Takeover" design (Claude Design project "App blocked
 screen redesign", direction 1a): full-bleed pine, one mascot mood per state, and a sand
 sheet with the actions. Colours and curves mirror `lib/core/theme`; copy lives in
-`res/values{,-ru,-uz}/strings.xml` and follows the child's app language, not the system's.
+`res/values{,-ru,-uz,-ky,-kk}/strings.xml` and follows the child's app language, not the system's.
 
 | State | When | Mascot |
 | --- | --- | --- |
@@ -79,7 +79,7 @@ The sheet suggests up to three of today's open tasks from the snapshot's `tasks`
 paused, and the fewest that cover the gap ("2 tasks, 40 coins") when short of coins. With
 none it links to Safini's task list. The parent's name and the bedtime frame need data the
 snapshot does not carry. iOS shields are SAF-155. `testConfigureLocalFixture` takes
-`-e language ru|uz` to review a translation.
+`-e language ru|uz|ky|kk` to review a translation.
 
 ## Verification
 

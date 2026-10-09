@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safini/core/utils/constants/api_const.dart';
@@ -181,6 +183,72 @@ void main() {
     );
   });
 
+  group('VersionUpdateLauncher on Play', () {
+    const channel = MethodChannel('de.ffuf.in_app_update/methods');
+    late List<String> calls;
+    late Map<String, Object?> info;
+
+    Map<String, Object?> playInfo({required int installStatus}) => {
+      'updateAvailability': 2,
+      'immediateAllowed': true,
+      'flexibleAllowed': true,
+      'availableVersionCode': 40,
+      'installStatus': installStatus,
+      'packageName': 'com.safini.app',
+      'clientVersionStalenessDays': 1,
+      'updatePriority': 0,
+    };
+
+    setUp(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      calls = [];
+      info = playInfo(installStatus: 0);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (call) async {
+            calls.add(call.method);
+            return call.method == 'checkForUpdate' ? info : null;
+          });
+    });
+
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null);
+    });
+
+    test(
+      'soft installs the flexible update once Play has downloaded it',
+      () async {
+        final opened = <Uri>[];
+        final launched = await VersionUpdateLauncher(
+          openUrl: (uri) async {
+            opened.add(uri);
+            return true;
+          },
+        ).open(tier: VersionGateTier.soft, storeUrl: kPlayStoreListingUrl);
+
+        expect(launched, isTrue);
+        expect(calls, [
+          'checkForUpdate',
+          'startFlexibleUpdate',
+          'completeFlexibleUpdate',
+        ]);
+        expect(opened, isEmpty);
+      },
+    );
+
+    test('soft completes an update Play already downloaded', () async {
+      info = playInfo(installStatus: 11);
+      final launched = await VersionUpdateLauncher(
+        openUrl: (_) async => true,
+      ).open(tier: VersionGateTier.soft, storeUrl: kPlayStoreListingUrl);
+
+      expect(launched, isTrue);
+      expect(calls, ['checkForUpdate', 'completeFlexibleUpdate']);
+    });
+  });
+
   group('VersionGateCubit', () {
     late _FakeClient client;
     late VersionPolicyStore store;
@@ -297,6 +365,37 @@ void main() {
         expect(cubit.state.blocksApp, isFalse);
         expect(cubit.state.tier, VersionGateTier.soft);
         expect(cubit.state.fromCache, isTrue);
+      },
+    );
+
+    test(
+      'a cached hard policy still nudges after the same version was dismissed',
+      () async {
+        const nudge = VersionPolicy(
+          android: PlatformVersionPolicy(
+            minSupported: '1.0.0',
+            latestRecommended: '2.0.0',
+            storeUrl: kPlayStoreListingUrl,
+          ),
+          ios: PlatformVersionPolicy(
+            minSupported: '1.0.0',
+            latestRecommended: '2.0.0',
+            storeUrl: '',
+          ),
+        );
+        client.policy = nudge;
+        await cubit.refresh();
+        await cubit.dismissSoft();
+        expect(cubit.state.showSoftBanner, isFalse);
+
+        client.policy = hard;
+        await cubit.refresh();
+        expect(cubit.state.blocksApp, isTrue);
+
+        client.policy = null;
+        await cubit.refresh();
+        expect(cubit.state.blocksApp, isFalse);
+        expect(cubit.state.showSoftBanner, isTrue);
       },
     );
 

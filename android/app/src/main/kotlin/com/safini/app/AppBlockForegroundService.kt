@@ -8,7 +8,6 @@ import android.content.pm.ServiceInfo
 import android.os.*
 import android.provider.Settings
 import org.json.JSONObject
-import java.util.concurrent.Executors
 
 /** Native enforcement and sync continue even when Flutter is suspended. */
 class AppBlockForegroundService : Service(), BlockOverlay.Host {
@@ -18,7 +17,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             private set
     }
     private val handler = Handler(Looper.getMainLooper())
-    private val network = Executors.newSingleThreadExecutor()
+    private val threads = ServiceThreads()
     private lateinit var store: EnforcementStore
     private lateinit var client: EnforcementClient
     private lateinit var overlay: BlockOverlay
@@ -30,6 +29,14 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     private var purchase = false
     private var backfilling = false
     private val waiters = mutableListOf<(Throwable?) -> Unit>()
+    private val uploadSoon = Runnable { uploadInstalledApps() }
+    private val packageChanges = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            // Install + replace fire back to back; one scan covers both.
+            handler.removeCallbacks(uploadSoon)
+            handler.postDelayed(uploadSoon, 2_000)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -39,6 +46,15 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         overlay = BlockOverlay(this, this)
         tracker = ForegroundTracker(store)
         notification()
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_PACKAGE_ADDED)
+            addAction(Intent.ACTION_PACKAGE_REMOVED)
+            addAction(Intent.ACTION_PACKAGE_CHANGED)
+            addAction(Intent.ACTION_PACKAGE_REPLACED)
+            addDataScheme("package")
+        }
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(packageChanges, filter, Context.RECEIVER_NOT_EXPORTED)
+        else registerReceiver(packageChanges, filter)
         handler.post(tick)
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -59,8 +75,10 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         if (!stopped) store.persist()
         stopped = true
         handler.removeCallbacks(tick)
+        handler.removeCallbacks(uploadSoon)
+        runCatching { unregisterReceiver(packageChanges) }
         removeOverlay()
-        network.shutdownNow()
+        threads.shutdownNow()
         waiters.toList().forEach { it(IllegalStateException("App limits stopped.")) }
         waiters.clear()
         if (instance === this) instance = null
@@ -212,7 +230,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             .put("usage_access", usageAccess(this)).put("overlay_permission", Settings.canDrawOverlays(this))
             .put("service_running", true).put("manufacturer", Build.MANUFACTURER.take(80))
             .put("device_admin_active", deviceAdminFlag())
-        network.execute {
+        threads.network.execute {
             val response = runCatching { client.request("/sync", body) }
             handler.post {
                 if (stopped) return@post
@@ -225,7 +243,17 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
                 syncing = false
                 val callbacks = waiters.toList(); waiters.clear()
                 callbacks.forEach { it(response.exceptionOrNull()) }
+                uploadInstalledApps()
             }
+        }
+    }
+
+    /** Cheap when unchanged; renders icons only when a PUT is due. */
+    fun uploadInstalledApps() {
+        if (stopped) return
+        threads.uploads.execute {
+            if (stopped) return@execute
+            runCatching { InstalledAppsSync.uploadIfDue(this, client, store) }
         }
     }
 
@@ -235,7 +263,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         backfilling = true
         val until = store.trackedFrom
         val since = store.startOfDay(until, UsageBackfill.DAYS.toLong())
-        network.execute {
+        threads.network.execute {
             val found = runCatching { UsageBackfill.read(this, since, until) }
             handler.post {
                 backfilling = false
@@ -257,7 +285,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         purchase = true
         syncNow { syncError ->
             if (syncError != null) { purchase = false; done(null, syncError) }
-            else network.execute {
+            else threads.network.execute {
                 val result = runCatching {
                     client.request("/redeem", JSONObject().put("app_slug", slug)
                         .put("request_id", client.purchaseId(slug)).put("expected_coin_cost", cost)
@@ -277,7 +305,8 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         }
     }
 
-    private fun text(en: String, ru: String, uz: String): String = when (store.language) { "ru" -> ru; "uz" -> uz; else -> en }
+    private fun text(en: String, ru: String, uz: String, ky: String, kk: String): String =
+        when (store.language) { "ru" -> ru; "uz" -> uz; "ky" -> ky; "kk" -> kk; else -> en }
     private fun showOverlay(pkg: String, now: Long) {
         overlay.show(pkg, store.blockFacts(pkg, now) ?: return)
         store.covered = true
@@ -304,7 +333,15 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
         manager.createNotificationChannel(NotificationChannel("safini_limits", "Safini", NotificationManager.IMPORTANCE_LOW))
         val pending = PendingIntent.getActivity(this, 0, packageManager.getLaunchIntentForPackage(packageName), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = Notification.Builder(this, "safini_limits").setContentTitle("Safini")
-            .setContentText(text("Keeping your app limits", "Контроль времени приложений", "Ilova vaqtini nazorat qilish"))
+            .setContentText(
+                text(
+                    "Keeping your app limits",
+                    "Контроль времени приложений",
+                    "Ilova vaqtini nazorat qilish",
+                    "Колдонмо убактысын көзөмөлдөө",
+                    "Қолданба уақытын бақылау",
+                ),
+            )
             .setSmallIcon(R.drawable.ic_stat_safini).setColor(getColor(R.color.safini_pine)).setOngoing(true).setContentIntent(pending).build()
         if (Build.VERSION.SDK_INT >= 34) startForeground(4711, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
         else startForeground(4711, notification)

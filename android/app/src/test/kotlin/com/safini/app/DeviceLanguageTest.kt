@@ -19,6 +19,12 @@ class DeviceLanguageTest {
     @Test fun uzbekThenEnglishLandsOnEnglish() =
         assertEquals("en", resolvePhoneLanguage(listOf("uz", "en")))
 
+    @Test fun kyrgyzAndKazakhAreNeverAutoSelected() {
+        assertEquals("ru", resolvePhoneLanguage(listOf("ky")))
+        assertEquals("ru", resolvePhoneLanguage(listOf("kk")))
+        assertEquals("en", resolvePhoneLanguage(listOf("ky", "kk", "en")))
+    }
+
     @Test fun unknownLocalesFallBackToRussian() =
         assertEquals("ru", resolvePhoneLanguage(listOf("kk", "de")))
 }

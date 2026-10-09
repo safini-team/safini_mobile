@@ -19,6 +19,7 @@ import 'package:safini/features/parent/presentation/screens/family/add_child_pag
 import 'package:safini/features/parent/presentation/screens/main/parent_main_screen.dart';
 import 'package:safini/features/parent/presentation/screens/app_lock/parent_app_lock_settings_screen.dart';
 import 'package:safini/features/parent/presentation/screens/settings/parent_settings_screen.dart';
+import 'package:safini/features/subscription/paywall_screen.dart';
 
 class AppRouter {
   late final RootStackRouter _router = RootStackRouter.build(
@@ -91,6 +92,11 @@ class AppRouter {
         name: 'parentSettings',
         path: '/parent-settings',
         builder: (context, data) => const ParentSettingsScreen(),
+      ),
+      NamedRouteDef(
+        name: 'paywall',
+        path: '/safini-pro',
+        builder: (context, data) => const PaywallScreen(),
       ),
       NamedRouteDef(
         name: 'parentAppLock',

@@ -8,7 +8,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 /** Non-secret budgets live in device-protected storage so boot can resume offline. */
-class EnforcementStore(context: Context) : FrontApp {
+class EnforcementStore(context: Context) : FrontApp, InstalledAppsStore {
     private val appContext = context.applicationContext
     private val prefs = context.createDeviceProtectedStorageContext()
         .getSharedPreferences("safini_enforcement_v2", Context.MODE_PRIVATE)
@@ -53,6 +53,20 @@ class EnforcementStore(context: Context) : FrontApp {
     var deviceAdminSeen: Boolean
         get() = prefs.getBoolean("device_admin_seen", false)
         set(value) { prefs.edit().putBoolean("device_admin_seen", value).apply() }
+
+    override fun installedAppsFingerprint(): String? = prefs.getString("installed_apps_fingerprint", null)
+    override fun installedAppsSuccessAt(): Long? = prefs.getLong("installed_apps_success_at", 0L).takeIf { it > 0 }
+    override fun installedAppsAttemptAt(): Long? = prefs.getLong("installed_apps_attempt_at", 0L).takeIf { it > 0 }
+    override fun markInstalledAppsAttempt(at: Long) {
+        prefs.edit().putLong("installed_apps_attempt_at", at).commit()
+    }
+    override fun markInstalledAppsSuccess(fingerprint: String, at: Long) {
+        prefs.edit()
+            .putString("installed_apps_fingerprint", fingerprint)
+            .putLong("installed_apps_success_at", at)
+            .putLong("installed_apps_attempt_at", at)
+            .commit()
+    }
 
     fun day(at: Long): String = Instant.ofEpochMilli(at).atZone(zone()).toLocalDate().toString()
     /** Family-local midnight [days] days before the day of [at]. */
@@ -207,6 +221,6 @@ const val BACKFILL_NONE = 0
 const val BACKFILL_READ = 1
 const val BACKFILL_SENT = 2
 
-/** Device default for the block screen until Flutter sends the app language. Uzbek is never inferred. */
+/** Device default for the block screen until Flutter sends the app language. Uzbek, Kyrgyz and Kazakh are never inferred. */
 internal fun resolvePhoneLanguage(languageCodes: Iterable<String>): String =
     languageCodes.firstOrNull { it == "ru" || it == "en" } ?: "ru"

@@ -19,11 +19,14 @@ import 'package:safini/features/child/presentation/cubit/quest_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/quest_model.dart';
 import 'package:safini/features/child/presentation/cubit/quest_state.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_cubit.dart';
+import 'package:safini/features/child/presentation/cubit/reward_store_model.dart';
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
+import 'package:safini/features/child/presentation/widgets/kid_usage_section.dart';
 import 'package:safini/features/child/presentation/widgets/dialogs/task_detail_dialog.dart';
-import 'package:safini/features/models/domain/models/device_usage.dart';
-import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
+import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
+import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
+    show formatHm;
 
 /// Localized greeting based on the current time of day.
 String childGreeting(S s) {
@@ -32,6 +35,46 @@ String childGreeting(S s) {
   if (hour >= 12 && hour < 17) return s.goodAfternoon;
   if (hour >= 17 && hour < 21) return s.goodEvening;
   return s.goodNight;
+}
+
+/// How many rewards Today previews before "See all".
+const int todayGiftLimit = 6;
+
+/// The rewards Today previews from the Store: the parent's gifts first, then
+/// avatar items the child can still buy, each cheapest first. Nothing until
+/// the store has loaded, and nothing when it failed, so Today never shows a
+/// half state.
+List<TodayGift> todayGifts(RewardStoreState store, int coins) {
+  if (store.hasLoadError) return const [];
+  final gifts = [
+    for (final prize in store.prizes)
+      TodayGift(
+        id: prize.id,
+        name: prize.title,
+        emoji: prize.displayEmoji,
+        cost: prize.coinCost,
+        coins: coins,
+        isWaiting: prize.isWaiting,
+      ),
+  ]..sort((a, b) => a.cost.compareTo(b.cost));
+  final avatar = [
+    // Owned, worn, free and level-locked items have nothing to buy.
+    for (final item in store.avatarItems)
+      if (item.cost case final cost?
+          when cost > 0 && !item.isLocked && !item.isEquipped)
+        TodayGift(
+          id: item.id,
+          name: item.name,
+          emoji: item.emoji,
+          cost: cost,
+          coins: coins,
+          isAvatarItem: true,
+        ),
+  ]..sort((a, b) => a.cost.compareTo(b.cost));
+  return [
+    ...gifts,
+    ...avatar.where((item) => item.name.isNotEmpty),
+  ].take(todayGiftLimit).toList();
 }
 
 class ChildHomeScreen extends StatelessWidget {
@@ -131,10 +174,28 @@ class _ChildTodayScreen extends StatelessWidget {
             avatarColor: AppColors.avatarPalette[1],
             level: profile.level,
             teaser: _teaser(store, coins, s),
-            timeApps: _timeApps(time),
-            timeMinutes: time?.totalMinutes ?? 0,
+            gifts: todayGifts(store, coins),
+            usageApps: kidAppUsage(
+              usage: time.usage,
+              rules: time.limits?.apps ?? const [],
+            ),
+            usageMinutes: time.usage?.totalMinutes ?? 0,
+            budget: _budget(time.limits),
+            usageAvailable:
+                time.limits?.screenTime.usageAvailable ??
+                time.usage?.usageAvailable ??
+                true,
+            loadFailed: quests.loadFailed,
           ),
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
+          onOpenGifts: () => _openGifts(context, store),
+          onOpenGift: (gift) {
+            context.read<ChildHomeCubit>().selectTab(2);
+            context.read<RewardStoreCubit>().openItem(
+              gift.isAvatarItem ? StoreTab.avatarItems : StoreTab.prizes,
+              gift.id,
+            );
+          },
           onOpenTasks: () => context.read<ChildHomeCubit>().selectTab(1),
           onOpenProfile: () => context.read<ChildHomeCubit>().selectTab(3),
           onOpenQuest: (quest) => _openQuest(context, quests, quest.id),
@@ -156,17 +217,28 @@ class _ChildTodayScreen extends StatelessWidget {
     );
   }
 
-  List<AppTimeRow> _timeApps(DeviceUsage? time) {
-    if (time == null || !time.usageAvailable) return const [];
-    return [
-      for (final app in time.apps)
-        AppTimeRow(
-          name: app.displayName,
-          iconUrl: app.iconUrl,
-          usedMinutes: app.usedMinutes,
-          isOver: app.isOver,
-        ),
-    ];
+  /// "See all" under the rewards strip: the Store on Gifts when the parent
+  /// has added any, else on Avatar, the strip's other source.
+  void _openGifts(BuildContext context, RewardStoreState store) {
+    context.read<ChildHomeCubit>().selectTab(2);
+    context.read<RewardStoreCubit>().selectTab(
+      store.prizes.isNotEmpty ? StoreTab.prizes : StoreTab.avatarItems,
+    );
+  }
+
+  KidBudget? _budget(ChildAppUsageSnapshot? limits) {
+    final screenTime = limits?.screenTime;
+    final limit = screenTime?.limitMinutes;
+    if (screenTime == null || limit == null) return null;
+    return KidBudget(
+      limitMinutes: limit,
+      usedMinutes: screenTime.usedMinutes,
+      remainingMinutes:
+          screenTime.remainingMinutes ??
+          (limit - screenTime.usedMinutes).clamp(0, limit),
+      usageAvailable: screenTime.usageAvailable,
+      nextResetAt: screenTime.nextResetAt,
+    );
   }
 
   TodayQuest _toTodayQuest(QuestModel quest, S s) => TodayQuest(
@@ -178,15 +250,20 @@ class _ChildTodayScreen extends StatelessWidget {
     needsPhoto: quest.needsPhoto,
   );
 
-  /// The cheapest thing the child cannot afford yet - the artboard's
-  /// "Almost yours" hook. Nothing to show once everything is within reach.
+  /// The cheapest app time the child cannot afford yet, for "Buy more time".
+  /// Avatar items are left out so the heading stays true. Nothing to show once
+  /// everything is within reach.
   TodayTeaser? _teaser(RewardStoreState store, int coins, S s) {
     final candidates = <({String name, String emoji, int cost})>[
+      // Only what the parent actually sells: a rule can carry a price with
+      // redemption switched off.
       for (final item in store.appTimeItems)
-        (name: item.title, emoji: '⏱️', cost: item.cost),
-      for (final item in store.avatarItems)
-        if (item.cost != null)
-          (name: s.avatarItem, emoji: item.emoji, cost: item.cost!),
+        if (item.isEnabled && item.minutes > 0)
+          (
+            name: '${item.title} · +${formatHm(s, item.minutes)}',
+            emoji: '⏱️',
+            cost: item.cost,
+          ),
     ]..sort((a, b) => a.cost.compareTo(b.cost));
 
     final target = candidates.where((c) => c.cost > coins).firstOrNull;

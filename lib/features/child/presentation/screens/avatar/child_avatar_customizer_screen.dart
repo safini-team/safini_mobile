@@ -57,8 +57,39 @@ class _AvatarScreen extends StatelessWidget {
           AvatarCategory.vehicle,
         ];
 
+        final tabs = [
+          DsTabItem(
+            label: s.tabToday,
+            builder: (color) => AppIcons.tabHome(color: color),
+          ),
+          DsTabItem(
+            label: s.tabTasks,
+            builder: (color) => AppIcons.tabTasksChild(color: color),
+          ),
+          DsTabItem(
+            label: s.tabStore,
+            builder: (color) => AppIcons.tabStore(color: color),
+          ),
+          DsTabItem(
+            label: s.friends,
+            builder: (color) => AppIcons.tabFriends(color: color),
+          ),
+          DsTabItem(
+            label: s.tabMe,
+            builder: (color) => AppIcons.tabMe(color: color),
+          ),
+        ];
+
         return Scaffold(
           backgroundColor: AppColors.bgChild,
+          extendBody: true,
+          bottomNavigationBar: DsTabBar.child(
+            currentIndex: 4,
+            onTap: (i) {
+              if (i != 4) context.router.maybePop(i);
+            },
+            items: tabs,
+          ),
           body: Column(
             children: [
               DsNavBar.child(
@@ -72,7 +103,8 @@ class _AvatarScreen extends StatelessWidget {
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.only(
-                      bottom: 40 + MediaQuery.viewPaddingOf(context).bottom,
+                      bottom:
+                          DsTabBar.bottomPadding(context) + 56 + 16,
                     ),
                     children: [
                       // Preview stage

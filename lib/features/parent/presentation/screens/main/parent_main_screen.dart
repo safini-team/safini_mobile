@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
@@ -8,6 +10,8 @@ import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/features/subscription/free_limit.dart';
+import 'package:safini/features/subscription/pro_cubit.dart';
 import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_shell.dart';
@@ -57,6 +61,27 @@ class _ParentMainScreenState extends State<ParentMainScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _push.attach();
+    // Reads this family's plan and picks up App Store renewals and purchases
+    // that were left unfinished.
+    getIt<ProCubit>().start();
+    _freeLimits = FreeLimitAlerts.instance.stream.listen(_onFreeLimit);
+  }
+
+  StreamSubscription<FreeLimit>? _freeLimits;
+  bool _freeLimitShown = false;
+
+  /// A free-plan limit from any screen, even one pushed over this one. A
+  /// task for several children can hit it once per child; one sheet is
+  /// enough.
+  Future<void> _onFreeLimit(FreeLimit limit) async {
+    if (!mounted || _freeLimitShown) return;
+    _freeLimitShown = true;
+    await showFreeLimitSheet(
+      context,
+      limit,
+      canBuy: getIt<ProCubit>().canSell,
+    );
+    _freeLimitShown = false;
   }
 
   @override
@@ -75,6 +100,7 @@ class _ParentMainScreenState extends State<ParentMainScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _freeLimits?.cancel();
     _push.dispose();
     _home.close();
     super.dispose();
@@ -138,55 +164,60 @@ class _ParentMainViewState extends State<_ParentMainView> {
         return BlocBuilder<ParentTasksCubit, ParentTasksState>(
           builder: (context, tasksState) {
             return BlocBuilder<LocaleCubit, Locale?>(
-              builder: (context, _) => FirstRunTour(
-                role: TourRole.parent,
-                userId: context.read<AuthSessionCubit>().state.userId,
-                selectedTab: state.selectedIndex,
-                onSelectTab: cubit.selectTab,
-                onOpenGifts: cubit.openPrizes,
-                tabBarKey: _tabBarKey,
-                reviewKey: _reviewKey,
-                child: Scaffold(
-                  backgroundColor: AppColors.bgParent,
-                  extendBody: true,
-                  body: IndexedStack(
-                    index: state.selectedIndex,
-                    children: [
-                      ParentMonitorScreen(reviewKey: _reviewKey),
-                      const ParentTasksScreen(),
-                      const ParentAppsScreen(),
-                      const ParentFamilyScreen(),
-                    ],
+              builder: (context, _) {
+                // One list feeds both the bar and the tour, so the tour's
+                // spotlight always matches the number of tabs.
+                final tabs = [
+                  DsTabItem(
+                    label: s.tabToday,
+                    builder: (color) => AppIcons.tabHome(color: color),
                   ),
-                  bottomNavigationBar: KeyedSubtree(
-                    key: _tabBarKey,
-                    child: DsTabBar(
-                      currentIndex: state.selectedIndex,
-                      onTap: cubit.selectTab,
-                      items: [
-                        DsTabItem(
-                          label: s.tabToday,
-                          builder: (color) => AppIcons.tabHome(color: color),
-                        ),
-                        DsTabItem(
-                          label: s.tabTasks,
-                          builder: (color) =>
-                              AppIcons.tabTasksParent(color: color),
-                          badge: _reviewCount(tasksState),
-                        ),
-                        DsTabItem(
-                          label: s.tabLimits,
-                          builder: (color) => AppIcons.tabLimits(color: color),
-                        ),
-                        DsTabItem(
-                          label: s.tabFamily,
-                          builder: (color) => AppIcons.tabFamily(color: color),
-                        ),
+                  DsTabItem(
+                    label: s.tabTasks,
+                    builder: (color) => AppIcons.tabTasksParent(color: color),
+                    badge: _reviewCount(tasksState),
+                  ),
+                  DsTabItem(
+                    label: s.tabLimits,
+                    builder: (color) => AppIcons.tabLimits(color: color),
+                  ),
+                  DsTabItem(
+                    label: s.tabFamily,
+                    builder: (color) => AppIcons.tabFamily(color: color),
+                  ),
+                ];
+                return FirstRunTour(
+                  role: TourRole.parent,
+                  userId: context.read<AuthSessionCubit>().state.userId,
+                  selectedTab: state.selectedIndex,
+                  onSelectTab: cubit.selectTab,
+                  onOpenGifts: cubit.openPrizes,
+                  tabBarKey: _tabBarKey,
+                  tabCount: tabs.length,
+                  reviewKey: _reviewKey,
+                  child: Scaffold(
+                    backgroundColor: AppColors.bgParent,
+                    extendBody: true,
+                    body: IndexedStack(
+                      index: state.selectedIndex,
+                      children: [
+                        ParentMonitorScreen(reviewKey: _reviewKey),
+                        const ParentTasksScreen(),
+                        const ParentAppsScreen(),
+                        const ParentFamilyScreen(),
                       ],
                     ),
+                    bottomNavigationBar: KeyedSubtree(
+                      key: _tabBarKey,
+                      child: DsTabBar(
+                        currentIndex: state.selectedIndex,
+                        onTap: cubit.selectTab,
+                        items: tabs,
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
         );

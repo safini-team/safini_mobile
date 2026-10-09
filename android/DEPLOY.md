@@ -24,25 +24,39 @@ debug build has the same SHA-1 for Google Sign-In.
 ## 2. Bump the version
 
 Version lives in one place: [`pubspec.yaml`](../pubspec.yaml) `version:`
-field, e.g. `1.0.1+19`.
+field, e.g. `1.0.9+33`. Do not edit that line by hand.
 
-- `1.0.1` → `versionName` (user-visible version)
-- `19` → `versionCode` (Play Store requires this to strictly increase on
+```
+make version          # current number and the rules
+make bump-build       # 1.0.9+33 -> 1.0.9+34   every store upload
+make bump-patch       # 1.0.9+33 -> 1.0.10+34  a release of fixes
+make bump-minor       # 1.0.9+33 -> 1.1.0+34   user-visible features
+make version-check    # same guard CI runs on PRs
+```
+
+- `1.0.9` → `versionName` (user-visible version)
+- `33` → `versionCode` (Play Store requires this to strictly increase on
   every upload, including internal/beta tracks)
 
 Both are read into Gradle automatically via `flutter.versionName` /
 `flutter.versionCode`, so there is nothing to edit in `android/`. iOS reads the same
 field as `CFBundleShortVersionString` / `CFBundleVersion`, and Settings shows
-it as `Safini 1.0.1 (19)` straight from the installed binary.
+it as `Safini 1.0.9 (33)` straight from the installed binary.
 
 The rule, for both stores:
 
+- Feature and fix PRs must not touch `version:`. Land the change, `git pull`
+  on `main`, then bump. Mixing a bump into a stale branch is how a Play
+  upload gets a colliding `versionCode` or a marketing version that goes
+  backwards (see PR #109 vs `main`). CI fails that class of PR.
 - Every upload (internal, TestFlight, beta, production) gets the next build
-  number: `+19` → `+20`. Never reuse one, even for a rebuild of the same code.
-  `make build-android` and `make build-ios` do this bump for you before
-  building; commit the bumped `pubspec.yaml` once the upload is accepted.
-- A release of fixes bumps the last part of the version: `1.0.1` → `1.0.2`.
-  New features bump the middle part: `1.0.x` → `1.1.0`.
+  number: `+33` → `+34`. Never reuse one, even for a rebuild of the same code.
+  `make bump-build` / `make build-android` / `make build-ios` refuse unless
+  you are on an up-to-date `main` (`FORCE=1` overrides). Commit the bumped
+  `pubspec.yaml` once the upload is accepted.
+- A release of fixes: `make bump-patch`. New features: `make bump-minor`.
+  Each of those also increments `+N`, because Play still needs a new
+  `versionCode`.
 
 ## 3. Build the release artifact
 

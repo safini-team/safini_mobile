@@ -113,12 +113,38 @@ class _ChildMainViewState extends State<_ChildMainView> {
         final s = S.of(context);
         final cubit = context.read<ChildHomeCubit>();
 
+        // One list feeds both the bar and the tour, so the tour's spotlight
+        // always matches the number of tabs (five here).
+        final tabs = [
+          DsTabItem(
+            label: s.tabToday,
+            builder: (color) => AppIcons.tabHome(color: color),
+          ),
+          DsTabItem(
+            label: s.tabTasks,
+            builder: (color) => AppIcons.tabTasksChild(color: color),
+          ),
+          DsTabItem(
+            label: s.tabStore,
+            builder: (color) => AppIcons.tabStore(color: color),
+          ),
+          DsTabItem(
+            label: s.friends,
+            builder: (color) => AppIcons.tabFriends(color: color),
+          ),
+          DsTabItem(
+            label: s.tabMe,
+            builder: (color) => AppIcons.tabMe(color: color),
+          ),
+        ];
+
         return FirstRunTour(
           role: TourRole.child,
           userId: context.read<AuthSessionCubit>().state.userId,
           selectedTab: state.selectedIndex,
           onSelectTab: cubit.selectTab,
           tabBarKey: _tabBarKey,
+          tabCount: tabs.length,
           child: Scaffold(
             backgroundColor: AppColors.bgChild,
             // The tab bar is translucent, so the content has to run underneath it.
@@ -132,28 +158,7 @@ class _ChildMainViewState extends State<_ChildMainView> {
               child: DsTabBar.child(
                 currentIndex: state.selectedIndex,
                 onTap: cubit.selectTab,
-                items: [
-                  DsTabItem(
-                    label: s.tabToday,
-                    builder: (color) => AppIcons.tabHome(color: color),
-                  ),
-                  DsTabItem(
-                    label: s.tabTasks,
-                    builder: (color) => AppIcons.tabTasksChild(color: color),
-                  ),
-                  DsTabItem(
-                    label: s.tabStore,
-                    builder: (color) => AppIcons.tabStore(color: color),
-                  ),
-                  DsTabItem(
-                    label: s.friends,
-                    builder: (color) => AppIcons.tabFriends(color: color),
-                  ),
-                  DsTabItem(
-                    label: s.tabMe,
-                    builder: (color) => AppIcons.tabMe(color: color),
-                  ),
-                ],
+                items: tabs,
               ),
             ),
           ),

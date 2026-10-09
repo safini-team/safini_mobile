@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:safini/core/utils/error/failures.dart';
+import 'package:safini/features/subscription/free_limit.dart';
 
 /// Translates a [DioException] into a domain [Failure] so data-layer services
 /// can return `Either<Failure, T>` consistently across the app.
@@ -12,6 +13,12 @@ Failure mapDioError(DioException e, String fallback) {
   final message = _extractMessage(e.response?.data) ?? e.message ?? fallback;
 
   switch (status) {
+    case 402:
+      final limit = FreeLimit.fromResponse(
+        status,
+        e.response?.headers.value(FreeLimit.header),
+      );
+      if (limit != null) return FreeLimitFailure(limit, message);
     case 401:
       return const UnauthorizedFailure('Missing, expired, or invalid token.');
     case 404:

@@ -189,6 +189,16 @@ class S {
     return Intl.message('Uzbek', name: 'uzbek', desc: '', args: []);
   }
 
+  /// `Kyrgyz`
+  String get kyrgyz {
+    return Intl.message('Kyrgyz', name: 'kyrgyz', desc: '', args: []);
+  }
+
+  /// `Kazakh`
+  String get kazakh {
+    return Intl.message('Kazakh', name: 'kazakh', desc: '', args: []);
+  }
+
   /// `My Profile`
   String get myProfile {
     return Intl.message('My Profile', name: 'myProfile', desc: '', args: []);
@@ -3712,11 +3722,11 @@ class S {
     );
   }
 
-  /// `Almost yours`
-  String get almostYours {
+  /// `Buy more time`
+  String get buyMoreTime {
     return Intl.message(
-      'Almost yours',
-      name: 'almostYours',
+      'Buy more time',
+      name: 'buyMoreTime',
       desc: '',
       args: [],
     );
@@ -3831,6 +3841,27 @@ class S {
       'No tasks yet. Enjoy the day.',
       name: 'nothingForTodayBody',
       desc: 'Child Today card body when the day has no tasks at all.',
+      args: [],
+    );
+  }
+
+  /// `No connection`
+  String get todayOffline {
+    return Intl.message(
+      'No connection',
+      name: 'todayOffline',
+      desc:
+          'Child Today headline and card title when today\'s tasks could not be loaded.',
+      args: [],
+    );
+  }
+
+  /// `Your tasks show up once you are online. Pull down to try again.`
+  String get todayOfflineBody {
+    return Intl.message(
+      'Your tasks show up once you are online. Pull down to try again.',
+      name: 'todayOfflineBody',
+      desc: 'Child Today card body when today\'s tasks could not be loaded.',
       args: [],
     );
   }
@@ -5401,11 +5432,11 @@ class S {
     );
   }
 
-  /// `My time today`
-  String get myTimeToday {
+  /// `My usage today`
+  String get myUsageToday {
     return Intl.message(
-      'My time today',
-      name: 'myTimeToday',
+      'My usage today',
+      name: 'myUsageToday',
       desc: '',
       args: [],
     );
@@ -5724,6 +5755,21 @@ class S {
   /// `Waiting`
   String get prizeWaiting {
     return Intl.message('Waiting', name: 'prizeWaiting', desc: '', args: []);
+  }
+
+  /// `Rewards for you`
+  String get rewardsForYou {
+    return Intl.message(
+      'Rewards for you',
+      name: 'rewardsForYou',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See all`
+  String get seeAllRewards {
+    return Intl.message('See all', name: 'seeAllRewards', desc: '', args: []);
   }
 
   /// `Your parent will see it. Your coins wait on hold until they answer.`
@@ -7401,6 +7447,426 @@ class S {
   String get extraVehicle {
     return Intl.message('Vehicle', name: 'extraVehicle', desc: '', args: []);
   }
+
+  /// `{time} left today`
+  String kidScreenTimeLeft(Object time) {
+    return Intl.message(
+      '$time left today',
+      name: 'kidScreenTimeLeft',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `No free time left today`
+  String get kidScreenTimeUp {
+    return Intl.message(
+      'No free time left today',
+      name: 'kidScreenTimeUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{time} a day`
+  String kidScreenTimeDaily(Object time) {
+    return Intl.message(
+      '$time a day',
+      name: 'kidScreenTimeDaily',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Back at {time}`
+  String kidScreenTimeBackAt(Object time) {
+    return Intl.message(
+      'Back at $time',
+      name: 'kidScreenTimeBackAt',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Shared by the apps your parent manages`
+  String get kidBudgetShared {
+    return Intl.message(
+      'Shared by the apps your parent manages',
+      name: 'kidBudgetShared',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked`
+  String get kidAppBlocked {
+    return Intl.message('Blocked', name: 'kidAppBlocked', desc: '', args: []);
+  }
+
+  /// `Your parent turned this app off`
+  String get kidAppBlockedBody {
+    return Intl.message(
+      'Your parent turned this app off',
+      name: 'kidAppBlockedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time's up`
+  String get kidAppTimesUp {
+    return Intl.message(
+      'Time\'s up',
+      name: 'kidAppTimesUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get more time in the Store`
+  String get kidGetMoreInStore {
+    return Intl.message(
+      'Get more time in the Store',
+      name: 'kidGetMoreInStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+{time} from coins`
+  String kidBonusFromCoins(Object time) {
+    return Intl.message(
+      '+$time from coins',
+      name: 'kidBonusFromCoins',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Safini Pro`
+  String get proTitle {
+    return Intl.message('Safini Pro', name: 'proTitle', desc: '', args: []);
+  }
+
+  /// `Free plan`
+  String get proSettingsFree {
+    return Intl.message(
+      'Free plan',
+      name: 'proSettingsFree',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active until {date}`
+  String proActiveUntil(Object date) {
+    return Intl.message(
+      'Active until $date',
+      name: 'proActiveUntil',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Renews on {date}`
+  String proRenewsOn(Object date) {
+    return Intl.message(
+      'Renews on $date',
+      name: 'proRenewsOn',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `One plan for the whole family`
+  String get proHeadline {
+    return Intl.message(
+      'One plan for the whole family',
+      name: 'proHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Both parents and every child share it. Cancel anytime.`
+  String get proLede {
+    return Intl.message(
+      'Both parents and every child share it. Cancel anytime.',
+      name: 'proLede',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every child, not just one`
+  String get proFeatureChildren {
+    return Intl.message(
+      'Every child, not just one',
+      name: 'proFeatureChildren',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limits on every app, not just three`
+  String get proFeatureApps {
+    return Intl.message(
+      'Limits on every app, not just three',
+      name: 'proFeatureApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unlimited recurring tasks`
+  String get proFeatureTasks {
+    return Intl.message(
+      'Unlimited recurring tasks',
+      name: 'proFeatureTasks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One subscription for both parents`
+  String get proFeatureParents {
+    return Intl.message(
+      'One subscription for both parents',
+      name: 'proFeatureParents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yearly`
+  String get proYearly {
+    return Intl.message('Yearly', name: 'proYearly', desc: '', args: []);
+  }
+
+  /// `Monthly`
+  String get proMonthly {
+    return Intl.message('Monthly', name: 'proMonthly', desc: '', args: []);
+  }
+
+  /// `{price} per year`
+  String proPerYear(Object price) {
+    return Intl.message(
+      '$price per year',
+      name: 'proPerYear',
+      desc: '',
+      args: [price],
+    );
+  }
+
+  /// `{price} per month`
+  String proPerMonth(Object price) {
+    return Intl.message(
+      '$price per month',
+      name: 'proPerMonth',
+      desc: '',
+      args: [price],
+    );
+  }
+
+  /// `Save {percent}%`
+  String proSave(Object percent) {
+    return Intl.message(
+      'Save $percent%',
+      name: 'proSave',
+      desc: '',
+      args: [percent],
+    );
+  }
+
+  /// `Subscribe`
+  String get proSubscribe {
+    return Intl.message('Subscribe', name: 'proSubscribe', desc: '', args: []);
+  }
+
+  /// `Restore purchases`
+  String get proRestore {
+    return Intl.message(
+      'Restore purchases',
+      name: 'proRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Terms of Use`
+  String get proTerms {
+    return Intl.message('Terms of Use', name: 'proTerms', desc: '', args: []);
+  }
+
+  /// `Payment is charged to your Apple ID. The subscription renews automatically at the same price unless you cancel at least 24 hours before the period ends. Manage or cancel it in your App Store settings.`
+  String get proLegal {
+    return Intl.message(
+      'Payment is charged to your Apple ID. The subscription renews automatically at the same price unless you cancel at least 24 hours before the period ends. Manage or cancel it in your App Store settings.',
+      name: 'proLegal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your family has Safini Pro`
+  String get proActiveTitle {
+    return Intl.message(
+      'Your family has Safini Pro',
+      name: 'proActiveTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage subscription`
+  String get proManage {
+    return Intl.message(
+      'Manage subscription',
+      name: 'proManage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple couldn't charge your card. Update it to keep Pro.`
+  String get proPaymentIssue {
+    return Intl.message(
+      'Apple couldn\'t charge your card. Update it to keep Pro.',
+      name: 'proPaymentIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't reach the App Store.`
+  String get proStoreUnavailable {
+    return Intl.message(
+      'Couldn\'t reach the App Store.',
+      name: 'proStoreUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome to Safini Pro!`
+  String get proWelcome {
+    return Intl.message(
+      'Welcome to Safini Pro!',
+      name: 'proWelcome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safini Pro is restored.`
+  String get proRestored {
+    return Intl.message(
+      'Safini Pro is restored.',
+      name: 'proRestored',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Safini Pro subscription on this Apple ID.`
+  String get proNothingToRestore {
+    return Intl.message(
+      'No Safini Pro subscription on this Apple ID.',
+      name: 'proNothingToRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for approval. Pro turns on once it's approved.`
+  String get proPending {
+    return Intl.message(
+      'Waiting for approval. Pro turns on once it\'s approved.',
+      name: 'proPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The purchase didn't go through. Try again.`
+  String get proFailed {
+    return Intl.message(
+      'The purchase didn\'t go through. Try again.',
+      name: 'proFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This Apple ID's subscription belongs to another Safini family.`
+  String get proOtherFamily {
+    return Intl.message(
+      'This Apple ID\'s subscription belongs to another Safini family.',
+      name: 'proOtherFamily',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `That's the free plan's limit`
+  String get freeLimitTitle {
+    return Intl.message(
+      'That\'s the free plan\'s limit',
+      name: 'freeLimitTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan has one child. With Safini Pro you can add every child in your family.`
+  String get freeLimitChildren {
+    return Intl.message(
+      'The free plan has one child. With Safini Pro you can add every child in your family.',
+      name: 'freeLimitChildren',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan limits three apps per child. With Safini Pro you can limit every app.`
+  String get freeLimitApps {
+    return Intl.message(
+      'The free plan limits three apps per child. With Safini Pro you can limit every app.',
+      name: 'freeLimitApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan repeats three tasks per child. With Safini Pro every task can repeat.`
+  String get freeLimitTasks {
+    return Intl.message(
+      'The free plan repeats three tasks per child. With Safini Pro every task can repeat.',
+      name: 'freeLimitTasks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See Safini Pro`
+  String get freeLimitSeePro {
+    return Intl.message(
+      'See Safini Pro',
+      name: 'freeLimitSeePro',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safini Pro is coming to Android soon.`
+  String get freeLimitAndroid {
+    return Intl.message(
+      'Safini Pro is coming to Android soon.',
+      name: 'freeLimitAndroid',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -7409,6 +7875,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'kk'),
+      Locale.fromSubtags(languageCode: 'ky'),
       Locale.fromSubtags(languageCode: 'ru'),
       Locale.fromSubtags(languageCode: 'uz'),
     ];

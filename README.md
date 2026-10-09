@@ -23,7 +23,25 @@ Connect's private review information, not through source control.
 
 ## Localization
 
-Translation workflow and locale setup are documented in `commands/localization.md`.
+The app ships in Uzbek (Latin), Russian, English, Kyrgyz and Kazakh. Only
+Russian and English follow the phone language; the other three are used only
+after the user picks them in the language picker. Translation workflow and
+locale setup are documented in `commands/localization.md`.
+
+## Store version
+
+`pubspec.yaml` `version:` (`1.0.9+33`) is the only store version. Play
+`versionCode` and iOS `CFBundleVersion` are the `+N` suffix and must go up
+on every upload. Do not bump it in a feature PR.
+
+```
+make version
+make bump-build    # every Play / TestFlight upload, on an up-to-date main
+make bump-patch    # 1.0.9 -> 1.0.10
+make bump-minor    # 1.0.9 -> 1.1.0
+```
+
+Details: [`android/DEPLOY.md`](android/DEPLOY.md).
 
 ## Getting Started
 

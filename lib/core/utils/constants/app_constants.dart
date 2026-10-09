@@ -3,6 +3,7 @@ class AppConstants {
   static const Duration apiTimeout = Duration(seconds: 10);
   static const String accessToken = 'access_token';
   static const String privacyPolicyUrl = 'https://safini.fun/privacy-policy';
+  static const String termsOfUseUrl = 'https://safini.fun/terms-of-service';
 
   static const String accountTypeParent = 'parent';
   static const String accountTypeChild = 'child';

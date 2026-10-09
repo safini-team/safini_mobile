@@ -5,6 +5,8 @@ import 'package:safini/features/parent/domain/repositories/i_parent_app_usage_re
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
+import 'package:safini/features/subscription/free_limit.dart';
+import 'package:safini/core/utils/error/failures.dart';
 
 class ParentAppsCubit extends Cubit<ParentAppsState> {
   final ParentFamilyCubit _familyCubit;
@@ -145,7 +147,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     );
 
     final result = await _appUsageRepo.updateAppRule(_childId!, rule);
-    return result.fold((failure) async => failure.message, (_) async {
+    return result.fold((failure) async => _errorFor(failure), (_) async {
       await loadAppLimits();
       return null;
     });
@@ -234,7 +236,12 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       // Revert on failure.
       _appUsage = previous;
       _emitLoaded();
-      return failure.message;
+      return _errorFor(failure);
     }, (_) => null);
   }
+
+  /// Empty for a free-plan limit: the Safini Pro sheet already said why, so
+  /// the caller stays put without a second message.
+  String _errorFor(Failure failure) =>
+      failure is FreeLimitFailure ? '' : failure.message;
 }

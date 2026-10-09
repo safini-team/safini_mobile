@@ -58,7 +58,7 @@ extension AvatarCategoryX on AvatarCategory {
 class AvatarGridItem {
   final String id;
 
-  /// Stable asset key — maps to assets/avatar/cosmetics/<slot>/<assetKey>.png
+  /// Stable asset key — maps to `assets/avatar/cosmetics/<slot>/<assetKey>.png`
   /// Falls back to [emoji] when absent (legacy items).
   final String? assetKey;
 

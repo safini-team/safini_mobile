@@ -54,6 +54,11 @@ class DsTabBar extends StatelessWidget {
   /// What the design pads under the labels.
   static const double _artboardBottom = 26;
 
+  /// Inset of the tab row from the bar's left and right edges (before any
+  /// landscape system padding). The first-run tour uses it to place its
+  /// spotlight over a tab.
+  static const double horizontalPadding = 10;
+
   /// The design pads 26 under the labels. On an iPhone that is the home
   /// indicator's own inset, a thin line drawn over the app, so mirror it
   /// rather than stacking both. On Android the inset is the system navigation
@@ -78,7 +83,7 @@ class DsTabBar extends StatelessWidget {
   static ({double label, double letterSpacing, double icon}) metricsFor(
     String languageCode,
   ) => switch (languageCode) {
-    'uz' => (label: 9.5, letterSpacing: 0, icon: 23),
+    'uz' || 'ky' || 'kk' => (label: 9.5, letterSpacing: 0, icon: 23),
     'ru' => (label: 10, letterSpacing: 0, icon: 23),
     _ => (label: 10.5, letterSpacing: 0.105, icon: 25),
   };
@@ -103,9 +108,9 @@ class DsTabBar extends StatelessWidget {
             // In landscape the system navigation bar and the camera cutout
             // move to a side; the tabs step in from them the same way.
             padding: EdgeInsets.fromLTRB(
-              10 + MediaQuery.viewPaddingOf(context).left,
+              horizontalPadding + MediaQuery.viewPaddingOf(context).left,
               9,
-              10 + MediaQuery.viewPaddingOf(context).right,
+              horizontalPadding + MediaQuery.viewPaddingOf(context).right,
               bottomPadding(context),
             ),
             child: Row(

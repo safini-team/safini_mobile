@@ -112,7 +112,7 @@ class _CharacterImage extends StatelessWidget {
       height: size,
       fit: BoxFit.contain,
       filterQuality: FilterQuality.medium,
-      errorBuilder: (_, __, ___) => _CharacterPlaceholder(
+      errorBuilder: (context, error, stack) => _CharacterPlaceholder(
         character: character,
         size: size,
       ),
@@ -181,7 +181,7 @@ class _CosmeticLayer extends StatelessWidget {
         height: size,
         fit: BoxFit.contain,
         filterQuality: FilterQuality.medium,
-        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+        errorBuilder: (context, error, stack) => const SizedBox.shrink(),
       ),
     );
   }

@@ -4,11 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/widgets/language_sheet.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm, formatHmTight;
 
-/// PRD v4 §9.3: Uzbek (Latin), Russian, English. Kazakh is retired.
-const List<String> _locales = ['en', 'ru', 'uz'];
+/// PRD v4 §9.3: Uzbek (Latin), Russian, English, plus Kyrgyz and Kazakh.
+const List<String> _locales = ['en', 'ru', 'uz', 'ky', 'kk'];
 
 Map<String, dynamic> _arb(String locale) {
   final file = File('lib/core/translation/l10n/intl_$locale.arb');
@@ -79,11 +80,12 @@ const Set<String> _sameAsEnglishByDesign = {
   'nameHintExample', // a person's name in the placeholder
   'storeAvatarTab', // "Avatar" is the same word in Uzbek
   'ok',
+  'proTitle', // the product name
 };
 
 void main() {
   group('locale catalogue', () {
-    test('ships exactly en, ru and uz', () {
+    test('ships exactly en, ru, uz, ky and kk', () {
       final files = Directory('lib/core/translation/l10n')
           .listSync()
           .whereType<File>()
@@ -94,18 +96,29 @@ void main() {
 
       expect(
         files,
-        ['intl_en.arb', 'intl_ru.arb', 'intl_uz.arb'],
-        reason: 'Kazakh is retired; only en/ru/uz ship',
+        [
+          'intl_en.arb',
+          'intl_kk.arb',
+          'intl_ky.arb',
+          'intl_ru.arb',
+          'intl_uz.arb',
+        ],
+        reason: 'en/ru/uz/ky/kk ship',
       );
     });
 
-    test('S.delegate supports exactly those three', () {
+    test('S.delegate supports exactly those five', () {
       final codes =
           S.delegate.supportedLocales.map((l) => l.languageCode).toList()
             ..sort();
       final expected = [..._locales]..sort();
       expect(codes, expected);
-      expect(S.delegate.isSupported(const Locale('kk')), isFalse);
+      expect(S.delegate.isSupported(const Locale('kk')), isTrue);
+      expect(S.delegate.isSupported(const Locale('tg')), isFalse);
+    });
+
+    test('every language picker lists RU, EN, KG, UZ, KZ', () {
+      expect(appLanguages.map((l) => l.code), ['ru', 'en', 'ky', 'uz', 'kk']);
     });
 
     test('every locale has the same key set', () {

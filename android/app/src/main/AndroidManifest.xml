@@ -22,12 +22,6 @@
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true">
-        <!-- Play's stalkerware/monitoring policy: a parental-control app that
-             transmits a child's app usage must declare itself as a monitoring
-             tool on every version code, or Play Protect flags it. -->
-        <meta-data
-            android:name="isMonitoringTool"
-            android:value="child_monitoring" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
