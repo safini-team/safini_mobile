@@ -7867,6 +7867,94 @@ class S {
       args: [],
     );
   }
+
+  /// `Start free trial`
+  String get proStartTrial {
+    return Intl.message(
+      'Start free trial',
+      name: 'proStartTrial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{trial}, then {price}`
+  String proTrialThen(Object trial, Object price) {
+    return Intl.message(
+      '$trial, then $price',
+      name: 'proTrialThen',
+      desc: '',
+      args: [trial, price],
+    );
+  }
+
+  /// `{count, plural, one{{count} day free} other{{count} days free}}`
+  String proTrialDays(num count) {
+    return Intl.plural(
+      count,
+      one: '$count day free',
+      other: '$count days free',
+      name: 'proTrialDays',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count, plural, one{{count} week free} other{{count} weeks free}}`
+  String proTrialWeeks(num count) {
+    return Intl.plural(
+      count,
+      one: '$count week free',
+      other: '$count weeks free',
+      name: 'proTrialWeeks',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count, plural, one{{count} month free} other{{count} months free}}`
+  String proTrialMonths(num count) {
+    return Intl.plural(
+      count,
+      one: '$count month free',
+      other: '$count months free',
+      name: 'proTrialMonths',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count, plural, one{{count} year free} other{{count} years free}}`
+  String proTrialYears(num count) {
+    return Intl.plural(
+      count,
+      one: '$count year free',
+      other: '$count years free',
+      name: 'proTrialYears',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Nothing is charged during the free trial. Cancel at least 24 hours before it ends and you pay nothing; otherwise the subscription starts when the trial ends.`
+  String get proLegalTrial {
+    return Intl.message(
+      'Nothing is charged during the free trial. Cancel at least 24 hours before it ends and you pay nothing; otherwise the subscription starts when the trial ends.',
+      name: 'proLegalTrial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free trial until {date}`
+  String proTrialUntil(Object date) {
+    return Intl.message(
+      'Free trial until $date',
+      name: 'proTrialUntil',
+      desc: '',
+      args: [date],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

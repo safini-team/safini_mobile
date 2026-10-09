@@ -905,5 +905,13 @@
   "extraHead": "Баш кийим",
   "extraAccessory": "Аксессуар",
   "extraVehicle": "Транспорт",
-  "comingSoonSubtitle": "Дагы кызыктуу нерселерди кошуп жатабыз. Кийинчерээк кайра кел!"
+  "comingSoonSubtitle": "Дагы кызыктуу нерселерди кошуп жатабыз. Кийинчерээк кайра кел!",
+  "proStartTrial": "Акысыз мезгилди баштоо",
+  "proTrialThen": "{trial}, андан кийин {price}",
+  "proTrialDays": "{count, plural, other{{count} күн акысыз}}",
+  "proTrialWeeks": "{count, plural, other{{count} жума акысыз}}",
+  "proTrialMonths": "{count, plural, other{{count} ай акысыз}}",
+  "proTrialYears": "{count, plural, other{{count} жыл акысыз}}",
+  "proLegalTrial": "Акысыз мезгилде эч нерсе алынбайт. Ал бүтөрдөн кеминде 24 саат мурун жокко чыгарсаңыз, эч нерсе төлөбөйсүз; антпесе жазылуу акысыз мезгил бүткөндө башталат.",
+  "proTrialUntil": "Акысыз мезгил {date} чейин"
 }

@@ -123,12 +123,22 @@ class _PaywallViewState extends State<_PaywallView> {
                         ),
                         const SizedBox(height: 18),
                         DsPrimaryButton(
-                          label: s.proSubscribe,
+                          label: state.offer(_period)?.trial != null
+                              ? s.proStartTrial
+                              : s.proSubscribe,
                           busy: state.busy,
                           enabled: state.offer(_period) != null && !state.busy,
                           onTap: () => context.read<ProCubit>().buy(_period),
                         ),
                         const SizedBox(height: 14),
+                        if (state.offer(_period)?.trial != null) ...[
+                          Text(
+                            s.proLegalTrial,
+                            style: AppText.footnote,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 6),
+                        ],
                         Text(
                           s.proLegal,
                           style: AppText.footnote,
@@ -239,9 +249,7 @@ class _Plans extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 10),
               child: _PlanTile(
                 title: period == ProPeriod.year ? s.proYearly : s.proMonthly,
-                price: period == ProPeriod.year
-                    ? s.proPerYear(offer.price)
-                    : s.proPerMonth(offer.price),
+                price: _price(s, offer),
                 badge: period == ProPeriod.year && saving != null
                     ? s.proSave(saving.toString())
                     : null,
@@ -252,6 +260,23 @@ class _Plans extends StatelessWidget {
       ],
     );
   }
+}
+
+/// `$66.99 per year`, or `1 month free, then $66.99 per year` while this
+/// Apple ID can still have the plan's trial.
+String _price(S s, ProOffer offer) {
+  final price = offer.period == ProPeriod.year
+      ? s.proPerYear(offer.price)
+      : s.proPerMonth(offer.price);
+  final trial = offer.trial;
+  if (trial == null) return price;
+  final free = switch (trial.unit) {
+    ProTrialUnit.day => s.proTrialDays(trial.count),
+    ProTrialUnit.week => s.proTrialWeeks(trial.count),
+    ProTrialUnit.month => s.proTrialMonths(trial.count),
+    ProTrialUnit.year => s.proTrialYears(trial.count),
+  };
+  return s.proTrialThen(free, price);
 }
 
 class _PlanTile extends StatelessWidget {
@@ -364,7 +389,11 @@ class _ActivePlan extends StatelessWidget {
               if (date != null) ...[
                 const SizedBox(height: 6),
                 Text(
-                  plan.willRenew ? s.proRenewsOn(date) : s.proActiveUntil(date),
+                  plan.isTrial
+                      ? s.proTrialUntil(date)
+                      : plan.willRenew
+                      ? s.proRenewsOn(date)
+                      : s.proActiveUntil(date),
                   style: AppText.body.copyWith(color: AppColors.primaryPale),
                 ),
               ],

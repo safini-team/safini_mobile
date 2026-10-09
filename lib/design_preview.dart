@@ -529,12 +529,14 @@ class _PreviewStore implements ProStore {
       price: r'$6.99',
       rawPrice: 6.99,
       currencyCode: 'USD',
+      trial: ProTrial(1, ProTrialUnit.week),
     ),
     ProOffer(
       productId: ProProducts.yearly,
       price: r'$66.99',
       rawPrice: 66.99,
       currencyCode: 'USD',
+      trial: ProTrial(1, ProTrialUnit.month),
     ),
   ];
 

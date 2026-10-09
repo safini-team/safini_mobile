@@ -1034,5 +1034,13 @@
   "freeLimitApps": "В бесплатном плане можно ограничить три приложения на ребёнка. С Safini Pro можно ограничить все приложения.",
   "freeLimitTasks": "В бесплатном плане повторяются три задания на ребёнка. С Safini Pro повторять можно все задания.",
   "freeLimitSeePro": "Подробнее о Safini Pro",
-  "freeLimitAndroid": "Safini Pro скоро появится на Android."
+  "freeLimitAndroid": "Safini Pro скоро появится на Android.",
+  "proStartTrial": "Начать бесплатный период",
+  "proTrialThen": "{trial}, затем {price}",
+  "proTrialDays": "{count, plural, one{{count} день бесплатно} few{{count} дня бесплатно} many{{count} дней бесплатно} other{{count} дня бесплатно}}",
+  "proTrialWeeks": "{count, plural, one{{count} неделя бесплатно} few{{count} недели бесплатно} many{{count} недель бесплатно} other{{count} недели бесплатно}}",
+  "proTrialMonths": "{count, plural, one{{count} месяц бесплатно} few{{count} месяца бесплатно} many{{count} месяцев бесплатно} other{{count} месяца бесплатно}}",
+  "proTrialYears": "{count, plural, one{{count} год бесплатно} few{{count} года бесплатно} many{{count} лет бесплатно} other{{count} года бесплатно}}",
+  "proLegalTrial": "Во время бесплатного периода ничего не списывается. Отмените минимум за 24 часа до его конца, и вы ничего не заплатите; иначе подписка начнётся, когда он закончится.",
+  "proTrialUntil": "Бесплатный период до {date}"
 }

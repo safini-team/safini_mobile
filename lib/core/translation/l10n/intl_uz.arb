@@ -934,5 +934,13 @@
   "freeLimitApps": "Bepul tarifda har bir farzand uchun uchta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
   "freeLimitTasks": "Bepul tarifda har bir farzand uchun uchta vazifa takrorlanadi. Safini Pro bilan barcha vazifalar takrorlanishi mumkin.",
   "freeLimitSeePro": "Safini Pro haqida",
-  "freeLimitAndroid": "Safini Pro tez orada Androidda paydo boʻladi."
+  "freeLimitAndroid": "Safini Pro tez orada Androidda paydo boʻladi.",
+  "proStartTrial": "Bepul sinovni boshlash",
+  "proTrialThen": "{trial}, keyin {price}",
+  "proTrialDays": "{count, plural, other{{count} kun bepul}}",
+  "proTrialWeeks": "{count, plural, other{{count} hafta bepul}}",
+  "proTrialMonths": "{count, plural, other{{count} oy bepul}}",
+  "proTrialYears": "{count, plural, other{{count} yil bepul}}",
+  "proLegalTrial": "Bepul sinov davomida hech narsa yechilmaydi. Tugashidan kamida 24 soat oldin bekor qilsangiz, hech narsa toʻlamaysiz; aks holda obuna sinov tugaganda boshlanadi.",
+  "proTrialUntil": "Bepul sinov {date} gacha"
 }

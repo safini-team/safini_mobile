@@ -15,6 +15,17 @@ class ProProducts {
 
 enum ProPeriod { month, year }
 
+enum ProTrialUnit { day, week, month, year }
+
+/// A free trial Apple will give this Apple ID on a plan: one per
+/// subscription group, so after any trial or subscription there is none.
+class ProTrial {
+  const ProTrial(this.count, this.unit);
+
+  final int count;
+  final ProTrialUnit unit;
+}
+
 /// One product as the App Store prices it for this Apple ID's storefront.
 class ProOffer {
   const ProOffer({
@@ -22,6 +33,7 @@ class ProOffer {
     required this.price,
     required this.rawPrice,
     required this.currencyCode,
+    this.trial,
   });
 
   final String productId;
@@ -30,6 +42,9 @@ class ProOffer {
   final String price;
   final double rawPrice;
   final String currencyCode;
+
+  /// Null when the plan has no free trial or this Apple ID already used one.
+  final ProTrial? trial;
 
   ProPeriod get period =>
       productId == ProProducts.yearly ? ProPeriod.year : ProPeriod.month;
@@ -119,8 +134,42 @@ class AppStoreProStore implements ProStore {
           price: product.price,
           rawPrice: product.rawPrice,
           currencyCode: product.currencyCode,
+          trial: await _trial(product),
         ),
     ];
+  }
+
+  /// Monthly has a week free and yearly a month (App Store Connect). The
+  /// plugin lists the introductory offer among the promotional ones.
+  Future<ProTrial?> _trial(ProductDetails product) async {
+    if (product is! AppStoreProduct2Details) return null;
+    final offers = product.sk2Product.subscription?.promotionalOffers ?? [];
+    final free = offers
+        .where(
+          (offer) =>
+              offer.type == SK2SubscriptionOfferType.introductory &&
+              offer.paymentMode == SK2SubscriptionOfferPaymentMode.freeTrial,
+        )
+        .firstOrNull;
+    if (free == null) return null;
+    try {
+      if (!await SK2Product.isIntroductoryOfferEligible(product.id)) {
+        return null;
+      }
+    } catch (_) {
+      // Unknown eligibility: promise nothing rather than a trial Apple
+      // then refuses.
+      return null;
+    }
+    return ProTrial(
+      free.period.value * free.periodCount,
+      switch (free.period.unit) {
+        SK2SubscriptionPeriodUnit.day => ProTrialUnit.day,
+        SK2SubscriptionPeriodUnit.week => ProTrialUnit.week,
+        SK2SubscriptionPeriodUnit.month => ProTrialUnit.month,
+        SK2SubscriptionPeriodUnit.year => ProTrialUnit.year,
+      },
+    );
   }
 
   @override

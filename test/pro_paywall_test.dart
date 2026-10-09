@@ -64,12 +64,13 @@ class _FakeStore implements ProStore {
   final bought = <(String, String)>[];
   List<StoreUpdate> leftovers = [];
   List<StoreUpdate> entitlements = [];
+  List<ProOffer> catalog = const [_monthly, _yearly];
 
   @override
   Stream<List<StoreUpdate>> get updates => controller.stream;
 
   @override
-  Future<List<ProOffer>> offers() async => const [_monthly, _yearly];
+  Future<List<ProOffer>> offers() async => catalog;
 
   @override
   Future<void> buy(ProOffer offer, {required String accountToken}) async {
@@ -106,9 +107,12 @@ DioException _status(int code) => DioException(
   ),
 );
 
-Future<(ProCubit, _FakeApi, _FakeStore)> _started() async {
+Future<(ProCubit, _FakeApi, _FakeStore)> _started({
+  List<ProOffer>? catalog,
+}) async {
   final api = _FakeApi();
   final store = _FakeStore();
+  if (catalog != null) store.catalog = catalog;
   final cubit = ProCubit(api: api, store: store);
   await cubit.start();
   await cubit.loadOffers();
@@ -282,6 +286,60 @@ void main() {
       expect(find.text('Restore purchases'), findsOneWidget);
       expect(find.text('Terms of Use'), findsOneWidget);
       expect(find.text('Privacy Policy'), findsOneWidget);
+    });
+
+    testWidgets('offers the free trial while the Apple ID can have it', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1170, 3600);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      final (cubit, _, _) = await _started(
+        catalog: const [
+          ProOffer(
+            productId: ProProducts.monthly,
+            price: r'$6.99',
+            rawPrice: 6.99,
+            currencyCode: 'USD',
+            trial: ProTrial(1, ProTrialUnit.week),
+          ),
+          ProOffer(
+            productId: ProProducts.yearly,
+            price: r'$66.99',
+            rawPrice: 66.99,
+            currencyCode: 'USD',
+            trial: ProTrial(1, ProTrialUnit.month),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(_host(PaywallScreen(cubit: cubit)));
+      await tester.pumpAndSettle();
+
+      expect(find.text(r'1 month free, then $66.99 per year'), findsOneWidget);
+      expect(find.text(r'1 week free, then $6.99 per month'), findsOneWidget);
+      expect(find.text('Start free trial'), findsOneWidget);
+      expect(find.text('Subscribe'), findsNothing);
+      expect(find.textContaining('Nothing is charged during'), findsOneWidget);
+    });
+
+    testWidgets('a family on its trial sees when it ends', (tester) async {
+      final (cubit, api, _) = await _started();
+      api.plan = FamilyPlan(
+        isPro: true,
+        status: 'active',
+        source: 'apple',
+        productId: ProProducts.yearly,
+        isTrial: true,
+        willRenew: true,
+        expiresAt: DateTime.utc(2026, 11, 9, 12),
+      );
+      await cubit.refresh();
+
+      await tester.pumpWidget(_host(PaywallScreen(cubit: cubit)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Free trial until Nov 9, 2026'), findsOneWidget);
     });
 
     testWidgets('a Pro family sees its plan and Manage subscription', (

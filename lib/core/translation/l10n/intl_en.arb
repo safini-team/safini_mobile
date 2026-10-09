@@ -1080,5 +1080,13 @@
   "freeLimitApps": "The free plan limits three apps per child. With Safini Pro you can limit every app.",
   "freeLimitTasks": "The free plan repeats three tasks per child. With Safini Pro every task can repeat.",
   "freeLimitSeePro": "See Safini Pro",
-  "freeLimitAndroid": "Safini Pro is coming to Android soon."
+  "freeLimitAndroid": "Safini Pro is coming to Android soon.",
+  "proStartTrial": "Start free trial",
+  "proTrialThen": "{trial}, then {price}",
+  "proTrialDays": "{count, plural, one{{count} day free} other{{count} days free}}",
+  "proTrialWeeks": "{count, plural, one{{count} week free} other{{count} weeks free}}",
+  "proTrialMonths": "{count, plural, one{{count} month free} other{{count} months free}}",
+  "proTrialYears": "{count, plural, one{{count} year free} other{{count} years free}}",
+  "proLegalTrial": "Nothing is charged during the free trial. Cancel at least 24 hours before it ends and you pay nothing; otherwise the subscription starts when the trial ends.",
+  "proTrialUntil": "Free trial until {date}"
 }

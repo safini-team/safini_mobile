@@ -905,5 +905,13 @@
   "extraHead": "Бас киім",
   "extraAccessory": "Аксессуар",
   "extraVehicle": "Көлік",
-  "comingSoonSubtitle": "Қызықты жаңалықтар қосып жатырмыз. Кейінірек қайта кел!"
+  "comingSoonSubtitle": "Қызықты жаңалықтар қосып жатырмыз. Кейінірек қайта кел!",
+  "proStartTrial": "Тегін кезеңді бастау",
+  "proTrialThen": "{trial}, содан кейін {price}",
+  "proTrialDays": "{count, plural, other{{count} күн тегін}}",
+  "proTrialWeeks": "{count, plural, other{{count} апта тегін}}",
+  "proTrialMonths": "{count, plural, other{{count} ай тегін}}",
+  "proTrialYears": "{count, plural, other{{count} жыл тегін}}",
+  "proLegalTrial": "Тегін кезеңде ештеңе алынбайды. Ол аяқталудан кемінде 24 сағат бұрын бас тартсаңыз, ештеңе төлемейсіз; әйтпесе жазылым тегін кезең аяқталғанда басталады.",
+  "proTrialUntil": "Тегін кезең {date} дейін"
 }
