@@ -138,6 +138,11 @@ class _GalleryState extends State<_Gallery> {
       (context) => PaywallScreen(cubit: _PreviewPro.active),
     ),
     _Entry(
+      'Safini Pro · Android',
+      AppColors.bgParent,
+      (context) => PaywallScreen(cubit: _PreviewPro.android),
+    ),
+    _Entry(
       'Free limit · iPhone',
       AppColors.bgParent,
       (context) => const _FreeLimitPreview(canBuy: true),
@@ -529,12 +534,14 @@ class _PreviewStore implements ProStore {
       price: r'$6.99',
       rawPrice: 6.99,
       currencyCode: 'USD',
+      trial: ProTrial(1, ProTrialUnit.week),
     ),
     ProOffer(
       productId: ProProducts.yearly,
       price: r'$66.99',
       rawPrice: 66.99,
       currencyCode: 'USD',
+      trial: ProTrial(1, ProTrialUnit.month),
     ),
   ];
 
@@ -565,6 +572,9 @@ class _PreviewPro {
     api: _PreviewPlans(FamilyPlan.free),
     store: _PreviewStore(),
   );
+
+  /// Android sells nothing, so the page is features and the promo box.
+  static final ProCubit android = ProCubit(api: _PreviewPlans(FamilyPlan.free));
 
   static final ProCubit active = ProCubit(
     api: _PreviewPlans(

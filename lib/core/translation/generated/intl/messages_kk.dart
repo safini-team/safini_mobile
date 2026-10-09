@@ -184,84 +184,100 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m71(percent) => "${percent}% үнемдеу";
 
-  static String m72(name) =>
+  static String m72(count) =>
+      "${Intl.plural(count, other: '${count} күн тегін')}";
+
+  static String m73(count) =>
+      "${Intl.plural(count, other: '${count} ай тегін')}";
+
+  static String m74(trial, price) => "${trial}, содан кейін ${price}";
+
+  static String m75(date) => "Тегін кезең ${date} дейін";
+
+  static String m76(count) =>
+      "${Intl.plural(count, other: '${count} апта тегін')}";
+
+  static String m77(count) =>
+      "${Intl.plural(count, other: '${count} жыл тегін')}";
+
+  static String m78(name) =>
       "Оны ${name} жаңа телефонында «Мен баламын» бөліміне енгізіңіз. Монеталар, тапсырмалар және тарих сол жаққа көшеді, ал ескі телефонда лимиттер жұмыс істемей қалады.";
 
-  static String m73(cost, time) =>
+  static String m79(cost, time) =>
       "Бала күнделікті лимиттен тыс ${time} ашу үшін ${cost} монета жұмсай алады.";
 
-  static String m74(minutes) => "${minutes} мин қалды";
+  static String m80(minutes) => "${minutes} мин қалды";
 
-  static String m75(name) =>
+  static String m81(name) =>
       "Бұл «${name}» бала аккаунтын және оған байланысты барлық деректі, соның ішінде тапсырмаларды, монеталарды және қолданба баптауларын біржола жояды. Мұны қайтару мүмкін емес.";
 
-  static String m76(name) => "«${name}» аккаунтын жоясыз ба?";
+  static String m82(name) => "«${name}» аккаунтын жоясыз ба?";
 
-  static String m77(name) => "«${name}» аккаунты біржола жойылды.";
+  static String m83(name) => "«${name}» аккаунты біржола жойылды.";
 
-  static String m78(name) => "${name} үшін сақтау";
+  static String m84(name) => "${name} үшін сақтау";
 
-  static String m79(name) => "${name} үшін сақталды";
+  static String m85(name) => "${name} үшін сақталды";
 
-  static String m80(count) => "Барлық ${count} қолданбаны көрсету";
+  static String m86(count) => "Барлық ${count} қолданбаны көрсету";
 
-  static String m81(code) => "Код ${code} · қолданба лимиттері өшеді";
+  static String m87(code) => "Код ${code} · қолданба лимиттері өшеді";
 
-  static String m82(name) => "${name} шыққысы келеді";
+  static String m88(name) => "${name} шыққысы келеді";
 
-  static String m83(count) =>
+  static String m89(count) =>
       "${Intl.plural(count, one: 'Код қате. 1 мүмкіндік қалды.', other: 'Код қате. ${count} мүмкіндік қалды.')}";
 
-  static String m84(count) =>
+  static String m90(count) =>
       "${Intl.plural(count, one: '1 тапсырма', other: '${count} тапсырма')}";
 
-  static String m85(tasks, coins) => "${tasks} · ${coins}";
+  static String m91(tasks, coins) => "${tasks} · ${coins}";
 
-  static String m86(scope, tasks) => "${scope} · ${tasks}";
+  static String m92(scope, tasks) => "${scope} · ${tasks}";
 
-  static String m87(tasks, coins) => "${tasks} қалды - ${coins} күтіп тұр";
+  static String m93(tasks, coins) => "${tasks} қалды - ${coins} күтіп тұр";
 
-  static String m88(time) => "${time} қалды";
+  static String m94(time) => "${time} қалды";
 
-  static String m89(time) => "${time} пайдаланылды";
+  static String m95(time) => "${time} пайдаланылды";
 
-  static String m90(count) => "тағы ${count}";
+  static String m96(count) => "тағы ${count}";
 
-  static String m91(step, total) => "${total} ішінен ${step}";
+  static String m97(step, total) => "${total} ішінен ${step}";
 
-  static String m92(name) =>
+  static String m98(name) =>
       "Оны ${name} телефонында «Мен баламын» бөліміне енгізіңіз.";
 
-  static String m93(used, limit) => "${used} пайдаланылды / ${limit} лимит";
+  static String m99(used, limit) => "${used} пайдаланылды / ${limit} лимит";
 
-  static String m94(used) => "${used} · лимитсіз";
+  static String m100(used) => "${used} · лимитсіз";
 
-  static String m95(used, limit) => "${used} / ${limit}";
+  static String m101(used, limit) => "${used} / ${limit}";
 
-  static String m96(used, limit) => "${used} / ${limit} · асып кетті";
+  static String m102(used, limit) => "${used} / ${limit} · асып кетті";
 
-  static String m97(time) => "бүгін ${time}";
+  static String m103(time) => "бүгін ${time}";
 
-  static String m98(seconds) => "${seconds} сек қалды";
-
-  static String m99(count) =>
-      "${Intl.plural(count, one: '1 күтуде', other: '${count} күтуде')}";
-
-  static String m100(name) => "${name} телефонын күтудеміз…";
-
-  static String m101(name) => "Бағасын қойыңыз, ол дүкенге түседі: ${name}.";
-
-  static String m102(name, prize) => "${name} армандайды: ${prize}";
-
-  static String m103(name, coins) => "${name} · ${coins}";
-
-  static String m104(age) =>
-      "${Intl.plural(age, one: '1 жаста', other: '${age} жаста')}";
+  static String m104(seconds) => "${seconds} сек қалды";
 
   static String m105(count) =>
+      "${Intl.plural(count, one: '1 күтуде', other: '${count} күтуде')}";
+
+  static String m106(name) => "${name} телефонын күтудеміз…";
+
+  static String m107(name) => "Бағасын қойыңыз, ол дүкенге түседі: ${name}.";
+
+  static String m108(name, prize) => "${name} армандайды: ${prize}";
+
+  static String m109(name, coins) => "${name} · ${coins}";
+
+  static String m110(age) =>
+      "${Intl.plural(age, one: '1 жаста', other: '${age} жаста')}";
+
+  static String m111(count) =>
       "${Intl.plural(count, one: 'Тағы 1 монета керек.', other: 'Тағы ${count} монета керек.')}";
 
-  static String m106(name) => "${name} (сіз)";
+  static String m112(name) => "${name} (сіз)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1364,6 +1380,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Отбасыңызда Safini Pro бар",
     ),
     "proActiveUntil": m67,
+    "proAndroidSoon": MessageLookupByLibrary.simpleMessage(
+      "Android-та Safini Pro сатып алу жақында мүмкін болады. Промокодыңыз бар ма? Оны төменге енгізіңіз.",
+    ),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Сатып алу орындалмады. Қайталап көріңіз.",
     ),
@@ -1387,6 +1406,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "proLegal": MessageLookupByLibrary.simpleMessage(
       "Төлем Apple ID есептік жазбаңыздан алынады. Кезең аяқталуына кемінде 24 сағат қалғанда бас тартпасаңыз, жазылым сол бағамен автоматты түрде ұзартылады. Жазылымды App Store баптауларында басқаруға немесе тоқтатуға болады.",
+    ),
+    "proLegalTrial": MessageLookupByLibrary.simpleMessage(
+      "Тегін кезеңде ештеңе алынбайды. Ол аяқталудан кемінде 24 сағат бұрын бас тартсаңыз, ештеңе төлемейсіз; әйтпесе жазылым тегін кезең аяқталғанда басталады.",
     ),
     "proManage": MessageLookupByLibrary.simpleMessage("Жазылымды басқару"),
     "proMonthly": MessageLookupByLibrary.simpleMessage("Айлық"),
@@ -1413,18 +1435,51 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "proSave": m71,
     "proSettingsFree": MessageLookupByLibrary.simpleMessage("Тегін жоспар"),
+    "proStartTrial": MessageLookupByLibrary.simpleMessage(
+      "Тегін кезеңді бастау",
+    ),
     "proStoreUnavailable": MessageLookupByLibrary.simpleMessage(
       "App Store-пен байланысу мүмкін болмады.",
     ),
     "proSubscribe": MessageLookupByLibrary.simpleMessage("Жазылу"),
     "proTerms": MessageLookupByLibrary.simpleMessage("Пайдалану шарттары"),
     "proTitle": MessageLookupByLibrary.simpleMessage("Safini Pro"),
+    "proTrialDays": m72,
+    "proTrialMonths": m73,
+    "proTrialThen": m74,
+    "proTrialUntil": m75,
+    "proTrialWeeks": m76,
+    "proTrialYears": m77,
     "proWelcome": MessageLookupByLibrary.simpleMessage(
       "Safini Pro-ға қош келдіңіз!",
     ),
     "proYearly": MessageLookupByLibrary.simpleMessage("Жылдық"),
     "profile": MessageLookupByLibrary.simpleMessage("Профиль"),
     "profileUpdated": MessageLookupByLibrary.simpleMessage("Сақталды"),
+    "promoAlreadyPro": MessageLookupByLibrary.simpleMessage(
+      "Отбасыңызда Safini Pro бұрыннан бар.",
+    ),
+    "promoAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Отбасыңыз бұл промокодты бұрын қолданған.",
+    ),
+    "promoApplied": MessageLookupByLibrary.simpleMessage(
+      "Промокод қолданылды. Отбасыңызда Safini Pro бар.",
+    ),
+    "promoApply": MessageLookupByLibrary.simpleMessage("Қолдану"),
+    "promoFailed": MessageLookupByLibrary.simpleMessage(
+      "Кодты тексеру мүмкін болмады. Қайта көріңіз.",
+    ),
+    "promoHint": MessageLookupByLibrary.simpleMessage("Кодты енгізіңіз"),
+    "promoInvalid": MessageLookupByLibrary.simpleMessage(
+      "Бұл промокод жарамсыз.",
+    ),
+    "promoTitle": MessageLookupByLibrary.simpleMessage("Промокод"),
+    "promoTooMany": MessageLookupByLibrary.simpleMessage(
+      "Тым көп әрекет. Бірнеше минут күтіп, қайта көріңіз.",
+    ),
+    "promoUsedUp": MessageLookupByLibrary.simpleMessage(
+      "Бұл промокод таусылды.",
+    ),
     "proofPhotoFailed": MessageLookupByLibrary.simpleMessage(
       "Фотоны жүктеу мүмкін болмады",
     ),
@@ -1443,7 +1498,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
       "Қайта байланыстыру коды · 24 сағат жарамды",
     ),
-    "reconnectMovesProfile": m72,
+    "reconnectMovesProfile": m78,
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Кодпен қайта байланыстыру",
     ),
@@ -1451,17 +1506,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Дауыстық нұсқау жазу",
     ),
     "recordingVoice": MessageLookupByLibrary.simpleMessage("Жазылуда"),
-    "redeemExplainer": m73,
+    "redeemExplainer": m79,
     "redoNoteHint": MessageLookupByLibrary.simpleMessage(
       "Нені түзету керек? Міндетті емес.",
     ),
     "reject": MessageLookupByLibrary.simpleMessage("Қабылдамау"),
     "remaining": MessageLookupByLibrary.simpleMessage("Қалды"),
-    "remainingTime": m74,
+    "remainingTime": m80,
     "removeChild": MessageLookupByLibrary.simpleMessage("Бала аккаунтын жою"),
-    "removeChildConfirmBody": m75,
-    "removeChildConfirmTitle": m76,
-    "removeChildDeletedSuccess": m77,
+    "removeChildConfirmBody": m81,
+    "removeChildConfirmTitle": m82,
+    "removeChildDeletedSuccess": m83,
     "removeChildError": MessageLookupByLibrary.simpleMessage(
       "Бала аккаунтын жою мүмкін болмады. Қайталап көріңіз.",
     ),
@@ -1530,9 +1585,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "sat": MessageLookupByLibrary.simpleMessage("СН"),
     "save": MessageLookupByLibrary.simpleMessage("Сақтау"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Өзгерістерді сақтау"),
-    "saveForName": m78,
+    "saveForName": m84,
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Бейнені сақтау!"),
-    "savedForName": m79,
+    "savedForName": m85,
     "scopeEveryone": MessageLookupByLibrary.simpleMessage("Барлығы"),
     "screenTime": MessageLookupByLibrary.simpleMessage("Экран уақыты"),
     "screenTimeCap": MessageLookupByLibrary.simpleMessage(
@@ -1568,7 +1623,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "setupYourFamily": MessageLookupByLibrary.simpleMessage(
       "Отбасыңызды баптаңыз",
     ),
-    "showAllAppsCount": m80,
+    "showAllAppsCount": m86,
     "showFewerApps": MessageLookupByLibrary.simpleMessage("Жию"),
     "signInAction": MessageLookupByLibrary.simpleMessage("Кіру"),
     "signInError": MessageLookupByLibrary.simpleMessage(
@@ -1591,15 +1646,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Бұл сұраудың мерзімі бітті. Әлі де шығу керек болса, қайта сұра.",
     ),
     "signoutKeep": MessageLookupByLibrary.simpleMessage("Шығармау"),
-    "signoutReviewMeta": m81,
-    "signoutReviewTitle": m82,
+    "signoutReviewMeta": m87,
+    "signoutReviewTitle": m88,
     "signoutTypeCode": MessageLookupByLibrary.simpleMessage(
       "Немесе ата-анаң айтқан кодты енгіз",
     ),
     "signoutWaiting": MessageLookupByLibrary.simpleMessage(
       "Жауапты күтудеміз…",
     ),
-    "signoutWrongCode": m83,
+    "signoutWrongCode": m89,
     "spendYourTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Уақыт монеталарыңды жұмса",
     ),
@@ -1647,7 +1702,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Тақтаны меңгер"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Шахмат сабағы"),
-    "taskCount": m84,
+    "taskCount": m90,
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage(
       "Тапсырма құрылды!",
     ),
@@ -1662,7 +1717,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Duolingo сабағын аяқта",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Тапсырма"),
-    "taskGroupSummary": m85,
+    "taskGroupSummary": m91,
     "taskIdeaBrushTeethDetails": MessageLookupByLibrary.simpleMessage(
       "Оянғаннан кейін екі минут тісіңді тазалап, суретін жібер.",
     ),
@@ -1773,7 +1828,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskRoomSub": MessageLookupByLibrary.simpleMessage("Күнделікті іс"),
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Бөлмеңді жина"),
-    "taskScopeLine": m86,
+    "taskScopeLine": m92,
     "taskStepsSub": MessageLookupByLibrary.simpleMessage("Көбірек қозғал!"),
     "taskStepsTitle": MessageLookupByLibrary.simpleMessage("5 000 қадам жүр"),
     "taskSubmittedForReview": MessageLookupByLibrary.simpleMessage(
@@ -1788,7 +1843,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tasksAndRewards": MessageLookupByLibrary.simpleMessage(
       "Тапсырмалар мен сыйлықтар",
     ),
-    "tasksLeftCoinsOnTable": m87,
+    "tasksLeftCoinsOnTable": m93,
     "theirNote": MessageLookupByLibrary.simpleMessage("Оның жазбасы"),
     "theyInstallSafini": MessageLookupByLibrary.simpleMessage(
       "Олар Safini-ді орнатып, кіріп, осы кодты енгізеді.",
@@ -1796,8 +1851,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "thisWeek": MessageLookupByLibrary.simpleMessage("Осы аптада"),
     "thu": MessageLookupByLibrary.simpleMessage("БС"),
     "timeCoins": MessageLookupByLibrary.simpleMessage("Уақыт монеталары"),
-    "timeLeft": m88,
-    "timeUsed": m89,
+    "timeLeft": m94,
+    "timeUsed": m95,
     "tip1": MessageLookupByLibrary.simpleMessage(
       "Жауапкершілікке үйрететін мәнді тапсырмалар беріңіз",
     ),
@@ -1813,7 +1868,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipsForParents": MessageLookupByLibrary.simpleMessage(
       "Ата-аналарға кеңестер",
     ),
-    "toGo": m90,
+    "toGo": m96,
     "todayOffline": MessageLookupByLibrary.simpleMessage("Байланыс жоқ"),
     "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
       "Интернет болғанда тапсырмалар шығады. Жаңарту үшін төмен тарт.",
@@ -1878,7 +1933,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Басты бетіңіз",
     ),
     "tourSkip": MessageLookupByLibrary.simpleMessage("Өткізіп жіберу"),
-    "tourStep": m91,
+    "tourStep": m97,
     "tryAgain": MessageLookupByLibrary.simpleMessage("Қайталау"),
     "tue": MessageLookupByLibrary.simpleMessage("СС"),
     "typeCodeFromOtherParent": MessageLookupByLibrary.simpleMessage(
@@ -1887,7 +1942,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "typeCodeFromParent": MessageLookupByLibrary.simpleMessage(
       "Ата-анаңнан алған кодты енгіз",
     ),
-    "typeItOnPhone": m92,
+    "typeItOnPhone": m98,
     "unitHour": MessageLookupByLibrary.simpleMessage("сағ"),
     "unitMinute": MessageLookupByLibrary.simpleMessage("мин"),
     "unlockExtraTime": MessageLookupByLibrary.simpleMessage(
@@ -1905,11 +1960,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateHardTitle": MessageLookupByLibrary.simpleMessage("Жаңарту керек"),
     "updateSoftBody": MessageLookupByLibrary.simpleMessage("Жаңа нұсқа шықты."),
     "updateSoftTitle": MessageLookupByLibrary.simpleMessage("Жаңарту бар"),
-    "usedLimit": m93,
-    "usedNoLimit": m94,
-    "usedOfLimit": m95,
-    "usedOfLimitOver": m96,
-    "usedTodayShort": m97,
+    "usedLimit": m99,
+    "usedNoLimit": m100,
+    "usedOfLimit": m101,
+    "usedOfLimitOver": m102,
+    "usedTodayShort": m103,
     "uzbek": MessageLookupByLibrary.simpleMessage("Өзбекше"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("Бала ретінде кіру"),
     "viewPhoto": MessageLookupByLibrary.simpleMessage("Фотоны ашу"),
@@ -1922,12 +1977,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voicePlaybackFailed": MessageLookupByLibrary.simpleMessage(
       "Дауыстық жазбаны ойнату мүмкін болмады.",
     ),
-    "voiceSecondsLeft": m98,
-    "waitingCount": m99,
+    "voiceSecondsLeft": m104,
+    "waitingCount": m105,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Ата-анаңның тексеруін күтудеміз",
     ),
-    "waitingForPhone": m100,
+    "waitingForPhone": m106,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Кию"),
     "wed": MessageLookupByLibrary.simpleMessage("СР"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Жм"),
@@ -1951,8 +2006,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "wishLabel": MessageLookupByLibrary.simpleMessage("Тілек"),
     "wishNameHint": MessageLookupByLibrary.simpleMessage("Футбол добы"),
     "wishPriceLabel": MessageLookupByLibrary.simpleMessage("Бағасы"),
-    "wishReviewBody": m101,
-    "wishReviewTitle": m102,
+    "wishReviewBody": m107,
+    "wishReviewTitle": m108,
     "wishSent": MessageLookupByLibrary.simpleMessage(
       "Тілек жіберілді. Ата-анаң оны көреді.",
     ),
@@ -1961,10 +2016,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "wishSheetTitle": MessageLookupByLibrary.simpleMessage("Не армандайсың?"),
     "wornLabel": MessageLookupByLibrary.simpleMessage("Киілген"),
-    "worthCoins": m103,
-    "yearsOld": m104,
-    "youNeedMoreCoins": m105,
-    "youSuffix": m106,
+    "worthCoins": m109,
+    "yearsOld": m110,
+    "youNeedMoreCoins": m111,
+    "youSuffix": m112,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Сіздің аккаунтыңыз"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Сенің аватарың"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("СІЗДІҢ БАЛАЛАРЫҢЫЗ"),

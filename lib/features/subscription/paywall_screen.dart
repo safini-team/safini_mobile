@@ -76,6 +76,8 @@ class _PaywallViewState extends State<_PaywallView> {
         AppSnackBar.error(context, s.proFailed);
       case ProNotice.otherFamily:
         AppSnackBar.error(context, s.proOtherFamily);
+      case ProNotice.promoApplied:
+        AppSnackBar.success(context, s.promoApplied);
       case ProNotice.none:
         break;
     }
@@ -115,31 +117,46 @@ class _PaywallViewState extends State<_PaywallView> {
                         const SizedBox(height: 20),
                         const _Features(),
                         const SizedBox(height: 22),
-                        _Plans(
-                          state: state,
-                          selected: _period,
-                          onSelect: (period) =>
-                              setState(() => _period = period),
-                        ),
-                        const SizedBox(height: 18),
-                        DsPrimaryButton(
-                          label: s.proSubscribe,
-                          busy: state.busy,
-                          enabled: state.offer(_period) != null && !state.busy,
-                          onTap: () => context.read<ProCubit>().buy(_period),
-                        ),
-                        const SizedBox(height: 14),
-                        Text(
-                          s.proLegal,
-                          style: AppText.footnote,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10),
-                        _LegalLinks(
-                          onRestore: state.busy
-                              ? null
-                              : () => context.read<ProCubit>().restore(),
-                        ),
+                        if (context.read<ProCubit>().canSell) ...[
+                            _Plans(
+                              state: state,
+                              selected: _period,
+                              onSelect: (period) =>
+                                  setState(() => _period = period),
+                            ),
+                            const SizedBox(height: 18),
+                            DsPrimaryButton(
+                              label: state.offer(_period)?.trial != null
+                                  ? s.proStartTrial
+                                  : s.proSubscribe,
+                              busy: state.busy,
+                              enabled: state.offer(_period) != null && !state.busy,
+                              onTap: () => context.read<ProCubit>().buy(_period),
+                            ),
+                            const SizedBox(height: 14),
+                            if (state.offer(_period)?.trial != null) ...[
+                              Text(
+                                s.proLegalTrial,
+                                style: AppText.footnote,
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 6),
+                            ],
+                            Text(
+                              s.proLegal,
+                              style: AppText.footnote,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 10),
+                            _LegalLinks(
+                              onRestore: state.busy
+                                  ? null
+                                  : () => context.read<ProCubit>().restore(),
+                            ),
+                        ] else
+                          Text(s.proAndroidSoon, style: AppText.bodyRegular),
+                        const SizedBox(height: 22),
+                        const _PromoCode(),
                       ],
               ),
             ),
@@ -239,9 +256,7 @@ class _Plans extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 10),
               child: _PlanTile(
                 title: period == ProPeriod.year ? s.proYearly : s.proMonthly,
-                price: period == ProPeriod.year
-                    ? s.proPerYear(offer.price)
-                    : s.proPerMonth(offer.price),
+                price: _price(s, offer),
                 badge: period == ProPeriod.year && saving != null
                     ? s.proSave(saving.toString())
                     : null,
@@ -252,6 +267,23 @@ class _Plans extends StatelessWidget {
       ],
     );
   }
+}
+
+/// `$66.99 per year`, or `1 month free, then $66.99 per year` while this
+/// Apple ID can still have the plan's trial.
+String _price(S s, ProOffer offer) {
+  final price = offer.period == ProPeriod.year
+      ? s.proPerYear(offer.price)
+      : s.proPerMonth(offer.price);
+  final trial = offer.trial;
+  if (trial == null) return price;
+  final free = switch (trial.unit) {
+    ProTrialUnit.day => s.proTrialDays(trial.count),
+    ProTrialUnit.week => s.proTrialWeeks(trial.count),
+    ProTrialUnit.month => s.proTrialMonths(trial.count),
+    ProTrialUnit.year => s.proTrialYears(trial.count),
+  };
+  return s.proTrialThen(free, price);
 }
 
 class _PlanTile extends StatelessWidget {
@@ -305,6 +337,90 @@ class _PlanTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// A code the team shared gives the family Pro for a while (API
+/// `POST /v1/billing/promo-codes/redeem`). The only way to Pro on Android.
+class _PromoCode extends StatefulWidget {
+  const _PromoCode();
+
+  @override
+  State<_PromoCode> createState() => _PromoCodeState();
+}
+
+class _PromoCodeState extends State<_PromoCode> {
+  final _code = TextEditingController();
+  PromoError? _error;
+
+  @override
+  void dispose() {
+    _code.dispose();
+    super.dispose();
+  }
+
+  Future<void> _apply() async {
+    FocusScope.of(context).unfocus();
+    final error = await context.read<ProCubit>().redeemPromo(_code.text);
+    if (mounted) setState(() => _error = error);
+  }
+
+  String _message(S s, PromoError error) => switch (error) {
+    PromoError.invalid => s.promoInvalid,
+    PromoError.usedUp => s.promoUsedUp,
+    PromoError.alreadyUsed => s.promoAlreadyUsed,
+    PromoError.alreadyPro => s.promoAlreadyPro,
+    PromoError.tooMany => s.promoTooMany,
+    PromoError.failed => s.promoFailed,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final busy = context.select((ProCubit pro) => pro.state.busy);
+    final error = _error;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(s.promoTitle, style: AppText.section),
+        const SizedBox(height: 8),
+        DsCard(
+          shadow: AppShadows.flat,
+          radius: AppRadius.card,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _code,
+                  decoration: DsFieldRow.decoration(s.promoHint),
+                  style: AppText.rowTitleLg,
+                  textCapitalization: TextCapitalization.characters,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  textInputAction: TextInputAction.done,
+                  onChanged: (_) {
+                    if (_error != null) setState(() => _error = null);
+                  },
+                  onSubmitted: busy ? null : (_) => _apply(),
+                ),
+              ),
+              DsInlineButton.quiet(
+                label: s.promoApply,
+                onTap: busy ? null : _apply,
+              ),
+            ],
+          ),
+        ),
+        if (error != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            _message(s, error),
+            style: AppText.footnote.copyWith(color: AppColors.danger),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -364,7 +480,11 @@ class _ActivePlan extends StatelessWidget {
               if (date != null) ...[
                 const SizedBox(height: 6),
                 Text(
-                  plan.willRenew ? s.proRenewsOn(date) : s.proActiveUntil(date),
+                  plan.isTrial
+                      ? s.proTrialUntil(date)
+                      : plan.willRenew
+                      ? s.proRenewsOn(date)
+                      : s.proActiveUntil(date),
                   style: AppText.body.copyWith(color: AppColors.primaryPale),
                 ),
               ],

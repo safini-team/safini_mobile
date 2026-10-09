@@ -79,6 +79,16 @@ class PlanApi {
     return FamilyPlan.fromJson(_map(response.data));
   }
 
+  /// Redeems a promo code for the family. The plan comes back with
+  /// `source: promo` and `isTrial`, ending at `expiresAt`.
+  Future<FamilyPlan> redeemPromo(String code) async {
+    final response = await _dio.post(
+      ApiConst.promoRedeem,
+      data: {'code': code},
+    );
+    return FamilyPlan.fromJson(_map(response.data));
+  }
+
   static Map<String, dynamic> _map(dynamic raw) =>
       raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{};
 }
