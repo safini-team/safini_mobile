@@ -1,5 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'dart:io';
+
 import 'package:safini/core/utils/child_avatar_look.dart';
+import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/models/domain/models/child_model.dart';
 import 'package:safini/features/child/presentation/widgets/utils/avatar_character_catalog.dart';
 
@@ -71,78 +74,60 @@ void main() {
     });
   });
 
-  // ─── SAF-131 Regression: partial equip update must not wipe other fields ──
+  // ─── SAF-131: PATCH replaces avatar_state, so a save must carry everything ──
 
-  group('SAF-131 partial equip update safety', () {
-    test('changing head slot must not remove existing accessory slot', () {
-      // Simulate what AvatarCubit._saveAvatarState sends after equipping a head item:
-      // the `equipped` map should contain ALL currently-equipped slots, not just head.
-      final existingEquipped = {
-        'accessory': 'item_watch_gold',
-        'vehicle': 'item_car_blue',
-      };
-
-      // Simulated new head item
-      const newHeadId = 'item_cap_green';
-
-      // Safe merge: add head without removing others
-      final merged = {...existingEquipped, 'head': newHeadId};
-
-      expect(merged['head'], 'item_cap_green');
-      expect(merged['accessory'], 'item_watch_gold',
-          reason: 'accessory must survive a head change');
-      expect(merged['vehicle'], 'item_car_blue',
-          reason: 'vehicle must survive a head change');
-    });
-
-    test('changing character_id must not remove equipped slots', () {
-      // The PATCH body sent by selectCharacter must include the existing equipped map.
-      final existingEquipped = {
-        'head': 'item_cap_red',
-        'accessory': 'item_glasses_round',
-      };
-
-      final patchBody = {
-        'avatar_state': {
-          'character_id': 'char_09',
-          'equipped': existingEquipped,
-          'emojis': {'face': '😊'},
-        },
-      };
-
-      final sentState = patchBody['avatar_state'] as Map;
-      expect(sentState['character_id'], 'char_09');
-      final sentEquipped = sentState['equipped'] as Map;
-      expect(sentEquipped['head'], 'item_cap_red',
-          reason: 'head must survive a character change');
-      expect(sentEquipped['accessory'], 'item_glasses_round',
-          reason: 'accessory must survive a character change');
-    });
-
-    test('legacy face emoji change must not wipe equipped slots', () {
-      // selectFace sends the existing _equipped map back unchanged.
-      final preserved = {
-        'hair': 'starter-hair-01',
-        'outfit': 'cosmic-cape',
-        'head': 'item_beanie',
-      };
-
-      final patchBody = {
-        'avatar_state': {
+  group('mergeAvatarState', () {
+    test('character change keeps equipped, emojis and unknown keys', () {
+      final merged = mergeAvatarState(
+        {
           'character_id': 'char_01',
-          'equipped': preserved,
-          'emojis': {'face': '🤓'},
+          'equipped': {'outfit': 'cosmic-cape'},
+          'emojis': {'face': '🤓', 'outfit': '🦸'},
+          'owned_characters': ['char_05'],
         },
-      };
+        characterId: 'char_09',
+        equipped: {'outfit': 'cosmic-cape'},
+        emojis: {'face': '🤓'},
+      );
+      expect(merged['character_id'], 'char_09');
+      expect(merged['equipped'], {'outfit': 'cosmic-cape'});
+      expect(merged['emojis'], {'face': '🤓', 'outfit': '🦸'});
+      expect(merged['owned_characters'], ['char_05']);
+    });
 
-      final sentEquipped =
-          (patchBody['avatar_state'] as Map)['equipped'] as Map;
-      expect(sentEquipped['hair'], 'starter-hair-01',
-          reason: 'legacy hair must not be wiped by a face change');
-      expect(sentEquipped['outfit'], 'cosmic-cape',
-          reason: 'legacy outfit must not be wiped by a face change');
-      expect(sentEquipped['head'], 'item_beanie',
-          reason: 'v2 head must not be wiped by a face change');
+    test('face change keeps the character the server holds', () {
+      final merged = mergeAvatarState(
+        {'character_id': 'char_07', 'equipped': {}},
+        characterId: 'char_07',
+        equipped: const {},
+        emojis: {'face': '😎'},
+      );
+      expect(merged['character_id'], 'char_07');
+      expect((merged['emojis'] as Map)['face'], '😎');
+    });
+
+    test('no character yet means no character_id key is invented', () {
+      final merged = mergeAvatarState(
+        const {},
+        equipped: const {},
+        emojis: {'face': '😊'},
+      );
+      expect(merged.containsKey('character_id'), isFalse);
+    });
+
+    test('does not mutate the base map', () {
+      final base = <String, dynamic>{
+        'equipped': {'hair': 'starter-hair-01'},
+        'emojis': {'face': '😊'},
+      };
+      mergeAvatarState(
+        base,
+        characterId: 'char_02',
+        equipped: {'hair': 'starter-hair-01'},
+        emojis: {'face': '🥰'},
+      );
+      expect(base.containsKey('character_id'), isFalse);
+      expect((base['emojis'] as Map)['face'], '😊');
     });
   });
 
@@ -169,7 +154,7 @@ void main() {
       expect(look.headItemId, 'item_beanie_purple');
     });
 
-    test('mixed v1+v2 — emoji and characterId both available', () {
+    test('mixed v1+v2 - emoji and characterId both available', () {
       final look = ChildAvatarLook.fromAvatarState({
         'character_id': 'char_03',
         'emojis': {'face': '🥰'},
@@ -231,8 +216,23 @@ void main() {
 
     test('asset paths follow the expected convention', () {
       for (final c in safiniiCharacters) {
-        expect(c.assetPath, 'assets/avatar/characters/${c.id}.png');
+        expect(c.assetPath, 'assets/avatar/characters/${c.id}.webp');
       }
+    });
+
+    test('every catalog character has its bundled file', () {
+      for (final c in safiniiCharacters) {
+        expect(File(c.assetPath).existsSync(), isTrue,
+            reason: '${c.assetPath} missing');
+      }
+    });
+
+    test('bundled character art stays small', () {
+      final bytes = safiniiCharacters
+          .map((c) => File(c.assetPath).lengthSync())
+          .fold<int>(0, (a, b) => a + b);
+      expect(bytes, lessThan(3 * 1024 * 1024),
+          reason: 'character art is ${bytes ~/ 1024} KB');
     });
   });
 
@@ -267,7 +267,7 @@ void main() {
       final model = AvatarStateModel.fromJson({});
       expect(model.characterId, isNull);
       expect(model.equipped, isEmpty);
-      // No exception thrown — safe
+      // No exception thrown - safe
     });
 
     test('child with character_id but no equipped map still parses', () {

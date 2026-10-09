@@ -10,7 +10,6 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
-import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_model.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
@@ -48,7 +47,6 @@ class _AvatarScreen extends StatelessWidget {
     return BlocBuilder<AvatarCubit, AvatarState>(
       builder: (context, state) {
         final cubit = context.read<AvatarCubit>();
-        final coins = context.watch<CoinsCubit>().state;
 
         final visibleTabs = [
           AvatarCategory.character,
@@ -141,10 +139,7 @@ class _AvatarScreen extends StatelessWidget {
                         child: state.selectedCategory == AvatarCategory.character
                             ? _CharacterGrid(
                                 selectedId: state.characterId,
-                                ownedCharacterIds: state.ownedCharacterIds,
-                                coins: coins,
                                 onSelect: cubit.selectCharacter,
-                                onPurchase: cubit.purchaseCharacter,
                               )
                             : const _ComingSoonSection(),
                       ),
@@ -296,17 +291,11 @@ class _TabChip extends StatelessWidget {
 class _CharacterGrid extends StatelessWidget {
   const _CharacterGrid({
     required this.selectedId,
-    required this.ownedCharacterIds,
-    required this.coins,
     required this.onSelect,
-    required this.onPurchase,
   });
 
   final String? selectedId;
-  final Set<String> ownedCharacterIds;
-  final int coins;
   final ValueChanged<String> onSelect;
-  final ValueChanged<String> onPurchase;
 
   @override
   Widget build(BuildContext context) {
@@ -320,100 +309,31 @@ class _CharacterGrid extends StatelessWidget {
         crossAxisCount: 4,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        mainAxisExtent: 108,
+        mainAxisExtent: 80,
       ),
       itemCount: safiniiCharacters.length,
       itemBuilder: (context, index) {
         final character = safiniiCharacters[index];
         final isSelected = character.id == effectiveId;
-        final cost = characterPrices[character.id];
-        final owned = cost == null || ownedCharacterIds.contains(character.id);
-        final effectiveCost = cost ?? 0;
-        final affordable = owned || coins >= effectiveCost;
 
         return Pressable(
-          onTap: owned
-              ? () => onSelect(character.id)
-              : affordable
-              ? () => onPurchase(character.id)
-              : null,
+          onTap: () => onSelect(character.id),
           scale: 0.93,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: double.infinity,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primaryTint
-                      : owned
-                      ? AppColors.fillAlt
-                      : AppColors.fillAlt.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(AppRadius.control),
-                  border: isSelected
-                      ? Border.all(color: AppColors.primary, width: 2.5)
-                      : null,
-                ),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(AppRadius.control - 2),
-                      child: Opacity(
-                        opacity: owned ? 1.0 : 0.45,
-                        child: SafiniAvatar(
-                          characterId: character.id,
-                          size: 80,
-                          showPlaceholderRing: false,
-                        ),
-                      ),
-                    ),
-                    if (!owned)
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              AppRadius.control - 2,
-                            ),
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.lock_rounded,
-                              color: Colors.white,
-                              size: 22,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black54,
-                                  blurRadius: 4,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              if (cost != null && !owned) ...[
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const DsCoinToken(size: 10),
-                    const SizedBox(width: 2),
-                    Text(
-                      '$cost',
-                      style: AppText.micro.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: affordable ? AppColors.ink : AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ],
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: double.infinity,
+            height: 80,
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.primaryTint : AppColors.fillAlt,
+              borderRadius: BorderRadius.circular(AppRadius.control),
+              border: isSelected
+                  ? Border.all(color: AppColors.primary, width: 2.5)
+                  : null,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.control - 2),
+              child: SafiniAvatar(characterId: character.id, size: 80),
+            ),
           ),
         );
       },

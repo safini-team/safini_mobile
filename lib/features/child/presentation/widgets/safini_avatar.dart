@@ -8,7 +8,8 @@ import 'package:safini/features/child/presentation/widgets/utils/avatar_characte
 ///   4. head cosmetic (hat, crown, etc.)
 ///
 /// Each layer renders `assets/avatar/cosmetics/<slot>/<itemId>.png`.
-/// When an asset file is not yet present, the layer is skipped silently.
+/// No cosmetic art is bundled yet (the head/accessory/vehicle tabs show
+/// "coming soon"), so every layer is skipped silently until the files ship.
 class SafiniAvatar extends StatelessWidget {
   const SafiniAvatar({
     super.key,

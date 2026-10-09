@@ -96,16 +96,12 @@ class AvatarState {
   /// have not yet migrated to the illustrated renderer).
   final String selectedFaceEmoji;
 
-  /// Characters the child has unlocked (includes all free chars + purchased ones).
-  final Set<String> ownedCharacterIds;
-
   const AvatarState({
     required this.avatarItems,
     this.selectedCategory = AvatarCategory.character,
     this.level = 0,
     this.characterId,
     this.selectedFaceEmoji = '😊',
-    this.ownedCharacterIds = const {},
   });
 
   const AvatarState.initial()
@@ -113,8 +109,7 @@ class AvatarState {
       selectedCategory = AvatarCategory.character,
       level = 0,
       characterId = null,
-      selectedFaceEmoji = '😊',
-      ownedCharacterIds = const {};
+      selectedFaceEmoji = '😊';
 
   List<AvatarGridItem> get currentItems =>
       avatarItems.where((i) => i.category == selectedCategory).toList();
@@ -128,7 +123,6 @@ class AvatarState {
     String? characterId,
     bool clearCharacterId = false,
     String? selectedFaceEmoji,
-    Set<String>? ownedCharacterIds,
   }) {
     return AvatarState(
       avatarItems: avatarItems ?? this.avatarItems,
@@ -136,7 +130,6 @@ class AvatarState {
       level: level ?? this.level,
       characterId: clearCharacterId ? null : (characterId ?? this.characterId),
       selectedFaceEmoji: selectedFaceEmoji ?? this.selectedFaceEmoji,
-      ownedCharacterIds: ownedCharacterIds ?? this.ownedCharacterIds,
     );
   }
 }
