@@ -7613,10 +7613,10 @@ class S {
     );
   }
 
-  /// `Limits on every app, not just three`
+  /// `Limits on every app, not just five`
   String get proFeatureApps {
     return Intl.message(
-      'Limits on every app, not just three',
+      'Limits on every app, not just five',
       name: 'proFeatureApps',
       desc: '',
       args: [],
@@ -7633,10 +7633,10 @@ class S {
     );
   }
 
-  /// `One subscription for both parents`
+  /// `Room for a second parent`
   String get proFeatureParents {
     return Intl.message(
-      'One subscription for both parents',
+      'Room for a second parent',
       name: 'proFeatureParents',
       desc: '',
       args: [],
@@ -7833,20 +7833,20 @@ class S {
     );
   }
 
-  /// `The free plan limits three apps per child. With Safini Pro you can limit every app.`
+  /// `The free plan limits five apps per child. With Safini Pro you can limit every app.`
   String get freeLimitApps {
     return Intl.message(
-      'The free plan limits three apps per child. With Safini Pro you can limit every app.',
+      'The free plan limits five apps per child. With Safini Pro you can limit every app.',
       name: 'freeLimitApps',
       desc: '',
       args: [],
     );
   }
 
-  /// `The free plan repeats three tasks per child. With Safini Pro every task can repeat.`
+  /// `The free plan repeats five tasks per child. With Safini Pro every task can repeat.`
   String get freeLimitTasks {
     return Intl.message(
-      'The free plan repeats three tasks per child. With Safini Pro every task can repeat.',
+      'The free plan repeats five tasks per child. With Safini Pro every task can repeat.',
       name: 'freeLimitTasks',
       desc: '',
       args: [],
@@ -7868,6 +7868,16 @@ class S {
     return Intl.message(
       'Safini Pro is coming to Android soon.',
       name: 'freeLimitAndroid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free plan has one parent. With Safini Pro a second parent can join your family.`
+  String get freeLimitParents {
+    return Intl.message(
+      'The free plan has one parent. With Safini Pro a second parent can join your family.',
+      name: 'freeLimitParents',
       desc: '',
       args: [],
     );

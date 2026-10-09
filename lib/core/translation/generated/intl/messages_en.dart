@@ -736,14 +736,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Safini Pro is coming to Android soon.",
     ),
     "freeLimitApps": MessageLookupByLibrary.simpleMessage(
-      "The free plan limits three apps per child. With Safini Pro you can limit every app.",
+      "The free plan limits five apps per child. With Safini Pro you can limit every app.",
     ),
     "freeLimitChildren": MessageLookupByLibrary.simpleMessage(
       "The free plan has one child. With Safini Pro you can add every child in your family.",
     ),
+    "freeLimitParents": MessageLookupByLibrary.simpleMessage(
+      "The free plan has one parent. With Safini Pro a second parent can join your family.",
+    ),
     "freeLimitSeePro": MessageLookupByLibrary.simpleMessage("See Safini Pro"),
     "freeLimitTasks": MessageLookupByLibrary.simpleMessage(
-      "The free plan repeats three tasks per child. With Safini Pro every task can repeat.",
+      "The free plan repeats five tasks per child. With Safini Pro every task can repeat.",
     ),
     "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
       "That\'s the free plan\'s limit",
@@ -1328,13 +1331,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "The purchase didn\'t go through. Try again.",
     ),
     "proFeatureApps": MessageLookupByLibrary.simpleMessage(
-      "Limits on every app, not just three",
+      "Limits on every app, not just five",
     ),
     "proFeatureChildren": MessageLookupByLibrary.simpleMessage(
       "Every child, not just one",
     ),
     "proFeatureParents": MessageLookupByLibrary.simpleMessage(
-      "One subscription for both parents",
+      "Room for a second parent",
     ),
     "proFeatureTasks": MessageLookupByLibrary.simpleMessage(
       "Unlimited recurring tasks",

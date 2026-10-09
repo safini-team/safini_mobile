@@ -908,9 +908,9 @@
   "proHeadline": "Butun oila uchun bitta tarif",
   "proLede": "Ikkala ota-ona va barcha bolalar uchun. Istalgan vaqtda bekor qilish mumkin.",
   "proFeatureChildren": "Faqat bitta emas, barcha bolalar",
-  "proFeatureApps": "Faqat uchta emas, barcha ilovalarga cheklov",
+  "proFeatureApps": "Faqat beshta emas, barcha ilovalarga cheklov",
   "proFeatureTasks": "Cheksiz takrorlanuvchi vazifalar",
-  "proFeatureParents": "Ikkala ota-ona uchun bitta obuna",
+  "proFeatureParents": "Oilaga ikkinchi ota-ona",
   "proYearly": "Yillik",
   "proMonthly": "Oylik",
   "proPerYear": "yiliga {price}",
@@ -932,8 +932,9 @@
   "proOtherFamily": "Bu Apple ID obunasi Safinidagi boshqa oilaga tegishli.",
   "freeLimitTitle": "Bepul tarif chegarasi",
   "freeLimitChildren": "Bepul tarifda bitta farzand. Safini Pro bilan oiladagi barcha farzandlarni qoʻshishingiz mumkin.",
-  "freeLimitApps": "Bepul tarifda har bir farzand uchun uchta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
-  "freeLimitTasks": "Bepul tarifda har bir farzand uchun uchta vazifa takrorlanadi. Safini Pro bilan barcha vazifalar takrorlanishi mumkin.",
+  "freeLimitApps": "Bepul tarifda har bir farzand uchun beshta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
+  "freeLimitTasks": "Bepul tarifda har bir farzand uchun beshta vazifa takrorlanadi. Safini Pro bilan barcha vazifalar takrorlanishi mumkin.",
   "freeLimitSeePro": "Safini Pro haqida",
-  "freeLimitAndroid": "Safini Pro tez orada Androidda paydo boʻladi."
+  "freeLimitAndroid": "Safini Pro tez orada Androidda paydo boʻladi.",
+  "freeLimitParents": "Bepul tarifda bitta ota-ona. Safini Pro bilan oilaga ikkinchi ota-ona qoʻshilishi mumkin."
 }
