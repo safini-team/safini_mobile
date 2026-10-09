@@ -4737,26 +4737,6 @@ class S {
     );
   }
 
-  /// `Daily limit`
-  String get dailyLimitToggle {
-    return Intl.message(
-      'Daily limit',
-      name: 'dailyLimitToggle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Off means this app is never capped`
-  String get dailyLimitToggleHint {
-    return Intl.message(
-      'Off means this app is never capped',
-      name: 'dailyLimitToggleHint',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `No free time`
   String get noFreeTime {
     return Intl.message('No free time', name: 'noFreeTime', desc: '', args: []);
@@ -4765,16 +4745,6 @@ class S {
   /// `Price`
   String get priceLabel {
     return Intl.message('Price', name: 'priceLabel', desc: '', args: []);
-  }
-
-  /// `{cost} coins for {time}`
-  String priceUnit(Object cost, Object time) {
-    return Intl.message(
-      '$cost coins for $time',
-      name: 'priceUnit',
-      desc: '',
-      args: [cost, time],
-    );
   }
 
   /// `Use it today, it expires at midnight.`
@@ -5132,6 +5102,41 @@ class S {
     return Intl.message(
       'Block completely',
       name: 'blockCompletely',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a limit`
+  String get addLimitAction {
+    return Intl.message(
+      'Add a limit',
+      name: 'addLimitAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove limit`
+  String get removeLimit {
+    return Intl.message(
+      'Remove limit',
+      name: 'removeLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block`
+  String get blockSegment {
+    return Intl.message('Block', name: 'blockSegment', desc: '', args: []);
+  }
+
+  /// `Not used in the last 7 days`
+  String get notUsedLastSevenDays {
+    return Intl.message(
+      'Not used in the last 7 days',
+      name: 'notUsedLastSevenDays',
       desc: '',
       args: [],
     );

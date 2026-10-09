@@ -101,15 +101,36 @@ class DeviceUsageApp {
 /// A phone paired today already has this: Android kept the week before Safini
 /// was installed, and the child's phone sends it once after pairing.
 class WeekUsage {
-  const WeekUsage({required this.days, required this.apps});
+  const WeekUsage({
+    required this.days,
+    required this.apps,
+    this.dayApps = const [],
+  });
 
   /// Oldest first, one per day, including days with no use.
   final List<DayUsage> days;
+
+  /// The apps of each day in [days], same order, for one app's own week.
+  final List<List<DeviceUsageApp>> dayApps;
 
   /// Each app's minutes summed over the week, most used first.
   final List<DeviceUsageApp> apps;
 
   int get totalMinutes => days.fold(0, (sum, day) => sum + day.minutes);
+
+  /// One app's minutes per day, oldest first, zero where it was not opened.
+  /// Empty when this week was built without per-day apps.
+  List<DayUsage> daysFor(String slug) => dayApps.length != days.length
+      ? const []
+      : [
+          for (var i = 0; i < days.length; i++)
+            DayUsage(
+              date: days[i].date,
+              minutes: dayApps[i]
+                  .where((app) => app.appSlug == slug)
+                  .fold(0, (sum, app) => sum + app.usedMinutes),
+            ),
+        ];
 
   /// Over the days that had any use, so a week that started mid-way on a
   /// phone that kept only a few days is not averaged down by empty ones.
@@ -135,6 +156,7 @@ class WeekUsage {
       }
     }
     return WeekUsage(
+      dayApps: [for (final day in days) day.apps],
       days: [
         for (final day in days)
           DayUsage(

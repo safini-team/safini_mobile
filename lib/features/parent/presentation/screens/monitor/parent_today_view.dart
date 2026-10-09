@@ -1,6 +1,5 @@
 import 'package:safini/features/parent/presentation/widgets/apps/overall_budget_card.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
@@ -11,6 +10,7 @@ import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
+import 'package:safini/features/models/presentation/widgets/week_bars.dart';
 
 /// One kid in the scope strip.
 class TodayKid {
@@ -307,6 +307,7 @@ class ParentTodayView extends StatelessWidget {
                       name: app.name,
                       iconUrl: app.iconUrl,
                       usedMinutes: app.usedMinutes,
+                      limitMinutes: app.limitMinutes,
                       isOver: app.isOver,
                       onTap: _tapFor(app),
                     ),
@@ -355,22 +356,15 @@ class ParentTodayView extends StatelessWidget {
   }
 }
 
-/// A bar per day, the busiest one darker, over the daily average.
+/// A bar per day over the daily average.
 class _WeekCard extends StatelessWidget {
   const _WeekCard({required this.week});
 
   final TodayWeek week;
 
-  static const double _barHeight = 64;
-
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final busiest = week.days.fold(
-      0,
-      (m, day) => day.minutes > m ? day.minutes : m,
-    );
 
     return DsCard(
       child: Column(
@@ -381,51 +375,7 @@ class _WeekCard extends StatelessWidget {
             style: AppText.rowTitleStrong,
           ),
           const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              for (final day in week.days)
-                Expanded(
-                  child: Semantics(
-                    label:
-                        '${DateFormat.EEEE(locale).format(day.date)}, '
-                        '${formatHm(s, day.minutes)}',
-                    excludeSemantics: true,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 18,
-                          height: busiest == 0
-                              ? 4
-                              : (day.minutes / busiest * _barHeight).clamp(
-                                  4,
-                                  _barHeight,
-                                ),
-                          decoration: BoxDecoration(
-                            color: day.minutes == 0
-                                ? AppColors.track
-                                : day.minutes == busiest
-                                ? AppColors.primary
-                                : AppColors.primaryBar,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            DateFormat.E(locale).format(day.date),
-                            maxLines: 1,
-                            style: AppText.micro.copyWith(letterSpacing: 0.345),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
+          WeekBars(days: week.days),
         ],
       ),
     );

@@ -39,6 +39,36 @@ void main() {
     expect(week.averageMinutes, 60);
   });
 
+  test('reads one app\'s own week, zero on the days it was not opened', () {
+    DeviceUsage day(String date, Map<String, int> minutes) => DeviceUsage(
+      usageDate: date,
+      usageAvailable: true,
+      totalMinutes: minutes.values.fold(0, (a, b) => a + b),
+      apps: [
+        for (final e in minutes.entries)
+          DeviceUsageApp(
+            appSlug: e.key,
+            displayName: e.key,
+            usedMinutes: e.value,
+          ),
+      ],
+    );
+    final week = WeekUsage.fromDays([
+      day('2026-09-19', {'youtube': 30, 'roblox': 50}),
+      day('2026-09-20', {'roblox': 10}),
+      day('2026-09-21', {'youtube': 40}),
+    ]);
+
+    expect(week.daysFor('youtube').map((d) => d.minutes), [30, 0, 40]);
+    expect(week.daysFor('youtube').first.date, DateTime(2026, 9, 19));
+    expect(week.daysFor('missing').map((d) => d.minutes), [0, 0, 0]);
+    // A week built without per-day apps has nothing to read back.
+    expect(
+      WeekUsage(days: week.days, apps: week.apps).daysFor('youtube'),
+      isEmpty,
+    );
+  });
+
   test('an empty week averages zero', () {
     final week = WeekUsage.fromDays([_day('2026-09-19', {})]);
     expect(week.averageMinutes, 0);

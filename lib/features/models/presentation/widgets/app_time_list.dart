@@ -14,6 +14,7 @@ class AppTimeRow {
     required this.name,
     required this.usedMinutes,
     this.iconUrl,
+    this.limitMinutes = 0,
     this.isOver = false,
     this.onTap,
   });
@@ -21,6 +22,10 @@ class AppTimeRow {
   final String name;
   final String? iconUrl;
   final int usedMinutes;
+
+  /// The daily limit, when the app has one: the row reads "45 m of 1 h" so a
+  /// parent sees which apps are capped before opening one.
+  final int limitMinutes;
 
   /// Past the parent's limit: the minutes and the bar turn red.
   final bool isOver;
@@ -134,7 +139,14 @@ class _Row extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      formatHm(S.of(context), app.usedMinutes),
+                      app.limitMinutes > 0
+                          ? S
+                                .of(context)
+                                .usedOfLimit(
+                                  formatHm(S.of(context), app.usedMinutes),
+                                  formatHm(S.of(context), app.limitMinutes),
+                                )
+                          : formatHm(S.of(context), app.usedMinutes),
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
