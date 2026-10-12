@@ -8559,6 +8559,133 @@
         ]
       }
     },
+    "/v1/billing/paddle/webhook": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Paddle Webhook",
+        "description": "**Auth:** Public. No bearer token is required.\n\n**Business requirement:** Paddle reports every website subscription, renewal, failed charge, cancellation and refund here, so a family that paid on safini.fun is Pro in every app. Only events signed with the notification destination's secret are applied; a replayed event is a no-op.\n\n**Frontend note:** Not for the apps. Set this URL as the Paddle notification destination for subscription.*, transaction.completed and adjustment.* events. Checkout must pass `customData: {family_id}`.",
+        "operationId": "paddle_webhook_v1_billing_paddle_webhook_post",
+        "responses": {
+          "200": {
+            "description": "Event accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "type": "object",
+                  "title": "Response Paddle Webhook V1 Billing Paddle Webhook Post"
+                },
+                "example": {
+                  "ok": true
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or request wait deadline exceeded. Retry reads after Retry-After; reconcile non-idempotent writes before replaying.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": 1
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Service is temporarily unavailable."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/billing/paddle/portal": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Open Paddle Customer Portal",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The parent who paid on the website changes their card, sees invoices or cancels in Paddle's customer portal. The portal shows the payer's card, so only the parent whose email matches the Paddle customer gets a link.\n\n**Frontend note:** Call when `source` is `paddle` and the parent taps Manage, then open `url`. 404 means the family has no website subscription; 403 means another parent paid and can use the link in their Paddle receipt email.",
+        "operationId": "paddle_portal_v1_billing_paddle_portal_post",
+        "responses": {
+          "200": {
+            "description": "A one-time customer portal link.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaddlePortalResponse"
+                },
+                "example": {
+                  "url": "https://customer-portal.paddle.com/cpl_01h..."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/waiting-list": {
       "post": {
         "tags": [
@@ -9428,6 +9555,19 @@
         "example": {
           "weekly_digest": true
         }
+      },
+      "PaddlePortalResponse": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "PaddlePortalResponse"
       },
       "ParentTaskSuggestionRequest": {
         "properties": {

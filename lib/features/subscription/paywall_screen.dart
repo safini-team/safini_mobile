@@ -118,41 +118,42 @@ class _PaywallViewState extends State<_PaywallView> {
                         const _Features(),
                         const SizedBox(height: 22),
                         if (context.read<ProCubit>().canSell) ...[
-                            _Plans(
-                              state: state,
-                              selected: _period,
-                              onSelect: (period) =>
-                                  setState(() => _period = period),
-                            ),
-                            const SizedBox(height: 18),
-                            DsPrimaryButton(
-                              label: state.offer(_period)?.trial != null
-                                  ? s.proStartTrial
-                                  : s.proSubscribe,
-                              busy: state.busy,
-                              enabled: state.offer(_period) != null && !state.busy,
-                              onTap: () => context.read<ProCubit>().buy(_period),
-                            ),
-                            const SizedBox(height: 14),
-                            if (state.offer(_period)?.trial != null) ...[
-                              Text(
-                                s.proLegalTrial,
-                                style: AppText.footnote,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 6),
-                            ],
+                          _Plans(
+                            state: state,
+                            selected: _period,
+                            onSelect: (period) =>
+                                setState(() => _period = period),
+                          ),
+                          const SizedBox(height: 18),
+                          DsPrimaryButton(
+                            label: state.offer(_period)?.trial != null
+                                ? s.proStartTrial
+                                : s.proSubscribe,
+                            busy: state.busy,
+                            enabled:
+                                state.offer(_period) != null && !state.busy,
+                            onTap: () => context.read<ProCubit>().buy(_period),
+                          ),
+                          const SizedBox(height: 14),
+                          if (state.offer(_period)?.trial != null) ...[
                             Text(
-                              s.proLegal,
+                              s.proLegalTrial,
                               style: AppText.footnote,
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 10),
-                            _LegalLinks(
-                              onRestore: state.busy
-                                  ? null
-                                  : () => context.read<ProCubit>().restore(),
-                            ),
+                            const SizedBox(height: 6),
+                          ],
+                          Text(
+                            s.proLegal,
+                            style: AppText.footnote,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 10),
+                          _LegalLinks(
+                            onRestore: state.busy
+                                ? null
+                                : () => context.read<ProCubit>().restore(),
+                          ),
                         ] else
                           Text(s.proAndroidSoon, style: AppText.bodyRegular),
                         const SizedBox(height: 22),
@@ -430,8 +431,15 @@ class _LegalLinks extends StatelessWidget {
 
   final VoidCallback? onRestore;
 
-  Future<void> _open(String url) =>
-      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+  Future<void> _open(BuildContext context, String url) => launchUrl(
+    Uri.parse(
+      AppConstants.localizedLegalUrl(
+        url,
+        Localizations.localeOf(context).languageCode,
+      ),
+    ),
+    mode: LaunchMode.externalApplication,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -445,8 +453,11 @@ class _LegalLinks extends StatelessWidget {
       alignment: WrapAlignment.center,
       children: [
         link(s.proRestore, onRestore),
-        link(s.proTerms, () => _open(AppConstants.termsOfUseUrl)),
-        link(s.privacyPolicy, () => _open(AppConstants.privacyPolicyUrl)),
+        link(s.proTerms, () => _open(context, AppConstants.termsOfUseUrl)),
+        link(
+          s.privacyPolicy,
+          () => _open(context, AppConstants.privacyPolicyUrl),
+        ),
       ],
     );
   }

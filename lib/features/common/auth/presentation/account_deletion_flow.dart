@@ -19,7 +19,12 @@ Future<void> openPrivacyPolicy(BuildContext context) async {
   var opened = false;
   try {
     opened = await launchUrl(
-      Uri.parse(AppConstants.privacyPolicyUrl),
+      Uri.parse(
+        AppConstants.localizedLegalUrl(
+          AppConstants.privacyPolicyUrl,
+          Localizations.localeOf(context).languageCode,
+        ),
+      ),
       mode: LaunchMode.externalApplication,
     );
   } catch (_) {
@@ -51,10 +56,7 @@ Future<void> showAccountDeletionFlow(BuildContext context) async {
       children: [
         Text(s.deleteAccountConfirmTitle, style: AppText.title3),
         const SizedBox(height: 8),
-        Text(
-          s.deleteAccountParentConfirmBody,
-          style: AppText.bodyRegular,
-        ),
+        Text(s.deleteAccountParentConfirmBody, style: AppText.bodyRegular),
         const SizedBox(height: 22),
         DsPrimaryButton(
           label: s.deleteAccount,
