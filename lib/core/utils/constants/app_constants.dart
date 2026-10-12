@@ -4,6 +4,14 @@ class AppConstants {
   static const String accessToken = 'access_token';
   static const String privacyPolicyUrl = 'https://safini.fun/privacy-policy';
   static const String termsOfUseUrl = 'https://safini.fun/terms-of-service';
+  static const Set<String> _legalPageLanguages = {'ru', 'uz', 'ky', 'kk'};
+
+  /// [url] on safini.fun in the app's language; English lives at the root.
+  static String localizedLegalUrl(String url, String languageCode) {
+    if (!_legalPageLanguages.contains(languageCode)) return url;
+    final uri = Uri.parse(url);
+    return uri.replace(path: '/$languageCode${uri.path}').toString();
+  }
 
   static const String accountTypeParent = 'parent';
   static const String accountTypeChild = 'child';
