@@ -8056,14 +8056,9 @@ class S {
     );
   }
 
-  /// `Get Pro on safini.fun`
+  /// `Get Pro`
   String get proBuyOnWeb {
-    return Intl.message(
-      'Get Pro on safini.fun',
-      name: 'proBuyOnWeb',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Get Pro', name: 'proBuyOnWeb', desc: '', args: []);
   }
 
   /// `Manage on safini.fun`

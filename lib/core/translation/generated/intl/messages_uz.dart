@@ -1410,9 +1410,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Oilangizda Safini Pro bor",
     ),
     "proActiveUntil": m67,
-    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage(
-      "Proni safini.fun saytida ulash",
-    ),
+    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage("Proni ulash"),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Xarid amalga oshmadi. Qayta urinib koʻring.",
     ),

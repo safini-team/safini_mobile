@@ -1343,9 +1343,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your family has Safini Pro",
     ),
     "proActiveUntil": m67,
-    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage(
-      "Get Pro on safini.fun",
-    ),
+    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage("Get Pro"),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "The purchase didn\'t go through. Try again.",
     ),

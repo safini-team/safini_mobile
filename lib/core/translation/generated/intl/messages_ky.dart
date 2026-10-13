@@ -1392,9 +1392,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Үй-бүлөңүздө Safini Pro бар",
     ),
     "proActiveUntil": m67,
-    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage(
-      "Pro\'ну safini.fun сайтында кошуу",
-    ),
+    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage("Pro\'ну кошуу"),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Сатып алуу ишке ашкан жок. Кайра аракет кылыңыз.",
     ),

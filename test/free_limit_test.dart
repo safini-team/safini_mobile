@@ -137,14 +137,14 @@ void main() {
       expect(find.text("That's the free plan's limit"), findsOneWidget);
       expect(find.textContaining('five apps per child'), findsOneWidget);
       expect(find.text('See Safini Pro'), findsOneWidget);
-      expect(find.textContaining('coming to Android'), findsNothing);
+      expect(find.textContaining('bought on safini.fun'), findsNothing);
     });
 
     testWidgets('on Android it says buying is coming but still leads to '
         'Safini Pro', (tester) async {
       await open(tester, canBuy: false);
 
-      expect(find.text('Safini Pro is coming to Android soon.'), findsOneWidget);
+      expect(find.text('On Android, Safini Pro is bought on safini.fun.'), findsOneWidget);
       expect(find.text('See Safini Pro'), findsOneWidget);
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();

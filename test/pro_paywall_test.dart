@@ -434,7 +434,7 @@ void main() {
 
       expect(find.text('Subscribe'), findsNothing);
       expect(find.text('Restore purchases'), findsNothing);
-      expect(find.text('Get Pro on safini.fun'), findsOneWidget);
+      expect(find.text('Get Pro'), findsOneWidget);
       await tester.enterText(find.byType(TextField), 'friends30');
       await tester.tap(find.text('Apply'));
       await tester.pumpAndSettle();
