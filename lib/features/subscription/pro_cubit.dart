@@ -178,6 +178,20 @@ class ProCubit extends Cubit<ProState> {
     }
   }
 
+  /// Android buys and manages Pro on safini.fun (SAF-216). Null when the
+  /// link could not be made.
+  Future<String?> webLink({required bool manage, required String lang}) async {
+    if (state.busy) return null;
+    emit(state.copyWith(busy: true));
+    try {
+      return await _api.webLink(manage: manage, lang: lang);
+    } catch (_) {
+      return null;
+    } finally {
+      if (!isClosed) emit(state.copyWith(busy: false));
+    }
+  }
+
   /// Works on every platform: the code gives the family Pro on the server,
   /// so nothing goes through a store. Null means it worked.
   Future<PromoError?> redeemPromo(String code) async {

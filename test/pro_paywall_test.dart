@@ -68,6 +68,14 @@ class _FakeApi extends PlanApi {
     );
   }
 
+  final links = <(bool, String)>[];
+
+  @override
+  Future<String> webLink({required bool manage, required String lang}) async {
+    links.add((manage, lang));
+    return 'https://safini.fun/account/?lang=$lang#t=token';
+  }
+
   @override
   Future<FamilyPlan> recordAppleTransaction(String signedTransaction) async {
     posted.add(signedTransaction);
@@ -426,7 +434,7 @@ void main() {
 
       expect(find.text('Subscribe'), findsNothing);
       expect(find.text('Restore purchases'), findsNothing);
-      expect(find.textContaining('coming soon'), findsOneWidget);
+      expect(find.text('Get Pro'), findsOneWidget);
       await tester.enterText(find.byType(TextField), 'friends30');
       await tester.tap(find.text('Apply'));
       await tester.pumpAndSettle();
@@ -435,6 +443,17 @@ void main() {
       expect(find.text('Your family has Safini Pro'), findsOneWidget);
       // Let the success snack bar run out.
       await tester.pump(const Duration(seconds: 5));
+    });
+
+    test('Android asks the server for a signed-in website link', () async {
+      final api = _FakeApi();
+      final cubit = ProCubit(api: api);
+
+      final url = await cubit.webLink(manage: false, lang: 'ky');
+
+      expect(url, 'https://safini.fun/account/?lang=ky#t=token');
+      expect(api.links, [(false, 'ky')]);
+      expect(cubit.state.busy, isFalse);
     });
 
     testWidgets('a bad code says so under the box', (tester) async {

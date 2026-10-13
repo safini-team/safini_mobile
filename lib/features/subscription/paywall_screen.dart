@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +30,22 @@ const String appleManageSubscriptionsUrl =
 ///
 /// Only what the app actually does is listed. Pro lifts the free limits of
 /// one child, three controlled apps and three recurring tasks (SAF-158).
+/// Opens safini.fun signed in as this parent. Never on iOS: the App Store
+/// forbids sending buyers to the website.
+Future<void> openProOnWeb(BuildContext context, {bool manage = false}) async {
+  final lang = Localizations.localeOf(context).languageCode;
+  final url = await context.read<ProCubit>().webLink(
+    manage: manage,
+    lang: lang,
+  );
+  final opened =
+      url != null &&
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+  if (!opened && context.mounted) {
+    AppSnackBar.error(context, S.of(context).proWebFailed);
+  }
+}
+
 class PaywallScreen extends StatelessWidget {
   const PaywallScreen({super.key, this.cubit});
 
@@ -50,15 +68,29 @@ class _PaywallView extends StatefulWidget {
   State<_PaywallView> createState() => _PaywallViewState();
 }
 
-class _PaywallViewState extends State<_PaywallView> {
+class _PaywallViewState extends State<_PaywallView>
+    with WidgetsBindingObserver {
   ProPeriod _period = ProPeriod.year;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     final pro = context.read<ProCubit>();
     pro.refresh();
     if (pro.state.offers.isEmpty) pro.loadOffers();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Back from paying on safini.fun: the webhook has usually landed by now.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) context.read<ProCubit>().refresh();
   }
 
   void _onNotice(BuildContext context, ProState state) {
@@ -154,8 +186,16 @@ class _PaywallViewState extends State<_PaywallView> {
                                 ? null
                                 : () => context.read<ProCubit>().restore(),
                           ),
-                        ] else
-                          Text(s.proAndroidSoon, style: AppText.bodyRegular),
+                        ] else ...[
+                          Text(s.proWebLede, style: AppText.bodyRegular),
+                          const SizedBox(height: 14),
+                          DsPrimaryButton(
+                            label: s.proBuyOnWeb,
+                            busy: state.busy,
+                            enabled: !state.busy,
+                            onTap: () => openProOnWeb(context),
+                          ),
+                        ],
                         const SizedBox(height: 22),
                         const _PromoCode(),
                       ],
@@ -504,6 +544,13 @@ class _ActivePlan extends StatelessWidget {
         ),
         const SizedBox(height: 18),
         const _Features(),
+        if (plan.source == 'paddle' && Platform.isAndroid) ...[
+          const SizedBox(height: 18),
+          DsPrimaryButton.secondary(
+            label: s.proManageOnWeb,
+            onTap: () => openProOnWeb(context, manage: true),
+          ),
+        ],
         if (plan.source == 'apple') ...[
           const SizedBox(height: 18),
           DsPrimaryButton.secondary(

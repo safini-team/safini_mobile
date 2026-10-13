@@ -935,7 +935,7 @@
   "freeLimitApps": "Bepul tarifda har bir farzand uchun beshta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
   "freeLimitTasks": "Bepul tarifda har bir farzand uchun beshta vazifa takrorlanadi. Safini Pro bilan barcha vazifalar takrorlanishi mumkin.",
   "freeLimitSeePro": "Safini Pro haqida",
-  "freeLimitAndroid": "Safini Pro tez orada Androidda paydo boʻladi.",
+  "freeLimitWeb": "Androidda Safini Pro safini.fun saytida sotib olinadi.",
   "proStartTrial": "Bepul sinovni boshlash",
   "proTrialThen": "{trial}, keyin {price}",
   "proTrialDays": "{count, plural, other{{count} kun bepul}}",
@@ -954,6 +954,9 @@
   "promoAlreadyPro": "Oilangizda allaqachon Safini Pro bor.",
   "promoTooMany": "Juda koʻp urinish. Bir necha daqiqa kutib, qayta urinib koʻring.",
   "promoFailed": "Kodni tekshirib boʻlmadi. Qayta urinib koʻring.",
-  "proAndroidSoon": "Androidda Safini Pro sotib olish tez orada mumkin boʻladi. Promokodingiz bormi? Uni pastga kiriting.",
+  "proWebLede": "Androidda Safini Pro safini.fun saytida sotib olinadi. Qayta kirish shart emas, bir daqiqa vaqt oladi. Promokodingiz bormi? Uni pastga kiriting.",
+  "proBuyOnWeb": "Proni ulash",
+  "proManageOnWeb": "safini.fun saytida boshqarish",
+  "proWebFailed": "safini.fun ochilmadi. Qayta urinib koʻring.",
   "freeLimitParents": "Bepul tarifda bitta ota-ona. Safini Pro bilan oilaga ikkinchi ota-ona qoʻshilishi mumkin."
 }

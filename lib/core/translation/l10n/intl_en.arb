@@ -1081,7 +1081,7 @@
   "freeLimitApps": "The free plan limits five apps per child. With Safini Pro you can limit every app.",
   "freeLimitTasks": "The free plan repeats five tasks per child. With Safini Pro every task can repeat.",
   "freeLimitSeePro": "See Safini Pro",
-  "freeLimitAndroid": "Safini Pro is coming to Android soon.",
+  "freeLimitWeb": "On Android, Safini Pro is bought on safini.fun.",
   "proStartTrial": "Start free trial",
   "proTrialThen": "{trial}, then {price}",
   "proTrialDays": "{count, plural, one{{count} day free} other{{count} days free}}",
@@ -1100,6 +1100,9 @@
   "promoAlreadyPro": "Your family already has Safini Pro.",
   "promoTooMany": "Too many tries. Wait a few minutes and try again.",
   "promoFailed": "Couldn't check the code. Try again.",
-  "proAndroidSoon": "Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.",
+  "proWebLede": "On Android, Safini Pro is bought on safini.fun. You stay signed in, so it takes a minute. Have a promo code? Enter it below.",
+  "proBuyOnWeb": "Get Pro",
+  "proManageOnWeb": "Manage on safini.fun",
+  "proWebFailed": "Couldn't open safini.fun. Try again.",
   "freeLimitParents": "The free plan has one parent. With Safini Pro a second parent can join your family."
 }

@@ -488,7 +488,7 @@
           "push"
         ],
         "summary": "Get Notification Preferences",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Backs the Alerts switches on the parent Settings screen.\n\n**Frontend note:** An account that never changed anything gets the defaults: submissions and limits on, the weekly digest off. Protection alerts, task reviews for children and family changes are always sent and have no switch.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Backs the Alerts switches on the parent Settings screen.\n\n**Frontend note:** An account that never changed anything gets the defaults: submissions, limits and phone offline on, the weekly digest off. `phone_offline` covers only the \"Safini cannot reach the phone\" alert; the other protection alerts (a permission off, a sign-out), task reviews for children and family changes are always sent and have no switch.",
         "operationId": "get_notification_preferences_v1_me_notification_preferences_get",
         "responses": {
           "200": {
@@ -499,7 +499,8 @@
                 "example": {
                   "task_submissions": true,
                   "limit_reached": true,
-                  "weekly_digest": false
+                  "weekly_digest": false,
+                  "phone_offline": true
                 }
               }
             }
@@ -557,7 +558,8 @@
                 "example": {
                   "task_submissions": true,
                   "limit_reached": true,
-                  "weekly_digest": true
+                  "weekly_digest": true,
+                  "phone_offline": true
                 }
               }
             }
@@ -7620,7 +7622,7 @@
           "sign-out approval"
         ],
         "summary": "Approve",
-        "description": "Auth: a family parent. Business requirement: let the child sign out; app limits turn off on that phone. Frontend note: 409 when the request was already answered, replaced or expired.",
+        "description": "Auth: a family parent. Business requirement: let the child sign out; app limits turn off on that phone. Frontend note: 409 when the request was already answered, replaced or expired. The child's phone gets a `signout_approved` push carrying `signout_id`; it should still confirm by reading the request before signing out.",
         "operationId": "approve_v1_children__child_id__signout_requests__request_id__approve_post",
         "security": [
           {
@@ -7695,7 +7697,7 @@
           "sign-out approval"
         ],
         "summary": "Deny",
-        "description": "Auth: a family parent. Business requirement: keep the child signed in. Frontend note: the child's phone reads `denied` on its next poll.",
+        "description": "Auth: a family parent. Business requirement: keep the child signed in. Frontend note: the child's phone gets a `signout_denied` push carrying `signout_id`, and reads `denied` on its next poll.",
         "operationId": "deny_v1_children__child_id__signout_requests__request_id__deny_post",
         "security": [
           {
@@ -8686,6 +8688,96 @@
         ]
       }
     },
+    "/v1/billing/web-link": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Open The Website Signed In",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent goes from the Android app to safini.fun to buy or manage Safini Pro without signing in again. The link carries a one-time Supabase sign-in token for the same account; it works once and expires with the project's email OTP expiry.\n\n**Frontend note:** Android only (the App Store forbids sending iPhone buyers to the website). Call when the parent taps the button and open `url` in the browser right away; never cache or log it. Parents only. 409 means the account has no email. 429 after 10 links in 5 minutes.",
+        "operationId": "web_sign_in_link_v1_billing_web_link_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebLinkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "A one-time signed-in link to the account page.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebLinkResponse"
+                },
+                "example": {
+                  "url": "https://safini.fun/account/?lang=ru&buy=1#t=pkce_..."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/waiting-list": {
       "post": {
         "tags": [
@@ -9522,7 +9614,7 @@
               }
             ],
             "title": "Task Submissions",
-            "description": "Push when a child sends a task for review."
+            "description": "Push when a child sends a task for review, asks for a prize, or finishes a task that is approved automatically."
           },
           "limit_reached": {
             "anyOf": [
@@ -9534,7 +9626,7 @@
               }
             ],
             "title": "Limit Reached",
-            "description": "Push when a child runs out of time on an app or for the day."
+            "description": "Push when a child runs out of time on an app or for the day, or buys more time with coins."
           },
           "weekly_digest": {
             "anyOf": [
@@ -9547,6 +9639,18 @@
             ],
             "title": "Weekly Digest",
             "description": "Sunday evening summary of each child's week."
+          },
+          "phone_offline": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Offline",
+            "description": "Push when Safini cannot reach a child's phone for about half an hour. Never sent at night (22:00-08:00 family time)."
           }
         },
         "additionalProperties": false,
@@ -10920,6 +11024,47 @@
           "email": "user@example.com",
           "utm_source": "instagram"
         }
+      },
+      "WebLinkRequest": {
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "buy",
+              "manage"
+            ],
+            "title": "Purpose",
+            "description": "`buy` opens the plan picker, `manage` the plan card.",
+            "default": "buy"
+          },
+          "lang": {
+            "type": "string",
+            "maxLength": 8,
+            "title": "Lang",
+            "description": "`en`, `ru` or `uz`; anything else opens Russian.",
+            "default": "ru"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "WebLinkRequest",
+        "example": {
+          "lang": "ru",
+          "purpose": "buy"
+        }
+      },
+      "WebLinkResponse": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "WebLinkResponse"
       },
       "WishRequest": {
         "properties": {

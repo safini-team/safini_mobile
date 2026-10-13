@@ -7863,11 +7863,11 @@ class S {
     );
   }
 
-  /// `Safini Pro is coming to Android soon.`
-  String get freeLimitAndroid {
+  /// `On Android, Safini Pro is bought on safini.fun.`
+  String get freeLimitWeb {
     return Intl.message(
-      'Safini Pro is coming to Android soon.',
-      name: 'freeLimitAndroid',
+      'On Android, Safini Pro is bought on safini.fun.',
+      name: 'freeLimitWeb',
       desc: '',
       args: [],
     );
@@ -8046,11 +8046,36 @@ class S {
     );
   }
 
-  /// `Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.`
-  String get proAndroidSoon {
+  /// `On Android, Safini Pro is bought on safini.fun. You stay signed in, so it takes a minute. Have a promo code? Enter it below.`
+  String get proWebLede {
     return Intl.message(
-      'Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.',
-      name: 'proAndroidSoon',
+      'On Android, Safini Pro is bought on safini.fun. You stay signed in, so it takes a minute. Have a promo code? Enter it below.',
+      name: 'proWebLede',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Pro`
+  String get proBuyOnWeb {
+    return Intl.message('Get Pro', name: 'proBuyOnWeb', desc: '', args: []);
+  }
+
+  /// `Manage on safini.fun`
+  String get proManageOnWeb {
+    return Intl.message(
+      'Manage on safini.fun',
+      name: 'proManageOnWeb',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't open safini.fun. Try again.`
+  String get proWebFailed {
+    return Intl.message(
+      'Couldn\'t open safini.fun. Try again.',
+      name: 'proWebFailed',
       desc: '',
       args: [],
     );

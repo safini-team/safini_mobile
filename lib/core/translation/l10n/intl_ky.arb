@@ -897,7 +897,7 @@
   "freeLimitApps": "Акысыз планда ар бир балага беш колдонмону чектөөгө болот. Safini Pro менен бардык колдонмолорду чектей аласыз.",
   "freeLimitTasks": "Акысыз планда ар бир балага беш тапшырма кайталанат. Safini Pro менен бардык тапшырмалар кайталана алат.",
   "freeLimitSeePro": "Safini Pro жөнүндө",
-  "freeLimitAndroid": "Safini Pro жакында Android'де пайда болот.",
+  "freeLimitWeb": "Android'де Safini Pro safini.fun сайтында сатылып алынат.",
   "avatarTabCharacters": "Каармандар",
   "avatarTabHead": "Баш кийим",
   "avatarTabAccessories": "Аксессуарлар",
@@ -925,6 +925,9 @@
   "promoAlreadyPro": "Үй-бүлөңүздө Safini Pro мурунтан эле бар.",
   "promoTooMany": "Өтө көп аракет. Бир нече мүнөт күтүп, кайра аракет кылыңыз.",
   "promoFailed": "Кодду текшере алган жокпуз. Кайра аракет кылыңыз.",
-  "proAndroidSoon": "Android'де Safini Pro сатып алуу жакында мүмкүн болот. Промокодуңуз барбы? Аны төмөнгө жазыңыз.",
+  "proWebLede": "Android'де Safini Pro safini.fun сайтында сатылып алынат. Кайра кирүүнүн кереги жок, бир мүнөт эле кетет. Промокодуңуз барбы? Аны төмөнгө жазыңыз.",
+  "proBuyOnWeb": "Pro'ну кошуу",
+  "proManageOnWeb": "safini.fun сайтында башкаруу",
+  "proWebFailed": "safini.fun ачылган жок. Кайра аракет кылыңыз.",
   "freeLimitParents": "Акысыз планда бир ата-эне. Safini Pro менен үй-бүлөгө экинчи ата-эне кошула алат."
 }

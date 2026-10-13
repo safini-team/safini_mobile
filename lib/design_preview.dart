@@ -573,7 +573,7 @@ class _PreviewPro {
     store: _PreviewStore(),
   );
 
-  /// Android sells nothing, so the page is features and the promo box.
+  /// Android buys on safini.fun, so the page links there.
   static final ProCubit android = ProCubit(api: _PreviewPlans(FamilyPlan.free));
 
   static final ProCubit active = ProCubit(
