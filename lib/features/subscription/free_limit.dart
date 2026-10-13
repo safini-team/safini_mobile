@@ -58,7 +58,7 @@ class FreeLimitAlerts {
 }
 
 /// What the parent sees past a limit. It leads to the Safini Pro page on
-/// both platforms: Android sells nothing (SAF-216) but takes promo codes.
+/// both platforms: Android buys on safini.fun (SAF-216) and takes promo codes.
 Future<void> showFreeLimitSheet(
   BuildContext context,
   FreeLimit limit, {
@@ -85,7 +85,7 @@ Future<void> showFreeLimitSheet(
           Text(body, style: AppText.bodyRegular),
           if (!buyHere) ...[
             const SizedBox(height: 8),
-            Text(s.freeLimitAndroid, style: AppText.footnote),
+            Text(s.freeLimitWeb, style: AppText.footnote),
           ],
           const SizedBox(height: 20),
           DsPrimaryButton(

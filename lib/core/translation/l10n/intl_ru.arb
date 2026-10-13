@@ -1035,7 +1035,7 @@
   "freeLimitApps": "В бесплатном плане можно ограничить пять приложений на ребёнка. С Safini Pro можно ограничить все приложения.",
   "freeLimitTasks": "В бесплатном плане повторяются пять заданий на ребёнка. С Safini Pro повторять можно все задания.",
   "freeLimitSeePro": "Подробнее о Safini Pro",
-  "freeLimitAndroid": "Safini Pro скоро появится на Android.",
+  "freeLimitWeb": "На Android Safini Pro покупается на safini.fun.",
   "proStartTrial": "Начать бесплатный период",
   "proTrialThen": "{trial}, затем {price}",
   "proTrialDays": "{count, plural, one{{count} день бесплатно} few{{count} дня бесплатно} many{{count} дней бесплатно} other{{count} дня бесплатно}}",
@@ -1054,6 +1054,9 @@
   "promoAlreadyPro": "У вашей семьи уже есть Safini Pro.",
   "promoTooMany": "Слишком много попыток. Подождите несколько минут и попробуйте снова.",
   "promoFailed": "Не удалось проверить код. Попробуйте ещё раз.",
-  "proAndroidSoon": "Купить Safini Pro на Android скоро будет можно. Есть промокод? Введите его ниже.",
+  "proWebLede": "На Android Safini Pro покупается на safini.fun. Входить заново не нужно, это займёт минуту. Есть промокод? Введите его ниже.",
+  "proBuyOnWeb": "Подключить Pro на safini.fun",
+  "proManageOnWeb": "Управлять на safini.fun",
+  "proWebFailed": "Не удалось открыть safini.fun. Попробуйте ещё раз.",
   "freeLimitParents": "В бесплатном плане один родитель. С Safini Pro к семье может присоединиться второй родитель."
 }

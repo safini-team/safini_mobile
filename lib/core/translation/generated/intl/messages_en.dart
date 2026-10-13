@@ -748,9 +748,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Safe screen time for smart kids 🌟",
     ),
     "free": MessageLookupByLibrary.simpleMessage("FREE"),
-    "freeLimitAndroid": MessageLookupByLibrary.simpleMessage(
-      "Safini Pro is coming to Android soon.",
-    ),
     "freeLimitApps": MessageLookupByLibrary.simpleMessage(
       "The free plan limits five apps per child. With Safini Pro you can limit every app.",
     ),
@@ -766,6 +763,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
       "That\'s the free plan\'s limit",
+    ),
+    "freeLimitWeb": MessageLookupByLibrary.simpleMessage(
+      "On Android, Safini Pro is bought on safini.fun.",
     ),
     "fri": MessageLookupByLibrary.simpleMessage("FRI"),
     "friends": MessageLookupByLibrary.simpleMessage("Friends"),
@@ -1343,8 +1343,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your family has Safini Pro",
     ),
     "proActiveUntil": m67,
-    "proAndroidSoon": MessageLookupByLibrary.simpleMessage(
-      "Buying Safini Pro on Android is coming soon. Have a promo code? Enter it below.",
+    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage(
+      "Get Pro on safini.fun",
     ),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "The purchase didn\'t go through. Try again.",
@@ -1374,6 +1374,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Nothing is charged during the free trial. Cancel at least 24 hours before it ends and you pay nothing; otherwise the subscription starts when the trial ends.",
     ),
     "proManage": MessageLookupByLibrary.simpleMessage("Manage subscription"),
+    "proManageOnWeb": MessageLookupByLibrary.simpleMessage(
+      "Manage on safini.fun",
+    ),
     "proMonthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "proNothingToRestore": MessageLookupByLibrary.simpleMessage(
       "No Safini Pro subscription on this Apple ID.",
@@ -1409,6 +1412,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "proTrialUntil": m75,
     "proTrialWeeks": m76,
     "proTrialYears": m77,
+    "proWebFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t open safini.fun. Try again.",
+    ),
+    "proWebLede": MessageLookupByLibrary.simpleMessage(
+      "On Android, Safini Pro is bought on safini.fun. You stay signed in, so it takes a minute. Have a promo code? Enter it below.",
+    ),
     "proWelcome": MessageLookupByLibrary.simpleMessage(
       "Welcome to Safini Pro!",
     ),

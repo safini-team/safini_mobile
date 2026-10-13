@@ -89,6 +89,16 @@ class PlanApi {
     return FamilyPlan.fromJson(_map(response.data));
   }
 
+  /// A one-time link that opens safini.fun signed in as this parent, for
+  /// buying ([manage] false) or managing a website subscription.
+  Future<String> webLink({required bool manage, required String lang}) async {
+    final response = await _dio.post(
+      ApiConst.webLink,
+      data: {'purpose': manage ? 'manage' : 'buy', 'lang': lang},
+    );
+    return _map(response.data)['url'] as String;
+  }
+
   static Map<String, dynamic> _map(dynamic raw) =>
       raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{};
 }

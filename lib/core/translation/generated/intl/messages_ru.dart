@@ -770,9 +770,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Безопасное экранное время для умных детей 🌟",
     ),
     "free": MessageLookupByLibrary.simpleMessage("БЕСПЛАТНО"),
-    "freeLimitAndroid": MessageLookupByLibrary.simpleMessage(
-      "Safini Pro скоро появится на Android.",
-    ),
     "freeLimitApps": MessageLookupByLibrary.simpleMessage(
       "В бесплатном плане можно ограничить пять приложений на ребёнка. С Safini Pro можно ограничить все приложения.",
     ),
@@ -790,6 +787,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Это предел бесплатного плана",
+    ),
+    "freeLimitWeb": MessageLookupByLibrary.simpleMessage(
+      "На Android Safini Pro покупается на safini.fun.",
     ),
     "fri": MessageLookupByLibrary.simpleMessage("ПТ"),
     "friends": MessageLookupByLibrary.simpleMessage("Друзья"),
@@ -1365,8 +1365,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "У вашей семьи Safini Pro",
     ),
     "proActiveUntil": m67,
-    "proAndroidSoon": MessageLookupByLibrary.simpleMessage(
-      "Купить Safini Pro на Android скоро будет можно. Есть промокод? Введите его ниже.",
+    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage(
+      "Подключить Pro на safini.fun",
     ),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Покупка не прошла. Попробуйте ещё раз.",
@@ -1396,6 +1396,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Во время бесплатного периода ничего не списывается. Отмените минимум за 24 часа до его конца, и вы ничего не заплатите; иначе подписка начнётся, когда он закончится.",
     ),
     "proManage": MessageLookupByLibrary.simpleMessage("Управлять подпиской"),
+    "proManageOnWeb": MessageLookupByLibrary.simpleMessage(
+      "Управлять на safini.fun",
+    ),
     "proMonthly": MessageLookupByLibrary.simpleMessage("Помесячно"),
     "proNothingToRestore": MessageLookupByLibrary.simpleMessage(
       "На этом Apple ID нет подписки Safini Pro.",
@@ -1433,6 +1436,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "proTrialUntil": m75,
     "proTrialWeeks": m76,
     "proTrialYears": m77,
+    "proWebFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось открыть safini.fun. Попробуйте ещё раз.",
+    ),
+    "proWebLede": MessageLookupByLibrary.simpleMessage(
+      "На Android Safini Pro покупается на safini.fun. Входить заново не нужно, это займёт минуту. Есть промокод? Введите его ниже.",
+    ),
     "proWelcome": MessageLookupByLibrary.simpleMessage(
       "Добро пожаловать в Safini Pro!",
     ),

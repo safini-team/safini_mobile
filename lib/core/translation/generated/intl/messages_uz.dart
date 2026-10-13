@@ -791,9 +791,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Aqlli bolalar uchun xavfsiz ekran vaqti 🌟",
     ),
     "free": MessageLookupByLibrary.simpleMessage("BEPUL"),
-    "freeLimitAndroid": MessageLookupByLibrary.simpleMessage(
-      "Safini Pro tez orada Androidda paydo boʻladi.",
-    ),
     "freeLimitApps": MessageLookupByLibrary.simpleMessage(
       "Bepul tarifda har bir farzand uchun beshta ilovani cheklash mumkin. Safini Pro bilan barcha ilovalarni cheklay olasiz.",
     ),
@@ -811,6 +808,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "freeLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Bepul tarif chegarasi",
+    ),
+    "freeLimitWeb": MessageLookupByLibrary.simpleMessage(
+      "Androidda Safini Pro safini.fun saytida sotib olinadi.",
     ),
     "fri": MessageLookupByLibrary.simpleMessage("JUM"),
     "friends": MessageLookupByLibrary.simpleMessage("Doʻstlar"),
@@ -1410,8 +1410,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Oilangizda Safini Pro bor",
     ),
     "proActiveUntil": m67,
-    "proAndroidSoon": MessageLookupByLibrary.simpleMessage(
-      "Androidda Safini Pro sotib olish tez orada mumkin boʻladi. Promokodingiz bormi? Uni pastga kiriting.",
+    "proBuyOnWeb": MessageLookupByLibrary.simpleMessage(
+      "Proni safini.fun saytida ulash",
     ),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Xarid amalga oshmadi. Qayta urinib koʻring.",
@@ -1441,6 +1441,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bepul sinov davomida hech narsa yechilmaydi. Tugashidan kamida 24 soat oldin bekor qilsangiz, hech narsa toʻlamaysiz; aks holda obuna sinov tugaganda boshlanadi.",
     ),
     "proManage": MessageLookupByLibrary.simpleMessage("Obunani boshqarish"),
+    "proManageOnWeb": MessageLookupByLibrary.simpleMessage(
+      "safini.fun saytida boshqarish",
+    ),
     "proMonthly": MessageLookupByLibrary.simpleMessage("Oylik"),
     "proNothingToRestore": MessageLookupByLibrary.simpleMessage(
       "Bu Apple ID da Safini Pro obunasi yoʻq.",
@@ -1476,6 +1479,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "proTrialUntil": m75,
     "proTrialWeeks": m76,
     "proTrialYears": m77,
+    "proWebFailed": MessageLookupByLibrary.simpleMessage(
+      "safini.fun ochilmadi. Qayta urinib koʻring.",
+    ),
+    "proWebLede": MessageLookupByLibrary.simpleMessage(
+      "Androidda Safini Pro safini.fun saytida sotib olinadi. Qayta kirish shart emas, bir daqiqa vaqt oladi. Promokodingiz bormi? Uni pastga kiriting.",
+    ),
     "proWelcome": MessageLookupByLibrary.simpleMessage(
       "Safini Proʼga xush kelibsiz!",
     ),
