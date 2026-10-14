@@ -156,12 +156,29 @@ class ParentLimitsView extends StatelessWidget {
     return DsScreen(
       onRefresh: onRefresh,
       slivers: [
-        // The picker sits above the title now: you pick whose phone first, and
-        // the title reads as the answer.
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.textGutter,
+              14,
+              AppSpacing.textGutter,
+              0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(s.tabLimits, style: AppText.largeTitle),
+                const SizedBox(height: 4),
+                Text(s.dateToday, style: AppText.subtitle),
+              ],
+            ),
+          ),
+        ),
+        // Title and subtitle first, then whose phone, like every tab.
         if (data.kids.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 2),
+              padding: const EdgeInsets.only(top: 14),
               child: DsKidStories(
                 showEveryone: false,
                 everyoneLabel: S.of(context).scopeEveryone,
@@ -183,24 +200,6 @@ class ParentLimitsView extends StatelessWidget {
               ),
             ),
           ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.textGutter,
-              14,
-              AppSpacing.textGutter,
-              0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(s.tabLimits, style: AppText.largeTitle),
-                const SizedBox(height: 4),
-                Text(s.dateToday, style: AppText.subtitle),
-              ],
-            ),
-          ),
-        ),
         if (onShowPrizes != null)
           SliverToBoxAdapter(
             child: Padding(
