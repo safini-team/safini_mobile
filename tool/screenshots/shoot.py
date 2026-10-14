@@ -27,7 +27,8 @@ FLOWS = Path(__file__).resolve().parent / "maestro"
 APP_ID = "com.safini.app"
 
 # Screen name -> the Semantics ids to tap, in order, from the parent tab bar.
-# A screen deeper than a tab (more than one id) relaunches the app after its
+# An entry ending in .yaml runs that flow from maestro/ instead (typing,
+# several taps). A screen deeper than a tab relaunches the app after its
 # shot, so the next one starts from the tab bar again.
 SCREENS = {
     "today": "nav.today",
@@ -39,6 +40,14 @@ SCREENS = {
     "fini-rules": "nav.fini fini.rules",
     "fini-activity": "nav.fini fini.activity",
     "family": "nav.family",
+    # Fini onboarding (needs DART_DEFINES=FINI_DEMO=true: no child is made).
+    "ob-child": "nav.fini kid_add.yaml",
+    "ob-goals": "nav.fini kid_add.yaml ob_fill_child.yaml",
+    "ob-tune": "nav.fini kid_add.yaml ob_fill_child.yaml ob_pick_goals.yaml",
+    "ob-plan": "nav.fini kid_add.yaml ob_fill_child.yaml ob_pick_goals.yaml"
+    " ob_next.yaml",
+    "ob-trial": "nav.fini kid_add.yaml ob_fill_child.yaml ob_pick_goals.yaml"
+    " ob_next.yaml ob_next.yaml",
 }
 LANGS = ("en", "ru", "ky", "uz", "kk")
 
@@ -307,7 +316,10 @@ def main() -> None:
                         path = SCREENS[screen].split()
                         maestro(device, "open_screen.yaml", NAV=path[0])
                         for row in path[1:]:
-                            maestro(device, "open_row.yaml", ROW=row)
+                            if row.endswith(".yaml"):
+                                maestro(device, row)
+                            else:
+                                maestro(device, "open_row.yaml", ROW=row)
                         shot = dest / f"{device.name}-{lang}-{screen}.png"
                         device.screenshot(shot)
                         shots.append(shot)

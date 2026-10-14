@@ -1,0 +1,7 @@
+# Taps the Add circle of the child selector (opens add-child).
+appId: com.safini.app
+---
+- tapOn:
+    id: "kid.add"
+- waitForAnimationToEnd:
+    timeout: 5000

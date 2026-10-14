@@ -6,6 +6,7 @@ import 'package:safini/core/theme/app_theme.dart';
 import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/core/utils/widgets/language_sheet.dart';
+import 'package:safini/features/fini/domain/fini_models.dart';
 
 /// The screenshot scripts in `tool/screenshots/` find elements by these ids,
 /// so a renamed id has to fail here rather than in a half-captured run.
@@ -54,6 +55,7 @@ void main() {
     final known = {
       ...QaIds.fixed,
       for (final l in appLanguages) QaIds.language(l.code),
+      for (final intent in GoalIntent.values) QaIds.goalTile(intent.name),
     };
     final flows = Directory('tool/screenshots/maestro')
         .listSync(recursive: true)
@@ -80,6 +82,14 @@ void main() {
     expect(paths, isNotEmpty);
     for (final m in paths) {
       for (final id in m.group(1)!.split(' ')) {
+        if (id.endsWith('.yaml')) {
+          expect(
+            File('tool/screenshots/maestro/$id').existsSync(),
+            isTrue,
+            reason: 'shoot.py runs "$id"',
+          );
+          continue;
+        }
         expect(QaIds.fixed, contains(id), reason: 'shoot.py taps "$id"');
       }
     }

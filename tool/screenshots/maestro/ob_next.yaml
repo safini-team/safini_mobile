@@ -1,0 +1,7 @@
+# Fini onboarding: the main button of the current board.
+appId: com.safini.app
+---
+- tapOn:
+    id: "ob.continue"
+- waitForAnimationToEnd:
+    timeout: 5000
