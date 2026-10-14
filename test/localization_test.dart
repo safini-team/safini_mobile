@@ -84,6 +84,8 @@ const Set<String> _sameAsEnglishByDesign = {
   'tabFini', // the assistant's name
   'goalGamesSub', // app names
   'goalScrollingSub', // app names
+  'obAndroid', // platform names
+  'obIphone',
 };
 
 void main() {
