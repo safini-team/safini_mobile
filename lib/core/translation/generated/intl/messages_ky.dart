@@ -932,10 +932,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Тыныгуу бардык эрежелерди ошол бойдон калтырат.",
     ),
     "finiPausedBody": MessageLookupByLibrary.simpleMessage(
-      "Акысыз сыноо бүттү. Эч нерсе жокко чыгарылган жок: бардык лимиттер ошол бойдон калат.",
+      "Акысыз сыноо бүттү. Бардык лимиттер ошол бойдон калат.",
     ),
     "finiPausedTitle": MessageLookupByLibrary.simpleMessage(
-      "Fini тындырылды. Эрежелериңиз иштеп жатат.",
+      "Fini эс алып жатат. Эрежелериңиз иштеп жатат.",
     ),
     "finiPickGoal": MessageLookupByLibrary.simpleMessage("Максат тандаңыз"),
     "finiPromise": MessageLookupByLibrary.simpleMessage(

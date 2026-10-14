@@ -906,10 +906,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пауза оставляет все правила как есть.",
     ),
     "finiPausedBody": MessageLookupByLibrary.simpleMessage(
-      "Бесплатный период закончился. Ничего не отменено: все лимиты остаются как есть.",
+      "Бесплатный период закончился. Все лимиты остаются как есть.",
     ),
     "finiPausedTitle": MessageLookupByLibrary.simpleMessage(
-      "Fini на паузе. Ваши правила работают.",
+      "Fini отдыхает. Ваши правила работают.",
     ),
     "finiPickGoal": MessageLookupByLibrary.simpleMessage("Выберите цель"),
     "finiPromise": MessageLookupByLibrary.simpleMessage(

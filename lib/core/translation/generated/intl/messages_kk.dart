@@ -928,10 +928,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Кідірту барлық ережені сол күйінде қалдырады.",
     ),
     "finiPausedBody": MessageLookupByLibrary.simpleMessage(
-      "Тегін сынақ аяқталды. Ештеңе қайтарылмады: барлық лимиттер сол күйі қалады.",
+      "Тегін сынақ аяқталды. Барлық лимиттер сол күйі қалады.",
     ),
     "finiPausedTitle": MessageLookupByLibrary.simpleMessage(
-      "Fini тоқтатылды. Ережелеріңіз жұмыс істеп тұр.",
+      "Fini демалып жатыр. Ережелеріңіз жұмыс істеп тұр.",
     ),
     "finiPickGoal": MessageLookupByLibrary.simpleMessage("Мақсат таңдаңыз"),
     "finiPromise": MessageLookupByLibrary.simpleMessage(

@@ -938,10 +938,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Pauza barcha qoidalarni o‘z holicha qoldiradi.",
     ),
     "finiPausedBody": MessageLookupByLibrary.simpleMessage(
-      "Bepul sinov tugadi. Hech narsa bekor qilinmadi: barcha cheklovlar o‘z holicha qoladi.",
+      "Bepul sinov tugadi. Barcha cheklovlar o‘z holicha qoladi.",
     ),
     "finiPausedTitle": MessageLookupByLibrary.simpleMessage(
-      "Fini to‘xtatildi. Qoidalaringiz ishlayapti.",
+      "Fini dam olmoqda. Qoidalaringiz ishlayapti.",
     ),
     "finiPickGoal": MessageLookupByLibrary.simpleMessage("Maqsad tanlang"),
     "finiPromise": MessageLookupByLibrary.simpleMessage(

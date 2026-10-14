@@ -884,10 +884,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Pausing keeps every rule as it is now.",
     ),
     "finiPausedBody": MessageLookupByLibrary.simpleMessage(
-      "The free trial is over. Nothing was rolled back: every limit stays as it is.",
+      "The free trial has ended. Every limit stays as it is.",
     ),
     "finiPausedTitle": MessageLookupByLibrary.simpleMessage(
-      "Fini is paused. Your rules are still on.",
+      "Fini is resting. Your rules still work.",
     ),
     "finiPickGoal": MessageLookupByLibrary.simpleMessage("Pick a goal"),
     "finiPromise": MessageLookupByLibrary.simpleMessage(

@@ -1248,8 +1248,8 @@
   "obStartTrial": "Start 14 days free",
   "obScreensOff": "Screens off",
   "finiTrialPill": "{count, plural, one{Free trial · {count} day left} other{Free trial · {count} days left}}",
-  "finiPausedTitle": "Fini is paused. Your rules are still on.",
-  "finiPausedBody": "The free trial is over. Nothing was rolled back: every limit stays as it is.",
+  "finiPausedTitle": "Fini is resting. Your rules still work.",
+  "finiPausedBody": "The free trial has ended. Every limit stays as it is.",
   "finiKeepWithPro": "Continue with Fini Pro",
   "proFeatureFini": "Fini runs your plan, step by step"
 }

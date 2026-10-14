@@ -9368,20 +9368,20 @@ class S {
     );
   }
 
-  /// `Fini is paused. Your rules are still on.`
+  /// `Fini is resting. Your rules still work.`
   String get finiPausedTitle {
     return Intl.message(
-      'Fini is paused. Your rules are still on.',
+      'Fini is resting. Your rules still work.',
       name: 'finiPausedTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `The free trial is over. Nothing was rolled back: every limit stays as it is.`
+  /// `The free trial has ended. Every limit stays as it is.`
   String get finiPausedBody {
     return Intl.message(
-      'The free trial is over. Nothing was rolled back: every limit stays as it is.',
+      'The free trial has ended. Every limit stays as it is.',
       name: 'finiPausedBody',
       desc: '',
       args: [],
