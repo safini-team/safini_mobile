@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart' show Tristate;
+import 'dart:ui' show Tristate;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/utils/widgets/ds/ds_kid_stories.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
