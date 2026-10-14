@@ -9020,6 +9020,341 @@ class S {
   String get finiDone {
     return Intl.message('Done', name: 'finiDone', desc: '', args: []);
   }
+
+  /// `Hi, I'm Fini! Who are we helping?`
+  String get obHiWho {
+    return Intl.message(
+      'Hi, I\'m Fini! Who are we helping?',
+      name: 'obHiWho',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Child's name`
+  String get obChildName {
+    return Intl.message(
+      'Child\'s name',
+      name: 'obChildName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `16+`
+  String get obAge16Plus {
+    return Intl.message('16+', name: 'obAge16Plus', desc: '', args: []);
+  }
+
+  /// `Their phone`
+  String get obTheirPhone {
+    return Intl.message(
+      'Their phone',
+      name: 'obTheirPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Android`
+  String get obAndroid {
+    return Intl.message('Android', name: 'obAndroid', desc: '', args: []);
+  }
+
+  /// `iPhone`
+  String get obIphone {
+    return Intl.message('iPhone', name: 'obIphone', desc: '', args: []);
+  }
+
+  /// `Skip`
+  String get obSkip {
+    return Intl.message('Skip', name: 'obSkip', desc: '', args: []);
+  }
+
+  /// `Only so Fini gets the grammar right.`
+  String get obGenderWhy {
+    return Intl.message(
+      'Only so Fini gets the grammar right.',
+      name: 'obGenderWhy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What would you like to change for {name}?`
+  String obGoalsTitle(Object name) {
+    return Intl.message(
+      'What would you like to change for $name?',
+      name: 'obGoalsTitle',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Pick as many as you like.`
+  String get obGoalsSub {
+    return Intl.message(
+      'Pick as many as you like.',
+      name: 'obGoalsSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set the limits you want`
+  String get obTuneTitle {
+    return Intl.message(
+      'Set the limits you want',
+      name: 'obTuneTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Where you want to end up. Fini gets {name} there step by step.`
+  String obTuneSub(Object name) {
+    return Intl.message(
+      'Where you want to end up. Fini gets $name there step by step.',
+      name: 'obTuneSub',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `a day, at most`
+  String get obADayAtMost {
+    return Intl.message(
+      'a day, at most',
+      name: 'obADayAtMost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Games open after this task`
+  String get obHomeworkGate {
+    return Intl.message(
+      'Games open after this task',
+      name: 'obHomeworkGate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Any study task you approve`
+  String get obAnyStudyTask {
+    return Intl.message(
+      'Any study task you approve',
+      name: 'obAnyStudyTask',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not sure? These are our suggested starting points for age {age}. You can change them any time.`
+  String obSuggested(Object age) {
+    return Intl.message(
+      'Not sure? These are our suggested starting points for age $age. You can change them any time.',
+      name: 'obSuggested',
+      desc: '',
+      args: [age],
+    );
+  }
+
+  /// `Here's my plan. No sudden cut-offs, so fewer fights.`
+  String get obPlanTitle {
+    return Intl.message(
+      'Here\'s my plan. No sudden cut-offs, so fewer fights.',
+      name: 'obPlanTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `First 3 days: I watch`
+  String get obPlanWatchTitle {
+    return Intl.message(
+      'First 3 days: I watch',
+      name: 'obPlanWatchTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Once {name}'s phone is connected I learn a normal day. Nothing changes yet.`
+  String obPlanWatchBody(Object name) {
+    return Intl.message(
+      'Once $name\'s phone is connected I learn a normal day. Nothing changes yet.',
+      name: 'obPlanWatchBody',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Every Monday: a small step`
+  String get obPlanMondayTitle {
+    return Intl.message(
+      'Every Monday: a small step',
+      name: 'obPlanMondayTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `About a quarter less each week, until each limit reaches what you set.`
+  String get obPlanMondayBody {
+    return Intl.message(
+      'About a quarter less each week, until each limit reaches what you set.',
+      name: 'obPlanMondayBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every day: homework first`
+  String get obPlanHomeworkTitle {
+    return Intl.message(
+      'Every day: homework first',
+      name: 'obPlanHomeworkTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Games stay closed until you approve a study task.`
+  String get obPlanHomeworkBody {
+    return Intl.message(
+      'Games stay closed until you approve a study task.',
+      name: 'obPlanHomeworkBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every night: screens off`
+  String get obPlanNightTitle {
+    return Intl.message(
+      'Every night: screens off',
+      name: 'obPlanNightTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From {from} until {to}, apps stay closed.`
+  String obPlanNightBody(Object from, Object to) {
+    return Intl.message(
+      'From $from until $to, apps stay closed.',
+      name: 'obPlanNightBody',
+      desc: '',
+      args: [from, to],
+    );
+  }
+
+  /// `You stay in charge. I never loosen a limit or unblock an app without asking you.`
+  String get obInCharge {
+    return Intl.message(
+      'You stay in charge. I never loosen a limit or unblock an app without asking you.',
+      name: 'obInCharge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sounds good`
+  String get obSoundsGood {
+    return Intl.message(
+      'Sounds good',
+      name: 'obSoundsGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change the limits`
+  String get obChangeLimits {
+    return Intl.message(
+      'Change the limits',
+      name: 'obChangeLimits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We're giving you`
+  String get obTrialLead {
+    return Intl.message(
+      'We\'re giving you',
+      name: 'obTrialLead',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `14 days of Fini for free`
+  String get obTrialTitle {
+    return Intl.message(
+      '14 days of Fini for free',
+      name: 'obTrialTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No card needed. Fini runs the plan, you just check in.`
+  String get obTrialSub {
+    return Intl.message(
+      'No card needed. Fini runs the plan, you just check in.',
+      name: 'obTrialSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every Fini feature, for every child`
+  String get obTrialTodayBody {
+    return Intl.message(
+      'Every Fini feature, for every child',
+      name: 'obTrialTodayBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Day {day}`
+  String obTrialDay(Object day) {
+    return Intl.message('Day $day', name: 'obTrialDay', desc: '', args: [day]);
+  }
+
+  /// `We remind you before the trial ends`
+  String get obTrialDay12Body {
+    return Intl.message(
+      'We remind you before the trial ends',
+      name: 'obTrialDay12Body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep it with Safini Pro. Or Fini pauses and your rules stay as they are.`
+  String get obTrialDay14Body {
+    return Intl.message(
+      'Keep it with Safini Pro. Or Fini pauses and your rules stay as they are.',
+      name: 'obTrialDay14Body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start 14 days free`
+  String get obStartTrial {
+    return Intl.message(
+      'Start 14 days free',
+      name: 'obStartTrial',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

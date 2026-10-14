@@ -8,8 +8,12 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/fini/data/fini_repository.dart';
+import 'package:safini/features/fini/onboarding/fini_onboarding_cubit.dart';
+import 'package:safini/features/fini/onboarding/fini_onboarding_page.dart';
 import 'package:safini/features/onboarding/fini.dart';
 import 'package:safini/features/onboarding/pairing_connected.dart';
 import 'package:safini/features/onboarding/pairing_watch.dart';
@@ -17,12 +21,11 @@ import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.da
 import 'package:safini/features/parent/presentation/widgets/family/family_sheets.dart';
 import 'package:safini/features/subscription/free_limit.dart';
 
-/// Steps 1 and 2 of the onboarding artboards: the child's details, then the
+/// Adding a child: the Fini onboarding (boards A to E, SAF-272), then the
 /// pairing code their phone needs.
 ///
-/// The artboard's "Their colour" picker is not here - a child's colour is
-/// derived from their id so it stays the same everywhere, and there is no field
-/// to persist a choice. The row in its place is gender, which the API does take.
+/// Board A creates the child, so leaving later still keeps them; the Fini tab
+/// picks the rest up from board B.
 class AddChildPage extends StatefulWidget {
   const AddChildPage({super.key});
 
@@ -30,25 +33,17 @@ class AddChildPage extends StatefulWidget {
   State<AddChildPage> createState() => _AddChildPageState();
 }
 
-enum _Gender {
-  boy('boy'),
-  girl('girl');
-
-  const _Gender(this.apiValue);
-
-  final String apiValue;
-}
-
 class _AddChildPageState extends State<AddChildPage> {
-  final _name = TextEditingController();
+  late final _onboarding = FiniOnboardingCubit(
+    repo: getIt<FiniRepository>(),
+    createChild: _createChild,
+  );
 
-  int _age = 8;
-  _Gender? _gender;
-  bool _submitting = false;
-  String? _error;
-
-  /// Set once the child exists; the screen then shows the pairing step.
+  /// Set once board A has created the child.
   String? _createdName;
+
+  /// Set after board E; the screen then shows the pairing step.
+  bool _onboarded = false;
   String? _pairingCode;
 
   /// Flips the waiting line to the connected screen once the kid's phone
@@ -57,19 +52,11 @@ class _AddChildPageState extends State<AddChildPage> {
   bool _connected = false;
 
   @override
-  void initState() {
-    super.initState();
-    _name.addListener(() => setState(() {}));
-  }
-
-  @override
   void dispose() {
     _watch?.stop();
-    _name.dispose();
+    _onboarding.close();
     super.dispose();
   }
-
-  bool get _canSubmit => _name.text.trim().isNotEmpty && !_submitting;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +68,15 @@ class _AddChildPageState extends State<AddChildPage> {
   }
 
   Widget _scaffold(BuildContext context) {
+    if (!_onboarded) {
+      return BlocProvider.value(
+        value: _onboarding,
+        child: FiniOnboardingFlow(
+          onDone: () => setState(() => _onboarded = true),
+          onLeave: () => context.router.maybePop(_createdName != null),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: AppColors.bgParent,
       body: DsScreenEntrance(
@@ -90,163 +86,12 @@ class _AddChildPageState extends State<AddChildPage> {
             padding: EdgeInsets.only(
               bottom: 40 + MediaQuery.viewInsetsOf(context).bottom,
             ),
-            child: _createdName == null
-                ? _details(context)
-                : _connected
+            child: _connected
                 ? _connectedView(context)
                 : _pairing(context),
           ),
         ),
       ),
-    );
-  }
-
-  // ── step 1 ──
-  Widget _details(BuildContext context) {
-    final s = S.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: 8),
-        DsBackButton(onTap: () => context.router.maybePop(false)),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(22, 8, 22, 0),
-          child: SizedBox(
-            width: 280,
-            child: Text(s.whoAreWeSettingUp, style: AppText.title1),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(22, 8, 22, 0),
-          child: Text(s.step1of2, style: AppText.bodyRegular),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(18, 24, 18, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DsGroup(
-                radius: AppRadius.card,
-                verticalPadding: 4,
-                shadow: AppShadows.cardSoft,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 72,
-                          child: Text(s.name, style: AppText.field),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: TextField(
-                            controller: _name,
-                            autofocus: true,
-                            textCapitalization: TextCapitalization.words,
-                            cursorColor: AppColors.primary,
-                            style: AppText.button.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ),
-                            decoration: InputDecoration(
-                              filled: false,
-                              isDense: true,
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.zero,
-                              hintText: s.nameHintExample,
-                              hintStyle: AppText.button.copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textTertiary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 72,
-                          child: Text(s.ageFieldLabel, style: AppText.field),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Text(
-                            '$_age',
-                            style: AppText.button.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ).nums,
-                          ),
-                        ),
-                        DsStepper(
-                          onLess: () =>
-                              setState(() => _age = (_age - 1).clamp(2, 18)),
-                          onMore: () =>
-                              setState(() => _age = (_age + 1).clamp(2, 18)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              DsCard(
-                radius: AppRadius.card,
-                shadow: AppShadows.cardSoft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DsOverlineText(s.genderOptional),
-                    const SizedBox(height: 14),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final option in _Gender.values)
-                          DsCategoryChip(
-                            label: _genderLabel(s, option),
-                            selected: _gender == option,
-                            restBackground: AppColors.fill,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 9,
-                            ),
-                            onTap: () => setState(
-                              () => _gender = _gender == option ? null : option,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              if (_error != null) ...[
-                const SizedBox(height: 14),
-                Text(
-                  _error!,
-                  style: AppText.metaSm.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.dangerDeep,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 26),
-              DsPrimaryButton(
-                label: s.continueAction,
-                enabled: _canSubmit,
-                busy: _submitting,
-                onTap: _submit,
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -348,58 +193,38 @@ class _AddChildPageState extends State<AddChildPage> {
     )..start();
   }
 
-  String _genderLabel(S s, _Gender option) => switch (option) {
-    _Gender.boy => s.genderBoy,
-    _Gender.girl => s.genderGirl,
-  };
-
-  Future<void> _submit() async {
-    if (!_canSubmit) return;
-    FocusScope.of(context).unfocus();
-
+  /// Board A's Continue: creates the child, issues their pairing code and
+  /// starts watching for the phone while the parent goes through B to E.
+  Future<String> _createChild({
+    required String name,
+    required int age,
+    String? gender,
+  }) async {
     final cubit = context.read<ParentFamilyCubit>();
-    final name = _name.text.trim();
-
-    setState(() {
-      _submitting = true;
-      _error = null;
-    });
-
     final failure = await cubit.createChild(
       nickname: name,
-      age: _age,
-      gender: _gender?.apiValue,
+      age: age,
+      gender: gender,
     );
-    if (!mounted) return;
-
-    if (failure != null) {
-      setState(() {
-        _submitting = false;
-        // The Safini Pro sheet already explains a free-plan limit.
-        _error = failure is FreeLimitFailure ? null : _messageFor(failure);
-      });
-      return;
-    }
-
-    setState(() {
-      _submitting = false;
-      _createdName = name;
-    });
+    // The Safini Pro sheet already explains a free-plan limit.
+    if (failure is FreeLimitFailure) throw const QuietFailure();
+    if (failure != null) throw _messageFor(failure);
 
     // The create call does not return the new child, so refresh and match on
     // the name to issue their pairing code.
     await cubit.loadCurrentFamily(refresh: true);
-    if (!mounted) return;
-
     final child = cubit.state.family?.children
         .where((c) => c.nickname == name)
         .lastOrNull;
-    if (child == null) return;
+    if (child == null) throw '';
+    if (mounted) setState(() => _createdName = name);
 
     final invite = await cubit.createChildInviteCode(child.id);
-    if (!mounted) return;
-    setState(() => _pairingCode = invite?.inviteCode);
-    if (invite != null) _watchPairing(cubit, child.id);
+    if (mounted) {
+      setState(() => _pairingCode = invite?.inviteCode);
+      if (invite != null) _watchPairing(cubit, child.id);
+    }
+    return child.id;
   }
 
   String _messageFor(Failure failure) {
