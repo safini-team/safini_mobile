@@ -74,38 +74,87 @@ class FiniCubit extends Cubit<FiniState> {
 
   int _generation = 0;
 
-  Future<void> load(String childId) async {
+  /// How long a child's Fini counts as current. Switching back within it
+  /// shows what is cached and calls nothing.
+  static const fresh = Duration(seconds: 30);
+
+  final _byChild = <String, FiniState>{};
+  final _loadedAt = <String, DateTime>{};
+
+  @override
+  void onChange(Change<FiniState> change) {
+    super.onChange(change);
+    final next = change.nextState;
+    // Writes land here too, so a cached child is never behind the screen.
+    if (next.status == FiniStatus.loaded && next.childId != null) {
+      _byChild[next.childId!] = next;
+    }
+  }
+
+  /// Shows [childId] at once when it was seen before, and refetches in the
+  /// background only when that copy is older than [fresh] or [force] is set.
+  Future<void> load(String childId, {bool force = false}) async {
     final generation = ++_generation;
+    final cached = _byChild[childId];
+    if (cached != null && state.childId != childId) {
+      emit(cached.copyWith(trial: state.trial));
+    }
+    final at = _loadedAt[childId];
+    if (!force &&
+        cached != null &&
+        at != null &&
+        DateTime.now().difference(at) < fresh) {
+      return;
+    }
     final same = state.childId == childId && state.status == FiniStatus.loaded;
-    emit(
-      same ? state : FiniState(childId: childId, status: FiniStatus.loading),
-    );
+    if (!same) emit(FiniState(childId: childId, status: FiniStatus.loading));
     try {
-      final results = await Future.wait([
-        _repo.settings(childId),
-        _repo.goals(childId),
-        _repo.pending(childId),
-        _repo.activity(childId),
-        _trialOrLast(),
-      ]);
+      final loaded = await _fetch(childId);
       if (isClosed || generation != _generation) return;
-      emit(
-        FiniState(
-          childId: childId,
-          status: FiniStatus.loaded,
-          settings: results[0] as FiniSettings,
-          goals: results[1] as List<FiniGoal>,
-          pending: results[2] as List<FiniProposal>,
-          activity: results[3] as List<FiniProposal>,
-          trial: results[4] as FiniTrial,
-        ),
-      );
+      _loadedAt[childId] = DateTime.now();
+      emit(loaded);
     } catch (_) {
       if (isClosed || generation != _generation) return;
       emit(
         same ? state : FiniState(childId: childId, status: FiniStatus.error),
       );
     }
+  }
+
+  /// Loads the other children quietly, one after another, so the first
+  /// switch to them is instant too. Nothing on screen changes.
+  Future<void> prefetch(Iterable<String> childIds) async {
+    for (final id in childIds) {
+      if (isClosed) return;
+      if (_byChild.containsKey(id)) continue;
+      try {
+        final loaded = await _fetch(id);
+        if (isClosed || _byChild.containsKey(id)) continue;
+        _byChild[id] = loaded;
+        _loadedAt[id] = DateTime.now();
+      } catch (_) {
+        // A miss here only means that child loads on the switch, as before.
+      }
+    }
+  }
+
+  Future<FiniState> _fetch(String childId) async {
+    final results = await Future.wait([
+      _repo.settings(childId),
+      _repo.goals(childId),
+      _repo.pending(childId),
+      _repo.activity(childId),
+      _trialOrLast(),
+    ]);
+    return FiniState(
+      childId: childId,
+      status: FiniStatus.loaded,
+      settings: results[0] as FiniSettings,
+      goals: results[1] as List<FiniGoal>,
+      pending: results[2] as List<FiniProposal>,
+      activity: results[3] as List<FiniProposal>,
+      trial: results[4] as FiniTrial,
+    );
   }
 
   /// A trial the server cannot say keeps the last one: the tab still works,

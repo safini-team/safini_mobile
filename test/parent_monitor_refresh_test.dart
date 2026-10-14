@@ -105,7 +105,8 @@ class _DelayedUsage extends _Usage {
   @override
   Future<Either<Failure, ChildAppUsageSnapshot>> fetchAppUsage(String childId) {
     requested.add(childId);
-    return (replies[childId] = Completer()).future;
+    // A prefetch of a child already on its way shares the pending reply.
+    return replies.putIfAbsent(childId, Completer.new).future;
   }
 
   void finish(String id, int minutes) => replies[id]!.complete(
@@ -225,11 +226,51 @@ void main() {
     );
 
     await cubit.selectChild(1);
-    expect(device.requested, ['amir', 'zilola']);
+    expect(device.requested.toSet(), {'amir', 'zilola'});
     expect(
       (cubit.state as ParentMonitorLoaded).deviceUsage?.apps.single.displayName,
       'zilola',
     );
+  });
+
+  test('switching to a prefetched child calls nothing', () async {
+    final family = _Family(_family({'amir': 25, 'zilola': 40}));
+    final device = _DeviceUsage(today: '2026-09-26');
+    final usage = _Usage();
+    final cubit = ParentMonitorCubit(family, usage, deviceUsage: device);
+    addTearDown(cubit.close);
+
+    await cubit.loadMonitorData();
+    await pumpEventQueue();
+    expect(usage.requested, ['amir', 'zilola']);
+
+    await cubit.selectChild(1);
+    await cubit.selectChild(0);
+    await cubit.selectChild(1);
+    final loaded = cubit.state as ParentMonitorLoaded;
+    expect(loaded.selectedChild?.id, 'zilola');
+    expect(loaded.weekUsage, isNotNull);
+    expect(usage.requested, ['amir', 'zilola']);
+    expect(family.loads, 1);
+  });
+
+  test('Limits shows a prefetched child without a skeleton or a call', () async {
+    final family = _Family(_family({'amir': 25, 'zilola': 40}));
+    final usage = _Usage();
+    final cubit = ParentAppsCubit(family, usage);
+    addTearDown(cubit.close);
+
+    await cubit.loadAppLimits();
+    await pumpEventQueue();
+    final states = <Object>[];
+    final sub = cubit.stream.listen(states.add);
+    addTearDown(sub.cancel);
+
+    expect(cubit.isFreshFor('zilola'), isTrue);
+    await pumpEventQueue();
+    expect(cubit.childId, 'zilola');
+    expect(states.whereType<ParentAppsLoading>(), isEmpty);
+    expect(usage.requested, ['amir', 'zilola']);
   });
 
   test('last week loads after the day, for the day the API is on', () async {

@@ -236,6 +236,7 @@ void main() {
           PushDestination.parentFamily,
           childId: _child,
         ),
+        'fini_trial_ending': const PushTarget(PushDestination.parentFini),
         'task_approved': const PushTarget(PushDestination.childToday),
         'streak_reminder': const PushTarget(PushDestination.childToday),
         'task_rejected': const PushTarget(
