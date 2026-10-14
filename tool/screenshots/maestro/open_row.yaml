@@ -1,15 +1,25 @@
-# Opens a row on the current screen that may sit below the fold: scrolls it
-# to the middle (a row peeking out above the tab bar counts as visible, and
-# a tap there lands on the tab), then taps it. ROW is a Semantics id (see SCREENS in shoot.py).
+# Opens a row on the current screen that may sit below the fold, then taps it.
+# ROW is a Semantics id (see SCREENS in shoot.py).
+#
+# The row is scrolled to the middle first: one peeking out above the tab bar
+# counts as visible, and a tap there lands on the tab. A row at the end of the
+# list cannot reach the middle, so that step is optional and a plain scroll
+# follows (it does nothing once the row is on screen).
 appId: com.safini.app
 ---
 - scrollUntilVisible:
     element:
       id: ${ROW}
     direction: DOWN
-    visibilityPercentage: 60
     centerElement: true
-    timeout: 15000
+    timeout: 8000
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: ${ROW}
+    direction: DOWN
+    visibilityPercentage: 60
+    timeout: 8000
 # A tap during the scroll's momentum only stops it.
 - waitForAnimationToEnd:
     timeout: 3000
