@@ -17,7 +17,7 @@ class GoalLook {
 
 GoalLook goalLook(GoalIntent intent) => switch (intent) {
   GoalIntent.games => const GoalLook(
-    '<path d="M6 9h12a4 4 0 0 1 4 4v1a3 3 0 0 1-5.4 1.8L15 14H9l-1.6 1.8A3 3 0 0 1 2 14v-1a4 4 0 0 1 4-4z"/><path d="M7 11.5v3M5.5 13h3"/>',
+    '<path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.6 9.4 2 14.5 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.4-1.4a2 2 0 0 1 1.4-.6h4.4a2 2 0 0 1 1.4.6L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.5-.6-6.6-.7-7.3a4 4 0 0 0-4-3.7z"/><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/>',
     AppColors.catLogic,
     AppColors.catLogicBg,
   ),
