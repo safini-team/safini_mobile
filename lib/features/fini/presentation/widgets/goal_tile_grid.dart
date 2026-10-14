@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/fini/domain/fini_goal_specs.dart';
 import 'package:safini/features/fini/domain/fini_models.dart';
@@ -103,6 +104,8 @@ class _GoalTile extends StatelessWidget {
     final subtitle = added ? s.goalAdded : goalTileSubtitle(s, spec);
     final minutes = spec.minutesPerDay;
     return Semantics(
+      identifier: QaIds.goalTile(spec.intent.name),
+      container: true,
       button: enabled,
       selected: multiSelect ? selected : null,
       enabled: enabled,

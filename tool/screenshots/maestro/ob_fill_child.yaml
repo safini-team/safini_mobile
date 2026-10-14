@@ -1,0 +1,14 @@
+# Fini onboarding board A: a name and Android, then Continue. Only run with
+# FINI_DEMO, which creates no child on the account.
+appId: com.safini.app
+---
+- tapOn:
+    id: "ob.name"
+- inputText: "Amir"
+- hideKeyboard
+- tapOn:
+    id: "ob.phone.android"
+- tapOn:
+    id: "ob.continue"
+- waitForAnimationToEnd:
+    timeout: 5000

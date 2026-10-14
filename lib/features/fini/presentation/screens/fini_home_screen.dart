@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
@@ -10,6 +11,7 @@ import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/fini/data/fini_repository.dart';
 import 'package:safini/features/fini/domain/fini_models.dart';
+import 'package:safini/features/fini/onboarding/fini_onboarding_page.dart';
 import 'package:safini/features/fini/presentation/cubit/fini_cubit.dart';
 import 'package:safini/features/fini/presentation/cubit/fini_inbox_cubit.dart';
 import 'package:safini/features/fini/presentation/fini_copy.dart';
@@ -221,8 +223,9 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
                 container: true,
                 child: DsRow(
                   key: const ValueKey('fini-add-goal'),
-                  onTap: () =>
-                      showAddGoalSheet(context, childName: child.nickname),
+                  onTap: () => state.goals.isEmpty
+                      ? _setUp(context, child)
+                      : showAddGoalSheet(context, childName: child.nickname),
                   leading: Container(
                     width: 36,
                     height: 36,
@@ -497,4 +500,17 @@ class _MascotCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// No goals yet: the onboarding from board B, then a reload.
+Future<void> _setUp(BuildContext context, ChildSummaryModel child) async {
+  final cubit = context.read<FiniCubit>();
+  await openFiniOnboarding(
+    context,
+    repo: getIt<FiniRepository>(),
+    childId: child.id,
+    name: child.nickname,
+    age: child.age,
+  );
+  await cubit.load(child.id);
 }
