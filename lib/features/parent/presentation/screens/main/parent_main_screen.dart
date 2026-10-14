@@ -18,6 +18,7 @@ import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_shell.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
+import 'package:safini/features/parent/presentation/cubit/family_usage_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
@@ -115,6 +116,8 @@ class _ParentMainScreenState extends State<ParentMainScreen>
         BlocProvider(create: (_) => getIt<ParentCubit>()..loadProfile()),
         // Hoisted so the Tasks tab and its badge read the same list.
         BlocProvider(create: (_) => getIt<ParentTasksCubit>()..loadAllTasks()),
+        // Everyone on Today and on Limits read the same per-child usage.
+        BlocProvider(create: (_) => getIt<FamilyUsageCubit>()),
       ],
       child: BlocListener<AuthSessionCubit, AuthSessionState>(
         listener: (context, state) {

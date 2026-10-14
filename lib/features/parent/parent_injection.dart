@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/cubit/family_usage_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,6 +68,9 @@ void registerParentDependencies(GetIt sl) {
   );
   sl.registerFactory<ParentInstalledAppsCubit>(
     () => ParentInstalledAppsCubit(sl<ParentAppBlockingService>()),
+  );
+  sl.registerFactory<FamilyUsageCubit>(
+    () => FamilyUsageCubit(sl<IParentAppUsageRepository>()),
   );
   sl.registerFactory<ParentMonitorCubit>(
     () => ParentMonitorCubit(

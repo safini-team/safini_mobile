@@ -958,5 +958,14 @@
   "proBuyOnWeb": "Proni ulash",
   "proManageOnWeb": "safini.fun saytida boshqarish",
   "proWebFailed": "safini.fun ochilmadi. Qayta urinib koʻring.",
-  "freeLimitParents": "Bepul tarifda bitta ota-ona. Safini Pro bilan oilaga ikkinchi ota-ona qoʻshilishi mumkin."
+  "freeLimitParents": "Bepul tarifda bitta ota-ona. Safini Pro bilan oilaga ikkinchi ota-ona qoʻshilishi mumkin.",
+  "familyUsedOfLimit": "{used} / {limit}",
+  "familyUsedToday": "Bugun {used}",
+  "familyTasksDone": "Vazifalar {done}/{total}",
+  "familyNothingYet": "Bugun hali hech narsa yo‘q",
+  "limitsFamilyCap": "Kunlik limit {time}",
+  "limitsFamilyNoCap": "Kunlik limit yo‘q",
+  "limitsFamilyApps": "{count, plural, =0{Ilovalarga limit yo‘q} other{{count} ta ilovada limit}}",
+  "limitsFamilyBlocked": "{count, plural, other{{count} ta bloklangan}}",
+  "limitsFamilyHint": "Limitlarni o‘zgartirish uchun bolani tanlang."
 }

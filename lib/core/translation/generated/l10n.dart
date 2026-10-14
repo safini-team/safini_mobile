@@ -8090,6 +8090,101 @@ class S {
       args: [],
     );
   }
+
+  /// `{used} of {limit}`
+  String familyUsedOfLimit(Object used, Object limit) {
+    return Intl.message(
+      '$used of $limit',
+      name: 'familyUsedOfLimit',
+      desc: '',
+      args: [used, limit],
+    );
+  }
+
+  /// `{used} today`
+  String familyUsedToday(Object used) {
+    return Intl.message(
+      '$used today',
+      name: 'familyUsedToday',
+      desc: '',
+      args: [used],
+    );
+  }
+
+  /// `Tasks {done}/{total}`
+  String familyTasksDone(Object done, Object total) {
+    return Intl.message(
+      'Tasks $done/$total',
+      name: 'familyTasksDone',
+      desc: '',
+      args: [done, total],
+    );
+  }
+
+  /// `Nothing yet today`
+  String get familyNothingYet {
+    return Intl.message(
+      'Nothing yet today',
+      name: 'familyNothingYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily cap {time}`
+  String limitsFamilyCap(Object time) {
+    return Intl.message(
+      'Daily cap $time',
+      name: 'limitsFamilyCap',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `No daily cap`
+  String get limitsFamilyNoCap {
+    return Intl.message(
+      'No daily cap',
+      name: 'limitsFamilyNoCap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count, plural, =0{No app limits} =1{1 app limited} other{{count} apps limited}}`
+  String limitsFamilyApps(num count) {
+    return Intl.plural(
+      count,
+      zero: 'No app limits',
+      one: '1 app limited',
+      other: '$count apps limited',
+      name: 'limitsFamilyApps',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count, plural, =1{1 blocked} other{{count} blocked}}`
+  String limitsFamilyBlocked(num count) {
+    return Intl.plural(
+      count,
+      one: '1 blocked',
+      other: '$count blocked',
+      name: 'limitsFamilyBlocked',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Tap a child to change their limits.`
+  String get limitsFamilyHint {
+    return Intl.message(
+      'Tap a child to change their limits.',
+      name: 'limitsFamilyHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1104,5 +1104,14 @@
   "proBuyOnWeb": "Get Pro",
   "proManageOnWeb": "Manage on safini.fun",
   "proWebFailed": "Couldn't open safini.fun. Try again.",
-  "freeLimitParents": "The free plan has one parent. With Safini Pro a second parent can join your family."
+  "freeLimitParents": "The free plan has one parent. With Safini Pro a second parent can join your family.",
+  "familyUsedOfLimit": "{used} of {limit}",
+  "familyUsedToday": "{used} today",
+  "familyTasksDone": "Tasks {done}/{total}",
+  "familyNothingYet": "Nothing yet today",
+  "limitsFamilyCap": "Daily cap {time}",
+  "limitsFamilyNoCap": "No daily cap",
+  "limitsFamilyApps": "{count, plural, =0{No app limits} =1{1 app limited} other{{count} apps limited}}",
+  "limitsFamilyBlocked": "{count, plural, =1{1 blocked} other{{count} blocked}}",
+  "limitsFamilyHint": "Tap a child to change their limits."
 }

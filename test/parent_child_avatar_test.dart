@@ -93,25 +93,27 @@ void main() {
     expect(find.text('😊'), findsNothing);
   });
 
-  testWidgets('the kid picker trigger shows the selected child face', (
+  testWidgets('the stories selector shows each child face', (
     tester,
   ) async {
     await tester.pumpWidget(
       _host(
         Scaffold(
-          body: DsKidPicker(
-            selectedKey: 'amir',
+          body: DsKidStories(
+            selectedId: 'amir',
+            everyoneLabel: 'Everyone',
+            addLabel: 'Add',
             onSelect: (_) {},
-            options: const [
-              DsPickerOption(
-                key: 'amir',
-                label: 'Amir',
+            kids: const [
+              DsStoryKid(
+                id: 'amir',
+                name: 'Amir',
                 color: Color(0xFF1A5C4A),
                 avatar: amir,
               ),
-              DsPickerOption(
-                key: 'layla',
-                label: 'Layla',
+              DsStoryKid(
+                id: 'layla',
+                name: 'Layla',
                 color: Color(0xFF2E6F8E),
                 avatar: ChildAvatarLook(
                   faceEmoji: '🥰',

@@ -28,11 +28,14 @@ APP_ID = "com.safini.app"
 
 # Screen name -> the Semantics id that opens it from the parent tab bar.
 # A new screen (the Fini tab, Fini onboarding) adds one line here.
+# Each screen is the Semantics ids to tap, in order, comma separated.
 SCREENS = {
     "today": "nav.today",
     "tasks": "nav.tasks",
     "limits": "nav.limits",
     "family": "nav.family",
+    "today-everyone": "nav.today,kid.everyone",
+    "limits-everyone": "nav.limits,kid.everyone",
 }
 LANGS = ("en", "ru", "ky", "uz", "kk")
 
@@ -251,7 +254,7 @@ def branch_dir() -> Path:
 
 def main() -> None:
     langs = words("LANGS", "en ru")
-    screens = words("SCREENS", " ".join(SCREENS))
+    screens = words("SCREENS", "today tasks limits family")
     platforms = words("PLATFORMS", "ios android")
     defines = [f"--dart-define={d}" for d in words("DART_DEFINES", "")]
     for lang in langs:
@@ -298,7 +301,8 @@ def main() -> None:
                 try:
                     maestro(device, "set_language.yaml", LANG=lang)
                     for screen in screens:
-                        maestro(device, "open_screen.yaml", NAV=SCREENS[screen])
+                        for nav in SCREENS[screen].split(","):
+                            maestro(device, "open_screen.yaml", NAV=nav)
                         shot = dest / f"{device.name}-{lang}-{screen}.png"
                         device.screenshot(shot)
                         shots.append(shot)

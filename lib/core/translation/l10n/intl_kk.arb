@@ -929,5 +929,14 @@
   "proBuyOnWeb": "Pro-ны қосу",
   "proManageOnWeb": "safini.fun сайтында басқару",
   "proWebFailed": "safini.fun ашылмады. Қайталап көріңіз.",
-  "freeLimitParents": "Тегін жоспарда бір ата-ана. Safini Pro арқылы отбасына екінші ата-ана қосыла алады."
+  "freeLimitParents": "Тегін жоспарда бір ата-ана. Safini Pro арқылы отбасына екінші ата-ана қосыла алады.",
+  "familyUsedOfLimit": "{used} / {limit}",
+  "familyUsedToday": "Бүгін {used}",
+  "familyTasksDone": "Тапсырмалар {done}/{total}",
+  "familyNothingYet": "Бүгін әзірге ештеңе жоқ",
+  "limitsFamilyCap": "Күндік лимит {time}",
+  "limitsFamilyNoCap": "Күндік лимит жоқ",
+  "limitsFamilyApps": "{count, plural, =0{Қолданбаларға лимит жоқ} other{{count} қолданбада лимит}}",
+  "limitsFamilyBlocked": "{count, plural, other{{count} бұғатталған}}",
+  "limitsFamilyHint": "Лимиттерін өзгерту үшін баланы таңдаңыз."
 }
