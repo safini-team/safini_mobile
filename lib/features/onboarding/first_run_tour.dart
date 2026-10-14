@@ -5,6 +5,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/onboarding/fini.dart';
 import 'package:safini/features/onboarding/onboarding_store.dart';
@@ -341,7 +342,11 @@ class _TourCard extends StatelessWidget {
               children: [
                 Text(s.tourStep(step + 1, total), style: AppText.meta),
                 const Spacer(),
-                TextButton(onPressed: onSkip, child: Text(s.tourSkip)),
+                Semantics(
+                  identifier: QaIds.tourSkip,
+                  container: true,
+                  child: TextButton(onPressed: onSkip, child: Text(s.tourSkip)),
+                ),
               ],
             ),
             FiniSays(text: body, size: 54),

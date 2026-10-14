@@ -5,6 +5,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/ds/app_flags.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 
@@ -67,21 +68,25 @@ Future<void> showLanguageSheet(BuildContext context) {
           radius: AppRadius.card,
           children: [
             for (final option in appLanguages)
-              DsRow(
-                title: option.label,
-                leading: AppFlag(option.code),
-                verticalPadding: 15,
-                onTap: () {
-                  cubit.setLocale(Locale(option.code));
-                  Navigator.of(context).pop();
-                },
-                trailing: option.code == current
-                    ? AppIcons.check(
-                        size: 15,
-                        color: AppColors.primary,
-                        strokeWidth: 2.4,
-                      )
-                    : const SizedBox.shrink(),
+              Semantics(
+                identifier: QaIds.language(option.code),
+                container: true,
+                child: DsRow(
+                  title: option.label,
+                  leading: AppFlag(option.code),
+                  verticalPadding: 15,
+                  onTap: () {
+                    cubit.setLocale(Locale(option.code));
+                    Navigator.of(context).pop();
+                  },
+                  trailing: option.code == current
+                      ? AppIcons.check(
+                          size: 15,
+                          color: AppColors.primary,
+                          strokeWidth: 2.4,
+                        )
+                      : const SizedBox.shrink(),
+                ),
               ),
           ],
         ),

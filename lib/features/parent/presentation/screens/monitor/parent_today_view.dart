@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/child_avatar_look.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/models/domain/models/device_usage.dart';
 import 'package:safini/features/models/presentation/widgets/app_time_list.dart';
@@ -392,19 +393,23 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return DsLargeTitle(
       title: S.of(context).tabToday,
-      trailing: Pressable(
-        onTap: onTap,
-        scale: 0.94,
-        child: Container(
-          width: 38,
-          height: 38,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            shape: BoxShape.circle,
-            boxShadow: AppShadows.hairline,
+      trailing: Semantics(
+        identifier: QaIds.openSettings,
+        container: true,
+        child: Pressable(
+          onTap: onTap,
+          scale: 0.94,
+          child: Container(
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              shape: BoxShape.circle,
+              boxShadow: AppShadows.hairline,
+            ),
+            child: AppIcons.gear(),
           ),
-          child: AppIcons.gear(),
         ),
       ),
     );

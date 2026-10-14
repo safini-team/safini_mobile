@@ -1,5 +1,5 @@
 .PHONY: help version version-check bump-build bump-patch bump-minor increment-build \
-	build-ios build-android build clean icons generate get openapi
+	build-ios build-android build clean icons generate get openapi screenshots
 
 PYTHON ?= python3
 VERSION_PY := $(PYTHON) scripts/pubspec_version.py
@@ -16,6 +16,7 @@ help:
 	@echo "  make generate        - Run codegen (intl + build_runner: freezed/json_serializable)"
 	@echo "  make openapi         - Refresh lib/api_reference/api.json from production"
 	@echo "  make icons           - Generate app launcher icons (flutter_launcher_icons)"
+	@echo "  make screenshots     - EN+RU shots from the iOS simulator + Android emulator (LANGS=, SCREENS=)"
 	@echo "  make build-ios       - bump-build, then build iOS release IPA"
 	@echo "  make build-android   - bump-build, then build Android App Bundle (.aab) + APK"
 	@echo "  make build           - bump-build once, then build iOS and Android"
@@ -58,6 +59,12 @@ openapi:
 	| python3 -c "import json, sys; json.dump(json.load(sys.stdin), sys.stdout, indent=2, ensure_ascii=False); print()" \
 	> lib/api_reference/api.json
 	@echo "lib/api_reference/api.json refreshed from api.safini.fun"
+
+# PR screenshots: artifacts/screenshots/<branch>/. Knobs in commands/screenshots.md.
+LANGS ?= en ru
+SCREENS ?= today tasks limits family
+screenshots:
+	@LANGS="$(LANGS)" SCREENS="$(SCREENS)" $(PYTHON) tool/screenshots/shoot.py
 
 # Generate app launcher icons
 icons:

@@ -1,0 +1,16 @@
+# Switches the app language through Settings -> Change Language, then
+# relaunches so every screen starts fresh in the new language. The choice is
+# saved per account, so it survives the relaunch.
+appId: com.safini.app
+---
+- tapOn:
+    id: "nav.today"
+- tapOn:
+    id: "settings.open"
+- tapOn:
+    id: "settings.language"
+- tapOn:
+    id: "lang.${LANG}"
+- stopApp
+- launchApp
+- runFlow: ready.yaml

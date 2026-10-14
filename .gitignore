@@ -46,3 +46,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# make screenshots output; attach to the PR, never commit
+/artifacts/screenshots/
