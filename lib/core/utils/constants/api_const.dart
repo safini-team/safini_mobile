@@ -67,6 +67,19 @@ class ApiConst {
   static String askForPrize(String prizeId) => '/v1/prizes/$prizeId/requests';
   static const String prizeRequests = '/v1/prize-requests';
 
+  /// Fini, the AI assistant (SAF-266). Parent-only.
+  static String finiSettings(String childId) =>
+      '/v1/children/$childId/fini/settings';
+  static String finiGoals(String childId) => '/v1/children/$childId/fini/goals';
+  static String finiGoal(String goalId) => '/v1/fini/goals/$goalId';
+  static String finiProposals(String childId) =>
+      '/v1/children/$childId/fini/proposals';
+  static String finiActivity(String childId) =>
+      '/v1/children/$childId/fini/activity';
+  static String finiDecision(String proposalId, String action) =>
+      '/v1/fini/proposals/$proposalId/$action';
+  static const String finiInbox = '/v1/fini/inbox';
+
   /// A child asks a parent before signing out (SAF-191).
   static String childSignoutRequests(String childId) =>
       '/v1/children/$childId/signout-requests';

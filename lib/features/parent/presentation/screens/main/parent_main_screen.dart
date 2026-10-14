@@ -18,6 +18,9 @@ import 'package:safini/core/notifications/push_deep_links.dart';
 import 'package:safini/core/notifications/push_shell.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
+import 'package:safini/features/fini/presentation/cubit/fini_inbox_cubit.dart';
+import 'package:safini/features/fini/presentation/fini_tab.dart';
+import 'package:safini/features/parent/presentation/cubit/family_usage_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
@@ -36,7 +39,7 @@ class ParentMainScreen extends StatefulWidget {
     PushDestination.parentToday => 0,
     PushDestination.parentTasks => 1,
     PushDestination.parentLimits => 2,
-    PushDestination.parentFamily => 3,
+    PushDestination.parentFamily => ParentTab.family,
     _ => null,
   };
 
@@ -115,6 +118,9 @@ class _ParentMainScreenState extends State<ParentMainScreen>
         BlocProvider(create: (_) => getIt<ParentCubit>()..loadProfile()),
         // Hoisted so the Tasks tab and its badge read the same list.
         BlocProvider(create: (_) => getIt<ParentTasksCubit>()..loadAllTasks()),
+        // Fini: each child's usage, and the tab badge.
+        BlocProvider(create: (_) => getIt<FamilyUsageCubit>()),
+        BlocProvider(create: (_) => getIt<FiniInboxCubit>()..refresh()),
       ],
       child: BlocListener<AuthSessionCubit, AuthSessionState>(
         listener: (context, state) {
@@ -186,6 +192,12 @@ class _ParentMainViewState extends State<_ParentMainView> {
                     builder: (color) => AppIcons.tabLimits(color: color),
                   ),
                   DsTabItem(
+                    label: s.tabFini,
+                    semanticsId: QaIds.navFini,
+                    builder: (color) => AppIcons.tabFini(color: color),
+                    badge: context.watch<FiniInboxCubit>().state.total,
+                  ),
+                  DsTabItem(
                     label: s.tabFamily,
                     semanticsId: QaIds.navFamily,
                     builder: (color) => AppIcons.tabFamily(color: color),
@@ -209,6 +221,7 @@ class _ParentMainViewState extends State<_ParentMainView> {
                         ParentMonitorScreen(reviewKey: _reviewKey),
                         const ParentTasksScreen(),
                         const ParentAppsScreen(),
+                        const FiniTab(),
                         const ParentFamilyScreen(),
                       ],
                     ),

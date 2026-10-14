@@ -157,7 +157,7 @@ class _GettingStartedHostState extends State<GettingStartedHost> {
       case SetupStep.child:
         context.router.push(const NamedRoute('addChild'));
       case SetupStep.phone:
-        home.selectTab(3);
+        home.selectTab(ParentTab.family);
       case SetupStep.task:
         home.selectTab(1);
       case SetupStep.limit:

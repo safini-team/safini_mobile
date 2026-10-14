@@ -205,6 +205,17 @@ class AppIcons {
     color: color,
   );
 
+  /// Fini: a winding path between two dots, the plan from now to the goal.
+  static Widget tabFini({double size = 25, required Color color}) => _svg(
+    '<circle cx="5.5" cy="18.5" r="2" stroke="currentColor" stroke-width="1.8"/>'
+    '<circle cx="18.5" cy="5.5" r="2" stroke="currentColor" stroke-width="1.8"/>'
+    '<path d="M7.5 18.5H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    width: 24,
+    height: 24,
+    size: size,
+    color: color,
+  );
+
   static Widget tabFamily({double size = 25, required Color color}) => _svg(
     '<circle cx="9" cy="8.5" r="3.4" stroke="currentColor" stroke-width="1.7"/>'
     '<path d="M2.8 20c.5-3.4 3-5.4 6.2-5.4s5.7 2 6.2 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'

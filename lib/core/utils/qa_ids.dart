@@ -12,6 +12,7 @@ abstract final class QaIds {
   static const navToday = 'nav.today';
   static const navTasks = 'nav.tasks';
   static const navLimits = 'nav.limits';
+  static const navFini = 'nav.fini';
   static const navFamily = 'nav.family';
 
   /// The "Everyone" circle of the child selector.
@@ -30,6 +31,7 @@ abstract final class QaIds {
     navToday,
     navTasks,
     navLimits,
+    navFini,
     navFamily,
     kidEveryone,
     openSettings,

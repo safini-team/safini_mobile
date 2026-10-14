@@ -1,3 +1,8 @@
+import 'package:safini/features/fini/data/fini_repository.dart';
+import 'package:safini/features/fini/demo/fini_demo.dart';
+import 'package:safini/features/fini/demo/fini_demo_repository.dart';
+import 'package:safini/features/fini/presentation/cubit/fini_inbox_cubit.dart';
+import 'package:safini/features/parent/presentation/cubit/family_usage_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,6 +72,18 @@ void registerParentDependencies(GetIt sl) {
   );
   sl.registerFactory<ParentInstalledAppsCubit>(
     () => ParentInstalledAppsCubit(sl<ParentAppBlockingService>()),
+  );
+  // Fini (SAF-271): fixtures behind --dart-define=FINI_DEMO=true, debug only.
+  sl.registerLazySingleton<FiniRepository>(() {
+    final demo = finiDemoState;
+    return demo == null
+        ? FiniApiRepository(sl<Dio>())
+        : FiniDemoRepository(demo);
+  });
+  sl.registerFactory<FiniInboxCubit>(() => FiniInboxCubit(sl<FiniRepository>()));
+  // Fini reads each child's usage to tell an iPhone (no usage) from Android.
+  sl.registerFactory<FamilyUsageCubit>(
+    () => FamilyUsageCubit(sl<IParentAppUsageRepository>()),
   );
   sl.registerFactory<ParentMonitorCubit>(
     () => ParentMonitorCubit(
