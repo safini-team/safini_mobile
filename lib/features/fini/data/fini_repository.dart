@@ -15,6 +15,10 @@ abstract class FiniRepository {
   Future<List<FiniProposal>> activity(String childId);
   Future<FiniProposal> decide(String proposalId, FiniDecision decision);
   Future<FiniInbox> inbox();
+  Future<FiniTrial> trial();
+
+  /// Starts the family's trial; a second call returns it unchanged.
+  Future<FiniTrial> startTrial();
 }
 
 enum FiniDecision { accept, dismiss, undo }
@@ -90,6 +94,14 @@ class FiniApiRepository implements FiniRepository {
   @override
   Future<FiniInbox> inbox() async =>
       FiniInbox.fromJson(_map((await _dio.get(ApiConst.finiInbox)).data));
+
+  @override
+  Future<FiniTrial> trial() async =>
+      FiniTrial.fromJson(_map((await _dio.get(ApiConst.finiTrial)).data));
+
+  @override
+  Future<FiniTrial> startTrial() async =>
+      FiniTrial.fromJson(_map((await _dio.post(ApiConst.finiTrialStart)).data));
 
   static Map<String, dynamic> _map(Object? data) =>
       data is Map ? data.cast<String, dynamic>() : const {};

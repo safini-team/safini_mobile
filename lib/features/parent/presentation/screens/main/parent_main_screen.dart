@@ -39,6 +39,7 @@ class ParentMainScreen extends StatefulWidget {
     PushDestination.parentToday => 0,
     PushDestination.parentTasks => 1,
     PushDestination.parentLimits => 2,
+    PushDestination.parentFini => ParentTab.fini,
     PushDestination.parentFamily => ParentTab.family,
     _ => null,
   };

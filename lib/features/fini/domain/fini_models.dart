@@ -284,6 +284,30 @@ class FiniProposal {
   );
 }
 
+enum FiniTrialState { notStarted, trial, expired, pro }
+
+/// The family's one 14-day Fini trial (SAF-273). Expired means Fini is
+/// paused: every rule stays as it was, and Pro turns it back on.
+class FiniTrial {
+  const FiniTrial({this.state = FiniTrialState.notStarted, this.daysLeft});
+
+  final FiniTrialState state;
+  final int? daysLeft;
+
+  bool get paused => state == FiniTrialState.expired;
+  bool get inTrial => state == FiniTrialState.trial;
+
+  factory FiniTrial.fromJson(Map<String, dynamic> json) => FiniTrial(
+    state: switch (json['state']) {
+      'trial' => FiniTrialState.trial,
+      'expired' => FiniTrialState.expired,
+      'pro' => FiniTrialState.pro,
+      _ => FiniTrialState.notStarted,
+    },
+    daysLeft: (json['days_left'] as num?)?.toInt(),
+  );
+}
+
 /// Pending cards per child, for the tab badge and the dots on the circles.
 class FiniInbox {
   const FiniInbox({this.total = 0, this.byChild = const {}});

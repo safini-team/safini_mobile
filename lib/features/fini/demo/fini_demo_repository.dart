@@ -248,6 +248,18 @@ class FiniDemoRepository implements FiniRepository {
   }
 
   @override
+  Future<FiniTrial> trial() async => switch (state) {
+    FiniDemoState.trialExpired => const FiniTrial(
+      state: FiniTrialState.expired,
+      daysLeft: 0,
+    ),
+    _ => const FiniTrial(state: FiniTrialState.trial, daysLeft: 11),
+  };
+
+  @override
+  Future<FiniTrial> startTrial() => trial();
+
+  @override
   Future<FiniInbox> inbox() async {
     final byChild = <String, int>{
       for (final entry in _proposals.entries)

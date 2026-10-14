@@ -1071,5 +1071,10 @@
   "obTrialDay12Body": "Сыноо мөөнөтү бүтөөрдөн мурун эскертебиз",
   "obTrialDay14Body": "Safini Pro менен улантыңыз. Же Fini тындырылат, эрежелериңиз ошол бойдон калат.",
   "obStartTrial": "14 күн акысыз баштоо",
-  "obScreensOff": "Экрандар өчүк"
+  "obScreensOff": "Экрандар өчүк",
+  "finiTrialPill": "{count, plural, =1{Акысыз сыноо · {count} күн калды} other{Акысыз сыноо · {count} күн калды}}",
+  "finiPausedTitle": "Fini тындырылды. Эрежелериңиз иштеп жатат.",
+  "finiPausedBody": "Акысыз сыноо бүттү. Эч нерсе жокко чыгарылган жок: бардык лимиттер ошол бойдон калат.",
+  "finiKeepWithPro": "Fini’ни Pro менен сактоо",
+  "proFeatureFini": "Fini планыңызды кадам сайын жүргүзөт"
 }
