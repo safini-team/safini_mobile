@@ -47,7 +47,7 @@ class FiniOnboardingFlow extends StatelessWidget {
     final (Widget body, Widget footer) = switch (data.step) {
       OnboardingStep.child => (
         _ChildBoard(data: data),
-        DsPrimaryButton(
+        _Continue(
           key: const ValueKey('ob-continue'),
           label: s.continueAction,
           enabled: data.childReady,
@@ -57,7 +57,7 @@ class FiniOnboardingFlow extends StatelessWidget {
       ),
       OnboardingStep.goals => (
         _GoalsBoard(data: data),
-        DsPrimaryButton(
+        _Continue(
           key: const ValueKey('ob-continue'),
           label: s.tourNext,
           enabled: data.picked.isNotEmpty,
@@ -66,7 +66,7 @@ class FiniOnboardingFlow extends StatelessWidget {
       ),
       OnboardingStep.tune => (
         _TuneBoard(data: data),
-        DsPrimaryButton(
+        _Continue(
           key: const ValueKey('ob-continue'),
           label: s.tourNext,
           onTap: next,
@@ -78,7 +78,7 @@ class FiniOnboardingFlow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DsPrimaryButton(
+            _Continue(
               key: const ValueKey('ob-continue'),
               label: s.obSoundsGood,
               busy: state.busy,
@@ -95,7 +95,7 @@ class FiniOnboardingFlow extends StatelessWidget {
       ),
       OnboardingStep.trial => (
         const _TrialBoard(),
-        DsPrimaryButton(
+        _Continue(
           key: const ValueKey('ob-continue'),
           label: s.obStartTrial,
           onTap: next,
@@ -163,11 +163,7 @@ class FiniOnboardingFlow extends StatelessWidget {
                           ),
                         ),
                       ),
-                    Semantics(
-                      identifier: QaIds.obContinue,
-                      container: true,
-                      child: footer,
-                    ),
+                    footer,
                   ],
                 ),
               ),
@@ -759,3 +755,31 @@ Future<void> openFiniOnboarding(
     ),
   ),
 );
+
+/// The board's main button, with the id the screenshot walk taps.
+class _Continue extends StatelessWidget {
+  const _Continue({
+    super.key,
+    required this.label,
+    required this.onTap,
+    this.enabled = true,
+    this.busy = false,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+  final bool enabled;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    identifier: QaIds.obContinue,
+    container: true,
+    child: DsPrimaryButton(
+      label: label,
+      enabled: enabled,
+      busy: busy,
+      onTap: onTap,
+    ),
+  );
+}
