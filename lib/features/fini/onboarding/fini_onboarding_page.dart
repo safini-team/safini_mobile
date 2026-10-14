@@ -122,6 +122,11 @@ class FiniOnboardingFlow extends StatelessWidget {
               Expanded(
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 220),
+                  // Short boards start at the top like the rest.
+                  layoutBuilder: (current, previous) => Stack(
+                    alignment: Alignment.topCenter,
+                    children: [...previous, ?current],
+                  ),
                   child: SingleChildScrollView(
                     key: ValueKey(data.step),
                     keyboardDismissBehavior:
