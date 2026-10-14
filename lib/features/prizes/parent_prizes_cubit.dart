@@ -23,15 +23,30 @@ class ParentPrizesCubit extends Cubit<ParentPrizesState> {
 
   final PrizeApi _api;
 
+  // Every child seen, so a switch shows their prizes at once while the
+  // fresh list loads behind them.
+  final _byChild = <String, PrizeList>{};
+
+  @override
+  void onChange(Change<ParentPrizesState> change) {
+    super.onChange(change);
+    final next = change.nextState;
+    final id = next.childId;
+    if (id != null && !next.isLoading && !next.hasError) {
+      _byChild[id] = next.list;
+    }
+  }
+
   Future<void> load([String? childId]) async {
     final id = childId ?? state.childId;
     if (id == null || id.isEmpty) return;
     final switched = id != state.childId;
+    final cached = switched ? _byChild[id] : state.list;
     emit(
       ParentPrizesState(
         childId: id,
-        list: switched ? const PrizeList.empty() : state.list,
-        isLoading: switched || state.prizes.isEmpty,
+        list: cached ?? const PrizeList.empty(),
+        isLoading: cached == null || cached.prizes.isEmpty,
       ),
     );
     try {

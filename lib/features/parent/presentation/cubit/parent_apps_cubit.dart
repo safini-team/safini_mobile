@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/tab_freshness.dart';
@@ -20,6 +21,12 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
   DateTime? _loadedAt;
 
+  // Every child seen this session, so switching between kids swaps rows in
+  // at once and refetches only when the copy is stale.
+  final _byChild = <String, ChildAppUsageSnapshot>{};
+  final _loadedAtByChild = <String, DateTime>{};
+  bool _prefetched = false;
+
   ParentAppsCubit(this._familyCubit, this._appUsageRepo)
     : super(const ParentAppsInitial());
 
@@ -27,14 +34,27 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   String? get childId => _childId;
 
   /// Whether switching back to Limits can skip the refetch for [childId].
-  bool isFreshFor(String? childId) =>
-      state is ParentAppsLoaded &&
-      (childId == null || childId == _childId) &&
-      isTabFresh(_loadedAt);
+  bool isFreshFor(String? childId) => childId == null || childId == _childId
+      ? state is ParentAppsLoaded && isTabFresh(_loadedAt)
+      : isTabFresh(_loadedAtByChild[childId]) && _showCached(childId);
+
+  /// Puts a cached child on screen. False when there is none.
+  bool _showCached(String childId) {
+    final cached = _byChild[childId];
+    if (cached == null) return false;
+    ++_loadGeneration;
+    _childId = childId;
+    _appUsage = cached.apps;
+    _screenTime = cached.screenTime;
+    _loadedAt = _loadedAtByChild[childId];
+    _emitLoaded();
+    return true;
+  }
 
   /// A refresh of the child already on screen keeps the list up and swaps the
   /// new rows in; only a first load or another child shows the skeleton.
   Future<void> loadAppLimits({String? childId}) async {
+    if (childId != null && childId != _childId) _showCached(childId);
     final generation = ++_loadGeneration;
     final sameChild =
         state is ParentAppsLoaded && (childId == null || childId == _childId);
@@ -77,9 +97,15 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
         _loadedAt = DateTime.now();
         _appUsage = snapshot.apps;
         _screenTime = snapshot.screenTime;
+        _byChild[_childId!] = snapshot;
+        _loadedAtByChild[_childId!] = _loadedAt!;
         _emitLoaded();
       },
     );
+    if (!_prefetched) {
+      _prefetched = true;
+      unawaited(_prefetch([for (final c in children) c.id]));
+    }
   }
 
   void _emitLoaded() {
@@ -155,11 +181,29 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     });
   }
 
+  /// Loads the other children quietly so the first switch to them is
+  /// instant. Nothing on screen changes.
+  Future<void> _prefetch(List<String> ids) async {
+    for (final id in ids) {
+      if (isClosed) return;
+      if (_byChild.containsKey(id)) continue;
+      final result = await _appUsageRepo.fetchAppUsage(id);
+      if (isClosed || _byChild.containsKey(id)) continue;
+      result.fold((_) {}, (snapshot) {
+        _byChild[id] = snapshot;
+        _loadedAtByChild[id] = DateTime.now();
+      });
+    }
+  }
+
   /// Switches which child's limits are shown.
   Future<void> selectChild(String childId) {
     if (childId == _childId) return Future.value();
-    _appUsage = const [];
-    _screenTime = ScreenTimeModel.none;
+    if (isFreshFor(childId)) return Future.value();
+    if (!_showCached(childId)) {
+      _appUsage = const [];
+      _screenTime = ScreenTimeModel.none;
+    }
     return loadAppLimits(childId: childId);
   }
 

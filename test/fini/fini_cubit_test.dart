@@ -14,9 +14,11 @@ class _Repo extends FiniDemoRepository {
 
   bool failReads = false;
   Object? writeError;
+  final goalReads = <String>[];
 
   @override
   Future<List<FiniGoal>> goals(String childId) {
+    goalReads.add(childId);
     if (failReads) throw Exception('offline');
     return super.goals(childId);
   }
@@ -209,5 +211,29 @@ void main() {
       expect(inbox.total, 3);
       expect(inbox.byChild['a'], 2);
     });
+  });
+
+  test('a child seen before shows at once and is not fetched again', () async {
+    final repo = _Repo(FiniDemoState.runningPlan);
+    final cubit = FiniCubit(repo);
+    addTearDown(cubit.close);
+
+    await cubit.load('a');
+    await cubit.prefetch(['a', 'b']);
+    expect(repo.goalReads, ['a', 'b']);
+
+    final states = <FiniState>[];
+    final sub = cubit.stream.listen(states.add);
+    addTearDown(sub.cancel);
+    await cubit.load('b');
+    await cubit.load('a');
+    expect(states.map((s) => (s.childId, s.status)), [
+      ('b', FiniStatus.loaded),
+      ('a', FiniStatus.loaded),
+    ]);
+    expect(repo.goalReads, ['a', 'b']);
+
+    await cubit.load('a', force: true);
+    expect(repo.goalReads, ['a', 'b', 'a']);
   });
 }

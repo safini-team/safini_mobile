@@ -25,6 +25,13 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   ScreenTimeModel _screenTime = ScreenTimeModel.none;
   DateTime? _loadedAt;
 
+  // Every child seen this session, so a switch shows them at once and
+  // refetches only when the copy is stale.
+  final _byChild = <String, ParentMonitorLoaded>{};
+  final _usageByChild = <String, ChildAppUsageSnapshot>{};
+  final _loadedAtByChild = <String, DateTime>{};
+  bool _prefetched = false;
+
   ParentMonitorCubit(
     this._familyCubit,
     this._appUsageRepo, {
@@ -57,6 +64,29 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   }
 
   @override
+  void onChange(Change<ParentMonitorState> change) {
+    super.onChange(change);
+    final next = change.nextState;
+    final id = next is ParentMonitorLoaded ? next.selectedChild?.id : null;
+    if (id != null) _byChild[id] = next as ParentMonitorLoaded;
+  }
+
+  /// Puts a cached child on screen. False when there is none.
+  bool _showCached(String childId) {
+    final cached = _byChild[childId];
+    final index = _children.indexWhere((child) => child.id == childId);
+    if (cached == null || index == -1) return false;
+    ++_loadGeneration;
+    _selectedIndex = index;
+    final usage = _usageByChild[childId] ?? ChildAppUsageSnapshot.empty;
+    _appUsage = usage.apps;
+    _screenTime = usage.screenTime;
+    _loadedAt = _loadedAtByChild[childId];
+    emit(cached.copyWith(children: _children, selectedIndex: index));
+    return true;
+  }
+
+  @override
   Future<void> close() {
     _familySub?.cancel();
     return super.close();
@@ -68,11 +98,17 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   }
 
   /// Whether switching back to Today can skip the refetch for [childId].
+  ///
+  /// Another child that is cached and fresh is put on screen right here.
   bool isFreshFor(String? childId) {
     final current = state;
-    return current is ParentMonitorLoaded &&
-        (childId == null || current.selectedChild?.id == childId) &&
-        isTabFresh(_loadedAt);
+    final shown = current is ParentMonitorLoaded
+        ? current.selectedChild?.id
+        : null;
+    if (childId == null || childId == shown) {
+      return current is ParentMonitorLoaded && isTabFresh(_loadedAt);
+    }
+    return isTabFresh(_loadedAtByChild[childId]) && _showCached(childId);
   }
 
   /// [childId] switches to that child, e.g. the one a tapped push is about.
@@ -81,6 +117,10 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   /// numbers in when they land. Only a first load or a different child shows
   /// the skeleton, so switching tabs never blanks Today.
   Future<void> loadMonitorData({String? childId}) async {
+    final onScreen = state is ParentMonitorLoaded
+        ? (state as ParentMonitorLoaded).selectedChild?.id
+        : null;
+    if (childId != null && childId != onScreen) _showCached(childId);
     final generation = ++_loadGeneration;
     final shown = state is ParentMonitorLoaded
         ? state as ParentMonitorLoaded
@@ -128,6 +168,11 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
     if (isClosed || generation != _loadGeneration) return;
     result.fold(_clearUsage, _takeUsage);
     _loadedAt = DateTime.now();
+    _usageByChild[child.id] = ChildAppUsageSnapshot(
+      apps: _appUsage,
+      screenTime: _screenTime,
+    );
+    _loadedAtByChild[child.id] = _loadedAt!;
     emit(
       ParentMonitorLoaded(
         children: _children,
@@ -148,6 +193,57 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
       ),
     );
     await _loadWeek(generation, child.id, deviceSnapshot);
+    if (!_prefetched && !isClosed) {
+      _prefetched = true;
+      unawaited(_prefetch());
+    }
+  }
+
+  /// Loads the other children quietly, one after another, so the first
+  /// switch to them is instant. Nothing on screen changes.
+  Future<void> _prefetch() async {
+    for (final child in List.of(_children)) {
+      if (isClosed) return;
+      if (_byChild.containsKey(child.id)) continue;
+      final deviceUsage = _fetchDeviceUsage(child.id);
+      final faceEmojiFuture = _appUsageRepo.fetchChildFaceEmoji(child.id);
+      final result = await _appUsageRepo.fetchAppUsage(child.id);
+      final faceEmoji = await faceEmojiFuture;
+      final deviceSnapshot = await deviceUsage;
+      final date = deviceSnapshot?.usageDate;
+      final week =
+          _deviceUsage != null &&
+              date != null &&
+              deviceSnapshot!.usageAvailable
+          ? (await _deviceUsage.fetchWeek(
+              child.id,
+              date,
+            )).fold((_) => null, (week) => week)
+          : null;
+      if (isClosed || _byChild.containsKey(child.id)) continue;
+      final usage = result.fold(
+        (_) => ChildAppUsageSnapshot.empty,
+        (snapshot) => snapshot,
+      );
+      final index = _children.indexWhere((c) => c.id == child.id);
+      if (index == -1) continue;
+      _usageByChild[child.id] = usage;
+      _loadedAtByChild[child.id] = DateTime.now();
+      _byChild[child.id] = ParentMonitorLoaded(
+        children: _children,
+        selectedIndex: index,
+        faceEmoji: faceEmoji,
+        stepsToday: 0,
+        stepsChange: '',
+        lessonsToday: '0/0',
+        lessonsChange: '',
+        weeklyUsage: const [0, 0, 0, 0, 0, 0, 0],
+        appLimits: usage.apps.map(_toLimitMap).toList(),
+        screenTime: usage.screenTime,
+        deviceUsage: deviceSnapshot,
+        weekUsage: week,
+      );
+    }
   }
 
   /// After Today is on screen, so the past week never holds it up.
@@ -178,7 +274,9 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
   /// Called when the parent swipes the progress card to another child.
   Future<void> selectChild(int index) async {
     if (index < 0 || index >= _children.length) return;
-    await loadMonitorData(childId: _children[index].id);
+    final id = _children[index].id;
+    if (isFreshFor(id)) return;
+    await loadMonitorData(childId: id);
   }
 
   void _clearUsage(Object _) {

@@ -72,17 +72,29 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
 
   void _ensureLoaded(BuildContext context, ChildSummaryModel child) {
     if (_loadedFor == child.id) return;
+    final first = _loadedFor == null;
     _loadedFor = child.id;
-    context.read<FiniCubit>().load(child.id);
+    final fini = context.read<FiniCubit>();
+    // A switch between children only swaps the cached child; the badge and
+    // the family usage are the same for every child.
+    if (!first) {
+      fini.load(child.id);
+      return;
+    }
+    final kids = _kids(context);
+    fini.load(child.id).then((_) {
+      fini.prefetch([
+        for (final kid in kids)
+          if (kid.id != child.id) kid.id,
+      ]);
+    });
     context.read<FiniInboxCubit>().refresh();
-    context.read<FamilyUsageCubit>().load([
-      for (final kid in _kids(context)) kid.id,
-    ]);
+    context.read<FamilyUsageCubit>().load([for (final kid in kids) kid.id]);
   }
 
   Future<void> _refresh(BuildContext context, ChildSummaryModel child) =>
       Future.wait([
-        context.read<FiniCubit>().load(child.id),
+        context.read<FiniCubit>().load(child.id, force: true),
         context.read<FiniInboxCubit>().refresh(),
       ]);
 
