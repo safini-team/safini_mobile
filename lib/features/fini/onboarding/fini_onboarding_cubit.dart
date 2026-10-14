@@ -115,8 +115,9 @@ class FiniOnboardingCubit extends Cubit<FiniOnboardingState> {
         if (_data.picked.isEmpty) return false;
       case OnboardingStep.plan:
         if (!await _run(_saveGoals)) return false;
-      case OnboardingStep.tune:
       case OnboardingStep.trial:
+        if (!await _run(_repo.startTrial)) return false;
+      case OnboardingStep.tune:
         break;
     }
     final next = _data.next;

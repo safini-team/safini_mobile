@@ -80,6 +80,10 @@ class ApiConst {
       '/v1/fini/proposals/$proposalId/$action';
   static const String finiInbox = '/v1/fini/inbox';
 
+  /// GET the family's 14-day Fini trial; POST `start` begins it (SAF-273).
+  static const String finiTrial = '/v1/fini/trial';
+  static const String finiTrialStart = '/v1/fini/trial/start';
+
   /// A child asks a parent before signing out (SAF-191).
   static String childSignoutRequests(String childId) =>
       '/v1/children/$childId/signout-requests';

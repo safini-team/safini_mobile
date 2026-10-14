@@ -1246,5 +1246,10 @@
   "obTrialDay12Body": "We remind you before the trial ends",
   "obTrialDay14Body": "Keep it with Safini Pro. Or Fini pauses and your rules stay as they are.",
   "obStartTrial": "Start 14 days free",
-  "obScreensOff": "Screens off"
+  "obScreensOff": "Screens off",
+  "finiTrialPill": "{count, plural, one{Free trial · {count} day left} other{Free trial · {count} days left}}",
+  "finiPausedTitle": "Fini is resting. Your rules still work.",
+  "finiPausedBody": "The free trial has ended. Every limit stays as it is.",
+  "finiKeepWithPro": "Continue with Fini Pro",
+  "proFeatureFini": "Fini runs your plan, step by step"
 }

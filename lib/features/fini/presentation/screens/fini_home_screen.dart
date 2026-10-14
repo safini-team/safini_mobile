@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/di/injection.dart';
@@ -91,6 +92,7 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
     final kids = _kids(context);
     final child = _selected(context, kids);
     final inbox = context.watch<FiniInboxCubit>().state;
+    final trial = context.watch<FiniCubit>().state.trial;
     if (child != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _ensureLoaded(this.context, child);
@@ -100,7 +102,14 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
     return DsScreen(
       onRefresh: child == null ? null : () => _refresh(context, child),
       slivers: [
-        SliverToBoxAdapter(child: DsLargeTitle(title: s.tabFini)),
+        SliverToBoxAdapter(
+          child: DsLargeTitle(
+            title: s.tabFini,
+            trailing: trial.inTrial && trial.daysLeft != null
+                ? _TrialPill(daysLeft: trial.daysLeft!)
+                : null,
+          ),
+        ),
         if (kids.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
@@ -171,6 +180,22 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
             title: s.networkError,
             action: s.retry,
             onAction: () => context.read<FiniCubit>().load(child.id),
+          ),
+        ),
+      ];
+    }
+
+    // The trial ended without Pro: one calm card, nothing else to act on.
+    if (state.trial.paused) {
+      return [
+        SliverToBoxAdapter(
+          child: _MascotCard(
+            key: const ValueKey('fini-paused'),
+            pose: 'wait',
+            title: s.finiPausedTitle,
+            body: s.finiPausedBody,
+            action: s.finiKeepWithPro,
+            onAction: () => context.router.push(const NamedRoute('paywall')),
           ),
         ),
       ];
@@ -467,14 +492,17 @@ class _Tile extends StatelessWidget {
 
 class _MascotCard extends StatelessWidget {
   const _MascotCard({
+    super.key,
     required this.pose,
     required this.title,
+    this.body,
     required this.action,
     required this.onAction,
   });
 
   final String pose;
   final String title;
+  final String? body;
   final String action;
   final VoidCallback onAction;
 
@@ -493,6 +521,10 @@ class _MascotCard extends StatelessWidget {
             Image.asset('assets/mascot/fini-$pose.png', height: 120),
             const SizedBox(height: 12),
             Text(title, textAlign: TextAlign.center, style: AppText.rowTitleLg),
+            if (body != null) ...[
+              const SizedBox(height: 6),
+              Text(body!, textAlign: TextAlign.center, style: AppText.meta),
+            ],
             const SizedBox(height: 16),
             DsPrimaryButton(label: action, onTap: onAction),
           ],
@@ -513,4 +545,30 @@ Future<void> _setUp(BuildContext context, ChildSummaryModel child) async {
     age: child.age,
   );
   await cubit.load(child.id);
+}
+
+/// "Free trial · 11 days left", next to the title while the trial runs.
+class _TrialPill extends StatelessWidget {
+  const _TrialPill({required this.daysLeft});
+
+  final int daysLeft;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('fini-trial-pill'),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: AppColors.primaryTint,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        S.of(context).finiTrialPill(daysLeft),
+        style: AppText.metaSm.copyWith(
+          fontWeight: FontWeight.w600,
+          color: AppColors.primary,
+        ),
+      ),
+    );
+  }
 }

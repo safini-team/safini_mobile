@@ -14,6 +14,7 @@ class FiniState {
     this.goals = const [],
     this.pending = const [],
     this.activity = const [],
+    this.trial = const FiniTrial(),
   });
 
   final String? childId;
@@ -22,6 +23,9 @@ class FiniState {
   final List<FiniGoal> goals;
   final List<FiniProposal> pending;
   final List<FiniProposal> activity;
+
+  /// The family's trial; the same for every child.
+  final FiniTrial trial;
 
   bool get hasGoals => goals.isNotEmpty;
 
@@ -44,6 +48,7 @@ class FiniState {
     List<FiniGoal>? goals,
     List<FiniProposal>? pending,
     List<FiniProposal>? activity,
+    FiniTrial? trial,
   }) => FiniState(
     childId: childId,
     status: status ?? this.status,
@@ -51,6 +56,7 @@ class FiniState {
     goals: goals ?? this.goals,
     pending: pending ?? this.pending,
     activity: activity ?? this.activity,
+    trial: trial ?? this.trial,
   );
 }
 
@@ -80,6 +86,7 @@ class FiniCubit extends Cubit<FiniState> {
         _repo.goals(childId),
         _repo.pending(childId),
         _repo.activity(childId),
+        _trialOrLast(),
       ]);
       if (isClosed || generation != _generation) return;
       emit(
@@ -90,6 +97,7 @@ class FiniCubit extends Cubit<FiniState> {
           goals: results[1] as List<FiniGoal>,
           pending: results[2] as List<FiniProposal>,
           activity: results[3] as List<FiniProposal>,
+          trial: results[4] as FiniTrial,
         ),
       );
     } catch (_) {
@@ -97,6 +105,16 @@ class FiniCubit extends Cubit<FiniState> {
       emit(
         same ? state : FiniState(childId: childId, status: FiniStatus.error),
       );
+    }
+  }
+
+  /// A trial the server cannot say keeps the last one: the tab still works,
+  /// it only loses the pill.
+  Future<FiniTrial> _trialOrLast() async {
+    try {
+      return await _repo.trial();
+    } catch (_) {
+      return state.trial;
     }
   }
 

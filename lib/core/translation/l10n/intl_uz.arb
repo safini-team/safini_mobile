@@ -1100,5 +1100,10 @@
   "obTrialDay12Body": "Sinov tugashidan oldin eslatamiz",
   "obTrialDay14Body": "Safini Pro bilan davom eting. Yoki Fini to‘xtaydi, qoidalaringiz esa o‘z holicha qoladi.",
   "obStartTrial": "14 kun bepul boshlash",
-  "obScreensOff": "Ekranlar o‘chiq"
+  "obScreensOff": "Ekranlar o‘chiq",
+  "finiTrialPill": "{count, plural, =1{Bepul sinov · {count} kun qoldi} other{Bepul sinov · {count} kun qoldi}}",
+  "finiPausedTitle": "Fini dam olmoqda. Qoidalaringiz ishlayapti.",
+  "finiPausedBody": "Bepul sinov tugadi. Barcha cheklovlar o‘z holicha qoladi.",
+  "finiKeepWithPro": "Fini Pro bilan davom etish",
+  "proFeatureFini": "Fini rejangizni qadamma-qadam olib boradi"
 }

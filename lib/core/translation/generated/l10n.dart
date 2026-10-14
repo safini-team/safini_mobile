@@ -9355,6 +9355,58 @@ class S {
       args: [],
     );
   }
+
+  /// `{count, plural, one{Free trial · {count} day left} other{Free trial · {count} days left}}`
+  String finiTrialPill(num count) {
+    return Intl.plural(
+      count,
+      one: 'Free trial · $count day left',
+      other: 'Free trial · $count days left',
+      name: 'finiTrialPill',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Fini is resting. Your rules still work.`
+  String get finiPausedTitle {
+    return Intl.message(
+      'Fini is resting. Your rules still work.',
+      name: 'finiPausedTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The free trial has ended. Every limit stays as it is.`
+  String get finiPausedBody {
+    return Intl.message(
+      'The free trial has ended. Every limit stays as it is.',
+      name: 'finiPausedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue with Fini Pro`
+  String get finiKeepWithPro {
+    return Intl.message(
+      'Continue with Fini Pro',
+      name: 'finiKeepWithPro',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini runs your plan, step by step`
+  String get proFeatureFini {
+    return Intl.message(
+      'Fini runs your plan, step by step',
+      name: 'proFeatureFini',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

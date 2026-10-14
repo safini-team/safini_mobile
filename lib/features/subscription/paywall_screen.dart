@@ -219,6 +219,7 @@ class _Features extends StatelessWidget {
       s.proFeatureApps,
       s.proFeatureTasks,
       s.proFeatureParents,
+      s.proFeatureFini,
     ];
 
     return DsCard(

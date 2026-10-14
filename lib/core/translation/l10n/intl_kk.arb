@@ -1071,5 +1071,10 @@
   "obTrialDay12Body": "Сынақ мерзімі біткенше еске саламыз",
   "obTrialDay14Body": "Safini Pro арқылы жалғастырыңыз. Немесе Fini тоқтайды, ережелеріңіз сол күйі қалады.",
   "obStartTrial": "14 күн тегін бастау",
-  "obScreensOff": "Экрандар сөндірулі"
+  "obScreensOff": "Экрандар сөндірулі",
+  "finiTrialPill": "{count, plural, =1{Тегін сынақ · {count} күн қалды} other{Тегін сынақ · {count} күн қалды}}",
+  "finiPausedTitle": "Fini демалып жатыр. Ережелеріңіз жұмыс істеп тұр.",
+  "finiPausedBody": "Тегін сынақ аяқталды. Барлық лимиттер сол күйі қалады.",
+  "finiKeepWithPro": "Fini Pro-мен жалғастыру",
+  "proFeatureFini": "Fini жоспарыңызды қадам сайын жүргізеді"
 }
