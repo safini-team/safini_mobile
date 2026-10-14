@@ -305,8 +305,9 @@ def main() -> None:
                     maestro(device, "set_language.yaml", LANG=lang)
                     for screen in screens:
                         path = SCREENS[screen].split()
-                        for nav in path:
-                            maestro(device, "open_screen.yaml", NAV=nav)
+                        maestro(device, "open_screen.yaml", NAV=path[0])
+                        for row in path[1:]:
+                            maestro(device, "open_row.yaml", ROW=row)
                         shot = dest / f"{device.name}-{lang}-{screen}.png"
                         device.screenshot(shot)
                         shots.append(shot)
