@@ -19,6 +19,7 @@ Future<bool?> showRewardSheet(
   required int coins,
   required String blurb,
   String? actionLabel,
+  Widget? art,
 }) {
   final canBuy = coins >= cost;
 
@@ -31,17 +32,19 @@ Future<bool?> showRewardSheet(
         mainAxisSize: MainAxisSize.min,
         children: [
           Center(
-            child: AppIconTile(
-              emoji: emoji,
-              packageName: packageName,
-              iconUrl: iconUrl,
-              size: 72,
-              placeholder: Text(
-                emoji,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 52),
-              ),
-            ),
+            child:
+                art ??
+                AppIconTile(
+                  emoji: emoji,
+                  packageName: packageName,
+                  iconUrl: iconUrl,
+                  size: 72,
+                  placeholder: Text(
+                    emoji,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 52),
+                  ),
+                ),
           ),
           const SizedBox(height: 12),
           Text(name, textAlign: TextAlign.center, style: AppText.title3),

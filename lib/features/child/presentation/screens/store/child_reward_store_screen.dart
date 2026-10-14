@@ -11,6 +11,7 @@ import 'package:safini/features/child/presentation/cubit/reward_store_model.dart
 import 'package:safini/features/child/presentation/cubit/reward_store_state.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/widgets/dialogs/reward_sheet.dart';
+import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
 import 'package:safini/core/notifications/on_push.dart';
 import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/features/prizes/widgets/wish_sheet.dart';
@@ -134,11 +135,7 @@ class _ChildStoreScreen extends StatelessWidget {
   }
 
   /// The tiles on the selected tab.
-  static List<StoreCardData> cardsFor(
-    RewardStoreState state,
-    int coins,
-    S s,
-  ) {
+  static List<StoreCardData> cardsFor(RewardStoreState state, int coins, S s) {
     final tab = state.selectedTab;
     final onAppTime = tab == StoreTab.appTime;
     final onPrizes = tab == StoreTab.prizes;
@@ -206,6 +203,7 @@ class _ChildStoreScreen extends StatelessWidget {
                     ? s.wornLabel
                     : (item.isLocked ? item.lockLabel : null),
                 pending: state.pendingPurchases.contains(item.id),
+                slot: item.slot,
               ),
           ];
   }
@@ -254,6 +252,9 @@ class _ChildStoreScreen extends StatelessWidget {
       cost: card.cost,
       coins: coins,
       blurb: blurb,
+      art: card.slot == 'character'
+          ? SafiniAvatar(characterId: card.id, size: 96)
+          : null,
     );
     if (confirmed != true) return;
 

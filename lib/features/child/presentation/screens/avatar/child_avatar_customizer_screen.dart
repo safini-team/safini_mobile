@@ -10,9 +10,12 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/core/utils/widgets/app_snack_bar.dart';
+import 'package:safini/features/child/presentation/cubit/coins_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/profile_model.dart';
 import 'package:safini/features/child/presentation/cubit/profile_state.dart';
+import 'package:safini/features/child/presentation/widgets/dialogs/reward_sheet.dart';
 import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
 import 'package:safini/features/child/presentation/widgets/utils/avatar_character_catalog.dart';
 import 'package:safini/features/common/auth/presentation/cubit/child_claim_cubit.dart';
@@ -101,8 +104,7 @@ class _AvatarScreen extends StatelessWidget {
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.only(
-                      bottom:
-                          DsTabBar.bottomPadding(context) + 56 + 16,
+                      bottom: DsTabBar.bottomPadding(context) + 56 + 16,
                     ),
                     children: [
                       // Preview stage
@@ -136,10 +138,17 @@ class _AvatarScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.gutter,
                         ),
-                        child: state.selectedCategory == AvatarCategory.character
+                        child:
+                            state.selectedCategory == AvatarCategory.character
                             ? _CharacterGrid(
                                 selectedId: state.characterId,
+                                prices: state.characterPrices,
                                 onSelect: cubit.selectCharacter,
+                                onBuy: (id) => _buyCharacter(
+                                  context,
+                                  id,
+                                  state.characterPrices[id]!,
+                                ),
                               )
                             : const _ComingSoonSection(),
                       ),
@@ -152,6 +161,25 @@ class _AvatarScreen extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+Future<void> _buyCharacter(BuildContext context, String id, int cost) async {
+  final s = S.of(context);
+  final cubit = context.read<AvatarCubit>();
+  final confirmed = await showRewardSheet(
+    context,
+    emoji: '',
+    art: SafiniAvatar(characterId: id, size: 96),
+    name: characterById(id)?.name ?? s.avatarItem,
+    cost: cost,
+    coins: context.read<CoinsCubit>().state,
+    blurb: s.rewardBlurbAvatar,
+  );
+  if (confirmed != true) return;
+  final error = await cubit.buyCharacter(id);
+  if (error != null && context.mounted) {
+    AppSnackBar.error(context, error.isEmpty ? s.networkError : error);
   }
 }
 
@@ -291,11 +319,15 @@ class _TabChip extends StatelessWidget {
 class _CharacterGrid extends StatelessWidget {
   const _CharacterGrid({
     required this.selectedId,
+    required this.prices,
     required this.onSelect,
+    required this.onBuy,
   });
 
   final String? selectedId;
+  final Map<String, int> prices;
   final ValueChanged<String> onSelect;
+  final ValueChanged<String> onBuy;
 
   @override
   Widget build(BuildContext context) {
@@ -315,9 +347,11 @@ class _CharacterGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final character = safiniiCharacters[index];
         final isSelected = character.id == effectiveId;
+        final price = prices[character.id];
 
         return Pressable(
-          onTap: () => onSelect(character.id),
+          onTap: () =>
+              price == null ? onSelect(character.id) : onBuy(character.id),
           scale: 0.93,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
@@ -332,7 +366,29 @@ class _CharacterGrid extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppRadius.control - 2),
-              child: SafiniAvatar(characterId: character.id, size: 80),
+              child: price == null
+                  ? SafiniAvatar(characterId: character.id, size: 80)
+                  : Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Opacity(
+                          opacity: 0.45,
+                          child: SafiniAvatar(
+                            characterId: character.id,
+                            size: 80,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: DsPill.coins(
+                            label: '$price',
+                            leading: const DsCoinToken(size: 11),
+                            height: 20,
+                            fontSize: 11.5,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ),
         );
@@ -376,4 +432,3 @@ class _ComingSoonSection extends StatelessWidget {
     );
   }
 }
-
