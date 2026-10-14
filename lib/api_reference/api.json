@@ -8725,6 +8725,134 @@
         }
       }
     },
+    "/v1/children/{child_id}/fini/goals/draft": {
+      "post": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Draft Fini Goals From Text",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** \"Say it your way\": a parent writes what they want in their own words, in any app language, and Fini reads it into goals. Nothing is saved: the app shows the goals as a card and creates the ones the parent confirms.\n\n**Frontend note:** The one synchronous model call. `goals` are ready-to-send bodies for `POST /children/{child_id}/fini/goals`. `incomplete` lists intents the parent named without the number they need (e.g. bedtime with no time): open that goal for them to fill. 503 when the model is off, capped or failing: fall back to the goal grid.",
+        "operationId": "draft_fini_goals_v1_children__child_id__fini_goals_draft_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalDraftRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Draft goals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Draft Fini Goals V1 Children  Child Id  Fini Goals Draft Post"
+                },
+                "example": {
+                  "goals": [
+                    {
+                      "kind": "category_budget",
+                      "target": {
+                        "intent": "games",
+                        "categories": [
+                          "games"
+                        ]
+                      },
+                      "minutes_per_day": 60,
+                      "pace": "steady"
+                    }
+                  ],
+                  "incomplete": [],
+                  "model": "anthropic/claude-sonnet-5.5",
+                  "prompt_version": "goal-draft-1"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/fini/goals/{goal_id}": {
       "patch": {
         "tags": [
@@ -11214,6 +11342,26 @@
             ]
           },
           "weekend_minutes": 60
+        }
+      },
+      "GoalDraftRequest": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Text",
+            "description": "The parent's own words."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "GoalDraftRequest",
+        "example": {
+          "text": "No more than an hour of games, bed by 9"
         }
       },
       "GoalTarget": {
