@@ -5,6 +5,7 @@ import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/fini/data/fini_repository.dart';
@@ -202,31 +203,39 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
           child: DsGroup(
             children: [
-              for (final goal in state.goals)
-                DsRow(
-                  key: ValueKey('fini-goal-${goal.id}'),
-                  onTap: () => openFiniGoal(context, goal, child.nickname),
-                  leading: GoalIcon(intent: goal.intent),
-                  title: goalTitle(s, goal.intent),
-                  subtitle: goalValueLine(s, goal),
-                  trailing: AppIcons.chevronRight(),
-                ),
-              DsRow(
-                key: const ValueKey('fini-add-goal'),
-                onTap: () =>
-                    showAddGoalSheet(context, childName: child.nickname),
-                leading: Container(
-                  width: 36,
-                  height: 36,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryTint,
-                    borderRadius: BorderRadius.circular(10),
+              for (final (index, goal) in state.goals.indexed)
+                Semantics(
+                  identifier: index == 0 ? QaIds.finiFirstGoal : null,
+                  container: index == 0,
+                  child: DsRow(
+                    key: ValueKey('fini-goal-${goal.id}'),
+                    onTap: () => openFiniGoal(context, goal, child.nickname),
+                    leading: GoalIcon(intent: goal.intent),
+                    title: goalTitle(s, goal.intent),
+                    subtitle: goalValueLine(s, goal),
+                    trailing: AppIcons.chevronRight(),
                   ),
-                  child: AppIcons.plus(size: 16, color: AppColors.primary),
                 ),
-                title: state.goals.isEmpty ? s.finiPickGoal : s.finiAddGoal,
-                titleColor: AppColors.primary,
+              Semantics(
+                identifier: QaIds.finiAddGoal,
+                container: true,
+                child: DsRow(
+                  key: const ValueKey('fini-add-goal'),
+                  onTap: () =>
+                      showAddGoalSheet(context, childName: child.nickname),
+                  leading: Container(
+                    width: 36,
+                    height: 36,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryTint,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: AppIcons.plus(size: 16, color: AppColors.primary),
+                  ),
+                  title: state.goals.isEmpty ? s.finiPickGoal : s.finiAddGoal,
+                  titleColor: AppColors.primary,
+                ),
               ),
             ],
           ),
@@ -244,6 +253,7 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
             children: [
               Expanded(
                 child: _Tile(
+                  semanticsId: QaIds.finiRules,
                   key: const ValueKey('fini-rules-tile'),
                   title: s.finiWhatItCanDo,
                   sub: s.finiSwitchesOn(state.settings.switchesOn, 5),
@@ -253,6 +263,7 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: _Tile(
+                  semanticsId: QaIds.finiActivity,
                   key: const ValueKey('fini-activity-tile'),
                   title: s.finiActivity,
                   sub: s.finiThingsToday(state.activityToday(DateTime.now())),
@@ -418,28 +429,34 @@ class _NeedsYouCard extends StatelessWidget {
 class _Tile extends StatelessWidget {
   const _Tile({
     super.key,
+    required this.semanticsId,
     required this.title,
     required this.sub,
     required this.onTap,
   });
 
+  final String semanticsId;
   final String title;
   final String sub;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return DsCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(14),
-      radius: AppRadius.card,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: AppText.rowTitleStrong),
-          const SizedBox(height: 4),
-          Text(sub, style: AppText.meta),
-        ],
+    return Semantics(
+      identifier: semanticsId,
+      container: true,
+      child: DsCard(
+        onTap: onTap,
+        padding: const EdgeInsets.all(14),
+        radius: AppRadius.card,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: AppText.rowTitleStrong),
+            const SizedBox(height: 4),
+            Text(sub, style: AppText.meta),
+          ],
+        ),
       ),
     );
   }

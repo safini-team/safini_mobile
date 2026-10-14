@@ -18,6 +18,12 @@ abstract final class QaIds {
   /// The "Everyone" circle of the child selector.
   static const kidEveryone = 'kid.everyone';
 
+  /// The Fini tab: its first goal, Add a goal, and the two tiles.
+  static const finiFirstGoal = 'fini.goal.first';
+  static const finiAddGoal = 'fini.goal.add';
+  static const finiRules = 'fini.rules';
+  static const finiActivity = 'fini.activity';
+
   static const openSettings = 'settings.open';
   static const settingsLanguage = 'settings.language';
 
@@ -34,6 +40,10 @@ abstract final class QaIds {
     navFini,
     navFamily,
     kidEveryone,
+    finiFirstGoal,
+    finiAddGoal,
+    finiRules,
+    finiActivity,
     openSettings,
     settingsLanguage,
   ];

@@ -1,0 +1,6 @@
+# Back to the tab bar after a screen pushed over it (a goal, a sheet).
+appId: com.safini.app
+---
+- stopApp
+- launchApp
+- runFlow: ready.yaml
