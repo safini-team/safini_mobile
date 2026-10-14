@@ -81,6 +81,9 @@ const Set<String> _sameAsEnglishByDesign = {
   'storeAvatarTab', // "Avatar" is the same word in Uzbek
   'ok',
   'proTitle', // the product name
+  'tabFini', // the assistant's name
+  'goalGamesSub', // app names
+  'goalScrollingSub', // app names
 };
 
 void main() {

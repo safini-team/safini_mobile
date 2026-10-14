@@ -1,3 +1,12 @@
+/// The parent tab bar, in order (SAF-271 put Fini before Family).
+abstract final class ParentTab {
+  static const today = 0;
+  static const tasks = 1;
+  static const limits = 2;
+  static const fini = 3;
+  static const family = 4;
+}
+
 class ParentHomeState {
   final int selectedIndex;
   final String? selectedChildId;

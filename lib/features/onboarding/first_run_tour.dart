@@ -143,7 +143,8 @@ class _FirstRunTourState extends State<FirstRunTour> {
           0 || 1 => 0,
           2 => 1,
           3 || 4 => 2,
-          _ => 3,
+          // Family, after Fini (SAF-271).
+          _ => 4,
         }
       : step;
 
