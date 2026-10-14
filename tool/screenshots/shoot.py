@@ -26,12 +26,18 @@ ROOT = Path(__file__).resolve().parents[2]
 FLOWS = Path(__file__).resolve().parent / "maestro"
 APP_ID = "com.safini.app"
 
-# Screen name -> the Semantics id that opens it from the parent tab bar.
-# A new screen (the Fini tab, Fini onboarding) adds one line here.
+# Screen name -> the Semantics ids to tap, in order, from the parent tab bar.
+# A screen deeper than a tab (more than one id) relaunches the app after its
+# shot, so the next one starts from the tab bar again.
 SCREENS = {
     "today": "nav.today",
     "tasks": "nav.tasks",
     "limits": "nav.limits",
+    "fini": "nav.fini",
+    "fini-goal": "nav.fini fini.goal.first",
+    "fini-add": "nav.fini fini.goal.add",
+    "fini-rules": "nav.fini fini.rules",
+    "fini-activity": "nav.fini fini.activity",
     "family": "nav.family",
 }
 LANGS = ("en", "ru", "ky", "uz", "kk")
@@ -298,11 +304,16 @@ def main() -> None:
                 try:
                     maestro(device, "set_language.yaml", LANG=lang)
                     for screen in screens:
-                        maestro(device, "open_screen.yaml", NAV=SCREENS[screen])
+                        path = SCREENS[screen].split()
+                        maestro(device, "open_screen.yaml", NAV=path[0])
+                        for row in path[1:]:
+                            maestro(device, "open_row.yaml", ROW=row)
                         shot = dest / f"{device.name}-{lang}-{screen}.png"
                         device.screenshot(shot)
                         shots.append(shot)
                         log(f"saved {shot.relative_to(ROOT)}")
+                        if len(path) > 1:
+                            maestro(device, "relaunch.yaml")
                 except RuntimeError as e:
                     # One language failing shouldn't throw away the rest.
                     log(str(e))

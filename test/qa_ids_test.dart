@@ -70,4 +70,18 @@ void main() {
       }
     }
   });
+
+  test('every id the screen paths in shoot.py tap exists', () {
+    final script = File('tool/screenshots/shoot.py').readAsStringSync();
+    final table = RegExp(
+      r'SCREENS = \{([^}]*)\}',
+    ).firstMatch(script)!.group(1)!;
+    final paths = RegExp(r'"[\w-]+":\s*"([^"]+)"').allMatches(table).toList();
+    expect(paths, isNotEmpty);
+    for (final m in paths) {
+      for (final id in m.group(1)!.split(' ')) {
+        expect(QaIds.fixed, contains(id), reason: 'shoot.py taps "$id"');
+      }
+    }
+  });
 }

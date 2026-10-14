@@ -25,8 +25,10 @@ enum FiniDemoState {
 bool finiDemoEnabled({required bool debugBuild, required bool define}) =>
     debugBuild && define;
 
-FiniDemoState finiDemoStateFrom(String name) => FiniDemoState.values
-    .firstWhere((s) => s.name == name, orElse: () => FiniDemoState.values.first);
+FiniDemoState finiDemoStateFrom(String name) => FiniDemoState.values.firstWhere(
+  (s) => s.name == name,
+  orElse: () => FiniDemoState.values.first,
+);
 
 bool get isFiniDemo =>
     finiDemoEnabled(debugBuild: kDebugMode, define: _finiDemoDefine);
