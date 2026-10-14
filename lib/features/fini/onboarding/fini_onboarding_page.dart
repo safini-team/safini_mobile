@@ -115,13 +115,9 @@ class FiniOnboardingFlow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  DsBackButton(
-                    onTap: data.previous == null ? onLeave : cubit.back,
-                  ),
-                ],
+              _Header(
+                step: data.step,
+                onBack: data.previous == null ? onLeave : cubit.back,
               ),
               Expanded(
                 child: AnimatedSwitcher(
@@ -200,178 +196,228 @@ class _ChildBoardState extends State<_ChildBoard> {
     final s = S.of(context);
     final cubit = context.read<FiniOnboardingCubit>();
     final data = widget.data;
+    const genders = ['girl', 'boy', null];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FiniSays(pose: FiniPose.wave, text: s.obHiWho),
-        const SizedBox(height: 18),
-        DsGroup(
-          radius: AppRadius.card,
-          shadow: AppShadows.cardSoft,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: Semantics(
-                identifier: QaIds.obName,
-                container: true,
-                child: TextField(
-                  key: const ValueKey('ob-name'),
-                  controller: _name,
-                  onChanged: cubit.setName,
-                  textCapitalization: TextCapitalization.words,
-                  cursorColor: AppColors.primary,
-                  style: AppText.button.copyWith(fontWeight: FontWeight.w500),
-                  decoration: InputDecoration(
-                    filled: false,
-                    isDense: true,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                    hintText: s.obChildName,
-                    hintStyle: AppText.button.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textTertiary,
+        FiniSays(pose: FiniPose.wave, size: 88, text: s.obHiWho),
+        const SizedBox(height: 14),
+        _Field(
+          label: s.obChildName,
+          child: Semantics(
+            identifier: QaIds.obName,
+            container: true,
+            child: TextField(
+              key: const ValueKey('ob-name'),
+              controller: _name,
+              onChanged: cubit.setName,
+              textCapitalization: TextCapitalization.words,
+              cursorColor: AppColors.primary,
+              style: AppText.button.copyWith(fontWeight: FontWeight.w500),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: AppColors.surface,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 15,
+                ),
+                hintText: s.nameHintExample,
+                hintStyle: AppText.button.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textTertiary,
+                ),
+                border: _outline(Colors.transparent),
+                enabledBorder: _outline(
+                  data.name.trim().isEmpty
+                      ? Colors.transparent
+                      : AppColors.primary,
+                ),
+                focusedBorder: _outline(AppColors.primary),
+              ),
+            ),
+          ),
+        ),
+        _Field(
+          label: s.ageFieldLabel,
+          child: _Grid(
+            columns: 6,
+            spacing: 8,
+            children: [
+              for (final age in onboardingAges)
+                _Choice(
+                  key: ValueKey('ob-age-$age'),
+                  height: 44,
+                  selected: data.age == age,
+                  filled: true,
+                  onTap: () => cubit.setAge(age),
+                  child: Text(
+                    age == onboardingOldest ? s.obAge16Plus : '$age',
+                    style: AppText.rowTitleStrong.copyWith(
+                      color: data.age == age
+                          ? AppColors.textOnPrimary
+                          : AppColors.ink,
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-        DsOverline(s.ageFieldLabel, top: 22),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final age in onboardingAges)
-              DsCategoryChip(
-                key: ValueKey('ob-age-$age'),
-                label: age == onboardingOldest ? s.obAge16Plus : '$age',
-                selected: data.age == age,
-                restBackground: AppColors.surface,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 9,
-                ),
-                onTap: () => cubit.setAge(age),
-              ),
-          ],
-        ),
-        DsOverline(s.obTheirPhone, top: 22),
-        Row(
-          children: [
-            for (final (phone, label, icon) in [
-              (ChildPhone.android, s.obAndroid, Icons.android_rounded),
-              (ChildPhone.iphone, s.obIphone, Icons.apple_rounded),
-            ]) ...[
-              if (phone == ChildPhone.iphone) const SizedBox(width: 10),
-              Expanded(
-                child: _PhoneOption(
-                  key: ValueKey('ob-phone-${phone.name}'),
-                  semanticsId: phone == ChildPhone.android
+        _Field(
+          label: s.obTheirPhone,
+          child: _Grid(
+            columns: 2,
+            spacing: 10,
+            children: [
+              for (final (phone, label, icon) in [
+                (ChildPhone.android, s.obAndroid, Icons.android_rounded),
+                (ChildPhone.iphone, s.obIphone, Icons.apple_rounded),
+              ])
+                Semantics(
+                  identifier: phone == ChildPhone.android
                       ? QaIds.obPhoneAndroid
                       : null,
-                  label: label,
-                  icon: icon,
-                  selected: data.phone == phone,
-                  onTap: () => cubit.setPhone(phone),
+                  container: true,
+                  child: _Choice(
+                    key: ValueKey('ob-phone-${phone.name}'),
+                    height: 56,
+                    selected: data.phone == phone,
+                    onTap: () => cubit.setPhone(phone),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(icon, size: 24, color: AppColors.ink),
+                        const SizedBox(width: 10),
+                        Text(label, style: AppText.rowTitleStrong),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
             ],
-          ],
+          ),
         ),
-        const SizedBox(height: 22),
-        Row(
-          children: [
-            Expanded(child: DsOverlineText(s.genderOptional)),
-            if (data.gender != null)
-              DsInlineButton.quiet(
-                key: const ValueKey('ob-gender-skip'),
-                label: s.obSkip,
-                onTap: () => cubit.setGender(null),
-              ),
-          ],
+        _Field(
+          label: s.genderOptional,
+          child: DsSegmentedControl(
+            key: const ValueKey('ob-gender'),
+            labels: [s.genderGirl, s.genderBoy, s.obSkip],
+            selectedIndex: genders.indexOf(data.gender),
+            onChanged: (index) => cubit.setGender(genders[index]),
+          ),
         ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final (value, label) in [
-              ('girl', s.genderGirl),
-              ('boy', s.genderBoy),
-            ])
-              DsCategoryChip(
-                key: ValueKey('ob-gender-$value'),
-                label: label,
-                selected: data.gender == value,
-                restBackground: AppColors.surface,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 9,
-                ),
-                onTap: () =>
-                    cubit.setGender(data.gender == value ? null : value),
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(s.obGenderWhy, style: AppText.meta),
       ],
+    );
+  }
+
+  static OutlineInputBorder _outline(Color color) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(16),
+    borderSide: BorderSide(color: color, width: 1.5),
+  );
+}
+
+/// A label over its control, every label on the same left edge.
+class _Field extends StatelessWidget {
+  const _Field({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 6),
+            child: Text(
+              label,
+              style: AppText.meta.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.inkSoft,
+              ),
+            ),
+          ),
+          child,
+        ],
+      ),
     );
   }
 }
 
-class _PhoneOption extends StatelessWidget {
-  const _PhoneOption({
-    super.key,
-    this.semanticsId,
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
+/// Equal-width cells, [columns] to a row.
+class _Grid extends StatelessWidget {
+  const _Grid({
+    required this.columns,
+    required this.spacing,
+    required this.children,
   });
 
-  final String? semanticsId;
-  final String label;
-  final IconData icon;
+  final int columns;
+  final double spacing;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width =
+            (constraints.maxWidth - spacing * (columns - 1)) / columns;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: [
+            for (final child in children) SizedBox(width: width, child: child),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// One option of a single choice: a white tile, pine when picked ([filled])
+/// or ringed in pine.
+class _Choice extends StatelessWidget {
+  const _Choice({
+    super.key,
+    required this.height,
+    required this.selected,
+    required this.onTap,
+    required this.child,
+    this.filled = false,
+  });
+
+  final double height;
   final bool selected;
+  final bool filled;
   final VoidCallback onTap;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      identifier: semanticsId,
-      container: true,
       button: true,
       selected: selected,
       inMutuallyExclusiveGroup: true,
       child: Pressable(
         onTap: onTap,
-        scale: 0.97,
+        scale: 0.96,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          height: height,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.primaryTint : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.card),
+            color: selected && filled ? AppColors.primary : AppColors.surface,
+            borderRadius: BorderRadius.circular(height >= 50 ? 16 : 14),
             border: Border.all(
-              color: selected ? AppColors.primary : Colors.transparent,
+              color: selected && !filled
+                  ? AppColors.primary
+                  : Colors.transparent,
               width: 2,
             ),
           ),
-          child: Column(
-            children: [
-              Icon(
-                icon,
-                size: 28,
-                color: selected ? AppColors.primary : AppColors.ink,
-              ),
-              const SizedBox(height: 6),
-              Text(label, style: AppText.rowTitleStrong),
-            ],
-          ),
+          child: child,
         ),
       ),
     );
@@ -426,118 +472,121 @@ class _TuneBoard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final cubit = context.read<FiniOnboardingCubit>();
+
+    Widget row(GoalIntent intent) {
+      final (String sub, Widget? control) = switch (tuneKindFor(intent)) {
+        TuneKind.minutes => (
+          s.obADayAtMost,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                formatHm(s, data.minutesFor(intent)),
+                key: ValueKey('ob-minutes-${intent.name}'),
+                style: AppText.rowTitleLg,
+              ),
+              const SizedBox(width: 10),
+              DsStepper(
+                onLess: data.minutesFor(intent) <= 15
+                    ? null
+                    : () => cubit.setMinutes(
+                        intent,
+                        data.minutesFor(intent) - 15,
+                      ),
+                onMore: data.minutesFor(intent) >= 300
+                    ? null
+                    : () => cubit.setMinutes(
+                        intent,
+                        data.minutesFor(intent) + 15,
+                      ),
+              ),
+            ],
+          ),
+        ),
+        TuneKind.window => (
+          s.obScreensOff,
+          Builder(
+            builder: (context) {
+              final (start, end) = data.windowFor(intent);
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _TimePill(
+                    value: start,
+                    onTap: () async {
+                      final t = await _pick(context, start);
+                      if (t != null) cubit.setWindow(intent, t, end);
+                    },
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6),
+                    child: Text('-', style: AppText.meta),
+                  ),
+                  _TimePill(
+                    value: end,
+                    onTap: () async {
+                      final t = await _pick(context, end);
+                      if (t != null) cubit.setWindow(intent, start, t);
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        TuneKind.homework => (s.obAnyStudyTask, null),
+        TuneKind.none => ('', null),
+      };
+      return Padding(
+        key: ValueKey('ob-tune-${intent.name}'),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Row(
+          children: [
+            GoalIcon(intent: intent),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(goalTitle(s, intent), style: AppText.rowTitleStrong),
+                  if (sub.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(sub, style: AppText.meta),
+                  ],
+                ],
+              ),
+            ),
+            if (control != null) ...[const SizedBox(width: 8), control],
+          ],
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(s.obTuneTitle, style: AppText.title1),
         const SizedBox(height: 6),
         Text(s.obTuneSub(data.name), style: AppText.subtitle),
-        for (final intent in data.tuned) ...[
-          const SizedBox(height: 14),
-          DsCard(
-            key: ValueKey('ob-tune-${intent.name}'),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    GoalIcon(intent: intent),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        goalTitle(s, intent),
-                        style: AppText.rowTitleStrong,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                switch (tuneKindFor(intent)) {
-                  TuneKind.minutes => Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              formatHm(s, data.minutesFor(intent)),
-                              key: ValueKey('ob-minutes-${intent.name}'),
-                              style: AppText.title1,
-                            ),
-                            Text(s.obADayAtMost, style: AppText.meta),
-                          ],
-                        ),
-                      ),
-                      DsStepper(
-                        onLess: data.minutesFor(intent) <= 15
-                            ? null
-                            : () => cubit.setMinutes(
-                                intent,
-                                data.minutesFor(intent) - 15,
-                              ),
-                        onMore: data.minutesFor(intent) >= 300
-                            ? null
-                            : () => cubit.setMinutes(
-                                intent,
-                                data.minutesFor(intent) + 15,
-                              ),
-                      ),
-                    ],
-                  ),
-                  TuneKind.window => Builder(
-                    builder: (context) {
-                      final (start, end) = data.windowFor(intent);
-                      return Column(
-                        children: [
-                          _TimeRow(
-                            label: s.goalFrom,
-                            value: start,
-                            onTap: () async {
-                              final t = await _pick(context, start);
-                              if (t != null) cubit.setWindow(intent, t, end);
-                            },
-                          ),
-                          _TimeRow(
-                            label: s.goalUntil,
-                            value: end,
-                            onTap: () async {
-                              final t = await _pick(context, end);
-                              if (t != null) cubit.setWindow(intent, start, t);
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  TuneKind.homework => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(s.obHomeworkGate, style: AppText.meta),
-                      const SizedBox(height: 2),
-                      Text(s.obAnyStudyTask, style: AppText.body),
-                    ],
-                  ),
-                  TuneKind.none => const SizedBox.shrink(),
-                },
-              ],
-            ),
-          ),
-        ],
-        const SizedBox(height: 14),
-        Text(s.obSuggested('${data.age}'), style: AppText.meta),
+        const SizedBox(height: 16),
+        DsGroup(
+          radius: AppRadius.card,
+          shadow: AppShadows.cardSoft,
+          children: [for (final intent in data.tuned) row(intent)],
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(s.obSuggested('${data.age}'), style: AppText.meta),
+        ),
       ],
     );
   }
 }
 
-class _TimeRow extends StatelessWidget {
-  const _TimeRow({
-    required this.label,
-    required this.value,
-    required this.onTap,
-  });
+class _TimePill extends StatelessWidget {
+  const _TimePill({required this.value, required this.onTap});
 
-  final String label;
   final FiniTime value;
   final VoidCallback onTap;
 
@@ -545,14 +594,66 @@ class _TimeRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Pressable(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Expanded(child: Text(label, style: AppText.body)),
-            Text(value.label, style: AppText.rowTitleStrong),
-          ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.fill,
+          borderRadius: BorderRadius.circular(10),
         ),
+        child: Text(value.label, style: AppText.rowTitleStrong),
+      ),
+    );
+  }
+}
+
+/// Back, and the five boards as a progress bar.
+class _Header extends StatelessWidget {
+  const _Header({required this.step, required this.onBack});
+
+  final OnboardingStep step;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(6, 6, AppSpacing.gutter, 10),
+      child: Row(
+        children: [
+          Semantics(
+            button: true,
+            label: MaterialLocalizations.of(context).backButtonTooltip,
+            child: Pressable(
+              onTap: onBack,
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Center(child: AppIcons.chevronLeft()),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Row(
+              children: [
+                for (final board in OnboardingStep.values) ...[
+                  if (board.index > 0) const SizedBox(width: 6),
+                  Expanded(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: board.index <= step.index
+                            ? AppColors.primary
+                            : AppColors.fillDeeper,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

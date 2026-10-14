@@ -1476,9 +1476,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "obChangeLimits": MessageLookupByLibrary.simpleMessage("Change the limits"),
     "obChildName": MessageLookupByLibrary.simpleMessage("Child\'s name"),
-    "obGenderWhy": MessageLookupByLibrary.simpleMessage(
-      "Only so Fini gets the grammar right.",
-    ),
     "obGoalsSub": MessageLookupByLibrary.simpleMessage(
       "Pick as many as you like.",
     ),
@@ -1516,6 +1513,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "obPlanWatchTitle": MessageLookupByLibrary.simpleMessage(
       "First 3 days: I watch",
     ),
+    "obScreensOff": MessageLookupByLibrary.simpleMessage("Screens off"),
     "obSkip": MessageLookupByLibrary.simpleMessage("Skip"),
     "obSoundsGood": MessageLookupByLibrary.simpleMessage("Sounds good"),
     "obStartTrial": MessageLookupByLibrary.simpleMessage("Start 14 days free"),

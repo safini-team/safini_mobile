@@ -1534,9 +1534,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Лимиттерді өзгерту",
     ),
     "obChildName": MessageLookupByLibrary.simpleMessage("Баланың аты"),
-    "obGenderWhy": MessageLookupByLibrary.simpleMessage(
-      "Fini дұрыс жазуы үшін ғана.",
-    ),
     "obGoalsSub": MessageLookupByLibrary.simpleMessage(
       "Қалағаныңызша таңдаңыз.",
     ),
@@ -1574,6 +1571,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "obPlanWatchTitle": MessageLookupByLibrary.simpleMessage(
       "Алғашқы 3 күн: мен бақылаймын",
     ),
+    "obScreensOff": MessageLookupByLibrary.simpleMessage("Экрандар сөндірулі"),
     "obSkip": MessageLookupByLibrary.simpleMessage("Өткізіп жіберу"),
     "obSoundsGood": MessageLookupByLibrary.simpleMessage("Жарайды"),
     "obStartTrial": MessageLookupByLibrary.simpleMessage("14 күн тегін бастау"),

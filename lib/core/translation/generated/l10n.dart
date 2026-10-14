@@ -9071,16 +9071,6 @@ class S {
     return Intl.message('Skip', name: 'obSkip', desc: '', args: []);
   }
 
-  /// `Only so Fini gets the grammar right.`
-  String get obGenderWhy {
-    return Intl.message(
-      'Only so Fini gets the grammar right.',
-      name: 'obGenderWhy',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `What would you like to change for {name}?`
   String obGoalsTitle(Object name) {
     return Intl.message(
@@ -9351,6 +9341,16 @@ class S {
     return Intl.message(
       'Start 14 days free',
       name: 'obStartTrial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Screens off`
+  String get obScreensOff {
+    return Intl.message(
+      'Screens off',
+      name: 'obScreensOff',
       desc: '',
       args: [],
     );

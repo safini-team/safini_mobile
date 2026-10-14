@@ -294,13 +294,13 @@ void main() {
 
     testWidgets('gender can be skipped', (tester) async {
       final c = await pump(tester);
-      expect(find.byKey(const ValueKey('ob-gender-skip')), findsNothing);
-      await tester.ensureVisible(find.byKey(const ValueKey('ob-gender-girl')));
-      await tester.tap(find.byKey(const ValueKey('ob-gender-girl')));
+      final s = S.current;
+      await tester.ensureVisible(find.byKey(const ValueKey('ob-gender')));
+      await tester.tap(find.text(s.genderGirl));
       await tester.pump();
       expect(c.state.data.gender, 'girl');
 
-      await tester.tap(find.byKey(const ValueKey('ob-gender-skip')));
+      await tester.tap(find.text(s.obSkip));
       await tester.pump();
       expect(c.state.data.gender, isNull);
     });

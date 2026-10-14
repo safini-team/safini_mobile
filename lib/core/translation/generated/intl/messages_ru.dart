@@ -1500,9 +1500,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "obChangeLimits": MessageLookupByLibrary.simpleMessage("Изменить лимиты"),
     "obChildName": MessageLookupByLibrary.simpleMessage("Имя ребёнка"),
-    "obGenderWhy": MessageLookupByLibrary.simpleMessage(
-      "Только чтобы Fini писал грамотно.",
-    ),
     "obGoalsSub": MessageLookupByLibrary.simpleMessage(
       "Выберите сколько угодно.",
     ),
@@ -1540,6 +1537,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "obPlanWatchTitle": MessageLookupByLibrary.simpleMessage(
       "Первые 3 дня: я наблюдаю",
     ),
+    "obScreensOff": MessageLookupByLibrary.simpleMessage("Экраны выключены"),
     "obSkip": MessageLookupByLibrary.simpleMessage("Пропустить"),
     "obSoundsGood": MessageLookupByLibrary.simpleMessage("Отлично"),
     "obStartTrial": MessageLookupByLibrary.simpleMessage(

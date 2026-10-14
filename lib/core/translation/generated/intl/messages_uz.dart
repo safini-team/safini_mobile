@@ -1562,9 +1562,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "Cheklovlarni o‘zgartirish",
     ),
     "obChildName": MessageLookupByLibrary.simpleMessage("Farzandning ismi"),
-    "obGenderWhy": MessageLookupByLibrary.simpleMessage(
-      "Faqat Fini to‘g‘ri yozishi uchun.",
-    ),
     "obGoalsSub": MessageLookupByLibrary.simpleMessage("Xohlagancha tanlang."),
     "obGoalsTitle": m84,
     "obHiWho": MessageLookupByLibrary.simpleMessage(
@@ -1600,6 +1597,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "obPlanWatchTitle": MessageLookupByLibrary.simpleMessage(
       "Dastlabki 3 kun: men kuzataman",
     ),
+    "obScreensOff": MessageLookupByLibrary.simpleMessage("Ekranlar o‘chiq"),
     "obSkip": MessageLookupByLibrary.simpleMessage("O‘tkazib yuborish"),
     "obSoundsGood": MessageLookupByLibrary.simpleMessage("Zo‘r"),
     "obStartTrial": MessageLookupByLibrary.simpleMessage(

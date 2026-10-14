@@ -1043,7 +1043,6 @@
   "obAndroid": "Android",
   "obIphone": "iPhone",
   "obSkip": "Өткөрүп жиберүү",
-  "obGenderWhy": "Fini туура жазышы үчүн гана.",
   "obGoalsTitle": "{name} үчүн эмнени өзгөрткүңүз келет?",
   "obGoalsSub": "Канча болсо да тандаңыз.",
   "obTuneTitle": "Керектүү лимиттерди коюңуз",
@@ -1071,5 +1070,6 @@
   "obTrialDay": "{day}-күн",
   "obTrialDay12Body": "Сыноо мөөнөтү бүтөөрдөн мурун эскертебиз",
   "obTrialDay14Body": "Safini Pro менен улантыңыз. Же Fini тындырылат, эрежелериңиз ошол бойдон калат.",
-  "obStartTrial": "14 күн акысыз баштоо"
+  "obStartTrial": "14 күн акысыз баштоо",
+  "obScreensOff": "Экрандар өчүк"
 }

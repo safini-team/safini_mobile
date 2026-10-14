@@ -1172,7 +1172,6 @@
   "obAndroid": "Android",
   "obIphone": "iPhone",
   "obSkip": "Пропустить",
-  "obGenderWhy": "Только чтобы Fini писал грамотно.",
   "obGoalsTitle": "Что вы хотите изменить для {name}?",
   "obGoalsSub": "Выберите сколько угодно.",
   "obTuneTitle": "Задайте нужные лимиты",
@@ -1200,5 +1199,6 @@
   "obTrialDay": "День {day}",
   "obTrialDay12Body": "Напомним до конца пробного периода",
   "obTrialDay14Body": "Оставьте с Safini Pro. Или Fini встанет на паузу, а ваши правила останутся как есть.",
-  "obStartTrial": "Начать 14 дней бесплатно"
+  "obStartTrial": "Начать 14 дней бесплатно",
+  "obScreensOff": "Экраны выключены"
 }
