@@ -1058,14 +1058,5 @@
   "proBuyOnWeb": "Подключить Pro",
   "proManageOnWeb": "Управлять на safini.fun",
   "proWebFailed": "Не удалось открыть safini.fun. Попробуйте ещё раз.",
-  "freeLimitParents": "В бесплатном плане один родитель. С Safini Pro к семье может присоединиться второй родитель.",
-  "familyUsedOfLimit": "{used} из {limit}",
-  "familyUsedToday": "{used} сегодня",
-  "familyTasksDone": "Задания {done}/{total}",
-  "familyNothingYet": "Сегодня пока пусто",
-  "limitsFamilyCap": "Лимит в день {time}",
-  "limitsFamilyNoCap": "Без дневного лимита",
-  "limitsFamilyApps": "{count, plural, =0{Нет лимитов на приложения} =1{1 приложение с лимитом} few{{count} приложения с лимитом} many{{count} приложений с лимитом} other{{count} приложений с лимитом}}",
-  "limitsFamilyBlocked": "{count, plural, =1{1 заблокировано} other{{count} заблокировано}}",
-  "limitsFamilyHint": "Нажмите на ребёнка, чтобы изменить его лимиты."
+  "freeLimitParents": "В бесплатном плане один родитель. С Safini Pro к семье может присоединиться второй родитель."
 }

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/core/utils/widgets/ds/ds_kid_stories.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
+import 'package:safini/features/models/domain/models/family_model.dart';
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 
 const _kids = [
   DsStoryKid(id: 'amir', name: 'Amir', color: Color(0xFF1A5C4A)),
@@ -141,27 +142,61 @@ void main() {
     handle.dispose();
   });
 
-  group('kidScope', () {
-    test('before a pick: Everyone for two children, the child for one', () {
-      expect(kidScope(null, ['amir', 'laylo']), isNull);
-      expect(kidScope(null, ['amir']), 'amir');
-    });
+  testWidgets('without Everyone, nobody picked selects the first child', (
+    tester,
+  ) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DsKidStories(
+            kids: _kids,
+            selectedId: null,
+            showEveryone: false,
+            everyoneLabel: 'Everyone',
+            addLabel: 'Add',
+            onSelect: (_) {},
+          ),
+        ),
+      ),
+    );
 
-    test('a pick sticks, and a child who is gone falls back', () {
-      expect(kidScope('laylo', ['amir', 'laylo']), 'laylo');
-      expect(kidScope(ParentHomeState.everyone, ['amir']), isNull);
-      expect(kidScope('gone', ['amir', 'laylo']), isNull);
-    });
+    expect(find.text('Everyone'), findsNothing);
+    expect(
+      tester
+          .getSemantics(find.byKey(const ValueKey('kid-story-amir')))
+          .hasFlag(SemanticsFlag.isSelected),
+      isTrue,
+    );
+    handle.dispose();
+  });
 
-    test('the selection survives a tab switch', () {
-      final home = ParentHomeCubit()..selectChild('laylo');
+  test('children are ordered oldest first, ties keep the family order', () {
+    ChildSummaryModel kid(String id, int age) => ChildSummaryModel(
+      id: id,
+      nickname: id,
+      age: age,
+      coinsBalance: 0,
+      level: 1,
+    );
 
-      home.selectTab(2);
-      home.selectTab(1);
+    final order = oldestFirst([
+      kid('amir', 8),
+      kid('laylo', 12),
+      kid('timur', 8),
+      kid('sara', 15),
+    ]).map((kid) => kid.id);
 
-      expect(home.state.selectedChildId, 'laylo');
-      expect(kidScope(home.state.selectedChildId, ['amir', 'laylo']), 'laylo');
-      home.close();
-    });
+    expect(order, ['sara', 'laylo', 'amir', 'timur']);
+  });
+
+  test('the selection survives a tab switch', () {
+    final home = ParentHomeCubit()..selectChild('laylo');
+
+    home.selectTab(2);
+    home.selectTab(1);
+
+    expect(home.state.selectedChildId, 'laylo');
+    home.close();
   });
 }

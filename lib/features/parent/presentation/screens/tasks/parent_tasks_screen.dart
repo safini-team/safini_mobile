@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -101,7 +102,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     if (scope == _scope) return;
     setState(
       () => context.read<ParentHomeCubit>().selectChild(
-        scope == _allScope ? ParentHomeState.everyone : scope,
+        scope == _allScope ? null : scope,
       ),
     );
   }
@@ -261,15 +262,15 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   ParentTasksData _buildData(BuildContext context, ParentTasksLoaded loaded) {
     final s = S.of(context);
 
-    final children =
-        context
-            .watch<ParentFamilyCubit>()
-            .state
-            .family
-            ?.children
-            .where((child) => child.id.isNotEmpty)
-            .toList() ??
-        const [];
+    final children = oldestFirst(
+      context
+              .watch<ParentFamilyCubit>()
+              .state
+              .family
+              ?.children
+              .where((child) => child.id.isNotEmpty) ??
+          const [],
+    );
 
     // In all-children mode the cubit tags each task with its child's name; in
     // single-child mode every task belongs to the loaded child.

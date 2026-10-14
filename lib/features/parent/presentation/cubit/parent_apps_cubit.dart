@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/utils/tab_freshness.dart';
 import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
@@ -49,9 +50,10 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     }
 
     if (isClosed || generation != _loadGeneration) return;
-    final children =
-        _familyCubit.state.family?.children.where((c) => c.id.isNotEmpty) ??
-        const [];
+    final children = oldestFirst(
+      _familyCubit.state.family?.children.where((c) => c.id.isNotEmpty) ??
+          const [],
+    );
     final child = childId != null
         ? children.where((c) => c.id == childId).firstOrNull
         : children.where((c) => c.id == _childId).firstOrNull ??

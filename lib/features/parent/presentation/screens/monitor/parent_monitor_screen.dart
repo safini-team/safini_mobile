@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'dart:async';
 
@@ -16,12 +17,8 @@ import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/onboarding/getting_started_cubit.dart';
 import 'package:safini/features/onboarding/getting_started_host.dart';
 import 'package:safini/features/onboarding/onboarding_store.dart';
-import 'package:safini/features/parent/presentation/cubit/family_usage_cubit.dart';
-import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
-import 'package:safini/features/models/domain/models/family_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
-import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
@@ -100,9 +97,7 @@ class ParentMonitorScreen extends StatelessWidget {
                   getIt<PushDeepLinks>()
                       .take(PushDestination.parentToday)
                       ?.childId ??
-                  childOnlyScope(
-                    context.read<ParentHomeCubit>().state.selectedChildId,
-                  ),
+                  context.read<ParentHomeCubit>().state.selectedChildId,
             ),
         ),
         BlocProvider(create: (_) => PrizeAsksCubit(getIt<PrizeApi>())..load()),
@@ -176,10 +171,8 @@ class _ParentMonitorView extends StatelessWidget {
           // resume, pushes and pull-to-refresh still always refetch.
           listener: (context, home) {
             final monitor = context.read<ParentMonitorCubit>();
-            final childId = childOnlyScope(home.selectedChildId);
-            if (childId == null) _loadFamily(context);
-            if (monitor.isFreshFor(childId)) return;
-            monitor.loadMonitorData(childId: childId);
+            if (monitor.isFreshFor(home.selectedChildId)) return;
+            monitor.loadMonitorData(childId: home.selectedChildId);
           },
         ),
         BlocListener<ParentTasksCubit, ParentTasksState>(
@@ -206,27 +199,13 @@ class _ParentMonitorView extends StatelessWidget {
 
           final asks = context.watch<PrizeAsksCubit>().state;
           final signouts = context.watch<SignoutAsksCubit>().state;
-          final scope = kidScope(
-            context.watch<ParentHomeCubit>().state.selectedChildId,
-            [for (final kid in state.children) kid.id],
-          );
-          final familyUsage = context.watch<FamilyUsageCubit>().state;
-          if (scope == null && familyUsage == null) _loadFamily(context);
           return BlocBuilder<ParentTasksCubit, ParentTasksState>(
             builder: (context, tasksState) => ParentTodayView(
               reviewKey: reviewKey,
-              data: _buildData(
-                context,
-                state,
-                tasksState,
-                asks,
-                signouts,
-                everyone: scope == null,
-                familyUsage: familyUsage ?? const {},
-              ),
-              onSelectKid: (id) => context.read<ParentHomeCubit>().selectChild(
-                id ?? ParentHomeState.everyone,
-              ),
+              data: _buildData(context, state, tasksState, asks, signouts),
+              onSelectKid: (index) => context
+                  .read<ParentHomeCubit>()
+                  .selectChild(state.children[index].id),
               onAddKid: () => openAddChild(context),
               onOpenSettings: () =>
                   context.router.push(const NamedRoute('parentSettings')),
@@ -265,15 +244,12 @@ class _ParentMonitorView extends StatelessWidget {
                     state.appLimits.isNotEmpty ||
                     (state.screenTime.limitMinutes ?? 0) > 0,
               ),
-              onRefresh: () => Future.wait([
-                refreshParentToday(
-                  monitor: context.read<ParentMonitorCubit>(),
-                  asks: context.read<PrizeAsksCubit>(),
-                  tasks: context.read<ParentTasksCubit>(),
-                  signouts: context.read<SignoutAsksCubit>(),
-                ),
-                if (scope == null) _loadFamily(context, force: true),
-              ]),
+              onRefresh: () => refreshParentToday(
+                monitor: context.read<ParentMonitorCubit>(),
+                asks: context.read<PrizeAsksCubit>(),
+                tasks: context.read<ParentTasksCubit>(),
+                signouts: context.read<SignoutAsksCubit>(),
+              ),
             ),
           );
         },
@@ -434,27 +410,14 @@ class _ParentMonitorView extends StatelessWidget {
         _ => null,
       };
 
-  static Future<void> _loadFamily(BuildContext context, {bool force = false}) {
-    final family = context.read<ParentFamilyCubit>().state.family;
-    final ids = [
-      for (final kid in family?.children ?? const <ChildSummaryModel>[])
-        if (kid.id.isNotEmpty) kid.id,
-    ];
-    return context.read<FamilyUsageCubit>().load(ids, force: force);
-  }
-
   ParentTodayData _buildData(
     BuildContext context,
     ParentMonitorLoaded state,
     ParentTasksState tasksState,
     List<PrizeRequest> asks,
-    List<SignoutRequest> signouts, {
-    bool everyone = false,
-    Map<String, ChildAppUsageSnapshot> familyUsage = const {},
-  }) {
-    // Everyone: no one child, so the reviews below cover the whole family.
-    final child = everyone ? null : state.selectedChild;
-    final kidsById = {for (final kid in state.children) kid.id: kid};
+    List<SignoutRequest> signouts,
+  ) {
+    final child = state.selectedChild;
     final tasks = _loadedOf(tasksState);
 
     final ruleApps = state.appLimits.map((limit) {
@@ -500,21 +463,20 @@ class _ParentMonitorView extends StatelessWidget {
     final avatars = {for (final kid in state.children) kid.id: kid.avatarLook};
     final reviews = childTasks
         .where((task) => task.isPendingApproval)
-        .map((task) {
-          final owner = child ?? kidsById[task.childId];
-          return TodayReview(
+        .map(
+          (task) => TodayReview(
             id: task.id,
             title: task.displayTitle,
             meta: [
-              owner?.nickname ?? '',
+              child?.nickname ?? '',
               taskCategoryLabel(S.of(context), task.category),
             ].where((part) => part.isNotEmpty).join(' · '),
-            kidName: owner?.nickname ?? '',
-            color: AppColors.kidColor(owner?.id ?? owner?.nickname),
+            kidName: child?.nickname ?? '',
+            color: AppColors.kidColor(child?.id ?? child?.nickname),
             coins: task.rewardCoins ?? 0,
-            avatar: owner?.avatarLook ?? const ChildAvatarLook(),
-          );
-        })
+            avatar: child?.avatarLook ?? const ChildAvatarLook(),
+          ),
+        )
         .toList();
     final s = S.of(context);
     for (final ask in asks) {
@@ -541,34 +503,22 @@ class _ParentMonitorView extends StatelessWidget {
     }
     reviews.insertAll(0, signoutReviews(s, signouts, avatars: avatars));
 
-    final kids = [
-      for (final kid in state.children)
-        TodayKid(
-          id: kid.id,
-          name: kid.nickname,
-          color: AppColors.kidColor(kid.id),
-          avatar: kid.avatarLook,
-          pendingReviewCount: pendingReviewCountForChild(
-            childId: kid.id,
-            tasks: tasks?.tasks ?? const [],
-            asks: asks,
-          ),
-        ),
-    ];
-    final allTasks = tasks?.tasks ?? const <ParentTaskInstanceModel>[];
     return ParentTodayData(
       usageAvailable: state.screenTime.usageAvailable,
       configurationAvailable: state.screenTime.configurationAvailable != false,
-      kids: kids,
-      everyone: everyone,
-      family: [
-        if (everyone)
-          for (final kid in kids)
-            familyRow(
-              kid,
-              familyUsage[kid.id],
-              allTasks.where((task) => task.childId == kid.id).toList(),
+      kids: [
+        for (final kid in state.children)
+          TodayKid(
+            id: kid.id,
+            name: kid.nickname,
+            color: AppColors.kidColor(kid.id),
+            avatar: kid.avatarLook,
+            pendingReviewCount: pendingReviewCountForChild(
+              childId: kid.id,
+              tasks: tasks?.tasks ?? const [],
+              asks: asks,
             ),
+          ),
       ],
       selectedIndex: state.selectedIndex,
       kidName: child?.nickname ?? '',
@@ -605,28 +555,6 @@ class _ParentMonitorView extends StatelessWidget {
       },
     );
   }
-}
-
-/// The child a tab load is for: Everyone and "not picked yet" are null.
-String? childOnlyScope(String? selected) =>
-    selected == ParentHomeState.everyone ? null : selected;
-
-/// One child's line in Everyone. Usage is left out for a phone that does not
-/// report it (an iPhone), rather than shown as zero.
-TodayFamilyRow familyRow(
-  TodayKid kid,
-  ChildAppUsageSnapshot? usage,
-  List<ParentTaskInstanceModel> tasks,
-) {
-  final screenTime = usage?.screenTime;
-  final reports = screenTime != null && screenTime.usageAvailable;
-  return TodayFamilyRow(
-    kid: kid,
-    usedMinutes: reports ? screenTime.usedMinutes : null,
-    limitMinutes: reports ? screenTime.limitMinutes : null,
-    tasksDone: tasks.where((task) => task.isCompleted).length,
-    tasksTotal: tasks.length,
-  );
 }
 
 /// Switches Today to the child a digest tapped while the tab is open is about.

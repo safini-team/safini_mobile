@@ -99,25 +99,6 @@ class TodayWeek {
   final List<TodayApp> apps;
 }
 
-/// One child's line in the Everyone summary on Today.
-class TodayFamilyRow {
-  const TodayFamilyRow({
-    required this.kid,
-    this.usedMinutes,
-    this.limitMinutes,
-    this.tasksDone = 0,
-    this.tasksTotal = 0,
-  });
-
-  final TodayKid kid;
-
-  /// Null while it loads or when the phone does not report usage (iPhone).
-  final int? usedMinutes;
-  final int? limitMinutes;
-  final int tasksDone;
-  final int tasksTotal;
-}
-
 class ParentTodayData {
   final bool usageAvailable;
   final bool configurationAvailable;
@@ -126,8 +107,6 @@ class ParentTodayData {
     this.configurationAvailable = true,
     required this.kids,
     required this.selectedIndex,
-    this.everyone = false,
-    this.family = const [],
     required this.kidName,
     required this.usedMinutes,
     required this.limitMinutes,
@@ -145,11 +124,6 @@ class ParentTodayData {
 
   final List<TodayKid> kids;
   final int selectedIndex;
-
-  /// The parent picked "Everyone": [family] replaces the one-child card,
-  /// and [reviews] cover every child.
-  final bool everyone;
-  final List<TodayFamilyRow> family;
   final String kidName;
   final int usedMinutes;
   final int? limitMinutes;
@@ -209,9 +183,7 @@ class ParentTodayView extends StatelessWidget {
   });
 
   final ParentTodayData data;
-
-  /// A child's id, or null for Everyone.
-  final ValueChanged<String?> onSelectKid;
+  final ValueChanged<int> onSelectKid;
   final VoidCallback? onAddKid;
   final VoidCallback onOpenSettings;
   final ValueChanged<TodayReview> onOpenReview;
@@ -245,14 +217,12 @@ class ParentTodayView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(top: 14),
               child: DsKidStories(
+                showEveryone: false,
                 everyoneLabel: s.scopeEveryone,
                 addLabel: s.addShort,
-                selectedId: data.everyone
-                    ? null
-                    : data.kids[data.selectedIndex.clamp(
-                        0,
-                        data.kids.length - 1,
-                      )].id,
+                selectedId: data
+                    .kids[data.selectedIndex.clamp(0, data.kids.length - 1)]
+                    .id,
                 kids: [
                   for (final kid in data.kids)
                     DsStoryKid(
@@ -263,7 +233,11 @@ class ParentTodayView extends StatelessWidget {
                       hasNews: kid.pendingReviewCount > 0,
                     ),
                 ],
-                onSelect: onSelectKid,
+                onSelect: (id) {
+                  if (id != null) {
+                    onSelectKid(data.kids.indexWhere((kid) => kid.id == id));
+                  }
+                },
                 onAdd: onAddKid,
               ),
             ),
@@ -277,9 +251,7 @@ class ParentTodayView extends StatelessWidget {
               AppSpacing.gutter,
               0,
             ),
-            child: data.everyone
-                ? _FamilyCard(rows: data.family, onOpenKid: onSelectKid)
-                : _ScreenTimeCard(data: data),
+            child: _ScreenTimeCard(data: data),
           ),
         ),
         SliverToBoxAdapter(
@@ -315,7 +287,7 @@ class ParentTodayView extends StatelessWidget {
             ),
           ),
         ),
-        if (!data.everyone && data.apps.isNotEmpty) ...[
+        if (data.apps.isNotEmpty) ...[
           SliverToBoxAdapter(
             child: DsSectionHeader(
               title: s.whereTheTimeWent,
@@ -347,7 +319,7 @@ class ParentTodayView extends StatelessWidget {
           ),
         ],
         if (data.week case final week?
-            when !data.everyone && week.days.any((day) => day.minutes > 0)) ...[
+            when week.days.any((day) => day.minutes > 0)) ...[
           SliverToBoxAdapter(child: DsSectionHeader(title: s.lastSevenDays)),
           SliverToBoxAdapter(
             child: Padding(
@@ -383,128 +355,6 @@ class ParentTodayView extends StatelessWidget {
     final open = onOpenApp;
     if (open == null || app.slug == null) return null;
     return () => open(app);
-  }
-}
-
-/// Everyone on Today: one row per child with today's screen time against
-/// their cap and the tasks done. A tap opens that child's Today.
-class _FamilyCard extends StatelessWidget {
-  const _FamilyCard({required this.rows, required this.onOpenKid});
-
-  final List<TodayFamilyRow> rows;
-  final ValueChanged<String?> onOpenKid;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    return DsGroup(
-      horizontalPadding: 0,
-      verticalPadding: 0,
-      children: [
-        for (final row in rows)
-          Pressable(
-            key: ValueKey('family-row-${row.kid.id}'),
-            onTap: () => onOpenKid(row.kid.id),
-            scale: 0.98,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
-              child: Row(
-                children: [
-                  DsKidFace(
-                    name: row.kid.name,
-                    avatar: row.kid.avatar,
-                    color: row.kid.color,
-                    size: 40,
-                    fontSize: 16,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                row.kid.name,
-                                style: AppText.rowTitleStrong,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (row.kid.pendingReviewCount > 0)
-                              DsAttentionBadge(
-                                count: row.kid.pendingReviewCount,
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          _familyLine(s, row),
-                          style: AppText.meta,
-                          maxLines: 2,
-                        ),
-                        if (row.usedMinutes != null &&
-                            (row.limitMinutes ?? 0) > 0) ...[
-                          const SizedBox(height: 7),
-                          _UsageBar(
-                            used: row.usedMinutes!,
-                            limit: row.limitMinutes!,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  AppIcons.chevronRight(),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  static String _familyLine(S s, TodayFamilyRow row) {
-    final used = row.usedMinutes;
-    final limit = row.limitMinutes;
-    final parts = <String>[
-      if (used != null)
-        limit != null && limit > 0
-            ? s.familyUsedOfLimit(formatHm(s, used), formatHm(s, limit))
-            : s.familyUsedToday(formatHm(s, used)),
-      if (row.tasksTotal > 0) s.familyTasksDone(row.tasksDone, row.tasksTotal),
-    ];
-    return parts.isEmpty ? s.familyNothingYet : parts.join(' · ');
-  }
-}
-
-class _UsageBar extends StatelessWidget {
-  const _UsageBar({required this.used, required this.limit});
-
-  final int used;
-  final int limit;
-
-  @override
-  Widget build(BuildContext context) {
-    final share = (used / limit).clamp(0.0, 1.0);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(2),
-      child: SizedBox(
-        height: 4,
-        child: Stack(
-          children: [
-            const Positioned.fill(child: ColoredBox(color: AppColors.track)),
-            FractionallySizedBox(
-              widthFactor: share,
-              child: ColoredBox(
-                color: used > limit ? AppColors.danger : AppColors.primary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

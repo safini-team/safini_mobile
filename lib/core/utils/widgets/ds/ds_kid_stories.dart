@@ -28,8 +28,8 @@ class DsStoryKid {
 }
 
 /// The child selector on Today, Tasks, Limits and Fini (SAF-269): a row of
-/// round faces like Instagram stories, "Everyone" first and a dashed "Add"
-/// last. The selected circle gets a pine ring.
+/// round faces like Instagram stories, oldest first, and a dashed "Add" last.
+/// The selected circle gets a pine ring. Tasks also starts with "Everyone".
 ///
 /// Board "1 · Fini tab": 52px circles 18px apart, the ring is a 3px gap in
 /// the page colour then 2.5px of `primary`, a 13px/600 label under each.
@@ -46,6 +46,7 @@ class DsKidStories extends StatelessWidget {
     required this.addLabel,
     this.onAdd,
     this.everyoneHasNews = false,
+    this.showEveryone = true,
     this.padding = const EdgeInsets.symmetric(horizontal: 20),
   });
 
@@ -60,6 +61,10 @@ class DsKidStories extends StatelessWidget {
   /// Hidden when null, e.g. for a parent who cannot add children.
   final VoidCallback? onAdd;
   final bool everyoneHasNews;
+
+  /// Only Tasks shows "Everyone". Elsewhere a tab is about one child, and
+  /// [selectedId] null selects the first one, the oldest.
+  final bool showEveryone;
   final EdgeInsetsGeometry padding;
 
   static const double circle = 52;
@@ -68,7 +73,7 @@ class DsKidStories extends StatelessWidget {
   Widget build(BuildContext context) {
     final selected = kids.any((kid) => kid.id == selectedId)
         ? selectedId
-        : null;
+        : (showEveryone ? null : kids.firstOrNull?.id);
     return SizedBox(
       height: circle + 8 + 6 + 18,
       child: ListView(
@@ -76,15 +81,16 @@ class DsKidStories extends StatelessWidget {
         padding: padding,
         clipBehavior: Clip.none,
         children: [
-          _Story(
-            key: const ValueKey('kid-story-everyone'),
-            semanticsId: QaIds.kidEveryone,
-            label: everyoneLabel,
-            selected: selected == null,
-            hasNews: everyoneHasNews,
-            onTap: () => onSelect(null),
-            face: const _EveryoneFace(),
-          ),
+          if (showEveryone)
+            _Story(
+              key: const ValueKey('kid-story-everyone'),
+              semanticsId: QaIds.kidEveryone,
+              label: everyoneLabel,
+              selected: selected == null,
+              hasNews: everyoneHasNews,
+              onTap: () => onSelect(null),
+              face: const _EveryoneFace(),
+            ),
           for (final kid in kids)
             _Story(
               key: ValueKey('kid-story-${kid.id}'),

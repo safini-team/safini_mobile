@@ -84,25 +84,6 @@ class LimitsApp {
   }
 }
 
-/// One child in the Everyone overview on Limits.
-class LimitsFamilyRow {
-  const LimitsFamilyRow({
-    required this.kid,
-    this.capMinutes,
-    this.limitedApps = 0,
-    this.blockedApps = 0,
-    this.loaded = true,
-  });
-
-  final LimitsKid kid;
-  final int? capMinutes;
-  final int limitedApps;
-  final int blockedApps;
-
-  /// False while that child's rules load, or when the call failed.
-  final bool loaded;
-}
-
 class ParentLimitsData {
   final bool usageAvailable;
   final bool configurationAvailable;
@@ -111,8 +92,6 @@ class ParentLimitsData {
     this.configurationAvailable = true,
     required this.kids,
     required this.selectedKidId,
-    this.everyone = false,
-    this.family = const [],
     required this.kidName,
     required this.apps,
     this.capMinutes,
@@ -123,10 +102,6 @@ class ParentLimitsData {
 
   final List<LimitsKid> kids;
   final String? selectedKidId;
-
-  /// "Everyone": a per-child overview; a tap opens that child's limits.
-  final bool everyone;
-  final List<LimitsFamilyRow> family;
   final String kidName;
   final List<LimitsApp> apps;
 
@@ -158,11 +133,9 @@ class ParentLimitsView extends StatelessWidget {
   });
 
   final ParentLimitsData data;
-
-  /// A child's id, or null for Everyone.
-  final ValueChanged<String?> onSelectKid;
-  final VoidCallback? onAddKid;
+  final ValueChanged<String> onSelectKid;
   final ValueChanged<LimitsApp> onOpenApp;
+  final VoidCallback? onAddKid;
   final VoidCallback? onAddApp;
 
   /// Null minutes removes the cap. Absent entirely in the design preview,
@@ -183,6 +156,33 @@ class ParentLimitsView extends StatelessWidget {
     return DsScreen(
       onRefresh: onRefresh,
       slivers: [
+        // The picker sits above the title now: you pick whose phone first, and
+        // the title reads as the answer.
+        if (data.kids.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: DsKidStories(
+                showEveryone: false,
+                everyoneLabel: S.of(context).scopeEveryone,
+                addLabel: S.of(context).addShort,
+                selectedId: data.selectedKidId ?? data.kids.first.id,
+                kids: [
+                  for (final kid in data.kids)
+                    DsStoryKid(
+                      id: kid.id,
+                      name: kid.name,
+                      color: kid.color,
+                      avatar: kid.avatar,
+                    ),
+                ],
+                onSelect: (id) {
+                  if (id != null) onSelectKid(id);
+                },
+                onAdd: onAddKid,
+              ),
+            ),
+          ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
@@ -201,29 +201,25 @@ class ParentLimitsView extends StatelessWidget {
             ),
           ),
         ),
-        if (data.kids.isNotEmpty)
+        if (onShowPrizes != null)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 14),
-              child: DsKidStories(
-                everyoneLabel: s.scopeEveryone,
-                addLabel: s.addShort,
-                selectedId: data.everyone ? null : data.selectedKidId,
-                kids: [
-                  for (final kid in data.kids)
-                    DsStoryKid(
-                      id: kid.id,
-                      name: kid.name,
-                      color: kid.color,
-                      avatar: kid.avatar,
-                    ),
-                ],
-                onSelect: onSelectKid,
-                onAdd: onAddKid,
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.gutter,
+                16,
+                AppSpacing.gutter,
+                0,
+              ),
+              child: DsSegmentedControl(
+                labels: [s.apps, s.prizesTab],
+                selectedIndex: showingPrizes ? 1 : 0,
+                onChanged: (index) => onShowPrizes!(index == 1),
               ),
             ),
           ),
-        if (data.everyone) ...[
+        if (showingPrizes)
+          ...prizeSlivers
+        else ...[
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
@@ -232,127 +228,46 @@ class ParentLimitsView extends StatelessWidget {
                 AppSpacing.gutter,
                 0,
               ),
-              child: _FamilyLimits(rows: data.family, onOpenKid: onSelectKid),
+              child: OverallBudgetCard(
+                limitMinutes: data.capMinutes,
+                usedMinutes: data.usedMinutes,
+                remainingMinutes: data.remainingMinutes,
+                usageAvailable: data.usageAvailable,
+                configurationAvailable: data.configurationAvailable,
+                nextResetAt: data.nextResetAt,
+                onSave: onSetCap,
+              ),
             ),
           ),
+
+          SliverToBoxAdapter(child: DsOverline(s.apps, top: 28)),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.gutter,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  DsGroup(
+                    children: [
+                      for (final app in data.apps)
+                        _AppRow(
+                          usageAvailable: data.usageAvailable,
+                          app: app,
+                          onTap: () => onOpenApp(app),
+                        ),
+                      if (onAddApp != null) _AddAppRow(onTap: onAddApp!),
+                    ],
+                  ),
+                  DsFootnote(s.limitsFootnote),
+                  DsFootnote(s.limitsNotYetEnforced),
+                ],
               ),
-              child: DsFootnote(s.limitsFamilyHint),
             ),
           ),
-        ] else ...[
-          if (onShowPrizes != null)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.gutter,
-                  16,
-                  AppSpacing.gutter,
-                  0,
-                ),
-                child: DsSegmentedControl(
-                  labels: [s.apps, s.prizesTab],
-                  selectedIndex: showingPrizes ? 1 : 0,
-                  onChanged: (index) => onShowPrizes!(index == 1),
-                ),
-              ),
-            ),
-          if (showingPrizes)
-            ...prizeSlivers
-          else ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.gutter,
-                  18,
-                  AppSpacing.gutter,
-                  0,
-                ),
-                child: OverallBudgetCard(
-                  limitMinutes: data.capMinutes,
-                  usedMinutes: data.usedMinutes,
-                  remainingMinutes: data.remainingMinutes,
-                  usageAvailable: data.usageAvailable,
-                  configurationAvailable: data.configurationAvailable,
-                  nextResetAt: data.nextResetAt,
-                  onSave: onSetCap,
-                ),
-              ),
-            ),
-
-            SliverToBoxAdapter(child: DsOverline(s.apps, top: 28)),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.gutter,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    DsGroup(
-                      children: [
-                        for (final app in data.apps)
-                          _AppRow(
-                            usageAvailable: data.usageAvailable,
-                            app: app,
-                            onTap: () => onOpenApp(app),
-                          ),
-                        if (onAddApp != null) _AddAppRow(onTap: onAddApp!),
-                      ],
-                    ),
-                    DsFootnote(s.limitsFootnote),
-                    DsFootnote(s.limitsNotYetEnforced),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ],
       ],
     );
   }
-}
-
-/// Everyone on Limits: what each child is held to, one row each.
-class _FamilyLimits extends StatelessWidget {
-  const _FamilyLimits({required this.rows, required this.onOpenKid});
-
-  final List<LimitsFamilyRow> rows;
-  final ValueChanged<String?> onOpenKid;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    return DsGroup(
-      children: [
-        for (final row in rows)
-          DsRow(
-            key: ValueKey('limits-family-${row.kid.id}'),
-            onTap: () => onOpenKid(row.kid.id),
-            title: row.kid.name,
-            subtitle: row.loaded ? _line(s, row) : '…',
-            leading: DsKidFace(
-              name: row.kid.name,
-              avatar: row.kid.avatar,
-              color: row.kid.color,
-              size: 36,
-              fontSize: 15,
-            ),
-          ),
-      ],
-    );
-  }
-
-  static String _line(S s, LimitsFamilyRow row) => [
-    row.capMinutes == null
-        ? s.limitsFamilyNoCap
-        : s.limitsFamilyCap(formatHm(s, row.capMinutes!)),
-    s.limitsFamilyApps(row.limitedApps),
-    if (row.blockedApps > 0) s.limitsFamilyBlocked(row.blockedApps),
-  ].join(' · ');
 }
 
 class _AppRow extends StatelessWidget {

@@ -33,7 +33,7 @@ folder is gitignored.
 | Variable | Default | |
 | --- | --- | --- |
 | `LANGS` | `en ru` | any of `en ru ky uz kk` |
-| `SCREENS` | `today tasks limits family` | keys of `SCREENS` in `shoot.py`, e.g. `today-everyone`, `limits-everyone` |
+| `SCREENS` | `today tasks limits family` | keys of `SCREENS` in `shoot.py` |
 | `PLATFORMS` | `ios android` | |
 | `AVD` | `Safini_QA` | never `Pixel_10a`, it is paired to production |
 | `IOS_SIM` | `iPhone 17 Pro` | simulator name |
@@ -57,8 +57,7 @@ so the flows work in all five languages. To make a new screen capturable:
 1. add its id to `lib/core/utils/qa_ids.dart` and put it on the widget:
    `Semantics(identifier: QaIds.navFini, container: true, child: ...)`, or
    `DsTabItem(semanticsId: ...)` for a tab.
-2. add a line to `SCREENS` in `tool/screenshots/shoot.py`: the ids to tap in
-   order, comma separated (`nav.limits,kid.everyone`).
+2. add a line to `SCREENS` in `tool/screenshots/shoot.py`.
 
 `test/qa_ids_test.dart` fails when a Maestro flow uses an id `QaIds` doesn't
 have.

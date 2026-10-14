@@ -1,3 +1,5 @@
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
+import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -15,11 +17,6 @@ import 'package:safini/features/parent/presentation/widgets/apps/enforcement_sta
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
-import 'package:safini/features/parent/presentation/cubit/family_usage_cubit.dart';
-import 'package:safini/features/parent/domain/models/child_app_usage_model.dart';
-import 'package:safini/features/parent/presentation/screens/monitor/parent_monitor_screen.dart'
-    show childOnlyScope;
-import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_installed_apps_screen.dart';
 import 'package:safini/features/parent/presentation/screens/apps/parent_limits_view.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/app_limit_sheet.dart';
@@ -42,7 +39,7 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
     ..loadAppLimits(
       childId:
           getIt<PushDeepLinks>().take(PushDestination.parentLimits)?.childId ??
-          childOnlyScope(context.read<ParentHomeCubit>().state.selectedChildId),
+          context.read<ParentHomeCubit>().state.selectedChildId,
     );
   final ParentPrizesCubit _prizes = ParentPrizesCubit(getIt<PrizeApi>());
   StreamSubscription<PushTarget>? _deepLinks;
@@ -86,10 +83,9 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
             (previous.selectedIndex != 2 ||
                 previous.selectedChildId != current.selectedChildId),
         listener: (context, home) {
-          final childId = childOnlyScope(home.selectedChildId);
           // Coming back within a few seconds keeps what is on screen.
-          if (_cubit.isFreshFor(childId)) return;
-          _cubit.loadAppLimits(childId: childId);
+          if (_cubit.isFreshFor(home.selectedChildId)) return;
+          _cubit.loadAppLimits(childId: home.selectedChildId);
         },
         child: OnPush(
           types: const {
@@ -105,20 +101,6 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
       ),
     );
   }
-}
-
-/// What a child is held to, from today's `app-usage`: the daily cap and how
-/// many apps carry a limit or a block.
-LimitsFamilyRow limitsFamilyRow(LimitsKid kid, ChildAppUsageSnapshot? usage) {
-  if (usage == null) return LimitsFamilyRow(kid: kid, loaded: false);
-  return LimitsFamilyRow(
-    kid: kid,
-    capMinutes: usage.screenTime.limitMinutes,
-    limitedApps: usage.apps
-        .where((app) => app.isLimited && !app.isBlocked)
-        .length,
-    blockedApps: usage.apps.where((app) => app.isBlocked).length,
-  );
 }
 
 class _ParentLimitsView extends StatefulWidget {
@@ -172,27 +154,16 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
         }
 
         final cubit = context.read<ParentAppsCubit>();
-        final children =
-            context
-                .watch<ParentFamilyCubit>()
-                .state
-                .family
-                ?.children
-                .where((child) => child.id.isNotEmpty)
-                .toList() ??
-            const [];
+        final children = oldestFirst(
+          context
+                  .watch<ParentFamilyCubit>()
+                  .state
+                  .family
+                  ?.children
+                  .where((child) => child.id.isNotEmpty) ??
+              const [],
+        );
 
-        final everyone =
-            kidScope(context.watch<ParentHomeCubit>().state.selectedChildId, [
-              for (final child in children) child.id,
-            ]) ==
-            null;
-        final familyUsage = context.watch<FamilyUsageCubit>().state;
-        if (everyone) {
-          context.read<FamilyUsageCubit>().load([
-            for (final child in children) child.id,
-          ]);
-        }
         final selectedId = cubit.childId;
         final selected = children
             .where((child) => child.id == selectedId)
@@ -244,7 +215,7 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
 
         return Column(
           children: [
-            if (selectedId != null && !_showingPrizes && !everyone)
+            if (selectedId != null && !_showingPrizes)
               EnforcementStatusCard(
                 key: ValueKey(selectedId),
                 childId: selectedId,
@@ -265,20 +236,6 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
                       ),
                   ],
                   selectedKidId: selectedId,
-                  everyone: everyone,
-                  family: [
-                    if (everyone)
-                      for (final child in children)
-                        limitsFamilyRow(
-                          LimitsKid(
-                            id: child.id,
-                            name: child.nickname,
-                            color: AppColors.kidColor(child.id),
-                            avatar: child.avatarLook,
-                          ),
-                          familyUsage?[child.id],
-                        ),
-                  ],
                   kidName: selected?.nickname ?? '',
                   apps: apps,
                   capMinutes: state.screenTime.limitMinutes,
@@ -286,9 +243,9 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
                   remainingMinutes: state.screenTime.remainingMinutes,
                   nextResetAt: state.screenTime.nextResetAt,
                 ),
-                onSelectKid: (id) => context.read<ParentHomeCubit>().selectChild(
-                  id ?? ParentHomeState.everyone,
-                ),
+                onSelectKid: (id) {
+                  context.read<ParentHomeCubit>().selectChild(id);
+                },
                 onAddKid: () => openAddChild(context),
                 onSetCap: selectedId == null ? null : cubit.setScreenTimeCap,
                 onOpenApp: (app) => showAppLimitSheet(
@@ -298,13 +255,8 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
                   childName: selected?.nickname ?? '',
                 ),
                 onAddApp: onAddApp,
-                onRefresh: () => _showingPrizes
-                    ? prizes.load()
-                    : everyone
-                    ? context.read<FamilyUsageCubit>().load([
-                        for (final child in children) child.id,
-                      ], force: true)
-                    : cubit.loadAppLimits(),
+                onRefresh: () =>
+                    _showingPrizes ? prizes.load() : cubit.loadAppLimits(),
                 showingPrizes: _showingPrizes,
                 onShowPrizes: selectedId == null
                     ? null
