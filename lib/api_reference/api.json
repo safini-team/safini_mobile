@@ -9066,6 +9066,84 @@
         }
       }
     },
+    "/v1/fini/inbox": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Fini Inbox Count",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** How many Fini cards wait for the parent, per child, for the tab badge and the dot on each child's circle.\n\n**Frontend note:** One call for the whole family. Children with nothing pending are left out.",
+        "operationId": "get_fini_inbox_v1_fini_inbox_get",
+        "responses": {
+          "200": {
+            "description": "Pending cards.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Fini Inbox V1 Fini Inbox Get"
+                },
+                "example": {
+                  "total": 1,
+                  "children": [
+                    {
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "pending": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
     "/v1/children/{child_id}/fini/activity": {
       "get": {
         "tags": [
@@ -10961,7 +11039,8 @@
               "group_budget",
               "app_cap",
               "task_gate",
-              "schedule_window"
+              "schedule_window",
+              "exempt"
             ],
             "title": "Kind"
           }
@@ -11017,7 +11096,31 @@
                 "type": "null"
               }
             ],
-            "title": "Task Id"
+            "title": "Task Id",
+            "description": "A task gate's task. Empty means any study task opens the apps."
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "games",
+                  "scrolling",
+                  "video",
+                  "homework",
+                  "bedtime",
+                  "school",
+                  "dinner",
+                  "learning",
+                  "custom"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent",
+            "description": "The goal tile the parent picked, e.g. `games` or `bedtime`."
           }
         },
         "additionalProperties": false,

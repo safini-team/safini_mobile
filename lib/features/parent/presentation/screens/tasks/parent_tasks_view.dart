@@ -83,6 +83,7 @@ class TaskScopeChip {
     this.color,
     this.hasAvatar = true,
     this.avatar = const ChildAvatarLook(),
+    this.hasNews = false,
   });
 
   final String key;
@@ -90,6 +91,9 @@ class TaskScopeChip {
   final Color? color;
   final bool hasAvatar;
   final ChildAvatarLook avatar;
+
+  /// Something of this child's waits for review.
+  final bool hasNews;
 }
 
 class ParentTasksData {
@@ -134,6 +138,7 @@ class ParentTasksView extends StatelessWidget {
     required this.onSelectLane,
     required this.onOpenTask,
     required this.onNewTask,
+    this.onAddKid,
     this.onRefresh,
   });
 
@@ -142,6 +147,7 @@ class ParentTasksView extends StatelessWidget {
   final ValueChanged<TaskLane> onSelectLane;
   final ValueChanged<TaskRowData> onOpenTask;
   final VoidCallback onNewTask;
+  final VoidCallback? onAddKid;
 
   final Future<void> Function()? onRefresh;
 
@@ -161,28 +167,36 @@ class ParentTasksView extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.textGutter,
-              14,
-              AppSpacing.textGutter,
-              0,
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: DsKidPicker(
-                selectedKey: data.selectedScope,
-                options: [
-                  for (final chip in data.chips)
-                    DsPickerOption(
-                      key: chip.key,
-                      label: chip.label,
+            padding: const EdgeInsets.only(top: 14),
+            child: DsKidStories(
+              everyoneLabel: s.scopeEveryone,
+              addLabel: s.addShort,
+              selectedId: data.chips.any(
+                (chip) => chip.hasAvatar && chip.key == data.selectedScope,
+              )
+                  ? data.selectedScope
+                  : null,
+              kids: [
+                for (final chip in data.chips)
+                  if (chip.hasAvatar)
+                    DsStoryKid(
+                      id: chip.key,
+                      name: chip.label,
                       color: chip.color ?? AppColors.textTertiary,
-                      initial: chip.hasAvatar ? null : '·',
-                      avatar: chip.hasAvatar ? chip.avatar : null,
+                      avatar: chip.avatar,
+                      hasNews: chip.hasNews,
                     ),
-                ],
-                onSelect: onSelectScope,
+              ],
+              onSelect: (id) => onSelectScope(
+                id ??
+                    data.chips
+                        .firstWhere(
+                          (chip) => !chip.hasAvatar,
+                          orElse: () => data.chips.first,
+                        )
+                        .key,
               ),
+              onAdd: onAddKid,
             ),
           ),
         ),

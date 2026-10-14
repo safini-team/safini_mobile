@@ -74,12 +74,12 @@ void main() {
       ),
     );
 
-    await _capturePickerMenu(tester);
+    await _captureStories(tester);
     await _captureTaskCreate(tester);
   });
 }
 
-Future<void> _capturePickerMenu(WidgetTester tester) async {
+Future<void> _captureStories(WidgetTester tester) async {
   await tester.pumpWidget(
     _app(
       Scaffold(
@@ -88,23 +88,27 @@ Future<void> _capturePickerMenu(WidgetTester tester) async {
           padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
           child: Align(
             alignment: Alignment.topLeft,
-            child: DsKidPicker(
-              selectedKey: 'amir',
+            child: DsKidStories(
+              selectedId: 'amir',
+              everyoneLabel: 'Everyone',
+              addLabel: 'Add',
               onSelect: (_) {},
-              options: const [
-                DsPickerOption(
-                  key: 'amir',
-                  label: 'Amir',
+              onAdd: () {},
+              kids: const [
+                DsStoryKid(
+                  id: 'amir',
+                  name: 'Amir',
                   color: Color(0xFF1A5C4A),
+                  hasNews: true,
                   avatar: ChildAvatarLook(
                     faceEmoji: '😎',
                     accessoryEmoji: '🦸',
                     hasCustomFace: true,
                   ),
                 ),
-                DsPickerOption(
-                  key: 'layla',
-                  label: 'Layla',
+                DsStoryKid(
+                  id: 'layla',
+                  name: 'Layla',
                   color: Color(0xFF2E6F8E),
                   avatar: ChildAvatarLook(
                     faceEmoji: '🥰',
@@ -119,10 +123,8 @@ Future<void> _capturePickerMenu(WidgetTester tester) async {
       ),
     ),
   );
-  await tester.pump();
-  await tester.tap(find.text('Amir'));
   await tester.pumpAndSettle();
-  await _save(tester, 'parent-child-switcher-menu');
+  await _save(tester, 'parent-child-stories');
 }
 
 Future<void> _captureTaskCreate(WidgetTester tester) async {

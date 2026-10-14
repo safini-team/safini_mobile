@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,7 +64,7 @@ class ParentMonitorCubit extends Cubit<ParentMonitorState> {
 
   List<ChildSummaryModel> _childrenFromFamily(FamilyModel? family) {
     if (family == null) return const [];
-    return family.children.where((c) => c.id.isNotEmpty).toList();
+    return oldestFirst(family.children.where((c) => c.id.isNotEmpty));
   }
 
   /// Whether switching back to Today can skip the refetch for [childId].

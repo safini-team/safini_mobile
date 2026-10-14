@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'dart:async';
 
@@ -205,6 +206,7 @@ class _ParentMonitorView extends StatelessWidget {
               onSelectKid: (index) => context
                   .read<ParentHomeCubit>()
                   .selectChild(state.children[index].id),
+              onAddKid: () => openAddChild(context),
               onOpenSettings: () =>
                   context.router.push(const NamedRoute('parentSettings')),
               onOpenLimits: () => context.read<ParentHomeCubit>().selectTab(2),

@@ -1,3 +1,4 @@
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/on_app_resume.dart';
 import 'package:safini/features/parent/domain/models/parent_tasks_response_model.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
+import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
@@ -38,8 +40,16 @@ class ParentTasksScreen extends StatefulWidget {
 }
 
 class _ParentTasksScreenState extends State<ParentTasksScreen> {
-  String get _scope =>
-      context.read<ParentHomeCubit>().state.selectedChildId ?? _allScope;
+  /// Tasks always holds the whole family, so a child who is not picked (or
+  /// is gone) shows everyone.
+  String get _scope {
+    final selected = context.read<ParentHomeCubit>().state.selectedChildId;
+    final children =
+        context.read<ParentFamilyCubit>().state.family?.children ?? const [];
+    return children.any((child) => child.id == selected)
+        ? selected!
+        : _allScope;
+  }
   TaskLane _lane = TaskLane.review;
 
   /// Until the parent picks a lane themselves, the screen opens on whichever
@@ -154,6 +164,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
           }),
           onOpenTask: (row) => _openTask(context, loaded, row.id),
           onNewTask: () => _openTask(context, loaded, null),
+          onAddKid: () => openAddChild(context),
           onRefresh: _reload,
         );
       },
@@ -251,15 +262,15 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
   ParentTasksData _buildData(BuildContext context, ParentTasksLoaded loaded) {
     final s = S.of(context);
 
-    final children =
-        context
-            .watch<ParentFamilyCubit>()
-            .state
-            .family
-            ?.children
-            .where((child) => child.id.isNotEmpty)
-            .toList() ??
-        const [];
+    final children = oldestFirst(
+      context
+              .watch<ParentFamilyCubit>()
+              .state
+              .family
+              ?.children
+              .where((child) => child.id.isNotEmpty) ??
+          const [],
+    );
 
     // In all-children mode the cubit tags each task with its child's name; in
     // single-child mode every task belongs to the loaded child.
@@ -365,6 +376,9 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
             label: child.nickname,
             color: AppColors.kidColor(child.id),
             avatar: child.avatarLook,
+            hasNews: loaded.tasks.any(
+              (task) => task.childId == child.id && task.isPendingApproval,
+            ),
           ),
       ],
       selectedScope: _scope,

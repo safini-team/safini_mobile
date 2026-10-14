@@ -123,6 +123,7 @@ class ParentLimitsView extends StatelessWidget {
     required this.data,
     required this.onSelectKid,
     required this.onOpenApp,
+    this.onAddKid,
     this.onAddApp,
     this.onSetCap,
     this.onRefresh,
@@ -134,6 +135,7 @@ class ParentLimitsView extends StatelessWidget {
   final ParentLimitsData data;
   final ValueChanged<String> onSelectKid;
   final ValueChanged<LimitsApp> onOpenApp;
+  final VoidCallback? onAddKid;
   final VoidCallback? onAddApp;
 
   /// Null minutes removes the cap. Absent entirely in the design preview,
@@ -154,35 +156,6 @@ class ParentLimitsView extends StatelessWidget {
     return DsScreen(
       onRefresh: onRefresh,
       slivers: [
-        // The picker sits above the title now: you pick whose phone first, and
-        // the title reads as the answer.
-        if (data.kids.isNotEmpty)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.textGutter,
-                2,
-                AppSpacing.textGutter,
-                0,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: DsKidPicker(
-                  selectedKey: data.selectedKidId ?? data.kids.first.id,
-                  options: [
-                    for (final kid in data.kids)
-                      DsPickerOption(
-                        key: kid.id,
-                        label: kid.name,
-                        color: kid.color,
-                        avatar: kid.avatar,
-                      ),
-                  ],
-                  onSelect: onSelectKid,
-                ),
-              ),
-            ),
-          ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
@@ -201,6 +174,32 @@ class ParentLimitsView extends StatelessWidget {
             ),
           ),
         ),
+        // Title and subtitle first, then whose phone, like every tab.
+        if (data.kids.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: DsKidStories(
+                showEveryone: false,
+                everyoneLabel: S.of(context).scopeEveryone,
+                addLabel: S.of(context).addShort,
+                selectedId: data.selectedKidId ?? data.kids.first.id,
+                kids: [
+                  for (final kid in data.kids)
+                    DsStoryKid(
+                      id: kid.id,
+                      name: kid.name,
+                      color: kid.color,
+                      avatar: kid.avatar,
+                    ),
+                ],
+                onSelect: (id) {
+                  if (id != null) onSelectKid(id);
+                },
+                onAdd: onAddKid,
+              ),
+            ),
+          ),
         if (onShowPrizes != null)
           SliverToBoxAdapter(
             child: Padding(

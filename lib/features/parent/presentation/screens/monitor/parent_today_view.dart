@@ -174,6 +174,7 @@ class ParentTodayView extends StatelessWidget {
     required this.onOpenReview,
     required this.onApproveReview,
     required this.onOpenLimits,
+    this.onAddKid,
     this.onOpenApp,
     this.onDeclineReview,
     this.onRefresh,
@@ -183,6 +184,7 @@ class ParentTodayView extends StatelessWidget {
 
   final ParentTodayData data;
   final ValueChanged<int> onSelectKid;
+  final VoidCallback? onAddKid;
   final VoidCallback onOpenSettings;
   final ValueChanged<TodayReview> onOpenReview;
   final ValueChanged<TodayReview> onApproveReview;
@@ -213,31 +215,30 @@ class ParentTodayView extends StatelessWidget {
         if (data.kids.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.textGutter,
-                16,
-                AppSpacing.textGutter,
-                0,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: DsKidPicker(
-                  selectedKey: data
-                      .kids[data.selectedIndex.clamp(0, data.kids.length - 1)]
-                      .id,
-                  options: [
-                    for (final kid in data.kids)
-                      DsPickerOption(
-                        key: kid.id,
-                        label: kid.name,
-                        color: kid.color,
-                        avatar: kid.avatar,
-                        badge: kid.pendingReviewCount,
-                      ),
-                  ],
-                  onSelect: (id) =>
-                      onSelectKid(data.kids.indexWhere((kid) => kid.id == id)),
-                ),
+              padding: const EdgeInsets.only(top: 14),
+              child: DsKidStories(
+                showEveryone: false,
+                everyoneLabel: s.scopeEveryone,
+                addLabel: s.addShort,
+                selectedId: data
+                    .kids[data.selectedIndex.clamp(0, data.kids.length - 1)]
+                    .id,
+                kids: [
+                  for (final kid in data.kids)
+                    DsStoryKid(
+                      id: kid.id,
+                      name: kid.name,
+                      color: kid.color,
+                      avatar: kid.avatar,
+                      hasNews: kid.pendingReviewCount > 0,
+                    ),
+                ],
+                onSelect: (id) {
+                  if (id != null) {
+                    onSelectKid(data.kids.indexWhere((kid) => kid.id == id));
+                  }
+                },
+                onAdd: onAddKid,
               ),
             ),
           ),

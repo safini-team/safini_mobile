@@ -1,3 +1,5 @@
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
+import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -152,15 +154,15 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
         }
 
         final cubit = context.read<ParentAppsCubit>();
-        final children =
-            context
-                .watch<ParentFamilyCubit>()
-                .state
-                .family
-                ?.children
-                .where((child) => child.id.isNotEmpty)
-                .toList() ??
-            const [];
+        final children = oldestFirst(
+          context
+                  .watch<ParentFamilyCubit>()
+                  .state
+                  .family
+                  ?.children
+                  .where((child) => child.id.isNotEmpty) ??
+              const [],
+        );
 
         final selectedId = cubit.childId;
         final selected = children
@@ -244,6 +246,7 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
                 onSelectKid: (id) {
                   context.read<ParentHomeCubit>().selectChild(id);
                 },
+                onAddKid: () => openAddChild(context),
                 onSetCap: selectedId == null ? null : cubit.setScreenTimeCap,
                 onOpenApp: (app) => showAppLimitSheet(
                   context,
