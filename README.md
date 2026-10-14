@@ -28,6 +28,12 @@ Russian and English follow the phone language; the other three are used only
 after the user picks them in the language picker. Translation workflow and
 locale setup are documented in `commands/localization.md`.
 
+## Screenshots
+
+`make screenshots` takes EN + RU shots of the parent tabs from the iOS
+simulator and the Android emulator, plus one contact sheet for the PR. See
+`commands/screenshots.md`.
+
 ## Store version
 
 `pubspec.yaml` `version:` (`1.0.9+33`) is the only store version. Play

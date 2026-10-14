@@ -1,0 +1,25 @@
+# Signs the demo parent in, or does nothing when a session is already there.
+# Every step finds its element by a Semantics id (lib/core/utils/qa_ids.dart),
+# so the flow works in any app language.
+appId: com.safini.app
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "auth.email.open"
+    timeout: 10000
+    optional: true
+- runFlow:
+    when:
+      visible:
+        id: "auth.email.open"
+    commands:
+      - tapOn:
+          id: "auth.email.open"
+      # The email field has autofocus; Enter moves to the password, and Enter
+      # there submits. No tap needed, so the keyboard can't cover anything.
+      - inputText: ${EMAIL}
+      - pressKey: Enter
+      - inputText: ${PASSWORD}
+      - pressKey: Enter
+- runFlow: ready.yaml

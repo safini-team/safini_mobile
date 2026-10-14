@@ -6,6 +6,7 @@ import 'package:safini/core/app/locale_cubit.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/utils/widgets/ds/app_icons.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/ds/ds_tab_bar.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_cubit.dart';
 import 'package:safini/features/common/auth/presentation/cubit/auth_session_state.dart';
@@ -170,19 +171,23 @@ class _ParentMainViewState extends State<_ParentMainView> {
                 final tabs = [
                   DsTabItem(
                     label: s.tabToday,
+                    semanticsId: QaIds.navToday,
                     builder: (color) => AppIcons.tabHome(color: color),
                   ),
                   DsTabItem(
                     label: s.tabTasks,
+                    semanticsId: QaIds.navTasks,
                     builder: (color) => AppIcons.tabTasksParent(color: color),
                     badge: _reviewCount(tasksState),
                   ),
                   DsTabItem(
                     label: s.tabLimits,
+                    semanticsId: QaIds.navLimits,
                     builder: (color) => AppIcons.tabLimits(color: color),
                   ),
                   DsTabItem(
                     label: s.tabFamily,
+                    semanticsId: QaIds.navFamily,
                     builder: (color) => AppIcons.tabFamily(color: color),
                   ),
                 ];

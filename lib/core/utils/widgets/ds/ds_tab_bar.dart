@@ -13,12 +13,16 @@ class DsTabItem {
     required this.builder,
     required this.label,
     this.badge,
+    this.semanticsId,
   });
 
   /// Receives the resolved colour so the icon can use `currentColor`.
   final Widget Function(Color color) builder;
   final String label;
   final int? badge;
+
+  /// Language-independent id for the screenshot scripts, see `QaIds`.
+  final String? semanticsId;
 }
 
 /// The floating translucent tab bar:
@@ -150,7 +154,7 @@ class _Tab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final tab = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: TweenAnimationBuilder<Color?>(
@@ -230,5 +234,8 @@ class _Tab extends StatelessWidget {
         },
       ),
     );
+    final id = item.semanticsId;
+    if (id == null) return tab;
+    return Semantics(identifier: id, container: true, child: tab);
   }
 }

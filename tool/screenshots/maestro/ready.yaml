@@ -1,0 +1,22 @@
+# Waits for the parent tab bar, clearing whatever covers it on the way: the
+# first-run tour (a modal, so the bar is hidden from accessibility until it
+# closes) and OS permission prompts.
+appId: com.safini.app
+---
+- repeat:
+    while:
+      notVisible:
+        id: "nav.today"
+    times: 20
+    commands:
+      - runFlow: dismiss_system_prompts.yaml
+      - tapOn:
+          id: "tour.skip"
+          optional: true
+      - extendedWaitUntil:
+          visible:
+            id: "nav.today"
+          timeout: 2000
+          optional: true
+- assertVisible:
+    id: "nav.today"

@@ -1,0 +1,10 @@
+# The OS asks for notification permission on first launch. The simulators run
+# in English, so these are the system's English labels.
+appId: com.safini.app
+---
+- tapOn:
+    text: "Allow"
+    optional: true
+- tapOn:
+    text: "Don.t allow"
+    optional: true

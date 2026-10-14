@@ -12,6 +12,7 @@ import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_radius.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/core/utils/widgets/language_sheet.dart';
@@ -192,12 +193,16 @@ class _LoginView extends StatelessWidget {
                       ],
                       googleButton,
                       const SizedBox(height: 10),
-                      DsPrimaryButton.secondary(
-                        key: const ValueKey('login-email'),
-                        label: emailLoading ? s.signingIn : s.loginWithEmail,
-                        enabled: !supabaseBlocked && !loading,
-                        busy: emailLoading,
-                        onTap: () => _showEmailSignInSheet(context),
+                      Semantics(
+                        identifier: QaIds.loginWithEmail,
+                        container: true,
+                        child: DsPrimaryButton.secondary(
+                          key: const ValueKey('login-email'),
+                          label: emailLoading ? s.signingIn : s.loginWithEmail,
+                          enabled: !supabaseBlocked && !loading,
+                          busy: emailLoading,
+                          onTap: () => _showEmailSignInSheet(context),
+                        ),
                       ),
                     ],
                     if (state.status == AuthSessionStatus.profileError &&
@@ -373,7 +378,11 @@ class _EmailSignInSheetState extends State<_EmailSignInSheet> {
             ],
           ),
           const SizedBox(height: 20),
-          DsPrimaryButton(label: s.signInAction, onTap: _submit),
+          Semantics(
+            identifier: QaIds.signIn,
+            container: true,
+            child: DsPrimaryButton(label: s.signInAction, onTap: _submit),
+          ),
         ],
       ),
     );

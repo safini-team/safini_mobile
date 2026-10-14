@@ -15,6 +15,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/app_snack_bar.dart';
 import 'package:safini/core/utils/widgets/app_version_label.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
@@ -96,25 +97,29 @@ class ParentSettingsScreen extends StatelessWidget {
                             trailing: AppIcons.chevronRight(),
                           ),
                         ),
-                        DsRow(
-                          onTap: () => showLanguageSheet(context),
-                          title: s.changeLanguage,
-                          verticalPadding: 15,
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              LanguageLabel(
-                                code: Localizations.localeOf(
-                                  context,
-                                ).languageCode,
-                                style: AppText.body.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textTertiary,
+                        Semantics(
+                          identifier: QaIds.settingsLanguage,
+                          container: true,
+                          child: DsRow(
+                            onTap: () => showLanguageSheet(context),
+                            title: s.changeLanguage,
+                            verticalPadding: 15,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                LanguageLabel(
+                                  code: Localizations.localeOf(
+                                    context,
+                                  ).languageCode,
+                                  style: AppText.body.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.textTertiary,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              AppIcons.chevronRight(),
-                            ],
+                                const SizedBox(width: 8),
+                                AppIcons.chevronRight(),
+                              ],
+                            ),
                           ),
                         ),
                         DsRow(

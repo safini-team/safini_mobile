@@ -2,6 +2,13 @@
 
 -
 
+## Checklist
+
+- [ ] Tests added for new logic, green in CI
+- [ ] EN + RU screenshots from iOS simulator and Android emulator attached (`make screenshots`, UI changes only)
+- [ ] New strings in all 5 ARB files (en, ru, uz, ky, kk); ky/kk checked for overflow
+- [ ] `make openapi` run if an API route changed
+
 ## Version
 
 Do **not** change `pubspec.yaml` `version:` in a feature or fix PR.

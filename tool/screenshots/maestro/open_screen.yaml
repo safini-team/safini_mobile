@@ -1,0 +1,8 @@
+# Opens one capturable screen. NAV is the Semantics id the runner picked for
+# the screen name (see SCREENS in shoot.py).
+appId: com.safini.app
+---
+- tapOn:
+    id: ${NAV}
+- waitForAnimationToEnd:
+    timeout: 5000
