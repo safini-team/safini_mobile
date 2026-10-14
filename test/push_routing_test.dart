@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:safini/features/parent/presentation/cubit/home/home_state.dart';
 import 'package:get_it/get_it.dart';
 import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/notifications/notification_preferences.dart';
@@ -74,7 +75,7 @@ void main() {
       );
 
       links.open(const PushTarget(PushDestination.parentFamily));
-      expect(parent([]).initialTab(0), 3);
+      expect(parent([]).initialTab(0), ParentTab.family);
       expect(links.hasPending, isFalse, reason: 'nothing else takes Family');
     });
 

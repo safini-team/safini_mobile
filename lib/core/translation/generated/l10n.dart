@@ -8090,6 +8090,936 @@ class S {
       args: [],
     );
   }
+
+  /// `Fini`
+  String get tabFini {
+    return Intl.message('Fini', name: 'tabFini', desc: '', args: []);
+  }
+
+  /// `Goals`
+  String get finiGoalsHeader {
+    return Intl.message('Goals', name: 'finiGoalsHeader', desc: '', args: []);
+  }
+
+  /// `Add a goal`
+  String get finiAddGoal {
+    return Intl.message('Add a goal', name: 'finiAddGoal', desc: '', args: []);
+  }
+
+  /// `Add a goal for {name}`
+  String finiAddGoalFor(Object name) {
+    return Intl.message(
+      'Add a goal for $name',
+      name: 'finiAddGoalFor',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `What Fini can do`
+  String get finiWhatItCanDo {
+    return Intl.message(
+      'What Fini can do',
+      name: 'finiWhatItCanDo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{on} of {total} on`
+  String finiSwitchesOn(Object on, Object total) {
+    return Intl.message(
+      '$on of $total on',
+      name: 'finiSwitchesOn',
+      desc: '',
+      args: [on, total],
+    );
+  }
+
+  /// `Activity`
+  String get finiActivity {
+    return Intl.message('Activity', name: 'finiActivity', desc: '', args: []);
+  }
+
+  /// `{count, plural, =0{Nothing yet today} =1{1 thing today} other{{count} things today}}`
+  String finiThingsToday(num count) {
+    return Intl.plural(
+      count,
+      zero: 'Nothing yet today',
+      one: '1 thing today',
+      other: '$count things today',
+      name: 'finiThingsToday',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Needs you`
+  String get finiNeedsYou {
+    return Intl.message('Needs you', name: 'finiNeedsYou', desc: '', args: []);
+  }
+
+  /// `Approve`
+  String get finiApprove {
+    return Intl.message('Approve', name: 'finiApprove', desc: '', args: []);
+  }
+
+  /// `Not now`
+  String get finiNotNow {
+    return Intl.message('Not now', name: 'finiNotNow', desc: '', args: []);
+  }
+
+  /// `Undo`
+  String get finiUndo {
+    return Intl.message('Undo', name: 'finiUndo', desc: '', args: []);
+  }
+
+  /// `What it looked at`
+  String get finiWhatItLookedAt {
+    return Intl.message(
+      'What it looked at',
+      name: 'finiWhatItLookedAt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Never the child's name or photos`
+  String get finiNeverNames {
+    return Intl.message(
+      'Never the child\'s name or photos',
+      name: 'finiNeverNames',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick a goal for {name} and I'll take it from here.`
+  String finiStatusNoGoals(Object name) {
+    return Intl.message(
+      'Pick a goal for $name and I\'ll take it from here.',
+      name: 'finiStatusNoGoals',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `{count, plural, =1{1 thing needs you.} other{{count} things need you.}}`
+  String finiStatusPending(num count) {
+    return Intl.plural(
+      count,
+      one: '1 thing needs you.',
+      other: '$count things need you.',
+      name: 'finiStatusPending',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `I'm paused for {name}. Every rule stays as it is.`
+  String finiStatusPaused(Object name) {
+    return Intl.message(
+      'I\'m paused for $name. Every rule stays as it is.',
+      name: 'finiStatusPaused',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `I'll suggest changes for {name}; you decide.`
+  String finiStatusSuggest(Object name) {
+    return Intl.message(
+      'I\'ll suggest changes for $name; you decide.',
+      name: 'finiStatusSuggest',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `I'm on it for {name}. Next small step on Monday.`
+  String finiStatusOnTrack(Object name) {
+    return Intl.message(
+      'I\'m on it for $name. Next small step on Monday.',
+      name: 'finiStatusOnTrack',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `I never loosen a limit without asking you.`
+  String get finiPromise {
+    return Intl.message(
+      'I never loosen a limit without asking you.',
+      name: 'finiPromise',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add your child to meet Fini.`
+  String get finiNoChild {
+    return Intl.message(
+      'Add your child to meet Fini.',
+      name: 'finiNoChild',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini starts once {name}'s phone is connected.`
+  String finiNotConnected(Object name) {
+    return Intl.message(
+      'Fini starts once $name\'s phone is connected.',
+      name: 'finiNotConnected',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Limits work; step-by-step plans need Android for now.`
+  String get finiIosNote {
+    return Intl.message(
+      'Limits work; step-by-step plans need Android for now.',
+      name: 'finiIosNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick a goal`
+  String get finiPickGoal {
+    return Intl.message(
+      'Pick a goal',
+      name: 'finiPickGoal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Less gaming`
+  String get goalGames {
+    return Intl.message('Less gaming', name: 'goalGames', desc: '', args: []);
+  }
+
+  /// `Less scrolling`
+  String get goalScrolling {
+    return Intl.message(
+      'Less scrolling',
+      name: 'goalScrolling',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Less video`
+  String get goalVideo {
+    return Intl.message('Less video', name: 'goalVideo', desc: '', args: []);
+  }
+
+  /// `Homework first`
+  String get goalHomework {
+    return Intl.message(
+      'Homework first',
+      name: 'goalHomework',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bedtime`
+  String get goalBedtime {
+    return Intl.message('Bedtime', name: 'goalBedtime', desc: '', args: []);
+  }
+
+  /// `School hours`
+  String get goalSchool {
+    return Intl.message('School hours', name: 'goalSchool', desc: '', args: []);
+  }
+
+  /// `Screen-free dinner`
+  String get goalDinner {
+    return Intl.message(
+      'Screen-free dinner',
+      name: 'goalDinner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learning apps free`
+  String get goalLearning {
+    return Intl.message(
+      'Learning apps free',
+      name: 'goalLearning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Roblox, Minecraft, Brawl Stars…`
+  String get goalGamesSub {
+    return Intl.message(
+      'Roblox, Minecraft, Brawl Stars…',
+      name: 'goalGamesSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TikTok, Shorts, Reels`
+  String get goalScrollingSub {
+    return Intl.message(
+      'TikTok, Shorts, Reels',
+      name: 'goalScrollingSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `YouTube, not Shorts · soon`
+  String get goalVideoSub {
+    return Intl.message(
+      'YouTube, not Shorts · soon',
+      name: 'goalVideoSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Games open when it's done`
+  String get goalHomeworkSub {
+    return Intl.message(
+      'Games open when it\'s done',
+      name: 'goalHomeworkSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Duolingo never counts`
+  String get goalLearningSub {
+    return Intl.message(
+      'Duolingo never counts',
+      name: 'goalLearningSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Added`
+  String get goalAdded {
+    return Intl.message('Added', name: 'goalAdded', desc: '', args: []);
+  }
+
+  /// `{time} a day`
+  String goalMinutesADay(Object time) {
+    return Intl.message(
+      '$time a day',
+      name: 'goalMinutesADay',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `{from}-{to}`
+  String goalWindow(Object from, Object to) {
+    return Intl.message(
+      '$from-$to',
+      name: 'goalWindow',
+      desc: '',
+      args: [from, to],
+    );
+  }
+
+  /// `Screens off {from}-{to}`
+  String goalScreensOff(Object from, Object to) {
+    return Intl.message(
+      'Screens off $from-$to',
+      name: 'goalScreensOff',
+      desc: '',
+      args: [from, to],
+    );
+  }
+
+  /// `No more than`
+  String get goalNoMoreThan {
+    return Intl.message(
+      'No more than',
+      name: 'goalNoMoreThan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `a day, all of them together`
+  String get goalADayTogether {
+    return Intl.message(
+      'a day, all of them together',
+      name: 'goalADayTogether',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The plan`
+  String get goalThePlan {
+    return Intl.message('The plan', name: 'goalThePlan', desc: '', args: []);
+  }
+
+  /// `Gentle`
+  String get paceGentle {
+    return Intl.message('Gentle', name: 'paceGentle', desc: '', args: []);
+  }
+
+  /// `Steady`
+  String get paceSteady {
+    return Intl.message('Steady', name: 'paceSteady', desc: '', args: []);
+  }
+
+  /// `Right away`
+  String get paceNow {
+    return Intl.message('Right away', name: 'paceNow', desc: '', args: []);
+  }
+
+  /// `About {start} a day now. A small step every Monday, {target} in {weeks} weeks.`
+  String goalPlanText(Object start, Object target, Object weeks) {
+    return Intl.message(
+      'About $start a day now. A small step every Monday, $target in $weeks weeks.',
+      name: 'goalPlanText',
+      desc: '',
+      args: [start, target, weeks],
+    );
+  }
+
+  /// `Starts tomorrow at {target}. Expect some push-back the first days.`
+  String goalPlanNow(Object target) {
+    return Intl.message(
+      'Starts tomorrow at $target. Expect some push-back the first days.',
+      name: 'goalPlanNow',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `I'll watch 3 days of usage first, then plan the steps.`
+  String get goalPlanWatching {
+    return Intl.message(
+      'I\'ll watch 3 days of usage first, then plan the steps.',
+      name: 'goalPlanWatching',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `now`
+  String get goalWeekNow {
+    return Intl.message('now', name: 'goalWeekNow', desc: '', args: []);
+  }
+
+  /// `wk {n}`
+  String goalWeekN(Object n) {
+    return Intl.message('wk $n', name: 'goalWeekN', desc: '', args: [n]);
+  }
+
+  /// `Extra on weekends`
+  String get goalWeekendExtra {
+    return Intl.message(
+      'Extra on weekends',
+      name: 'goalWeekendExtra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+30 min Saturday and Sunday`
+  String get goalWeekendExtraSub {
+    return Intl.message(
+      '+30 min Saturday and Sunday',
+      name: 'goalWeekendExtraSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove goal`
+  String get goalRemove {
+    return Intl.message('Remove goal', name: 'goalRemove', desc: '', args: []);
+  }
+
+  /// `Limits it already set stay as they are.`
+  String get goalRemoveNote {
+    return Intl.message(
+      'Limits it already set stay as they are.',
+      name: 'goalRemoveNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From`
+  String get goalFrom {
+    return Intl.message('From', name: 'goalFrom', desc: '', args: []);
+  }
+
+  /// `Until`
+  String get goalUntil {
+    return Intl.message('Until', name: 'goalUntil', desc: '', args: []);
+  }
+
+  /// `Games stay closed until a study task is approved.`
+  String get goalHomeworkDetail {
+    return Intl.message(
+      'Games stay closed until a study task is approved.',
+      name: 'goalHomeworkDetail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learning apps never count against a limit.`
+  String get goalLearningDetail {
+    return Intl.message(
+      'Learning apps never count against a limit.',
+      name: 'goalLearningDetail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini sorts apps into this goal as it learns them.`
+  String get goalPoolNote {
+    return Intl.message(
+      'Fini sorts apps into this goal as it learns them.',
+      name: 'goalPoolNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On its own`
+  String get finiOnItsOwn {
+    return Intl.message('On its own', name: 'finiOnItsOwn', desc: '', args: []);
+  }
+
+  /// `Let Fini act on its own`
+  String get finiActAlone {
+    return Intl.message(
+      'Let Fini act on its own',
+      name: 'finiActAlone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off: every change waits for you as a card`
+  String get finiActAloneSub {
+    return Intl.message(
+      'Off: every change waits for you as a card',
+      name: 'finiActAloneSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lower limits on the plan`
+  String get finiRuleLower {
+    return Intl.message(
+      'Lower limits on the plan',
+      name: 'finiRuleLower',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Never faster than the pace you chose`
+  String get finiRuleLowerSub {
+    return Intl.message(
+      'Never faster than the pace you chose',
+      name: 'finiRuleLowerSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sort new apps`
+  String get finiRuleSort {
+    return Intl.message(
+      'Sort new apps',
+      name: 'finiRuleSort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A new game gets a limit right away`
+  String get finiRuleSortSub {
+    return Intl.message(
+      'A new game gets a limit right away',
+      name: 'finiRuleSortSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approve tasks with app proof`
+  String get finiRuleUsage {
+    return Intl.message(
+      'Approve tasks with app proof',
+      name: 'finiRuleUsage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Duolingo 10 min done? Paid. Undo for 24 h`
+  String get finiRuleUsageSub {
+    return Intl.message(
+      'Duolingo 10 min done? Paid. Undo for 24 h',
+      name: 'finiRuleUsageSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check photo proof`
+  String get finiRulePhoto {
+    return Intl.message(
+      'Check photo proof',
+      name: 'finiRulePhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approves only a clear photo; otherwise asks you`
+  String get finiRulePhotoSub {
+    return Intl.message(
+      'Approves only a clear photo; otherwise asks you',
+      name: 'finiRulePhotoSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Give extra time`
+  String get finiRuleTime {
+    return Intl.message(
+      'Give extra time',
+      name: 'finiRuleTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Up to {minutes} min a day, once`
+  String finiRuleTimeSub(Object minutes) {
+    return Intl.message(
+      'Up to $minutes min a day, once',
+      name: 'finiRuleTimeSub',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Always asks you`
+  String get finiAlwaysAsks {
+    return Intl.message(
+      'Always asks you',
+      name: 'finiAlwaysAsks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Raising any limit`
+  String get finiAskRaise {
+    return Intl.message(
+      'Raising any limit',
+      name: 'finiAskRaise',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unblocking an app`
+  String get finiAskUnblock {
+    return Intl.message(
+      'Unblocking an app',
+      name: 'finiAskUnblock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saying no to a task`
+  String get finiAskReject {
+    return Intl.message(
+      'Saying no to a task',
+      name: 'finiAskReject',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coins beyond a task's reward`
+  String get finiAskCoins {
+    return Intl.message(
+      'Coins beyond a task\'s reward',
+      name: 'finiAskCoins',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pause Fini for {name}`
+  String finiPauseFor(Object name) {
+    return Intl.message(
+      'Pause Fini for $name',
+      name: 'finiPauseFor',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Turn Fini back on for {name}`
+  String finiResumeFor(Object name) {
+    return Intl.message(
+      'Turn Fini back on for $name',
+      name: 'finiResumeFor',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Pausing keeps every rule as it is now.`
+  String get finiPauseNote {
+    return Intl.message(
+      'Pausing keeps every rule as it is now.',
+      name: 'finiPauseNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Everything Fini did for {name}`
+  String finiActivitySub(Object name) {
+    return Intl.message(
+      'Everything Fini did for $name',
+      name: 'finiActivitySub',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Nothing yet. What Fini does shows up here, with Undo.`
+  String get finiActivityEmpty {
+    return Intl.message(
+      'Nothing yet. What Fini does shows up here, with Undo.',
+      name: 'finiActivityEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today`
+  String get finiDayToday {
+    return Intl.message('Today', name: 'finiDayToday', desc: '', args: []);
+  }
+
+  /// `Earlier`
+  String get finiDayEarlier {
+    return Intl.message('Earlier', name: 'finiDayEarlier', desc: '', args: []);
+  }
+
+  /// `Set {app} to {time} a day`
+  String finiDidLimit(Object app, Object time) {
+    return Intl.message(
+      'Set $app to $time a day',
+      name: 'finiDidLimit',
+      desc: '',
+      args: [app, time],
+    );
+  }
+
+  /// `Blocked {app}`
+  String finiDidBlock(Object app) {
+    return Intl.message(
+      'Blocked $app',
+      name: 'finiDidBlock',
+      desc: '',
+      args: [app],
+    );
+  }
+
+  /// `Unblocked {app}`
+  String finiDidUnblock(Object app) {
+    return Intl.message(
+      'Unblocked $app',
+      name: 'finiDidUnblock',
+      desc: '',
+      args: [app],
+    );
+  }
+
+  /// `Approved a task`
+  String get finiDidApprove {
+    return Intl.message(
+      'Approved a task',
+      name: 'finiDidApprove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sent a task back`
+  String get finiDidReject {
+    return Intl.message(
+      'Sent a task back',
+      name: 'finiDidReject',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gave {minutes} min extra`
+  String finiDidGrant(Object minutes) {
+    return Intl.message(
+      'Gave $minutes min extra',
+      name: 'finiDidGrant',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Suggested new tasks`
+  String get finiDidTasks {
+    return Intl.message(
+      'Suggested new tasks',
+      name: 'finiDidTasks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drafted a goal`
+  String get finiDidGoal {
+    return Intl.message(
+      'Drafted a goal',
+      name: 'finiDidGoal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sent a note to {name}`
+  String finiDidMessage(Object name) {
+    return Intl.message(
+      'Sent a note to $name',
+      name: 'finiDidMessage',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Undone`
+  String get finiResultUndone {
+    return Intl.message('Undone', name: 'finiResultUndone', desc: '', args: []);
+  }
+
+  /// `You said no`
+  String get finiResultDismissed {
+    return Intl.message(
+      'You said no',
+      name: 'finiResultDismissed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You said yes`
+  String get finiResultAccepted {
+    return Intl.message(
+      'You said yes',
+      name: 'finiResultAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not allowed, so it didn't run`
+  String get finiResultRefused {
+    return Intl.message(
+      'Not allowed, so it didn\'t run',
+      name: 'finiResultRefused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} asks for {minutes} more minutes`
+  String finiAskGrant(Object name, Object minutes) {
+    return Intl.message(
+      '$name asks for $minutes more minutes',
+      name: 'finiAskGrant',
+      desc: '',
+      args: [name, minutes],
+    );
+  }
+
+  /// `Lower {app} to {time} a day?`
+  String finiAskLimit(Object app, Object time) {
+    return Intl.message(
+      'Lower $app to $time a day?',
+      name: 'finiAskLimit',
+      desc: '',
+      args: [app, time],
+    );
+  }
+
+  /// `Raise {app} to {time} a day?`
+  String finiAskRaiseLimit(Object app, Object time) {
+    return Intl.message(
+      'Raise $app to $time a day?',
+      name: 'finiAskRaiseLimit',
+      desc: '',
+      args: [app, time],
+    );
+  }
+
+  /// `Approve this task?`
+  String get finiAskApprove {
+    return Intl.message(
+      'Approve this task?',
+      name: 'finiAskApprove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini has a suggestion`
+  String get finiAskGeneric {
+    return Intl.message(
+      'Fini has a suggestion',
+      name: 'finiAskGeneric',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Give {minutes} min`
+  String finiGive(Object minutes) {
+    return Intl.message(
+      'Give $minutes min',
+      name: 'finiGive',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Done`
+  String get finiDone {
+    return Intl.message('Done', name: 'finiDone', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

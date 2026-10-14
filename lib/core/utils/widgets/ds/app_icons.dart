@@ -205,6 +205,16 @@ class AppIcons {
     color: color,
   );
 
+  /// Fini: sparkles, the smart helper.
+  static Widget tabFini({double size = 25, required Color color}) => _svg(
+    '<path d="M9.94 15.5a2 2 0 0 0-1.44-1.44l-6.13-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.13a.5.5 0 0 1 .96 0l1.58 6.13a2 2 0 0 0 1.44 1.44l6.13 1.58a.5.5 0 0 1 0 .96l-6.13 1.58a2 2 0 0 0-1.44 1.44l-1.58 6.13a.5.5 0 0 1-.96 0z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
+    '<path d="M20 3v4M22 5h-4M4 17v2M5 18H3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+    width: 24,
+    height: 24,
+    size: size,
+    color: color,
+  );
+
   static Widget tabFamily({double size = 25, required Color color}) => _svg(
     '<circle cx="9" cy="8.5" r="3.4" stroke="currentColor" stroke-width="1.7"/>'
     '<path d="M2.8 20c.5-3.4 3-5.4 6.2-5.4s5.7 2 6.2 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
