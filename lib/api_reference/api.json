@@ -8267,6 +8267,1381 @@
         }
       }
     },
+    "/v1/children/{child_id}/fini/settings": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Get Fini Settings",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** What Fini may do for this child: its level, the pause, the switches for what it may do alone, and the extra-time envelope.\n\n**Frontend note:** Parents only. A child Fini was never set up for returns the defaults (`suggest`, nothing that loosens a rule runs alone) with `updated_at: null`.",
+        "operationId": "get_fini_settings_v1_children__child_id__fini_settings_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fini settings for the child.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Fini Settings V1 Children  Child Id  Fini Settings Get"
+                },
+                "example": {
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "level": "auto",
+                  "paused": false,
+                  "may_lower_limits": true,
+                  "may_sort_new_apps": true,
+                  "may_grant_time": true,
+                  "auto_approve_usage": false,
+                  "auto_approve_photo": false,
+                  "extra_time_envelope_minutes": 15,
+                  "updated_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Save Fini Settings",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Lets a parent choose how much Fini does for a child, pause it, and set the extra-time envelope. Anything that loosens a limit always waits for a parent, whatever is switched on.\n\n**Frontend note:** Full replace: send every field. Pausing or turning Fini off never changes a rule; the child keeps the limits they have.",
+        "operationId": "put_fini_settings_v1_children__child_id__fini_settings_put",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FiniSettingsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved settings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Put Fini Settings V1 Children  Child Id  Fini Settings Put"
+                },
+                "example": {
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "level": "auto",
+                  "paused": false,
+                  "may_lower_limits": true,
+                  "may_sort_new_apps": true,
+                  "may_grant_time": true,
+                  "auto_approve_usage": false,
+                  "auto_approve_photo": false,
+                  "extra_time_envelope_minutes": 15,
+                  "updated_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/fini/goals": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "List Fini Goals",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The goals a parent set for a child, which Fini works towards.\n\n**Frontend note:** Archived goals are left out.",
+        "operationId": "list_fini_goals_v1_children__child_id__fini_goals_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The child's goals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Fini Goals V1 Children  Child Id  Fini Goals Get"
+                },
+                "example": {
+                  "goals": [
+                    {
+                      "id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "kind": "app_cap",
+                      "target": {
+                        "app_slugs": [
+                          "roblox"
+                        ]
+                      },
+                      "minutes_per_day": 45,
+                      "weekend_minutes": 60,
+                      "start_minutes": 120,
+                      "pace": "steady",
+                      "status": "active",
+                      "created_at": "2026-10-14T09:00:00Z",
+                      "updated_at": "2026-10-14T09:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Create Fini Goal",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent sets a goal: a budget over app categories, a cap on one app, a task that unlocks apps, or a time window.\n\n**Frontend note:** Creating a goal changes no rule. Fini steps the limit down towards it at the chosen `pace` (`gentle` 15% a week, `steady` 25%, `now` straight to the goal). Weekend and weekday minutes override `minutes_per_day` on those days.",
+        "operationId": "create_fini_goal_v1_children__child_id__fini_goals_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created goal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Create Fini Goal V1 Children  Child Id  Fini Goals Post"
+                },
+                "example": {
+                  "id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "kind": "app_cap",
+                  "target": {
+                    "app_slugs": [
+                      "roblox"
+                    ]
+                  },
+                  "minutes_per_day": 45,
+                  "weekend_minutes": 60,
+                  "start_minutes": 120,
+                  "pace": "steady",
+                  "status": "active",
+                  "created_at": "2026-10-14T09:00:00Z",
+                  "updated_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fini/goals/{goal_id}": {
+      "patch": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Update Fini Goal",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent changes a goal's minutes, pace or target, or pauses it.\n\n**Frontend note:** Send only what changes; `null` clears an optional value. A paused goal drives nothing until it is active again. The kind cannot change.",
+        "operationId": "update_fini_goal_v1_fini_goals__goal_id__patch",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "goal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Goal Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated goal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Update Fini Goal V1 Fini Goals  Goal Id  Patch"
+                },
+                "example": {
+                  "id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "kind": "app_cap",
+                  "target": {
+                    "app_slugs": [
+                      "roblox"
+                    ]
+                  },
+                  "minutes_per_day": 45,
+                  "weekend_minutes": 60,
+                  "start_minutes": 120,
+                  "pace": "steady",
+                  "status": "active",
+                  "created_at": "2026-10-14T09:00:00Z",
+                  "updated_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or business-rule error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Avatar state references items the child does not own."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Delete Fini Goal",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent drops a goal.\n\n**Frontend note:** The goal is archived, so the activity log keeps its history. Rules it already changed stay as they are.",
+        "operationId": "delete_fini_goal_v1_fini_goals__goal_id__delete",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "goal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Goal Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/fini/proposals": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "List Fini Suggestions",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Fini's inbox: the changes waiting for the parent.\n\n**Frontend note:** Defaults to `status=pending`, newest first. The Fini tab badge is the number of pending items.",
+        "operationId": "list_fini_proposals_v1_children__child_id__fini_proposals_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "pending",
+              "type": "string",
+              "default": "pending",
+              "title": "Status"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Suggestions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Fini Proposals V1 Children  Child Id  Fini Proposals Get"
+                },
+                "example": {
+                  "items": [
+                    {
+                      "id": "9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                      "kind": "rule_change",
+                      "payload": {
+                        "app_slug": "roblox",
+                        "daily_limit_minutes": 90
+                      },
+                      "reason": "Roblox averaged 112 min last week; next step of the plan.",
+                      "evidence": {
+                        "avg_minutes_7d": 112
+                      },
+                      "status": "pending",
+                      "policy_reason": "suggest_only",
+                      "can_undo": false,
+                      "created_at": "2026-10-14T09:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fini/inbox": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Fini Inbox Count",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** How many Fini cards wait for the parent, per child, for the tab badge and the dot on each child's circle.\n\n**Frontend note:** One call for the whole family. Children with nothing pending are left out.",
+        "operationId": "get_fini_inbox_v1_fini_inbox_get",
+        "responses": {
+          "200": {
+            "description": "Pending cards.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Fini Inbox V1 Fini Inbox Get"
+                },
+                "example": {
+                  "total": 1,
+                  "children": [
+                    {
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "pending": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/children/{child_id}/fini/activity": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Fini Activity Log",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Everything Fini did, and every suggestion the parent or the policy settled, with the reason and evidence. Changes Fini ran alone can be undone from here for 24 hours.\n\n**Frontend note:** Newest first. Page with `before` set to the last item's `created_at`. `can_undo` tells whether to show Undo; `decided_by` is `fini` for what ran alone and for what the policy refused (`status: rejected`).",
+        "operationId": "get_fini_activity_v1_children__child_id__fini_activity_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Before"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activity.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Fini Activity V1 Children  Child Id  Fini Activity Get"
+                },
+                "example": {
+                  "items": [
+                    {
+                      "id": "9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                      "kind": "rule_change",
+                      "payload": {
+                        "app_slug": "roblox",
+                        "daily_limit_minutes": 90
+                      },
+                      "reason": "Roblox averaged 112 min last week; next step of the plan.",
+                      "evidence": {
+                        "avg_minutes_7d": 112
+                      },
+                      "status": "applied",
+                      "policy_reason": "plan_step",
+                      "decided_by": "fini",
+                      "decided_at": "2026-10-14T09:00:00Z",
+                      "can_undo": true,
+                      "undo_until": "2026-10-15T09:00:00Z",
+                      "created_at": "2026-10-14T09:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fini/proposals/{proposal_id}/accept": {
+      "post": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Accept Fini Suggestion",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The parent says yes to a card, and the change runs through the same write a parent's own edit uses.\n\n**Frontend note:** Only `pending` suggestions; anything else is `409`. Today rule changes and task approvals can run; other kinds answer `409` until their tickets land. An accepted change can be undone for 24 hours.",
+        "operationId": "accept_fini_proposal_v1_fini_proposals__proposal_id__accept_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Proposal Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The suggestion after the decision.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Accept Fini Proposal V1 Fini Proposals  Proposal Id  Accept Post"
+                },
+                "example": {
+                  "id": "9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "kind": "rule_change",
+                  "payload": {
+                    "app_slug": "roblox",
+                    "daily_limit_minutes": 90
+                  },
+                  "reason": "Roblox averaged 112 min last week; next step of the plan.",
+                  "evidence": {
+                    "avg_minutes_7d": 112
+                  },
+                  "status": "pending",
+                  "policy_reason": "suggest_only",
+                  "can_undo": false,
+                  "created_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fini/proposals/{proposal_id}/dismiss": {
+      "post": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Dismiss Fini Suggestion",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The parent says no to a card. Nothing changes.\n\n**Frontend note:** Only `pending` suggestions; anything else is `409`.",
+        "operationId": "dismiss_fini_proposal_v1_fini_proposals__proposal_id__dismiss_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Proposal Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The suggestion after the decision.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Dismiss Fini Proposal V1 Fini Proposals  Proposal Id  Dismiss Post"
+                },
+                "example": {
+                  "id": "9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "kind": "rule_change",
+                  "payload": {
+                    "app_slug": "roblox",
+                    "daily_limit_minutes": 90
+                  },
+                  "reason": "Roblox averaged 112 min last week; next step of the plan.",
+                  "evidence": {
+                    "avg_minutes_7d": 112
+                  },
+                  "status": "pending",
+                  "policy_reason": "suggest_only",
+                  "can_undo": false,
+                  "created_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fini/proposals/{proposal_id}/undo": {
+      "post": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Undo Fini Change",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The parent reverses a change Fini ran or they accepted, within 24 hours. A rule goes back exactly as it was; a task approval takes its coins back.\n\n**Frontend note:** `409` when the window has passed, the rule was edited since, or the child already spent the coins.",
+        "operationId": "undo_fini_proposal_v1_fini_proposals__proposal_id__undo_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Proposal Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The suggestion after the decision.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Undo Fini Proposal V1 Fini Proposals  Proposal Id  Undo Post"
+                },
+                "example": {
+                  "id": "9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "kind": "rule_change",
+                  "payload": {
+                    "app_slug": "roblox",
+                    "daily_limit_minutes": 90
+                  },
+                  "reason": "Roblox averaged 112 min last week; next step of the plan.",
+                  "evidence": {
+                    "avg_minutes_7d": 112
+                  },
+                  "status": "pending",
+                  "policy_reason": "suggest_only",
+                  "can_undo": false,
+                  "created_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/billing/apple/transactions": {
       "post": {
         "tags": [
@@ -9489,6 +10864,397 @@
         "title": "FamilyJoinRequest",
         "example": {
           "invite_code": "PRNT"
+        }
+      },
+      "FiniSettingsRequest": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "off",
+              "suggest",
+              "auto"
+            ],
+            "title": "Level",
+            "description": "`off`: Fini does nothing. `suggest`: every change is a card. `auto`: Fini runs what the autonomy table allows and asks for the rest."
+          },
+          "paused": {
+            "type": "boolean",
+            "title": "Paused",
+            "description": "Stops Fini for this child and leaves every rule as it is."
+          },
+          "may_lower_limits": {
+            "type": "boolean",
+            "title": "May Lower Limits",
+            "description": "Fini may step a limit down along a goal's plan."
+          },
+          "may_sort_new_apps": {
+            "type": "boolean",
+            "title": "May Sort New Apps",
+            "description": "Fini may put an app it has just seen under a limit or block."
+          },
+          "may_grant_time": {
+            "type": "boolean",
+            "title": "May Grant Time",
+            "description": "Fini may answer a time request inside the envelope."
+          },
+          "auto_approve_usage": {
+            "type": "boolean",
+            "title": "Auto Approve Usage",
+            "description": "Fini may approve a task whose usage proof matches."
+          },
+          "auto_approve_photo": {
+            "type": "boolean",
+            "title": "Auto Approve Photo",
+            "description": "Fini may approve a task on a clear photo."
+          },
+          "extra_time_envelope_minutes": {
+            "type": "integer",
+            "maximum": 120.0,
+            "minimum": 0.0,
+            "title": "Extra Time Envelope Minutes",
+            "description": "Most extra minutes Fini may grant in a day, once a day."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "level",
+          "paused",
+          "may_lower_limits",
+          "may_sort_new_apps",
+          "may_grant_time",
+          "auto_approve_usage",
+          "auto_approve_photo",
+          "extra_time_envelope_minutes"
+        ],
+        "title": "FiniSettingsRequest",
+        "example": {
+          "auto_approve_photo": false,
+          "auto_approve_usage": false,
+          "extra_time_envelope_minutes": 15,
+          "level": "auto",
+          "may_grant_time": true,
+          "may_lower_limits": true,
+          "may_sort_new_apps": true,
+          "paused": false
+        }
+      },
+      "GoalCreateRequest": {
+        "properties": {
+          "target": {
+            "$ref": "#/components/schemas/GoalTarget"
+          },
+          "minutes_per_day": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes Per Day"
+          },
+          "weekday_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekday Minutes"
+          },
+          "weekend_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Minutes"
+          },
+          "start_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Minutes",
+            "description": "Where the step-down plan starts, usually today's usage."
+          },
+          "window_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window Start"
+          },
+          "window_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window End"
+          },
+          "pace": {
+            "type": "string",
+            "enum": [
+              "gentle",
+              "steady",
+              "now"
+            ],
+            "title": "Pace",
+            "default": "gentle"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "category_budget",
+              "group_budget",
+              "app_cap",
+              "task_gate",
+              "schedule_window",
+              "exempt"
+            ],
+            "title": "Kind"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "title": "GoalCreateRequest",
+        "example": {
+          "kind": "app_cap",
+          "minutes_per_day": 45,
+          "pace": "steady",
+          "start_minutes": 120,
+          "target": {
+            "app_slugs": [
+              "roblox"
+            ]
+          },
+          "weekend_minutes": 60
+        }
+      },
+      "GoalTarget": {
+        "properties": {
+          "app_slugs": {
+            "items": {
+              "type": "string",
+              "maxLength": 255,
+              "minLength": 1
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "App Slugs"
+          },
+          "categories": {
+            "items": {
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Categories"
+          },
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id",
+            "description": "A task gate's task. Empty means any study task opens the apps."
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "games",
+                  "scrolling",
+                  "video",
+                  "homework",
+                  "bedtime",
+                  "school",
+                  "dinner",
+                  "learning",
+                  "custom"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent",
+            "description": "The goal tile the parent picked, e.g. `games` or `bedtime`."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "GoalTarget"
+      },
+      "GoalUpdateRequest": {
+        "properties": {
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GoalTarget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "minutes_per_day": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes Per Day"
+          },
+          "weekday_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekday Minutes"
+          },
+          "weekend_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Minutes"
+          },
+          "start_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Minutes",
+            "description": "Where the step-down plan starts, usually today's usage."
+          },
+          "window_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window Start"
+          },
+          "window_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window End"
+          },
+          "pace": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "gentle",
+                  "steady",
+                  "now"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pace"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "paused",
+                  "done"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "GoalUpdateRequest",
+        "example": {
+          "minutes_per_day": 40,
+          "status": "paused"
         }
       },
       "HTTPValidationError": {
@@ -11170,6 +12936,10 @@
     {
       "name": "billing",
       "description": "Safini Pro purchases: App Store transactions from the app and Apple's server notifications."
+    },
+    {
+      "name": "fini",
+      "description": "Fini, the AI assistant for parental control: settings, goals, the parent's inbox of suggestions, and the activity log with Undo."
     },
     {
       "name": "ai",
