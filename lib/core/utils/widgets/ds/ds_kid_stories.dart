@@ -109,6 +109,7 @@ class DsKidStories extends StatelessWidget {
           if (onAdd != null)
             _Story(
               key: const ValueKey('kid-story-add'),
+              semanticsId: QaIds.kidAdd,
               label: addLabel,
               selected: false,
               onTap: onAdd!,

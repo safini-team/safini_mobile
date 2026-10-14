@@ -6,6 +6,7 @@ import 'package:safini/core/theme/app_shadows.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
+import 'package:safini/core/utils/qa_ids.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/fini/data/fini_repository.dart';
 import 'package:safini/features/fini/domain/fini_goal_specs.dart';
@@ -162,7 +163,11 @@ class FiniOnboardingFlow extends StatelessWidget {
                           ),
                         ),
                       ),
-                    footer,
+                    Semantics(
+                      identifier: QaIds.obContinue,
+                      container: true,
+                      child: footer,
+                    ),
                   ],
                 ),
               ),
@@ -210,24 +215,28 @@ class _ChildBoardState extends State<_ChildBoard> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 14),
-              child: TextField(
-                key: const ValueKey('ob-name'),
-                controller: _name,
-                onChanged: cubit.setName,
-                textCapitalization: TextCapitalization.words,
-                cursorColor: AppColors.primary,
-                style: AppText.button.copyWith(fontWeight: FontWeight.w500),
-                decoration: InputDecoration(
-                  filled: false,
-                  isDense: true,
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                  hintText: s.obChildName,
-                  hintStyle: AppText.button.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textTertiary,
+              child: Semantics(
+                identifier: QaIds.obName,
+                container: true,
+                child: TextField(
+                  key: const ValueKey('ob-name'),
+                  controller: _name,
+                  onChanged: cubit.setName,
+                  textCapitalization: TextCapitalization.words,
+                  cursorColor: AppColors.primary,
+                  style: AppText.button.copyWith(fontWeight: FontWeight.w500),
+                  decoration: InputDecoration(
+                    filled: false,
+                    isDense: true,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    hintText: s.obChildName,
+                    hintStyle: AppText.button.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textTertiary,
+                    ),
                   ),
                 ),
               ),
@@ -264,6 +273,9 @@ class _ChildBoardState extends State<_ChildBoard> {
               Expanded(
                 child: _PhoneOption(
                   key: ValueKey('ob-phone-${phone.name}'),
+                  semanticsId: phone == ChildPhone.android
+                      ? QaIds.obPhoneAndroid
+                      : null,
                   label: label,
                   icon: icon,
                   selected: data.phone == phone,
@@ -318,12 +330,14 @@ class _ChildBoardState extends State<_ChildBoard> {
 class _PhoneOption extends StatelessWidget {
   const _PhoneOption({
     super.key,
+    this.semanticsId,
     required this.label,
     required this.icon,
     required this.selected,
     required this.onTap,
   });
 
+  final String? semanticsId;
   final String label;
   final IconData icon;
   final bool selected;
@@ -332,6 +346,8 @@ class _PhoneOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
+      identifier: semanticsId,
+      container: true,
       button: true,
       selected: selected,
       inMutuallyExclusiveGroup: true,

@@ -12,6 +12,7 @@ import 'package:safini/core/di/injection.dart';
 import 'package:safini/core/utils/error/failures.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/fini/data/fini_repository.dart';
+import 'package:safini/features/fini/demo/fini_demo.dart';
 import 'package:safini/features/fini/onboarding/fini_onboarding_cubit.dart';
 import 'package:safini/features/fini/onboarding/fini_onboarding_page.dart';
 import 'package:safini/features/onboarding/fini.dart';
@@ -200,6 +201,12 @@ class _AddChildPageState extends State<AddChildPage> {
     required int age,
     String? gender,
   }) async {
+    // Screenshots (FINI_DEMO, debug only) walk the boards without adding a
+    // child to the real account.
+    if (isFiniDemo) {
+      setState(() => _createdName = name);
+      return 'demo-child';
+    }
     final cubit = context.read<ParentFamilyCubit>();
     final failure = await cubit.createChild(
       nickname: name,
