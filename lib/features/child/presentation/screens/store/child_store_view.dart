@@ -7,6 +7,7 @@ import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
 
 class StoreCardData {
   const StoreCardData({
@@ -231,18 +232,20 @@ class _StoreTile extends StatelessWidget {
                 : card.affordable || card.owned
                 ? 1
                 : 0.4,
-            child: AppIconTile(
-              emoji: card.emoji,
-              packageName: card.packageName,
-              iconUrl: card.iconUrl,
-              // As tall as the 32pt emoji's line, so the name under an icon
-              // sits where it sits under an emoji.
-              size: 46,
-              placeholder: Text(
-                card.emoji,
-                style: const TextStyle(fontSize: 32),
-              ),
-            ),
+            child: card.slot == 'character'
+                ? SafiniAvatar(characterId: card.id, size: 46)
+                : AppIconTile(
+                    emoji: card.emoji,
+                    packageName: card.packageName,
+                    iconUrl: card.iconUrl,
+                    // As tall as the 32pt emoji's line, so the name under an icon
+                    // sits where it sits under an emoji.
+                    size: 46,
+                    placeholder: Text(
+                      card.emoji,
+                      style: const TextStyle(fontSize: 32),
+                    ),
+                  ),
           ),
           const SizedBox(height: 10),
           // The tile is a fixed 168pt. The name wraps at the tile's width as
@@ -282,11 +285,7 @@ class _StoreTile extends StatelessWidget {
               ),
             )
           else if (card.waiting)
-            DsPill.pending(
-              label: card.badge ?? '',
-              height: 26,
-              fontSize: 13.5,
-            )
+            DsPill.pending(label: card.badge ?? '', height: 26, fontSize: 13.5)
           else if (card.owned)
             DsPill.paid(
               label: S.of(context).yoursLabel,
@@ -331,9 +330,7 @@ class ChildStoreSkeleton extends StatelessWidget {
       background: AppColors.bgChild,
       animateEntrance: false,
       slivers: [
-        SliverToBoxAdapter(
-          child: DsLargeTitle(title: S.of(context).tabStore),
-        ),
+        SliverToBoxAdapter(child: DsLargeTitle(title: S.of(context).tabStore)),
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.gutter,

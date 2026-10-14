@@ -179,8 +179,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           level: _asInt(child['level']),
           xpProgress: (xp % 100) / 100.0,
           characterId: (charId != null && charId.isNotEmpty) ? charId : null,
-          equippedFaceEmoji:
-              _avatarEmoji(avatarStateMap, 'face') ?? '😊',
+          equippedFaceEmoji: _avatarEmoji(avatarStateMap, 'face') ?? '😊',
         ),
       );
       return true;
@@ -419,6 +418,7 @@ class AvatarCubit extends Cubit<AvatarState> {
       emit(
         state.copyWith(
           avatarItems: _parseAvatarItems(data['avatar_items'], equipped),
+          characterPrices: _parseCharacterPrices(data['avatar_items']),
           level: _intValue(child, ['level']) ?? 0,
           selectedFaceEmoji: _extractFaceEmoji(avatarState),
           characterId: _extractCharacterId(avatarState),
@@ -451,6 +451,7 @@ class AvatarCubit extends Cubit<AvatarState> {
   /// `avatar_state` (equipped slots, emojis, unknown keys) is sent back as
   /// read, so a character change never wipes it (SAF-131).
   Future<void> selectCharacter(String characterId) async {
+    if (state.characterPrices.containsKey(characterId)) return;
     emit(state.copyWith(characterId: characterId));
     final childId = await _resolveChildId();
     if (childId == null) return;
@@ -471,6 +472,38 @@ class AvatarCubit extends Cubit<AvatarState> {
     } catch (e) {
       debugPrint('[AvatarCubit] saving character failed: $e');
     }
+  }
+
+  /// Buys a store character and puts it on. Returns the server's message
+  /// when the purchase fails, null when it went through.
+  Future<String?> buyCharacter(String characterId) async {
+    final cost = state.characterPrices[characterId];
+    if (cost == null) return null;
+    final childId = await _resolveChildId();
+    if (childId == null) return '';
+    try {
+      final response = await _dio.post(
+        ApiConst.redeemAvatarItem(childId),
+        data: {'item_key': characterId},
+      );
+      final balance = _intValue(_asMap(response.data), ['balance_after']);
+      if (balance != null) {
+        _coins.set(balance);
+      } else {
+        _coins.subtract(cost);
+      }
+    } on DioException catch (e) {
+      final detail = _asMap(e.response?.data)['detail'];
+      return detail is String ? detail : '';
+    }
+    if (isClosed) return null;
+    emit(
+      state.copyWith(
+        characterPrices: {...state.characterPrices}..remove(characterId),
+      ),
+    );
+    await selectCharacter(characterId);
+    return null;
   }
 
   /// Loads the child row once if `loadItems` has not managed to yet. PATCH
@@ -548,6 +581,18 @@ class AvatarCubit extends Cubit<AvatarState> {
     return const {};
   }
 
+  Map<String, int> _parseCharacterPrices(dynamic raw) {
+    if (raw is! List) return const {};
+    final prices = <String, int>{};
+    for (final item in raw.whereType<Map>()) {
+      final map = _asMap(item);
+      if (map['slot'] != 'character' || map['is_owned'] == true) continue;
+      final key = _stringValue(map, ['item_key']);
+      if (key.isNotEmpty) prices[key] = _intValue(map, ['coin_cost']) ?? 0;
+    }
+    return prices;
+  }
+
   List<AvatarGridItem> _parseAvatarItems(
     dynamic raw,
     Map<String, String> equipped,
@@ -559,23 +604,26 @@ class AvatarCubit extends Cubit<AvatarState> {
         final key = _stringValue(map, ['item_key', 'id', 'avatar_item_id']);
         if (key.isEmpty) continue;
         final slotHint = _stringValue(map, ['slot', 'category']);
+        if (slotHint == 'character') continue;
         final category = _categoryForKey(key, slotHint: slotHint);
         final assetKey = _stringValue(map, ['asset_key', 'asset_id']);
         final owned = map['is_owned'] == true || map['owned'] == true;
         final isEquipped =
             map['is_equipped'] == true || equipped[category.slotKey] == key;
-        items.add(AvatarGridItem(
-          id: key,
-          assetKey: assetKey.isEmpty ? null : assetKey,
-          emoji: _emojiForAvatarKey(key),
-          category: category,
-          cost: owned || isEquipped
-              ? null
-              : _intValue(map, ['coin_cost', 'cost']),
-          isEquipped: isEquipped,
-          isLocked: map['is_locked'] == true || map['locked'] == true,
-          lockLabel: map['lock_label']?.toString(),
-        ));
+        items.add(
+          AvatarGridItem(
+            id: key,
+            assetKey: assetKey.isEmpty ? null : assetKey,
+            emoji: _emojiForAvatarKey(key),
+            category: category,
+            cost: owned || isEquipped
+                ? null
+                : _intValue(map, ['coin_cost', 'cost']),
+            isEquipped: isEquipped,
+            isLocked: map['is_locked'] == true || map['locked'] == true,
+            lockLabel: map['lock_label']?.toString(),
+          ),
+        );
       }
     }
 
