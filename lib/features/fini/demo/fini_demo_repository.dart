@@ -82,7 +82,7 @@ class FiniDemoRepository implements FiniRepository {
           evidence: const {
             'task': 'The task and its reward',
             'usage': 'Duolingo minutes today',
-            'age_band': 'Age 9–11',
+            'age_band': 'Age 9-11',
           },
           createdAt: at(16, 20),
         ),

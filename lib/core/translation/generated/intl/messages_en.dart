@@ -149,11 +149,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m55(start, target, weeks) =>
       "About ${start} a day now. A small step every Monday, ${target} in ${weeks} weeks.";
 
-  static String m56(from, to) => "Screens off ${from}–${to}";
+  static String m56(from, to) => "Screens off ${from}-${to}";
 
   static String m57(n) => "wk ${n}";
 
-  static String m58(from, to) => "${from}–${to}";
+  static String m58(from, to) => "${from}-${to}";
 
   static String m59(name) => "Limit ${name}?";
 

@@ -8421,20 +8421,20 @@ class S {
     );
   }
 
-  /// `{from}–{to}`
+  /// `{from}-{to}`
   String goalWindow(Object from, Object to) {
     return Intl.message(
-      '$from–$to',
+      '$from-$to',
       name: 'goalWindow',
       desc: '',
       args: [from, to],
     );
   }
 
-  /// `Screens off {from}–{to}`
+  /// `Screens off {from}-{to}`
   String goalScreensOff(Object from, Object to) {
     return Intl.message(
-      'Screens off $from–$to',
+      'Screens off $from-$to',
       name: 'goalScreensOff',
       desc: '',
       args: [from, to],

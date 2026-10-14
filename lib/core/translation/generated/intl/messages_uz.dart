@@ -147,11 +147,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m55(start, target, weeks) =>
       "Hozir kuniga taxminan ${start}. Har dushanba kichik qadam, ${weeks} haftada ${target}.";
 
-  static String m56(from, to) => "Ekranlarsiz ${from}–${to}";
+  static String m56(from, to) => "Ekranlarsiz ${from}-${to}";
 
   static String m57(n) => "${n}-h";
 
-  static String m58(from, to) => "${from}–${to}";
+  static String m58(from, to) => "${from}-${to}";
 
   static String m59(name) => "${name} cheklansinmi?";
 

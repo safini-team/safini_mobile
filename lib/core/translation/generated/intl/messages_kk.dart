@@ -150,11 +150,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m55(start, target, weeks) =>
       "Қазір күніне шамамен ${start}. Әр дүйсенбі шағын қадам, ${weeks} аптада ${target}.";
 
-  static String m56(from, to) => "Экрансыз ${from}–${to}";
+  static String m56(from, to) => "Экрансыз ${from}-${to}";
 
   static String m57(n) => "${n}-а";
 
-  static String m58(from, to) => "${from}–${to}";
+  static String m58(from, to) => "${from}-${to}";
 
   static String m59(name) => "${name} шектелсін бе?";
 

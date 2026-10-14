@@ -278,7 +278,7 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
   }
 }
 
-/// "45 min a day", "Screens off 22:00–07:00", or the tile's own line.
+/// "45 min a day", "Screens off 22:00-07:00", or the tile's own line.
 String goalValueLine(S s, FiniGoal goal) {
   if (goal.isWindow && goal.windowStart != null && goal.windowEnd != null) {
     return s.goalScreensOff(goal.windowStart!.label, goal.windowEnd!.label);
