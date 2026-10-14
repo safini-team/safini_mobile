@@ -154,8 +154,10 @@ class FiniRulesScreen extends StatelessWidget {
                         ? s.finiResumeFor(childName)
                         : s.finiPauseFor(childName),
                     filled: false,
-                    onTap: () =>
-                        _save(context, settings.copyWith(paused: !settings.paused)),
+                    onTap: () => _save(
+                      context,
+                      settings.copyWith(paused: !settings.paused),
+                    ),
                   ),
                 ),
                 Padding(

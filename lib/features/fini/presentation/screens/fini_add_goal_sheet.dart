@@ -40,21 +40,21 @@ class _AddGoalSheet extends StatelessWidget {
         Text(s.finiAddGoalFor(childName), style: AppText.title2),
         const SizedBox(height: 14),
         GoalTileGrid(
-            tileColor: AppColors.fillAlt,
-            added: state.addedIntents,
-            onTap: (spec) async {
-              final navigator = Navigator.of(context);
-              final error = await context.read<FiniCubit>().addGoal(spec);
-              if (!context.mounted) return;
-              if (error != null) {
-                AppSnackBar.error(
-                  context,
-                  error.isEmpty ? s.networkError : error,
-                );
-                return;
-              }
-              navigator.pop();
-            },
+          tileColor: AppColors.fillAlt,
+          added: state.addedIntents,
+          onTap: (spec) async {
+            final navigator = Navigator.of(context);
+            final error = await context.read<FiniCubit>().addGoal(spec);
+            if (!context.mounted) return;
+            if (error != null) {
+              AppSnackBar.error(
+                context,
+                error.isEmpty ? s.networkError : error,
+              );
+              return;
+            }
+            navigator.pop();
+          },
         ),
       ],
     );

@@ -261,7 +261,8 @@ class FiniProposal {
   final DateTime? undoUntil;
   final DateTime createdAt;
 
-  bool get ranAlone => decidedBy == 'fini' && status == FiniProposalStatus.applied;
+  bool get ranAlone =>
+      decidedBy == 'fini' && status == FiniProposalStatus.applied;
 
   factory FiniProposal.fromJson(Map<String, dynamic> json) => FiniProposal(
     id: json['id'].toString(),

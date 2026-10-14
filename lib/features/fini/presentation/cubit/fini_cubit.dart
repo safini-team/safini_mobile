@@ -72,9 +72,7 @@ class FiniCubit extends Cubit<FiniState> {
     final generation = ++_generation;
     final same = state.childId == childId && state.status == FiniStatus.loaded;
     emit(
-      same
-          ? state
-          : FiniState(childId: childId, status: FiniStatus.loading),
+      same ? state : FiniState(childId: childId, status: FiniStatus.loading),
     );
     try {
       final results = await Future.wait([
@@ -97,29 +95,26 @@ class FiniCubit extends Cubit<FiniState> {
     } catch (_) {
       if (isClosed || generation != _generation) return;
       emit(
-        same
-            ? state
-            : FiniState(childId: childId, status: FiniStatus.error),
+        same ? state : FiniState(childId: childId, status: FiniStatus.error),
       );
     }
   }
 
-  Future<String?> addGoal(GoalIntentSpec spec, {int? minutes}) => _write(() async {
-    final goal = await _repo.createGoal(
-      state.childId!,
-      spec.createBody(minutes: minutes),
-    );
-    emit(state.copyWith(goals: [...state.goals, goal]));
-  });
+  Future<String?> addGoal(GoalIntentSpec spec, {int? minutes}) =>
+      _write(() async {
+        final goal = await _repo.createGoal(
+          state.childId!,
+          spec.createBody(minutes: minutes),
+        );
+        emit(state.copyWith(goals: [...state.goals, goal]));
+      });
 
   Future<String?> updateGoal(FiniGoal goal, Map<String, dynamic> changes) =>
       _write(() async {
         final updated = await _repo.updateGoal(goal.id, changes);
         emit(
           state.copyWith(
-            goals: [
-              for (final g in state.goals) g.id == goal.id ? updated : g,
-            ],
+            goals: [for (final g in state.goals) g.id == goal.id ? updated : g],
           ),
         );
       });

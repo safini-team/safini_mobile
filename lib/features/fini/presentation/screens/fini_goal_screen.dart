@@ -210,7 +210,9 @@ class _MinutesCard extends StatelessWidget {
             onLess: minutes <= _minuteStep
                 ? null
                 : () => onChange(minutes - _minuteStep),
-            onMore: minutes >= 300 ? null : () => onChange(minutes + _minuteStep),
+            onMore: minutes >= 300
+                ? null
+                : () => onChange(minutes + _minuteStep),
           ),
         ],
       ),
@@ -234,7 +236,9 @@ class _PlanCard extends StatelessWidget {
     final s = S.of(context);
     final target = goal.targetMinutes ?? 0;
     final start = goal.startMinutes;
-    final steps = start == null ? null : formatPlanSteps(start, target, goal.pace);
+    final steps = start == null
+        ? null
+        : formatPlanSteps(start, target, goal.pace);
     final String text;
     if (steps == null) {
       text = s.goalPlanWatching;
@@ -261,7 +265,11 @@ class _PlanCard extends StatelessWidget {
             _StepBars(steps: steps),
           ],
           const SizedBox(height: 14),
-          Text(text, key: const ValueKey('goal-plan-text'), style: AppText.meta),
+          Text(
+            text,
+            key: const ValueKey('goal-plan-text'),
+            style: AppText.meta,
+          ),
         ],
       ),
     );

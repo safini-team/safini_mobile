@@ -84,9 +84,8 @@ String finiCardTitle(
 }
 
 /// The yes button on a card: "Give 15 min" for time, "Approve" otherwise.
-String finiCardYes(S s, FiniProposal p) => p.kind == 'time_grant'
-    ? s.finiGive(_minutes(p, 'minutes'))
-    : s.finiApprove;
+String finiCardYes(S s, FiniProposal p) =>
+    p.kind == 'time_grant' ? s.finiGive(_minutes(p, 'minutes')) : s.finiApprove;
 
 /// How a settled entry ended, when it was not Fini acting alone.
 String? finiResultLine(S s, FiniProposal p) => switch (p.status) {

@@ -72,9 +72,7 @@ String goalTileSubtitle(S s, GoalIntentSpec spec) => switch (spec.intent) {
   GoalIntent.video => s.goalVideoSub,
   GoalIntent.homework => s.goalHomeworkSub,
   GoalIntent.learning => s.goalLearningSub,
-  GoalIntent.bedtime ||
-  GoalIntent.school ||
-  GoalIntent.dinner => s.goalWindow(
+  GoalIntent.bedtime || GoalIntent.school || GoalIntent.dinner => s.goalWindow(
     spec.windowStart!.label,
     spec.windowEnd!.label,
   ),

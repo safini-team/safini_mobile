@@ -66,7 +66,7 @@ class FiniDemoRepository implements FiniRepository {
             ),
           ]
         : [];
-    final at = (int hour, int minute) =>
+    DateTime at(int hour, int minute) =>
         DateTime(_now.year, _now.month, _now.day, hour, minute);
     _proposals[childId] = [
       if (_running) ...[
@@ -137,7 +137,10 @@ class FiniDemoRepository implements FiniRepository {
   }
 
   @override
-  Future<FiniSettings> saveSettings(String childId, FiniSettings settings) async {
+  Future<FiniSettings> saveSettings(
+    String childId,
+    FiniSettings settings,
+  ) async {
     _seed(childId);
     return _settings[childId] = settings;
   }
@@ -161,7 +164,10 @@ class FiniDemoRepository implements FiniRepository {
   }
 
   @override
-  Future<FiniGoal> updateGoal(String goalId, Map<String, dynamic> changes) async {
+  Future<FiniGoal> updateGoal(
+    String goalId,
+    Map<String, dynamic> changes,
+  ) async {
     for (final goals in _goals.values) {
       final index = goals.indexWhere((goal) => goal.id == goalId);
       if (index == -1) continue;

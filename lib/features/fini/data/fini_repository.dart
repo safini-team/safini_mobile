@@ -25,19 +25,22 @@ class FiniApiRepository implements FiniRepository {
   final Dio _dio;
 
   @override
-  Future<FiniSettings> settings(String childId) async =>
-      FiniSettings.fromJson(_map((await _dio.get(ApiConst.finiSettings(childId))).data));
+  Future<FiniSettings> settings(String childId) async => FiniSettings.fromJson(
+    _map((await _dio.get(ApiConst.finiSettings(childId))).data),
+  );
 
   @override
-  Future<FiniSettings> saveSettings(String childId, FiniSettings settings) async =>
-      FiniSettings.fromJson(
-        _map(
-          (await _dio.put(
-            ApiConst.finiSettings(childId),
-            data: settings.toJson(),
-          )).data,
-        ),
-      );
+  Future<FiniSettings> saveSettings(
+    String childId,
+    FiniSettings settings,
+  ) async => FiniSettings.fromJson(
+    _map(
+      (await _dio.put(
+        ApiConst.finiSettings(childId),
+        data: settings.toJson(),
+      )).data,
+    ),
+  );
 
   @override
   Future<List<FiniGoal>> goals(String childId) async => _list(
@@ -45,16 +48,20 @@ class FiniApiRepository implements FiniRepository {
   ).map(FiniGoal.fromJson).toList();
 
   @override
-  Future<FiniGoal> createGoal(String childId, Map<String, dynamic> body) async =>
-      FiniGoal.fromJson(
-        _map((await _dio.post(ApiConst.finiGoals(childId), data: body)).data),
-      );
+  Future<FiniGoal> createGoal(
+    String childId,
+    Map<String, dynamic> body,
+  ) async => FiniGoal.fromJson(
+    _map((await _dio.post(ApiConst.finiGoals(childId), data: body)).data),
+  );
 
   @override
-  Future<FiniGoal> updateGoal(String goalId, Map<String, dynamic> changes) async =>
-      FiniGoal.fromJson(
-        _map((await _dio.patch(ApiConst.finiGoal(goalId), data: changes)).data),
-      );
+  Future<FiniGoal> updateGoal(
+    String goalId,
+    Map<String, dynamic> changes,
+  ) async => FiniGoal.fromJson(
+    _map((await _dio.patch(ApiConst.finiGoal(goalId), data: changes)).data),
+  );
 
   @override
   Future<void> deleteGoal(String goalId) =>

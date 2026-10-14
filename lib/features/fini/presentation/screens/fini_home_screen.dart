@@ -23,6 +23,7 @@ import 'package:safini/features/parent/presentation/cubit/home/home_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
+import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 import 'package:safini/features/parent/presentation/widgets/family/open_add_child.dart';
 
 /// Where a child stands for Fini, from the family row and today's usage.
@@ -49,15 +50,12 @@ class FiniHomeScreen extends StatefulWidget {
 class _FiniHomeScreenState extends State<FiniHomeScreen> {
   String? _loadedFor;
 
-  List<ChildSummaryModel> _kids(BuildContext context) =>
-      context
-          .watch<ParentFamilyCubit>()
-          .state
-          .family
-          ?.children
-          .where((kid) => kid.id.isNotEmpty)
-          .toList() ??
-      const [];
+  List<ChildSummaryModel> _kids(BuildContext context) => oldestFirst(
+    context.watch<ParentFamilyCubit>().state.family?.children.where(
+          (kid) => kid.id.isNotEmpty,
+        ) ??
+        const [],
+  );
 
   ChildSummaryModel? _selected(
     BuildContext context,
@@ -188,9 +186,7 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
                   goals: state.goals.length,
                   pending: state.pending.length,
                 ),
-          sub: reach == FiniChildReach.iphone
-              ? s.finiIosNote
-              : s.finiPromise,
+          sub: reach == FiniChildReach.iphone ? s.finiIosNote : s.finiPromise,
           pose: state.settings.paused
               ? 'wait'
               : (state.goals.isEmpty ? 'point' : 'wave'),
@@ -217,7 +213,8 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
                 ),
               DsRow(
                 key: const ValueKey('fini-add-goal'),
-                onTap: () => showAddGoalSheet(context, childName: child.nickname),
+                onTap: () =>
+                    showAddGoalSheet(context, childName: child.nickname),
                 leading: Container(
                   width: 36,
                   height: 36,
@@ -287,7 +284,11 @@ String goalValueLine(S s, FiniGoal goal) {
 }
 
 class _StatusCard extends StatelessWidget {
-  const _StatusCard({required this.line, required this.sub, required this.pose});
+  const _StatusCard({
+    required this.line,
+    required this.sub,
+    required this.pose,
+  });
 
   final String line;
   final String sub;
@@ -296,7 +297,12 @@ class _StatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.gutter, 16, AppSpacing.gutter, 0),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.gutter,
+        16,
+        AppSpacing.gutter,
+        0,
+      ),
       child: DsCard(
         padding: const EdgeInsets.fromLTRB(8, 12, 16, 12),
         child: Row(
@@ -348,7 +354,12 @@ class _NeedsYouCard extends StatelessWidget {
     final time = TimeOfDay.fromDateTime(proposal.createdAt).format(context);
     return Padding(
       key: const ValueKey('fini-needs-you'),
-      padding: const EdgeInsets.fromLTRB(AppSpacing.gutter, 12, AppSpacing.gutter, 0),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.gutter,
+        12,
+        AppSpacing.gutter,
+        0,
+      ),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -405,7 +416,12 @@ class _NeedsYouCard extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile({super.key, required this.title, required this.sub, required this.onTap});
+  const _Tile({
+    super.key,
+    required this.title,
+    required this.sub,
+    required this.onTap,
+  });
 
   final String title;
   final String sub;
@@ -445,7 +461,12 @@ class _MascotCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.gutter, 24, AppSpacing.gutter, 0),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.gutter,
+        24,
+        AppSpacing.gutter,
+        0,
+      ),
       child: DsCard(
         child: Column(
           children: [
