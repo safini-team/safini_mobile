@@ -9388,10 +9388,10 @@ class S {
     );
   }
 
-  /// `Keep Fini with Pro`
+  /// `Continue with Fini Pro`
   String get finiKeepWithPro {
     return Intl.message(
-      'Keep Fini with Pro',
+      'Continue with Fini Pro',
       name: 'finiKeepWithPro',
       desc: '',
       args: [],

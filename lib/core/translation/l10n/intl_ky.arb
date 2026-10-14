@@ -1075,6 +1075,6 @@
   "finiTrialPill": "{count, plural, =1{Акысыз сыноо · {count} күн калды} other{Акысыз сыноо · {count} күн калды}}",
   "finiPausedTitle": "Fini тындырылды. Эрежелериңиз иштеп жатат.",
   "finiPausedBody": "Акысыз сыноо бүттү. Эч нерсе жокко чыгарылган жок: бардык лимиттер ошол бойдон калат.",
-  "finiKeepWithPro": "Fini’ни Pro менен сактоо",
+  "finiKeepWithPro": "Fini Pro менен улантуу",
   "proFeatureFini": "Fini планыңызды кадам сайын жүргүзөт"
 }

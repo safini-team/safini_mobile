@@ -851,7 +851,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Limits work; step-by-step plans need Android for now.",
     ),
     "finiKeepWithPro": MessageLookupByLibrary.simpleMessage(
-      "Keep Fini with Pro",
+      "Continue with Fini Pro",
     ),
     "finiNeedsYou": MessageLookupByLibrary.simpleMessage("Needs you"),
     "finiNeverNames": MessageLookupByLibrary.simpleMessage(

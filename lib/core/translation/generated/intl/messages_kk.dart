@@ -895,7 +895,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Лимиттер жұмыс істейді; кезеңдік жоспарлар әзірге тек Android-та.",
     ),
     "finiKeepWithPro": MessageLookupByLibrary.simpleMessage(
-      "Fini-ді Pro арқылы сақтау",
+      "Fini Pro-мен жалғастыру",
     ),
     "finiNeedsYou": MessageLookupByLibrary.simpleMessage("Шешіміңіз керек"),
     "finiNeverNames": MessageLookupByLibrary.simpleMessage(

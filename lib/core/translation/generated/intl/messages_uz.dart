@@ -905,7 +905,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Limitlar ishlaydi; bosqichma-bosqich rejalar hozircha faqat Android’da.",
     ),
     "finiKeepWithPro": MessageLookupByLibrary.simpleMessage(
-      "Fini’ni Pro bilan saqlash",
+      "Fini Pro bilan davom etish",
     ),
     "finiNeedsYou": MessageLookupByLibrary.simpleMessage("Qaroringiz kerak"),
     "finiNeverNames": MessageLookupByLibrary.simpleMessage(

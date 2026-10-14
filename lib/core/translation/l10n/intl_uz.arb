@@ -1104,6 +1104,6 @@
   "finiTrialPill": "{count, plural, =1{Bepul sinov · {count} kun qoldi} other{Bepul sinov · {count} kun qoldi}}",
   "finiPausedTitle": "Fini to‘xtatildi. Qoidalaringiz ishlayapti.",
   "finiPausedBody": "Bepul sinov tugadi. Hech narsa bekor qilinmadi: barcha cheklovlar o‘z holicha qoladi.",
-  "finiKeepWithPro": "Fini’ni Pro bilan saqlash",
+  "finiKeepWithPro": "Fini Pro bilan davom etish",
   "proFeatureFini": "Fini rejangizni qadamma-qadam olib boradi"
 }

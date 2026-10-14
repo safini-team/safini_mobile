@@ -873,7 +873,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Лимиты работают; пошаговые планы пока только на Android.",
     ),
     "finiKeepWithPro": MessageLookupByLibrary.simpleMessage(
-      "Оставить Fini с Pro",
+      "Продолжить с Fini Pro",
     ),
     "finiNeedsYou": MessageLookupByLibrary.simpleMessage("Нужно ваше решение"),
     "finiNeverNames": MessageLookupByLibrary.simpleMessage(

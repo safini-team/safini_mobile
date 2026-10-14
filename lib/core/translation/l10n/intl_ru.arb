@@ -1204,6 +1204,6 @@
   "finiTrialPill": "{count, plural, one{Пробный период · остался {count} день} few{Пробный период · осталось {count} дня} many{Пробный период · осталось {count} дней} other{Пробный период · осталось {count} дней}}",
   "finiPausedTitle": "Fini на паузе. Ваши правила работают.",
   "finiPausedBody": "Бесплатный период закончился. Ничего не отменено: все лимиты остаются как есть.",
-  "finiKeepWithPro": "Оставить Fini с Pro",
+  "finiKeepWithPro": "Продолжить с Fini Pro",
   "proFeatureFini": "Fini ведёт ваш план шаг за шагом"
 }
