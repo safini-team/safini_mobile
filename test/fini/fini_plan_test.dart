@@ -1,8 +1,29 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safini/features/fini/domain/fini_models.dart';
 import 'package:safini/features/fini/domain/fini_plan.dart';
 
 void main() {
+  group('the plan the server runs (SAF-274)', () {
+    // The same file safini-api's plan.py is tested against, so the bars on
+    // the goal screen are the limits the phone will get each Monday.
+    final fixture =
+        jsonDecode(File('test/fixtures/fini_plan.json').readAsStringSync())
+            as Map<String, dynamic>;
+    for (final raw in fixture['steps'] as List) {
+      final c = raw as Map<String, dynamic>;
+      test('${c['start']} -> ${c['target']} ${c['pace']}', () {
+        final pace = FiniPace.values.byName(c['pace'] as String);
+        expect(
+          formatPlanSteps(c['start'] as int, c['target'] as int, pace),
+          (c['steps'] as List).cast<int>(),
+        );
+      });
+    }
+  });
+
   group('formatPlanSteps', () {
     test('steady from 2h10m to 45m: 25% a week, clamped at the goal', () {
       expect(formatPlanSteps(130, 45, FiniPace.steady), [130, 98, 74, 56, 45]);

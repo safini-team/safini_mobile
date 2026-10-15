@@ -51,6 +51,12 @@
     <string name="block_paused_body">Родитель поставил приложение на паузу, монетами его не открыть. Попроси включить его снова.</string>
     <string name="block_day_title">На сегодня всё</string>
     <string name="block_day_body">Экранное время на сегодня закончилось. Завтра всё снова проснётся.</string>
+    <string name="block_pool_games_title">Игры на сегодня всё</string>
+    <string name="block_pool_games_body">Время на игры на сегодня закончилось. Другие приложения работают, а игры проснутся завтра.</string>
+    <string name="block_pool_scrolling_title">Ленты на сегодня всё</string>
+    <string name="block_pool_scrolling_body">Время на ленты на сегодня закончилось. Другие приложения работают, а ленты проснутся завтра.</string>
+    <string name="block_pool_title">%1$s отдыхает до завтра</string>
+    <string name="block_pool_body">Время на такие приложения на сегодня закончилось. Другие приложения работают.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">Открыта %d минута</item>
         <item quantity="few">Открыто %d минуты</item>

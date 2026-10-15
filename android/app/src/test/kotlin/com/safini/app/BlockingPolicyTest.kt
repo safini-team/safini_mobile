@@ -32,4 +32,18 @@ class BlockingPolicyTest {
         assertEquals(0L, BlockingRule(false, true, 0, 0, 0).remaining(0, true))
         assertEquals(30*minute, BlockingRule(false, true, 0, 0, 30*minute).remaining(0, true))
     }
+    @Test fun poolCountsWhatRanHereOrWhatTheServerSawIfMore() {
+        assertEquals(30*minute, BlockingPolicy.poolRemaining(90, 40, 60*minute, true))
+        assertEquals(20*minute, BlockingPolicy.poolRemaining(90, 70, 60*minute, true))
+    }
+    @Test fun yesterdaysServerFigureNeverSpendsTodaysPool() {
+        assertEquals(90*minute, BlockingPolicy.poolRemaining(90, 80, 0, false))
+    }
+    @Test fun aSpentPoolGoesNegativeAndTheTightestLimitWins() {
+        assertEquals(-5*minute, BlockingPolicy.poolRemaining(45, 0, 50*minute, true))
+        // Roblox has 30 min of its own left, but the games pool has 10.
+        val rule = BlockingRule(false, true, 60*minute, 0, 0)
+        assertEquals(10*minute, BlockingPolicy.remaining(rule, 30*minute, true, 10*minute))
+        assertEquals(0L, BlockingPolicy.remaining(rule, 30*minute, true, -5*minute))
+    }
 }

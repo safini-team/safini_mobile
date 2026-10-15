@@ -19,6 +19,12 @@ abstract class FiniRepository {
 
   /// Starts the family's trial; a second call returns it unchanged.
   Future<FiniTrial> startTrial();
+
+  /// Skips the rest of a budget goal's plan: the pool goes to the goal now.
+  Future<FiniGoal> jumpToTarget(String goalId);
+
+  /// The child's budget goals as shared pools, with today's minutes.
+  Future<List<FiniPool>> pools(String childId);
 }
 
 enum FiniDecision { accept, dismiss, undo }
@@ -102,6 +108,16 @@ class FiniApiRepository implements FiniRepository {
   @override
   Future<FiniTrial> startTrial() async =>
       FiniTrial.fromJson(_map((await _dio.post(ApiConst.finiTrialStart)).data));
+
+  @override
+  Future<FiniGoal> jumpToTarget(String goalId) async => FiniGoal.fromJson(
+    _map((await _dio.post(ApiConst.finiGoalJump(goalId))).data),
+  );
+
+  @override
+  Future<List<FiniPool>> pools(String childId) async => _list(
+    _map((await _dio.get(ApiConst.finiPools(childId))).data)['pools'],
+  ).map(FiniPool.fromJson).toList();
 
   static Map<String, dynamic> _map(Object? data) =>
       data is Map ? data.cast<String, dynamic>() : const {};

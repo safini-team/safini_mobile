@@ -242,6 +242,7 @@ class _ParentLimitsViewState extends State<_ParentLimitsView> {
                   usedMinutes: state.screenTime.usedMinutes,
                   remainingMinutes: state.screenTime.remainingMinutes,
                   nextResetAt: state.screenTime.nextResetAt,
+                  pools: state.pools,
                 ),
                 onSelectKid: (id) {
                   context.read<ParentHomeCubit>().selectChild(id);

@@ -145,12 +145,20 @@ class FiniGoal {
     this.windowEnd,
     this.pace = FiniPace.gentle,
     this.status = 'active',
+    this.currentMinutes,
+    this.plan,
   });
 
   final String id;
   final String childId;
   final String kind;
   final GoalIntent intent;
+
+  /// A pool's limit today, as the phone enforces it. Null while Fini watches.
+  final int? currentMinutes;
+
+  /// Where the step-down stands; null for goals with no plan, or an older API.
+  final FiniPlan? plan;
   final List<String> appSlugs;
   final List<String> categories;
   final int? minutesPerDay;
@@ -196,6 +204,10 @@ class FiniGoal {
         orElse: () => FiniPace.gentle,
       ),
       status: (json['status'] ?? 'active').toString(),
+      currentMinutes: (json['current_minutes'] as num?)?.toInt(),
+      plan: json['plan'] is Map
+          ? FiniPlan.fromJson((json['plan'] as Map).cast<String, dynamic>())
+          : null,
     );
   }
 
@@ -217,6 +229,122 @@ class FiniGoal {
 
   static List<String> _strings(Object? raw) =>
       raw is List ? raw.map((item) => item.toString()).toList() : const [];
+}
+
+enum FiniPlanPhase { waitingForPhone, watching, stepping, atTarget }
+
+/// A budget goal's step-down plan as the server runs it (SAF-274).
+class FiniPlan {
+  const FiniPlan({
+    required this.phase,
+    this.platform,
+    this.stepsDown = false,
+    this.currentMinutes,
+    this.startMinutes,
+    this.watchDays = 3,
+    this.watchedDays = 0,
+    this.steps = const [],
+    this.nextStepOn,
+    this.appCount = 0,
+  });
+
+  final FiniPlanPhase phase;
+
+  /// `android`, `ios`, or null while no phone is paired.
+  final String? platform;
+
+  /// False on an iPhone and at "right away": the goal applies as set.
+  final bool stepsDown;
+  final int? currentMinutes;
+  final int? startMinutes;
+  final int watchDays;
+  final int watchedDays;
+
+  /// Weekly limits from today's to the goal.
+  final List<int> steps;
+  final DateTime? nextStepOn;
+
+  /// Apps on the phone in this goal's pool.
+  final int appCount;
+
+  bool get isIphone => platform == 'ios';
+
+  /// Mondays left until the goal.
+  int get weeksLeft => steps.isEmpty ? 0 : steps.length - 1;
+
+  factory FiniPlan.fromJson(Map<String, dynamic> json) => FiniPlan(
+    phase: switch (json['phase']) {
+      'waiting_for_phone' => FiniPlanPhase.waitingForPhone,
+      'stepping' => FiniPlanPhase.stepping,
+      'at_target' => FiniPlanPhase.atTarget,
+      _ => FiniPlanPhase.watching,
+    },
+    platform: json['platform'] as String?,
+    stepsDown: json['steps_down'] == true,
+    currentMinutes: (json['current_minutes'] as num?)?.toInt(),
+    startMinutes: (json['start_minutes'] as num?)?.toInt(),
+    watchDays: (json['watch_days'] as num?)?.toInt() ?? 3,
+    watchedDays: (json['watched_days'] as num?)?.toInt() ?? 0,
+    steps: [
+      for (final step in (json['steps'] as List?) ?? const [])
+        (step as num).toInt(),
+    ],
+    nextStepOn: DateTime.tryParse(json['next_step_on']?.toString() ?? ''),
+    appCount: (json['app_count'] as num?)?.toInt() ?? 0,
+  );
+}
+
+/// A budget goal as one shared daily limit over its apps (SAF-274).
+class FiniPool {
+  const FiniPool({
+    required this.goalId,
+    required this.intent,
+    required this.limitMinutes,
+    required this.usedMinutes,
+    this.goalMinutes,
+    this.apps = const [],
+  });
+
+  final String goalId;
+  final GoalIntent intent;
+  final int limitMinutes;
+  final int usedMinutes;
+  final int? goalMinutes;
+  final List<FiniPoolApp> apps;
+
+  bool get isSpent => usedMinutes >= limitMinutes;
+
+  factory FiniPool.fromJson(Map<String, dynamic> json) => FiniPool(
+    goalId: json['goal_id'].toString(),
+    intent: GoalIntent.values
+            .where((intent) => intent.name == json['intent'])
+            .firstOrNull ??
+        GoalIntent.games,
+    limitMinutes: (json['limit_minutes'] as num?)?.toInt() ?? 0,
+    usedMinutes: (json['used_minutes'] as num?)?.toInt() ?? 0,
+    goalMinutes: (json['goal_minutes'] as num?)?.toInt(),
+    apps: [
+      for (final app in (json['apps'] as List?) ?? const [])
+        if (app is Map)
+          FiniPoolApp(
+            packageName: app['package_name'].toString(),
+            name: (app['app_name'] ?? app['package_name']).toString(),
+            usedMinutes: (app['used_minutes'] as num?)?.toInt() ?? 0,
+          ),
+    ],
+  );
+}
+
+class FiniPoolApp {
+  const FiniPoolApp({
+    required this.packageName,
+    required this.name,
+    required this.usedMinutes,
+  });
+
+  final String packageName;
+  final String name;
+  final int usedMinutes;
 }
 
 enum FiniProposalStatus {

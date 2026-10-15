@@ -96,6 +96,7 @@ void registerParentDependencies(GetIt sl) {
     () => ParentAppsCubit(
       sl<ParentFamilyCubit>(),
       sl<IParentAppUsageRepository>(),
+      fini: sl<FiniRepository>(),
     ),
   );
   sl.registerLazySingleton<IParentTaskRepository>(

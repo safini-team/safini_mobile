@@ -8,6 +8,8 @@ import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart
 import 'package:safini/features/parent/presentation/cubit/parent_family_cubit.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 import 'package:safini/features/subscription/free_limit.dart';
+import 'package:safini/features/fini/data/fini_repository.dart';
+import 'package:safini/features/fini/domain/fini_models.dart';
 import 'package:safini/core/utils/error/failures.dart';
 
 class ParentAppsCubit extends Cubit<ParentAppsState> {
@@ -27,8 +29,28 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   final _loadedAtByChild = <String, DateTime>{};
   bool _prefetched = false;
 
-  ParentAppsCubit(this._familyCubit, this._appUsageRepo)
-    : super(const ParentAppsInitial());
+  /// Fini's budget pools (SAF-274), read next to the app rules.
+  final FiniRepository? _fini;
+  List<FiniPool> _pools = const [];
+  final _poolsByChild = <String, List<FiniPool>>{};
+
+  ParentAppsCubit(
+    this._familyCubit,
+    this._appUsageRepo, {
+    FiniRepository? fini,
+  }) : _fini = fini,
+       super(const ParentAppsInitial());
+
+  /// A pools read that fails keeps what was shown: they are an extra.
+  Future<List<FiniPool>> _fetchPools(String childId) async {
+    final fini = _fini;
+    if (fini == null) return const [];
+    try {
+      return await fini.pools(childId);
+    } catch (_) {
+      return _poolsByChild[childId] ?? const [];
+    }
+  }
 
   /// Child the Limits screen is scoped to; the chip strip switches it.
   String? get childId => _childId;
@@ -46,6 +68,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     _childId = childId;
     _appUsage = cached.apps;
     _screenTime = cached.screenTime;
+    _pools = _poolsByChild[childId] ?? const [];
     _loadedAt = _loadedAtByChild[childId];
     _emitLoaded();
     return true;
@@ -85,8 +108,12 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       return;
     }
 
+    final poolsFuture = _fetchPools(_childId!);
     final result = await _appUsageRepo.fetchAppUsage(_childId!);
+    final pools = await poolsFuture;
     if (isClosed || generation != _loadGeneration) return;
+    _pools = pools;
+    _poolsByChild[_childId!] = pools;
     result.fold(
       // Degrade to an empty list so the screen still renders (tip + add button).
       // A failed background refresh keeps the rows already on screen.
@@ -113,6 +140,7 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
       ParentAppsLoaded(
         appLimits: _appUsage.map(_toLimitMap).toList(),
         screenTime: _screenTime,
+        pools: _pools,
       ),
     );
   }
@@ -187,10 +215,13 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     for (final id in ids) {
       if (isClosed) return;
       if (_byChild.containsKey(id)) continue;
+      final poolsFuture = _fetchPools(id);
       final result = await _appUsageRepo.fetchAppUsage(id);
+      final pools = await poolsFuture;
       if (isClosed || _byChild.containsKey(id)) continue;
       result.fold((_) {}, (snapshot) {
         _byChild[id] = snapshot;
+        _poolsByChild[id] = pools;
         _loadedAtByChild[id] = DateTime.now();
       });
     }

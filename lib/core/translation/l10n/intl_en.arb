@@ -1251,5 +1251,22 @@
   "finiPausedTitle": "Fini is resting. Your rules still work.",
   "finiPausedBody": "The free trial has ended. Every limit stays as it is.",
   "finiKeepWithPro": "Continue with Fini Pro",
-  "proFeatureFini": "Fini runs your plan, step by step"
+  "proFeatureFini": "Fini runs your plan, step by step",
+  "goalPlanWatchingDays": "Watching: day {seen} of {total}. Then the plan starts at what {name} really uses.",
+  "goalPlanWaitingPhone": "I start watching when {name}'s phone is connected.",
+  "goalPlanStepping": "Today's limit is {current}. Next Monday it goes to {next}, the goal in {weeks} weeks.",
+  "goalPlanAtTarget": "At the goal: {target} a day. I keep it there.",
+  "goalPlanIphone": "On iPhone I can't see app time, so the goal applies as set: {target} a day, with no steps.",
+  "goalJumpNow": "Go to {target} now",
+  "goalJumpNote": "Skips the rest of the steps. Expect some push-back the first days.",
+  "limitsPools": "Fini budgets",
+  "limitsPoolsNote": "One shared limit for every app in the group. A new game joins the day Fini sees it.",
+  "poolUsedOf": "{used} of {limit} today",
+  "poolUsedUp": "{limit} used up today",
+  "planLineStart": "The plan started at {to} a day, after watching.",
+  "planLineStep": "Monday step: {from} to {to} a day, on the way to {target}.",
+  "planLineJump": "The limit never ran out last week. Go to {to} a day now?",
+  "planLineEase": "{from} ran out every day last week. Ease off to {to} for a week?",
+  "planLineJumped": "Jumped to the goal: {to} a day.",
+  "planLineAtTarget": "The goal applies as set: {to} a day."
 }

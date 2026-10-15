@@ -9407,6 +9407,176 @@ class S {
       args: [],
     );
   }
+
+  /// `Watching: day {seen} of {total}. Then the plan starts at what {name} really uses.`
+  String goalPlanWatchingDays(Object seen, Object total, Object name) {
+    return Intl.message(
+      'Watching: day $seen of $total. Then the plan starts at what $name really uses.',
+      name: 'goalPlanWatchingDays',
+      desc: '',
+      args: [seen, total, name],
+    );
+  }
+
+  /// `I start watching when {name}'s phone is connected.`
+  String goalPlanWaitingPhone(Object name) {
+    return Intl.message(
+      'I start watching when $name\'s phone is connected.',
+      name: 'goalPlanWaitingPhone',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Today's limit is {current}. Next Monday it goes to {next}, the goal in {weeks} weeks.`
+  String goalPlanStepping(Object current, Object next, Object weeks) {
+    return Intl.message(
+      'Today\'s limit is $current. Next Monday it goes to $next, the goal in $weeks weeks.',
+      name: 'goalPlanStepping',
+      desc: '',
+      args: [current, next, weeks],
+    );
+  }
+
+  /// `At the goal: {target} a day. I keep it there.`
+  String goalPlanAtTarget(Object target) {
+    return Intl.message(
+      'At the goal: $target a day. I keep it there.',
+      name: 'goalPlanAtTarget',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `On iPhone I can't see app time, so the goal applies as set: {target} a day, with no steps.`
+  String goalPlanIphone(Object target) {
+    return Intl.message(
+      'On iPhone I can\'t see app time, so the goal applies as set: $target a day, with no steps.',
+      name: 'goalPlanIphone',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `Go to {target} now`
+  String goalJumpNow(Object target) {
+    return Intl.message(
+      'Go to $target now',
+      name: 'goalJumpNow',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `Skips the rest of the steps. Expect some push-back the first days.`
+  String get goalJumpNote {
+    return Intl.message(
+      'Skips the rest of the steps. Expect some push-back the first days.',
+      name: 'goalJumpNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini budgets`
+  String get limitsPools {
+    return Intl.message(
+      'Fini budgets',
+      name: 'limitsPools',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One shared limit for every app in the group. A new game joins the day Fini sees it.`
+  String get limitsPoolsNote {
+    return Intl.message(
+      'One shared limit for every app in the group. A new game joins the day Fini sees it.',
+      name: 'limitsPoolsNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{used} of {limit} today`
+  String poolUsedOf(Object used, Object limit) {
+    return Intl.message(
+      '$used of $limit today',
+      name: 'poolUsedOf',
+      desc: '',
+      args: [used, limit],
+    );
+  }
+
+  /// `{limit} used up today`
+  String poolUsedUp(Object limit) {
+    return Intl.message(
+      '$limit used up today',
+      name: 'poolUsedUp',
+      desc: '',
+      args: [limit],
+    );
+  }
+
+  /// `The plan started at {to} a day, after watching.`
+  String planLineStart(Object to) {
+    return Intl.message(
+      'The plan started at $to a day, after watching.',
+      name: 'planLineStart',
+      desc: '',
+      args: [to],
+    );
+  }
+
+  /// `Monday step: {from} to {to} a day, on the way to {target}.`
+  String planLineStep(Object from, Object to, Object target) {
+    return Intl.message(
+      'Monday step: $from to $to a day, on the way to $target.',
+      name: 'planLineStep',
+      desc: '',
+      args: [from, to, target],
+    );
+  }
+
+  /// `The limit never ran out last week. Go to {to} a day now?`
+  String planLineJump(Object to) {
+    return Intl.message(
+      'The limit never ran out last week. Go to $to a day now?',
+      name: 'planLineJump',
+      desc: '',
+      args: [to],
+    );
+  }
+
+  /// `{from} ran out every day last week. Ease off to {to} for a week?`
+  String planLineEase(Object from, Object to) {
+    return Intl.message(
+      '$from ran out every day last week. Ease off to $to for a week?',
+      name: 'planLineEase',
+      desc: '',
+      args: [from, to],
+    );
+  }
+
+  /// `Jumped to the goal: {to} a day.`
+  String planLineJumped(Object to) {
+    return Intl.message(
+      'Jumped to the goal: $to a day.',
+      name: 'planLineJumped',
+      desc: '',
+      args: [to],
+    );
+  }
+
+  /// `The goal applies as set: {to} a day.`
+  String planLineAtTarget(Object to) {
+    return Intl.message(
+      'The goal applies as set: $to a day.',
+      name: 'planLineAtTarget',
+      desc: '',
+      args: [to],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

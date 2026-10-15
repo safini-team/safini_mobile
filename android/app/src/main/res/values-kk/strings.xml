@@ -45,6 +45,12 @@
     <string name="block_paused_body">Ата-анаң бұл қолданбаны кідіртті, сондықтан оны монетамен ашуға болмайды. Қайта қосуын сұра.</string>
     <string name="block_day_title">Бүгінге осы</string>
     <string name="block_day_body">Барлық экран уақытыңды пайдаландың. Бәрі ертең қайта ашылады.</string>
+    <string name="block_pool_games_title">Бүгінге ойындар осы</string>
+    <string name="block_pool_games_body">Бүгінгі ойын уақытың бітті. Басқа қолданбалар жұмыс істейді, ойындар ертең оянады.</string>
+    <string name="block_pool_scrolling_title">Бүгінге лента осы</string>
+    <string name="block_pool_scrolling_body">Бүгінгі лента уақытың бітті. Басқа қолданбалар жұмыс істейді, лента ертең оянады.</string>
+    <string name="block_pool_title">%1$s ертеңге дейін демалады</string>
+    <string name="block_pool_body">Мұндай қолданбалардың бүгінгі уақыты бітті. Басқа қолданбалар жұмыс істейді.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d минут ашылды</item>
         <item quantity="other">%d минут ашылды</item>

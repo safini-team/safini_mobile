@@ -112,22 +112,53 @@ class EnforcementStore(context: Context) : FrontApp, InstalledAppsStore {
         return cap.optLong("global_limit_minutes")*60000-localTotal-other
     }
 
+    fun pools(): List<JSONObject> = snapshot.optJSONArray("pools")?.let { list ->
+        (0 until list.length()).map { list.getJSONObject(it) }
+    } ?: emptyList()
+
+    private fun packagesOf(pool: JSONObject): List<String> = pool.optJSONArray("package_names")?.let { list ->
+        (0 until list.length()).map { list.getString(it) }
+    } ?: emptyList()
+
+    /** Fini's budget pools [pkg] is in: one shared daily limit over every app of a category (SAF-274). */
+    private fun poolsOf(pkg: String): List<JSONObject> =
+        if (AlwaysAllowed.contains(appContext, pkg)) emptyList() else pools().filter { pkg in packagesOf(it) }
+
+    /** Time left in [pool] today: its limit minus what its apps used here, or what the server saw if more. */
+    private fun poolRemaining(pool: JSONObject, date: String, sameDay: Boolean): Long {
+        val local = packagesOf(pool).sumOf { deviceUsed(it, date) }
+        return BlockingPolicy.poolRemaining(pool.optLong("limit_minutes"), pool.optLong("used_minutes"), local, sameDay)
+    }
+
+    /** The tightest pool [pkg] is in, with its time left, or null when it is in none. */
+    private fun tightestPool(pkg: String, date: String, sameDay: Boolean): Pair<JSONObject, Long>? =
+        poolsOf(pkg).map { it to poolRemaining(it, date, sameDay) }.minByOrNull { it.second }
+
     fun remaining(pkg: String, now: Long): Long? {
-        val app = app(pkg) ?: return null
         val date = day(now)
         val sameDay = date == snapshot.optString("usage_date")
-        return BlockingPolicy.remaining(rule(app), used(pkg, date), sameDay, globalRemaining(date, sameDay))
+        val pool = tightestPool(pkg, date, sameDay)?.second
+        val app = app(pkg) ?: return pool?.coerceAtLeast(0)
+        val shared = listOfNotNull(globalRemaining(date, sameDay), pool).minOrNull()
+        return BlockingPolicy.remaining(rule(app), used(pkg, date), sameDay, shared)
     }
+
+    /** Whether [pkg] is limited at all: its own rule or a pool. */
+    fun limited(pkg: String): Boolean = app(pkg) != null || poolsOf(pkg).isNotEmpty()
 
     /** What the block screen tells the child about [pkg]: why it is closed and what coins can still do. */
     fun blockFacts(pkg: String, now: Long): BlockFacts? {
-        val app = app(pkg) ?: return null
         val date = day(now)
         val sameDay = date == snapshot.optString("usage_date")
+        val tightest = tightestPool(pkg, date, sameDay)
+        val pool = tightest?.takeIf { it.second <= 0 }?.first
+        val app = app(pkg) ?: return pool?.let { poolFacts(pkg, it, now) }
         val rule = rule(app)
         val global = globalRemaining(date, sameDay)
         // The server refuses purchases once the overall cap is spent, so that reason wins over the app's own.
         val dayCap = !rule.blocked && global != null && global <= 0
+        // A spent pool closes every app in it; coins buy one app's minutes, not the pool's.
+        if (!rule.blocked && !dayCap && pool != null) return poolFacts(pkg, pool, now)
         val allowance = when {
             dayCap -> snapshot.getJSONObject("screen_time").optLong("global_limit_minutes")*60000
             sameDay -> maxOf(rule.dailyMs, rule.serverUsedMs)+rule.bonusRemainingMs
@@ -145,10 +176,33 @@ class EnforcementStore(context: Context) : FrontApp, InstalledAppsStore {
             balance = snapshot.optInt("balance"),
             allowanceMinutes = allowance/60000,
             resetInMinutes = (reset-now+59_999)/60_000,
-            remainingSeconds = BlockingPolicy.remaining(rule, used(pkg, date), sameDay, global)?.let { it/1000 },
+            remainingSeconds = BlockingPolicy.remaining(rule, used(pkg, date), sameDay,
+                listOfNotNull(global, tightest?.second).minOrNull())?.let { it/1000 },
             tasks = snapshot.optJSONArray("tasks")?.let { list -> (0 until list.length()).map { list.getJSONObject(it) } }.orEmpty()
                 .map { BlockTask(it.optString("title"), it.optString("category"), it.optInt("coin_reward")) }
                 .filter { it.title.isNotBlank() }.sortedByDescending { it.coins },
+        )
+    }
+
+    /** The block screen for an app whose pool is spent: no coins, back tomorrow. */
+    private fun poolFacts(pkg: String, pool: JSONObject, now: Long): BlockFacts {
+        val reset = Instant.ofEpochMilli(now).atZone(zone()).toLocalDate().plusDays(1).atStartOfDay(zone()).toInstant().toEpochMilli()
+        val label = runCatching {
+            appContext.packageManager.getApplicationLabel(appContext.packageManager.getApplicationInfo(pkg, 0)).toString()
+        }.getOrDefault(pkg)
+        return BlockFacts(
+            slug = "",
+            appName = label,
+            paused = false,
+            dayCap = false,
+            canUnlock = false,
+            cost = 0,
+            minutes = 0,
+            balance = snapshot.optInt("balance"),
+            allowanceMinutes = pool.optLong("limit_minutes"),
+            resetInMinutes = (reset-now+59_999)/60_000,
+            remainingSeconds = 0,
+            pool = pool.optString("intent").ifBlank { "other" },
         )
     }
 

@@ -127,9 +127,11 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             for (other in tracker.visible) {
                 if (other == pkg || other == packageName) continue
                 val allowed = store.remaining(other, from) ?: continue
-                if (allowed > 0 && store.app(other) != null) {
+                if (allowed > 0) {
                     val end = minOf(until, from+allowed)
-                    if (end > from) store.record(other, from, end)
+                    if (end > from && store.app(other) != null) store.record(other, from, end)
+                    // A pool burns on device minutes: a game with no rule of its own still spends it.
+                    else if (end > from && countsAsApp(other)) store.recordDevice(other, from, end)
                 }
             }
             from = until
@@ -187,7 +189,7 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     private fun floatingBlocked(now: Long): String? =
         tracker.visible.lastOrNull {
             it != packageName && it != store.foreground &&
-                store.app(it) != null && store.remaining(it, now) == 0L
+                store.limited(it) && store.remaining(it, now) == 0L
         }
 
     private val launchable = HashMap<String, Boolean>()

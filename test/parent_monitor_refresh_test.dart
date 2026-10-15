@@ -15,6 +15,9 @@ import 'package:safini/features/parent/presentation/cubit/parent_monitor_state.d
 import 'package:safini/features/parent/presentation/cubit/parent_apps_cubit.dart';
 import 'package:safini/features/parent/presentation/cubit/parent_apps_state.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
+import 'package:safini/features/fini/demo/fini_demo.dart';
+import 'package:safini/features/fini/demo/fini_demo_repository.dart';
+import 'package:safini/features/fini/domain/fini_models.dart';
 
 /// Coins and the streak on the Today card come from the child rows in the
 /// family, and the monitor only fetched the family when it had none. Approving
@@ -97,6 +100,18 @@ class _DeviceUsage extends Fake implements DeviceUsageService {
         apps: [DeviceUsageApp(displayName: childId, usedMinutes: 40)],
       ),
     );
+  }
+}
+
+class _CountingFini extends FiniDemoRepository {
+  _CountingFini() : super(FiniDemoState.runningPlan);
+
+  final asked = <String>[];
+
+  @override
+  Future<List<FiniPool>> pools(String childId) {
+    asked.add(childId);
+    return super.pools(childId);
   }
 }
 
@@ -271,6 +286,24 @@ void main() {
     expect(cubit.childId, 'zilola');
     expect(states.whereType<ParentAppsLoading>(), isEmpty);
     expect(usage.requested, ['amir', 'zilola']);
+  });
+
+  test('Limits reads Fini pools with the rules and keeps them per child', () async {
+    final family = _Family(_family({'amir': 25, 'zilola': 40}));
+    final fini = _CountingFini();
+    final cubit = ParentAppsCubit(family, _Usage(), fini: fini);
+    addTearDown(cubit.close);
+
+    await cubit.loadAppLimits();
+    await pumpEventQueue();
+    final pools = (cubit.state as ParentAppsLoaded).pools;
+    expect(pools.single.intent, GoalIntent.games);
+    expect(pools.single.limitMinutes, 98);
+    expect(fini.asked, ['amir', 'zilola']);
+
+    expect(cubit.isFreshFor('zilola'), isTrue);
+    expect((cubit.state as ParentAppsLoaded).pools, hasLength(1));
+    expect(fini.asked, ['amir', 'zilola']);
   });
 
   test('last week loads after the day, for the day the API is on', () async {

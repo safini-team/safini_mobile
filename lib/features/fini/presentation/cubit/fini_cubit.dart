@@ -186,6 +186,16 @@ class FiniCubit extends Cubit<FiniState> {
         );
       });
 
+  /// Skips the rest of a budget goal's plan: the pool goes to the goal today.
+  Future<String?> jumpToTarget(FiniGoal goal) => _write(() async {
+    final jumped = await _repo.jumpToTarget(goal.id);
+    emit(
+      state.copyWith(
+        goals: [for (final g in state.goals) g.id == goal.id ? jumped : g],
+      ),
+    );
+  });
+
   Future<String?> deleteGoal(FiniGoal goal) => _write(() async {
     await _repo.deleteGoal(goal.id);
     emit(

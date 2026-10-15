@@ -45,6 +45,12 @@
     <string name="block_paused_body">Ota-onang bu ilovani toʻxtatgan, uni tanga bilan ochib boʻlmaydi. Qayta yoqishni soʻra.</string>
     <string name="block_day_title">Bugunga yetarli</string>
     <string name="block_day_body">Bugungi ekran vaqting tugadi. Ertaga hammasi yana uygʻonadi.</string>
+    <string name="block_pool_games_title">Bugunga oʻyinlar yetarli</string>
+    <string name="block_pool_games_body">Bugungi oʻyin vaqting tugadi. Boshqa ilovalar ishlaydi, oʻyinlar ertaga uygʻonadi.</string>
+    <string name="block_pool_scrolling_title">Bugunga lentalar yetarli</string>
+    <string name="block_pool_scrolling_body">Bugungi lenta vaqting tugadi. Boshqa ilovalar ishlaydi, lentalar ertaga uygʻonadi.</string>
+    <string name="block_pool_title">%1$s ertagacha dam oladi</string>
+    <string name="block_pool_body">Bunday ilovalar uchun bugungi vaqt tugadi. Boshqa ilovalar ishlaydi.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d daqiqa ochildi</item>
         <item quantity="other">%d daqiqa ochildi</item>

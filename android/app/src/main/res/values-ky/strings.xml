@@ -45,6 +45,12 @@
     <string name="block_paused_body">Ата-энең бул колдонмону тындырды, ошондуктан аны монета менен ачууга болбойт. Кайра күйгүзүүсүн сура.</string>
     <string name="block_day_title">Бүгүнкүгө ушул</string>
     <string name="block_day_body">Бардык экран убактыңды колдондуң. Баары эртең кайра ачылат.</string>
+    <string name="block_pool_games_title">Бүгүнкүгө оюндар ушул</string>
+    <string name="block_pool_games_body">Бүгүнкү оюн убактың бүттү. Башка тиркемелер иштейт, оюндар эртең ойгонот.</string>
+    <string name="block_pool_scrolling_title">Бүгүнкүгө лента ушул</string>
+    <string name="block_pool_scrolling_body">Бүгүнкү лента убактың бүттү. Башка тиркемелер иштейт, лента эртең ойгонот.</string>
+    <string name="block_pool_title">%1$s эртеңге чейин эс алат</string>
+    <string name="block_pool_body">Мындай тиркемелердин бүгүнкү убактысы бүттү. Башка тиркемелер иштейт.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d мүнөт ачылды</item>
         <item quantity="other">%d мүнөт ачылды</item>
