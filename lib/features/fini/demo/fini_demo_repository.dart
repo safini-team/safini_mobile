@@ -424,6 +424,24 @@ class FiniDemoRepository implements FiniRepository {
   }
 
   @override
+  Future<List<FiniReport>> reports(String childId) async {
+    if (!_running) return const [];
+    final end = DateTime(_now.year, _now.month, _now.day);
+    return [
+      FiniReport(
+        id: '$childId-report',
+        weekStart: end.subtract(const Duration(days: 6)),
+        weekEnd: end,
+        bullets: const [
+          'Your child kept game time within the daily limit on 6 of 7 days.',
+          'Daily game time dropped from 121 to 84 minutes, a clear step down.',
+          'On Monday, the daily game limit moves to 74 minutes.',
+        ],
+      ),
+    ];
+  }
+
+  @override
   Future<List<FiniPool>> pools(String childId) async {
     _seed(childId);
     return [

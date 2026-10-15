@@ -17,6 +17,7 @@ import 'package:safini/features/fini/presentation/cubit/fini_cubit.dart';
 import 'package:safini/features/fini/presentation/cubit/fini_inbox_cubit.dart';
 import 'package:safini/features/fini/presentation/fini_copy.dart';
 import 'package:safini/features/fini/presentation/widgets/new_app_actions.dart';
+import 'package:safini/features/fini/presentation/widgets/report_card.dart';
 import 'package:safini/features/fini/presentation/screens/fini_activity_screen.dart';
 import 'package:safini/features/fini/presentation/screens/fini_add_goal_sheet.dart';
 import 'package:safini/features/fini/presentation/screens/fini_goal_screen.dart';
@@ -241,6 +242,18 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
       if (card != null)
         SliverToBoxAdapter(
           child: FiniNeedsYouCard(proposal: card, childName: child.nickname),
+        ),
+      if (state.latestReport(DateTime.now()) case final report?)
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.gutter,
+              12,
+              AppSpacing.gutter,
+              0,
+            ),
+            child: FiniReportCard(report: report, childName: child.nickname),
+          ),
         ),
       for (final sorted in openAppSorts(state.activity, DateTime.now()))
         SliverToBoxAdapter(

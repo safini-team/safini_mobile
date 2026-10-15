@@ -13,6 +13,7 @@ import 'package:safini/features/fini/domain/fini_models.dart';
 import 'package:safini/features/fini/presentation/cubit/fini_cubit.dart';
 import 'package:safini/features/fini/presentation/fini_copy.dart';
 import 'package:safini/features/fini/presentation/widgets/new_app_actions.dart';
+import 'package:safini/features/fini/presentation/widgets/report_card.dart';
 
 Future<void> openFiniActivity(BuildContext context, String childName) =>
     Navigator.of(context).push(
@@ -35,7 +36,9 @@ class FiniActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final items = context.watch<FiniCubit>().state.activity;
+    final state = context.watch<FiniCubit>().state;
+    final items = state.activity;
+    final report = state.reports.firstOrNull;
     final now = DateTime.now();
     bool isToday(FiniProposal p) =>
         p.createdAt.year == now.year &&
@@ -73,6 +76,16 @@ class FiniActivityScreen extends StatelessWidget {
                     style: AppText.subtitle,
                   ),
                 ),
+                if (report != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.gutter,
+                      16,
+                      AppSpacing.gutter,
+                      0,
+                    ),
+                    child: FiniReportCard(report: report, childName: childName),
+                  ),
                 if (items.isEmpty)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(

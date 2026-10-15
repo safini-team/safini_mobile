@@ -10022,6 +10022,26 @@ class S {
       args: [],
     );
   }
+
+  /// `{child}'s week`
+  String finiReportTitle(Object child) {
+    return Intl.message(
+      '$child\'s week',
+      name: 'finiReportTitle',
+      desc: '',
+      args: [child],
+    );
+  }
+
+  /// `Sunday report`
+  String get finiReportOverline {
+    return Intl.message(
+      'Sunday report',
+      name: 'finiReportOverline',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

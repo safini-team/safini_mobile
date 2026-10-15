@@ -474,3 +474,36 @@ const allWeekdays = 127;
 
 /// Monday to Friday, school's default.
 const schoolDays = 31;
+
+/// Fini's Sunday report for one child (SAF-278): at most three bullets in
+/// the parent's language, written from the week's numbers.
+class FiniReport {
+  const FiniReport({
+    required this.id,
+    required this.weekStart,
+    required this.weekEnd,
+    required this.bullets,
+  });
+
+  final String id;
+  final DateTime weekStart;
+  final DateTime weekEnd;
+  final List<String> bullets;
+
+  /// Shown on the Fini home through the week after it was written.
+  bool isCurrent(DateTime now) =>
+      now.difference(weekEnd) < const Duration(days: 8);
+
+  factory FiniReport.fromJson(Map<String, dynamic> json) => FiniReport(
+    id: json['id'].toString(),
+    weekStart:
+        DateTime.tryParse(json['week_start']?.toString() ?? '') ??
+        DateTime(2026),
+    weekEnd:
+        DateTime.tryParse(json['week_end']?.toString() ?? '') ?? DateTime(2026),
+    bullets: [
+      for (final bullet in (json['bullets'] as List?) ?? const [])
+        if (bullet is String && bullet.isNotEmpty) bullet,
+    ],
+  );
+}

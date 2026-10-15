@@ -81,6 +81,10 @@ class ApiConst {
   static String finiApp(String childId, String packageName) =>
       '/v1/children/$childId/fini/apps/${Uri.encodeComponent(packageName)}';
 
+  /// Fini's Sunday reports for one child (SAF-278).
+  static String finiReports(String childId) =>
+      '/v1/children/$childId/fini/reports';
+
   /// Budget goals as shared pools, with today's minutes (SAF-274).
   static String finiPools(String childId) => '/v1/children/$childId/fini/pools';
 

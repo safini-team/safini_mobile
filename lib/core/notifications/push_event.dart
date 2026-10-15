@@ -29,6 +29,7 @@ enum PushType {
   finiTimeRequest('fini_time_request'),
   finiAppSorted('fini_app_sorted'),
   finiAppSort('fini_app_sort'),
+  finiReport('fini_report'),
   finiTimeGranted('fini_time_granted'),
   finiTimeDeclined('fini_time_declined');
 
@@ -142,7 +143,8 @@ class PushEvent {
     PushType.finiTrialEnding ||
     PushType.finiTimeRequest ||
     PushType.finiAppSorted ||
-    PushType.finiAppSort => const PushTarget(PushDestination.parentFini),
+    PushType.finiAppSort ||
+    PushType.finiReport => const PushTarget(PushDestination.parentFini),
     PushType.taskApproved ||
     PushType.streakReminder ||
     PushType.finiTimeGranted ||

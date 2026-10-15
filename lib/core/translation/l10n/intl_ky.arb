@@ -1140,5 +1140,7 @@
   "kidWindowBedtime": "Экрандар {time} чейин эс алат",
   "kidWindowSchool": "Сабак {time} чейин",
   "kidWindowDinner": "Кечки тамак {time} чейин",
-  "kidWindowSub": "Ага чейин тиркемелер эс алат. Чалуу жана билдирүүлөр иштейт."
+  "kidWindowSub": "Ага чейин тиркемелер эс алат. Чалуу жана билдирүүлөр иштейт.",
+  "finiReportTitle": "{child}: жума",
+  "finiReportOverline": "Жумалык отчет"
 }

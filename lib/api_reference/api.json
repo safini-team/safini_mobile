@@ -9468,6 +9468,119 @@
         }
       }
     },
+    "/v1/children/{child_id}/fini/reports": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "List Fini Sunday Reports",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Fini's Sunday report for one child (SAF-278): at most three bullets in the parent's language, written on Sunday evening in the family's time zone for families with Fini on and a goal set.\n\n**Frontend note:** Newest first, at most 8. `bullets` are ready to show; `numbers` are what they were written from. `source` is `template` when the model was down or its answer carried a number it was not given. The `fini_report` push carries `report_id`.",
+        "operationId": "list_fini_reports_v1_children__child_id__fini_reports_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The reports.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Fini Reports V1 Children  Child Id  Fini Reports Get"
+                },
+                "example": {
+                  "reports": [
+                    {
+                      "id": "5f0c2b8e-1d2a-4c3b-9e8f-7a6b5c4d3e2f",
+                      "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                      "week_start": "2026-10-12",
+                      "week_end": "2026-10-18",
+                      "language": "en",
+                      "bullets": [
+                        "Games stayed within 98 min on 6 of 7 days.",
+                        "8 tasks done and 160 coins earned.",
+                        "On Monday games go to 74 min a day."
+                      ],
+                      "numbers": {
+                        "week": {
+                          "tasks_done": 8
+                        }
+                      },
+                      "source": "model",
+                      "created_at": "2026-10-18T14:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/children/{child_id}/fini/apps/{package_name}": {
       "put": {
         "tags": [

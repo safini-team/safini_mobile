@@ -34,6 +34,9 @@ abstract class FiniRepository {
     String? category,
     int? minutes,
   });
+
+  /// Fini's Sunday reports, newest first (SAF-278).
+  Future<List<FiniReport>> reports(String childId);
 }
 
 enum FiniDecision { accept, dismiss, undo }
@@ -142,6 +145,11 @@ class FiniApiRepository implements FiniRepository {
       )).data,
     ),
   );
+
+  @override
+  Future<List<FiniReport>> reports(String childId) async => _list(
+    _map((await _dio.get(ApiConst.finiReports(childId))).data)['reports'],
+  ).map(FiniReport.fromJson).toList();
 
   static Map<String, dynamic> _map(Object? data) =>
       data is Map ? data.cast<String, dynamic>() : const {};

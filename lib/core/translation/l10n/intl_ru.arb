@@ -1269,5 +1269,7 @@
   "kidWindowBedtime": "Экраны отдыхают до {time}",
   "kidWindowSchool": "Уроки до {time}",
   "kidWindowDinner": "Ужин до {time}",
-  "kidWindowSub": "До этого времени приложения отдыхают. Звонки и сообщения работают."
+  "kidWindowSub": "До этого времени приложения отдыхают. Звонки и сообщения работают.",
+  "finiReportTitle": "Неделя: {child}",
+  "finiReportOverline": "Отчёт за неделю"
 }
