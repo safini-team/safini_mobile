@@ -74,7 +74,8 @@ class _AddChildPageState extends State<AddChildPage> {
         value: _onboarding,
         child: FiniOnboardingFlow(
           onDone: () => setState(() => _onboarded = true),
-          onLeave: () => context.router.maybePop(_createdName != null),
+          // The flow already handles PopScope; maybePop would re-enter it.
+          onLeave: () => context.router.pop(_createdName != null),
         ),
       );
     }
