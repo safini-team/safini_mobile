@@ -19,10 +19,7 @@ import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dar
 import 'package:safini/features/parent/presentation/widgets/tasks/task_voice_recorder.dart';
 import 'package:safini/core/utils/task_category.dart';
 import 'dart:convert';
-import 'package:safini/core/di/injection.dart';
 import 'package:safini/features/fini/presentation/widgets/fini_check_panel.dart';
-import 'package:safini/features/models/domain/models/installed_app.dart';
-import 'package:safini/features/parent/data/services/parent_app_blocking_service.dart';
 
 enum _NewTaskChoice { custom }
 
@@ -332,16 +329,6 @@ class _TaskSheetState extends State<TaskSheet> {
 
   String get _proofMode => proofModeFor(photoProof: _photoProof);
 
-  /// The phone's apps, for "Let Fini check"; the chosen child's, or the one
-  /// the sheet opened on when it is for everyone.
-  Future<List<InstalledApp>> _loadApps() async {
-    final childId = _targetChildId ?? widget.childId;
-    final result = await getIt<ParentAppBlockingService>().fetchInstalledApps(
-      childId,
-    );
-    return result.fold((_) => const [], (snapshot) => snapshot.apps);
-  }
-
   Future<void> _submit() async {
     final title = _title.text.trim();
     if (title.isEmpty) return;
@@ -391,7 +378,7 @@ class _TaskSheetState extends State<TaskSheet> {
         metadata: withFiniCheck({
           'emoji': _emoji,
           if (widget.idea case final idea?) TaskIdea.metadataKey: idea.key,
-        }, _finiCheck.toJson(photo: _photoProof)),
+        }, _finiCheck.toJson()),
       );
       final targetIds = _targetChildId == null
           ? _children.map((child) => child.id).toList()
@@ -414,7 +401,7 @@ class _TaskSheetState extends State<TaskSheet> {
       recurrenceDays: _recurrenceDays,
       emoji: _emoji,
       photoProof: _photoProof,
-      finiCheck: _finiCheck.toJson(photo: _photoProof),
+      finiCheck: _finiCheck.toJson(),
     );
 
     if (request.isEmpty && !_voiceSave.hasWork) {
@@ -575,8 +562,6 @@ class _TaskSheetState extends State<TaskSheet> {
               const SizedBox(height: 14),
               FiniCheckPanel(
                 check: _finiCheck,
-                photo: _photoProof,
-                loadApps: _loadApps,
                 onChanged: (check) => setState(() => _finiCheck = check),
               ),
               const SizedBox(height: 14),

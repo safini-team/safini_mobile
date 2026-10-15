@@ -2199,26 +2199,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Duolingo сабағын аяқта",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Тапсырма"),
-    "taskFiniApp": MessageLookupByLibrary.simpleMessage("Қолданба"),
     "taskFiniApproved": MessageLookupByLibrary.simpleMessage("Fini мақұлдады"),
     "taskFiniCheck": MessageLookupByLibrary.simpleMessage("Fini тексерсін"),
     "taskFiniCheckSub": MessageLookupByLibrary.simpleMessage(
-      "Дәлел болса, Fini мақұлдайды. 24 сағат ішінде қайтаруға болады.",
+      "Fini тапсырманы бүгінгі қолданбалардағы уақытпен және суретпен салыстырып, анық болғанда ғана мақұлдайды. 24 сағат ішінде қайтаруға болады.",
     ),
-    "taskFiniChecking": MessageLookupByLibrary.simpleMessage(
-      "Fini суретті қарап жатыр",
+    "taskFiniCheckingTask": MessageLookupByLibrary.simpleMessage(
+      "Fini тексеріп жатыр",
     ),
-    "taskFiniMinutes": MessageLookupByLibrary.simpleMessage(
-      "Қолданбадағы уақыт",
-    ),
-    "taskFiniNoApps": MessageLookupByLibrary.simpleMessage(
-      "Бала телефоны қосылғанда қолданбалар шығады.",
-    ),
-    "taskFiniPhotoHint": MessageLookupByLibrary.simpleMessage(
-      "Fini суретті қарап, анық суретті ғана мақұлдайды. Fini ережелерінде «Фото дәлелді тексеру» дегенді қосыңыз.",
-    ),
-    "taskFiniPickApp": MessageLookupByLibrary.simpleMessage(
-      "Қолданбаны таңдаңыз",
+    "taskFiniNoSignals": MessageLookupByLibrary.simpleMessage(
+      "Fini: бүгін тексеретін қолданба уақыты да, сурет те жоқ",
     ),
     "taskFiniSawApp": m149,
     "taskFiniSawPhoto": m150,

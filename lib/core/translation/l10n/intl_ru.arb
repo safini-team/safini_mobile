@@ -1239,16 +1239,12 @@
   "finiAskReason": "{goal}: время на сегодня закончилось.",
   "finiNotToday": "Не сегодня",
   "taskFiniCheck": "Пусть Fini проверит",
-  "taskFiniCheckSub": "Fini одобрит, если доказательство есть. Отменить можно в течение 24 ч.",
-  "taskFiniApp": "Приложение",
-  "taskFiniPickApp": "Выберите приложение",
-  "taskFiniMinutes": "Время в приложении",
-  "taskFiniPhotoHint": "Fini посмотрит фото и одобрит только понятное. Включите «Проверять фото» в правилах Fini.",
-  "taskFiniNoApps": "Приложения появятся, когда подключится телефон ребёнка.",
+  "taskFiniCheckSub": "Fini сверит задание со временем в приложениях за сегодня и фото, если оно есть, и одобрит, только если всё ясно. Отменить можно в течение 24 ч.",
   "taskFiniApproved": "Одобрено Fini",
   "taskFiniUndo": "Отменить",
   "taskFiniSawApp": "Fini: {app}, {used} из {needed} сегодня",
   "taskFiniSawPhoto": "Fini: {note}",
-  "taskFiniChecking": "Fini смотрит фото",
-  "finiUsageProof": "{app}: {used} сегодня, задание просило {needed}."
+  "finiUsageProof": "{app}: {used} сегодня, задание просило {needed}.",
+  "taskFiniCheckingTask": "Fini проверяет",
+  "taskFiniNoSignals": "Fini: сегодня нечего проверить, ни времени в приложениях, ни фото"
 }

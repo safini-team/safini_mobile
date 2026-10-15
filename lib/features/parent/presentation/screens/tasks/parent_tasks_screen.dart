@@ -492,8 +492,14 @@ String? finiTaskLine(S s, ParentTaskInstanceModel task) {
   if (task.status != 'submitted' && task.status != 'pending_approval') {
     return null;
   }
-  if (result.kind == 'photo') {
-    if (result.state == 'checking') return s.taskFiniChecking;
+  // The AI check (SAF-276): its note is already in the parent's language.
+  if (result.kind == 'check' || result.kind == 'photo') {
+    switch (result.state) {
+      case 'checking':
+        return s.taskFiniCheckingTask;
+      case 'no_signals':
+        return s.taskFiniNoSignals;
+    }
     final note = result.note?.trim();
     return note == null || note.isEmpty ? null : s.taskFiniSawPhoto(note);
   }

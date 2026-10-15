@@ -2243,23 +2243,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Duolingo darsini tugat",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Vazifa"),
-    "taskFiniApp": MessageLookupByLibrary.simpleMessage("Ilova"),
     "taskFiniApproved": MessageLookupByLibrary.simpleMessage("Fini tasdiqladi"),
     "taskFiniCheck": MessageLookupByLibrary.simpleMessage("Fini tekshirsin"),
     "taskFiniCheckSub": MessageLookupByLibrary.simpleMessage(
-      "Isbot boʻlsa, Fini tasdiqlaydi. 24 soat ichida bekor qilish mumkin.",
+      "Fini vazifani bugungi ilovalar vaqti va rasm bilan solishtiradi, faqat aniq boʻlsa tasdiqlaydi. 24 soat ichida bekor qilish mumkin.",
     ),
-    "taskFiniChecking": MessageLookupByLibrary.simpleMessage(
-      "Fini rasmni koʻryapti",
+    "taskFiniCheckingTask": MessageLookupByLibrary.simpleMessage(
+      "Fini tekshiryapti",
     ),
-    "taskFiniMinutes": MessageLookupByLibrary.simpleMessage("Ilovadagi vaqt"),
-    "taskFiniNoApps": MessageLookupByLibrary.simpleMessage(
-      "Farzandingiz telefoni ulanganda ilovalar chiqadi.",
+    "taskFiniNoSignals": MessageLookupByLibrary.simpleMessage(
+      "Fini: bugun tekshiradigan ilova vaqti ham, rasm ham yoʻq",
     ),
-    "taskFiniPhotoHint": MessageLookupByLibrary.simpleMessage(
-      "Fini rasmni koʻradi va faqat aniq rasmni tasdiqlaydi. Fini qoidalarida «Foto dalilni tekshirish»ni yoqing.",
-    ),
-    "taskFiniPickApp": MessageLookupByLibrary.simpleMessage("Ilovani tanlang"),
     "taskFiniSawApp": m149,
     "taskFiniSawPhoto": m150,
     "taskFiniUndo": MessageLookupByLibrary.simpleMessage("Bekor qilish"),

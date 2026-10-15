@@ -1285,16 +1285,12 @@
   "finiAskReason": "{goal}: today's time is up.",
   "finiNotToday": "Not today",
   "taskFiniCheck": "Let Fini check",
-  "taskFiniCheckSub": "Fini approves when the proof is there. You can undo it for 24 h.",
-  "taskFiniApp": "App",
-  "taskFiniPickApp": "Pick an app",
-  "taskFiniMinutes": "Time in the app",
-  "taskFiniPhotoHint": "Fini looks at the photo and approves only a clear one. Turn on \"Check photo proof\" in Fini's rules.",
-  "taskFiniNoApps": "Apps show up once your child's phone is connected.",
+  "taskFiniCheckSub": "Fini reads the task with today's app time and the photo, if there is one, and approves only when it's clear. You can undo it for 24 h.",
   "taskFiniApproved": "Approved by Fini",
   "taskFiniUndo": "Undo",
   "taskFiniSawApp": "Fini: {app}, {used} of {needed} today",
   "taskFiniSawPhoto": "Fini: {note}",
-  "taskFiniChecking": "Fini is looking at the photo",
-  "finiUsageProof": "{app}: {used} today, the task asked for {needed}."
+  "finiUsageProof": "{app}: {used} today, the task asked for {needed}.",
+  "taskFiniCheckingTask": "Fini is checking",
+  "taskFiniNoSignals": "Fini: no app time or photo to check today"
 }

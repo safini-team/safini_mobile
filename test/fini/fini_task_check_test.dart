@@ -28,23 +28,22 @@ ParentTaskInstanceModel _task(String status, Map<String, dynamic>? fini) =>
 
 void main() {
   group('"Let Fini check" on the task sheet', () {
-    test('what goes in metadata.fini_check', () {
-      const off = FiniCheck();
-      expect(off.toJson(photo: false), isNull);
-      const noApp = FiniCheck(on: true);
-      expect(noApp.toJson(photo: false), isNull);
-      expect(noApp.toJson(photo: true), {'photo': true});
-      final app = FiniCheck.fromJson(_duolingo);
-      expect(app.toJson(photo: false), _duolingo);
-      expect(FiniCheck.fromJson({'photo': true}).on, isTrue);
-    });
+    test(
+      'one switch: on saves auto, off saves nothing, any saved form is on',
+      () {
+        expect(const FiniCheck().toJson(), isNull);
+        expect(const FiniCheck(on: true).toJson(), {'auto': true});
+        expect(FiniCheck.fromJson(_duolingo).on, isTrue);
+        expect(FiniCheck.fromJson(null).on, isFalse);
+      },
+    );
 
     test('the rest of the metadata is kept, the check set or dropped', () {
       final meta = {'emoji': '📚', 'idea': 'read', 'fini_check': _duolingo};
       expect(withFiniCheck(meta, null), {'emoji': '📚', 'idea': 'read'});
-      expect(withFiniCheck({'emoji': '📚'}, {'photo': true}), {
+      expect(withFiniCheck({'emoji': '📚'}, {'auto': true}), {
         'emoji': '📚',
-        'fini_check': {'photo': true},
+        'fini_check': {'auto': true},
       });
     });
 
@@ -56,7 +55,10 @@ void main() {
         proofMode: 'none',
         coinReward: 20,
         xpReward: 20,
-        metadata: {'emoji': '📚', 'fini_check': _duolingo},
+        metadata: {
+          'emoji': '📚',
+          'fini_check': {'auto': true},
+        },
       );
       Map<String, dynamic> edit(Map<String, dynamic>? check) => taskEditRequest(
         lesson,
@@ -70,11 +72,7 @@ void main() {
         photoProof: false,
         finiCheck: check,
       ).toJson();
-      expect(edit(_duolingo), isEmpty);
-      expect(edit({..._duolingo, 'minutes': 15})['metadata'], {
-        'emoji': '📚',
-        'fini_check': {..._duolingo, 'minutes': 15},
-      });
+      expect(edit({'auto': true}), isEmpty);
       expect(edit(null)['metadata'], {'emoji': '📚'});
     });
   });
@@ -129,9 +127,16 @@ void main() {
       expect(
         finiTaskLine(
           s,
-          _task('submitted', {'kind': 'photo', 'state': 'checking'}),
+          _task('submitted', {'kind': 'check', 'state': 'checking'}),
         ),
-        s.taskFiniChecking,
+        s.taskFiniCheckingTask,
+      );
+      expect(
+        finiTaskLine(
+          s,
+          _task('submitted', {'kind': 'check', 'state': 'no_signals'}),
+        ),
+        s.taskFiniNoSignals,
       );
     });
 

@@ -246,7 +246,7 @@ class SampleData {
             lane: TaskLane.review,
             coins: 20,
             childName: 'Amir',
-            fini: s.taskFiniSawApp('Kindle', '6 m', '15 m'),
+            fini: s.taskFiniCheckingTask,
           ),
           TaskRowData(
             id: 'f3',
@@ -256,7 +256,7 @@ class SampleData {
             lane: TaskLane.review,
             coins: 15,
             childName: 'Amir',
-            fini: s.taskFiniSawPhoto('The bed is made, the pillow is on it.'),
+            fini: s.taskFiniNoSignals,
           ),
         ],
       ),

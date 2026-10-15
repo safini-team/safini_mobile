@@ -1139,16 +1139,12 @@
   "finiAskReason": "{goal}: bugungi vaqt tugadi.",
   "finiNotToday": "Bugun emas",
   "taskFiniCheck": "Fini tekshirsin",
-  "taskFiniCheckSub": "Isbot boʻlsa, Fini tasdiqlaydi. 24 soat ichida bekor qilish mumkin.",
-  "taskFiniApp": "Ilova",
-  "taskFiniPickApp": "Ilovani tanlang",
-  "taskFiniMinutes": "Ilovadagi vaqt",
-  "taskFiniPhotoHint": "Fini rasmni koʻradi va faqat aniq rasmni tasdiqlaydi. Fini qoidalarida «Foto dalilni tekshirish»ni yoqing.",
-  "taskFiniNoApps": "Farzandingiz telefoni ulanganda ilovalar chiqadi.",
+  "taskFiniCheckSub": "Fini vazifani bugungi ilovalar vaqti va rasm bilan solishtiradi, faqat aniq boʻlsa tasdiqlaydi. 24 soat ichida bekor qilish mumkin.",
   "taskFiniApproved": "Fini tasdiqladi",
   "taskFiniUndo": "Bekor qilish",
   "taskFiniSawApp": "Fini: {app}, bugun {needed} dan {used}",
   "taskFiniSawPhoto": "Fini: {note}",
-  "taskFiniChecking": "Fini rasmni koʻryapti",
-  "finiUsageProof": "{app}: bugun {used}, vazifa {needed} soʻragan."
+  "finiUsageProof": "{app}: bugun {used}, vazifa {needed} soʻragan.",
+  "taskFiniCheckingTask": "Fini tekshiryapti",
+  "taskFiniNoSignals": "Fini: bugun tekshiradigan ilova vaqti ham, rasm ham yoʻq"
 }

@@ -9733,56 +9733,11 @@ class S {
     );
   }
 
-  /// `Fini approves when the proof is there. You can undo it for 24 h.`
+  /// `Fini reads the task with today's app time and the photo, if there is one, and approves only when it's clear. You can undo it for 24 h.`
   String get taskFiniCheckSub {
     return Intl.message(
-      'Fini approves when the proof is there. You can undo it for 24 h.',
+      'Fini reads the task with today\'s app time and the photo, if there is one, and approves only when it\'s clear. You can undo it for 24 h.',
       name: 'taskFiniCheckSub',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `App`
-  String get taskFiniApp {
-    return Intl.message('App', name: 'taskFiniApp', desc: '', args: []);
-  }
-
-  /// `Pick an app`
-  String get taskFiniPickApp {
-    return Intl.message(
-      'Pick an app',
-      name: 'taskFiniPickApp',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Time in the app`
-  String get taskFiniMinutes {
-    return Intl.message(
-      'Time in the app',
-      name: 'taskFiniMinutes',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Fini looks at the photo and approves only a clear one. Turn on "Check photo proof" in Fini's rules.`
-  String get taskFiniPhotoHint {
-    return Intl.message(
-      'Fini looks at the photo and approves only a clear one. Turn on "Check photo proof" in Fini\'s rules.',
-      name: 'taskFiniPhotoHint',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Apps show up once your child's phone is connected.`
-  String get taskFiniNoApps {
-    return Intl.message(
-      'Apps show up once your child\'s phone is connected.',
-      name: 'taskFiniNoApps',
       desc: '',
       args: [],
     );
@@ -9823,16 +9778,6 @@ class S {
     );
   }
 
-  /// `Fini is looking at the photo`
-  String get taskFiniChecking {
-    return Intl.message(
-      'Fini is looking at the photo',
-      name: 'taskFiniChecking',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `{app}: {used} today, the task asked for {needed}.`
   String finiUsageProof(Object app, Object used, Object needed) {
     return Intl.message(
@@ -9840,6 +9785,26 @@ class S {
       name: 'finiUsageProof',
       desc: '',
       args: [app, used, needed],
+    );
+  }
+
+  /// `Fini is checking`
+  String get taskFiniCheckingTask {
+    return Intl.message(
+      'Fini is checking',
+      name: 'taskFiniCheckingTask',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini: no app time or photo to check today`
+  String get taskFiniNoSignals {
+    return Intl.message(
+      'Fini: no app time or photo to check today',
+      name: 'taskFiniNoSignals',
+      desc: '',
+      args: [],
     );
   }
 }

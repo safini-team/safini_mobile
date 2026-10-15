@@ -2226,25 +2226,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Duolingo сабагын бүтүр",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Тапшырма"),
-    "taskFiniApp": MessageLookupByLibrary.simpleMessage("Тиркеме"),
     "taskFiniApproved": MessageLookupByLibrary.simpleMessage("Fini бекитти"),
     "taskFiniCheck": MessageLookupByLibrary.simpleMessage("Fini текшерсин"),
     "taskFiniCheckSub": MessageLookupByLibrary.simpleMessage(
-      "Далил болсо, Fini бекитет. 24 саат ичинде жокко чыгарса болот.",
+      "Fini тапшырманы бүгүнкү тиркемелердеги убакыт жана сүрөт менен салыштырып, так болгондо гана бекитет. 24 саат ичинде жокко чыгарса болот.",
     ),
-    "taskFiniChecking": MessageLookupByLibrary.simpleMessage(
-      "Fini сүрөттү карап жатат",
+    "taskFiniCheckingTask": MessageLookupByLibrary.simpleMessage(
+      "Fini текшерүүдө",
     ),
-    "taskFiniMinutes": MessageLookupByLibrary.simpleMessage(
-      "Тиркемедеги убакыт",
+    "taskFiniNoSignals": MessageLookupByLibrary.simpleMessage(
+      "Fini: бүгүн текшере турган тиркеме убактысы да, сүрөт да жок",
     ),
-    "taskFiniNoApps": MessageLookupByLibrary.simpleMessage(
-      "Баланын телефону туташканда тиркемелер чыгат.",
-    ),
-    "taskFiniPhotoHint": MessageLookupByLibrary.simpleMessage(
-      "Fini сүрөттү карап, так сүрөттү гана бекитет. Fini эрежелеринен «Сүрөт далилин текшерүү» дегенди күйгүзүңүз.",
-    ),
-    "taskFiniPickApp": MessageLookupByLibrary.simpleMessage("Тиркеме тандаңыз"),
     "taskFiniSawApp": m149,
     "taskFiniSawPhoto": m150,
     "taskFiniUndo": MessageLookupByLibrary.simpleMessage("Жокко чыгаруу"),

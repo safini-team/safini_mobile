@@ -98,18 +98,12 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
   }
 }
 
-/// The task sheet's "Let Fini check" panel: an app task, then a photo task.
+/// The task sheet's "Let Fini check" switch, on and off.
 class _FiniCheckPreview extends StatelessWidget {
   const _FiniCheckPreview();
 
   @override
   Widget build(BuildContext context) {
-    const check = FiniCheck(
-      on: true,
-      packageName: 'com.duolingo',
-      appName: 'Duolingo',
-      minutes: 10,
-    );
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.fromLTRB(
@@ -119,26 +113,9 @@ class _FiniCheckPreview extends StatelessWidget {
           32,
         ),
         children: [
-          FiniCheckPanel(
-            check: check,
-            photo: false,
-            loadApps: () async => const [],
-            onChanged: (_) {},
-          ),
+          FiniCheckPanel(check: const FiniCheck(on: true), onChanged: (_) {}),
           const SizedBox(height: 16),
-          FiniCheckPanel(
-            check: check,
-            photo: true,
-            loadApps: () async => const [],
-            onChanged: (_) {},
-          ),
-          const SizedBox(height: 16),
-          FiniCheckPanel(
-            check: const FiniCheck(),
-            photo: false,
-            loadApps: () async => const [],
-            onChanged: (_) {},
-          ),
+          FiniCheckPanel(check: const FiniCheck(), onChanged: (_) {}),
         ],
       ),
     );

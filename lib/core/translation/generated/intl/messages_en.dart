@@ -2125,25 +2125,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Complete Duolingo",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Task"),
-    "taskFiniApp": MessageLookupByLibrary.simpleMessage("App"),
     "taskFiniApproved": MessageLookupByLibrary.simpleMessage(
       "Approved by Fini",
     ),
     "taskFiniCheck": MessageLookupByLibrary.simpleMessage("Let Fini check"),
     "taskFiniCheckSub": MessageLookupByLibrary.simpleMessage(
-      "Fini approves when the proof is there. You can undo it for 24 h.",
+      "Fini reads the task with today\'s app time and the photo, if there is one, and approves only when it\'s clear. You can undo it for 24 h.",
     ),
-    "taskFiniChecking": MessageLookupByLibrary.simpleMessage(
-      "Fini is looking at the photo",
+    "taskFiniCheckingTask": MessageLookupByLibrary.simpleMessage(
+      "Fini is checking",
     ),
-    "taskFiniMinutes": MessageLookupByLibrary.simpleMessage("Time in the app"),
-    "taskFiniNoApps": MessageLookupByLibrary.simpleMessage(
-      "Apps show up once your child\'s phone is connected.",
+    "taskFiniNoSignals": MessageLookupByLibrary.simpleMessage(
+      "Fini: no app time or photo to check today",
     ),
-    "taskFiniPhotoHint": MessageLookupByLibrary.simpleMessage(
-      "Fini looks at the photo and approves only a clear one. Turn on \"Check photo proof\" in Fini\'s rules.",
-    ),
-    "taskFiniPickApp": MessageLookupByLibrary.simpleMessage("Pick an app"),
     "taskFiniSawApp": m149,
     "taskFiniSawPhoto": m150,
     "taskFiniUndo": MessageLookupByLibrary.simpleMessage("Undo"),

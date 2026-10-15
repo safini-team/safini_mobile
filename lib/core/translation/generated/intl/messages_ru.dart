@@ -2160,28 +2160,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пройти Duolingo",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Задание"),
-    "taskFiniApp": MessageLookupByLibrary.simpleMessage("Приложение"),
     "taskFiniApproved": MessageLookupByLibrary.simpleMessage("Одобрено Fini"),
     "taskFiniCheck": MessageLookupByLibrary.simpleMessage(
       "Пусть Fini проверит",
     ),
     "taskFiniCheckSub": MessageLookupByLibrary.simpleMessage(
-      "Fini одобрит, если доказательство есть. Отменить можно в течение 24 ч.",
+      "Fini сверит задание со временем в приложениях за сегодня и фото, если оно есть, и одобрит, только если всё ясно. Отменить можно в течение 24 ч.",
     ),
-    "taskFiniChecking": MessageLookupByLibrary.simpleMessage(
-      "Fini смотрит фото",
+    "taskFiniCheckingTask": MessageLookupByLibrary.simpleMessage(
+      "Fini проверяет",
     ),
-    "taskFiniMinutes": MessageLookupByLibrary.simpleMessage(
-      "Время в приложении",
-    ),
-    "taskFiniNoApps": MessageLookupByLibrary.simpleMessage(
-      "Приложения появятся, когда подключится телефон ребёнка.",
-    ),
-    "taskFiniPhotoHint": MessageLookupByLibrary.simpleMessage(
-      "Fini посмотрит фото и одобрит только понятное. Включите «Проверять фото» в правилах Fini.",
-    ),
-    "taskFiniPickApp": MessageLookupByLibrary.simpleMessage(
-      "Выберите приложение",
+    "taskFiniNoSignals": MessageLookupByLibrary.simpleMessage(
+      "Fini: сегодня нечего проверить, ни времени в приложениях, ни фото",
     ),
     "taskFiniSawApp": m149,
     "taskFiniSawPhoto": m150,
