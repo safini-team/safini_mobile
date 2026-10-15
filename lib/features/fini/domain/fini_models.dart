@@ -392,6 +392,17 @@ class FiniProposal {
   bool get ranAlone =>
       decidedBy == 'fini' && status == FiniProposalStatus.applied;
 
+  /// A new app Fini sorted, or could not sort, or the parent placed.
+  bool get isAppSort => kind == 'app_sort';
+  String get appPackage => (payload['package_name'] ?? '').toString();
+  String get appName => (payload['app_name'] ?? appPackage).toString();
+
+  /// Where the app went: Fini's sure category, or the parent's pick.
+  String? get appCategory => payload['category'] as String?;
+
+  /// Fini could not tell: the parent picks a category on the card.
+  bool get cantSort => payload['cant_sort'] == true && decidedBy != 'parent';
+
   factory FiniProposal.fromJson(Map<String, dynamic> json) => FiniProposal(
     id: json['id'].toString(),
     childId: json['child_id'].toString(),

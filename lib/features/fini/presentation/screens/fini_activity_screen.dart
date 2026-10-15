@@ -12,6 +12,7 @@ import 'package:safini/features/fini/data/fini_repository.dart';
 import 'package:safini/features/fini/domain/fini_models.dart';
 import 'package:safini/features/fini/presentation/cubit/fini_cubit.dart';
 import 'package:safini/features/fini/presentation/fini_copy.dart';
+import 'package:safini/features/fini/presentation/widgets/new_app_actions.dart';
 
 Future<void> openFiniActivity(BuildContext context, String childName) =>
     Navigator.of(context).push(
@@ -42,6 +43,7 @@ class FiniActivityScreen extends StatelessWidget {
         p.createdAt.day == now.day;
     final today = items.where(isToday).toList();
     final earlier = items.where((p) => !isToday(p)).toList();
+    final open = openAppSorts(items, now).toSet();
 
     return Scaffold(
       backgroundColor: AppColors.bgParent,
@@ -96,7 +98,11 @@ class FiniActivityScreen extends StatelessWidget {
                       child: DsGroup(
                         children: [
                           for (final item in list)
-                            _Entry(item: item, childName: childName),
+                            _Entry(
+                              item: item,
+                              childName: childName,
+                              open: open.contains(item),
+                            ),
                         ],
                       ),
                     ),
@@ -111,10 +117,17 @@ class FiniActivityScreen extends StatelessWidget {
 }
 
 class _Entry extends StatelessWidget {
-  const _Entry({required this.item, required this.childName});
+  const _Entry({
+    required this.item,
+    required this.childName,
+    this.open = false,
+  });
 
   final FiniProposal item;
   final String childName;
+
+  /// A new app Fini sorted that the parent has not answered yet.
+  final bool open;
 
   Future<void> _undo(BuildContext context) async {
     final s = S.of(context);
@@ -157,9 +170,13 @@ class _Entry extends StatelessWidget {
                   finiActivityTitle(s, item, childName: childName),
                   style: AppText.rowTitleStrong,
                 ),
-                if (item.reason.isNotEmpty) ...[
+                if (finiReasonLine(s, item).isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(finiReasonLine(s, item), style: AppText.meta),
+                ],
+                if (open) ...[
+                  const SizedBox(height: 10),
+                  NewAppActions(proposal: item),
                 ],
                 if (result != null) ...[
                   const SizedBox(height: 4),

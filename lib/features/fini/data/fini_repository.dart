@@ -25,6 +25,15 @@ abstract class FiniRepository {
 
   /// The child's budget goals as shared pools, with today's minutes.
   Future<List<FiniPool>> pools(String childId);
+
+  /// The parent's answer for one new app: [category] ("other" is "not a
+  /// game") and/or its own [minutes] a day. Answers a waiting card for it.
+  Future<FiniProposal> placeApp(
+    String childId,
+    String packageName, {
+    String? category,
+    int? minutes,
+  });
 }
 
 enum FiniDecision { accept, dismiss, undo }
@@ -118,6 +127,21 @@ class FiniApiRepository implements FiniRepository {
   Future<List<FiniPool>> pools(String childId) async => _list(
     _map((await _dio.get(ApiConst.finiPools(childId))).data)['pools'],
   ).map(FiniPool.fromJson).toList();
+
+  @override
+  Future<FiniProposal> placeApp(
+    String childId,
+    String packageName, {
+    String? category,
+    int? minutes,
+  }) async => FiniProposal.fromJson(
+    _map(
+      (await _dio.put(
+        ApiConst.finiApp(childId, packageName),
+        data: {'category': ?category, 'minutes': ?minutes},
+      )).data,
+    ),
+  );
 
   static Map<String, dynamic> _map(Object? data) =>
       data is Map ? data.cast<String, dynamic>() : const {};

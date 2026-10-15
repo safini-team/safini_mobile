@@ -430,6 +430,7 @@ class BlockOverlay(private val context: Context, private val host: Host) {
             BlockScreen.POOL_CAP -> when (f.pool) {
                 "games" -> res.getString(R.string.block_pool_games_title) to res.getString(R.string.block_pool_games_body)
                 "scrolling" -> res.getString(R.string.block_pool_scrolling_title) to res.getString(R.string.block_pool_scrolling_body)
+                "new_apps" -> res.getString(R.string.block_pool_new_apps_title, f.appName) to res.getString(R.string.block_pool_new_apps_body)
                 else -> res.getString(R.string.block_pool_title, f.appName) to res.getString(R.string.block_pool_body)
             }
             BlockScreen.NEED_COINS -> (f.cost-f.balance).let { res.getQuantityString(R.plurals.block_need_title, it, it) } to

@@ -1,5 +1,6 @@
 package com.safini.app
 
+import android.content.pm.ApplicationInfo
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Base64
@@ -10,6 +11,7 @@ data class InstalledAppRecord(
     val packageName: String,
     val appName: String,
     val alwaysAllowed: Boolean = false,
+    val storeCategory: String? = null,
     val iconSha256: String? = null,
     val iconPng: ByteArray? = null,
 ) {
@@ -18,6 +20,7 @@ data class InstalledAppRecord(
             packageName = map["packageName"]?.toString().orEmpty(),
             appName = map["appName"]?.toString().orEmpty(),
             alwaysAllowed = map["alwaysAllowed"] == true,
+            storeCategory = map["storeCategory"] as? String,
             iconSha256 = map["iconSha256"] as? String,
             iconPng = map["iconPng"] as? ByteArray,
         )
@@ -35,6 +38,20 @@ object InstalledAppsUpload {
     const val CHANGE_DEBOUNCE_MS = 30_000L
     const val MAX_APPS = 1000
     const val ICON_BATCH_BYTES = 1024 * 1024
+
+    private val STORE_CATEGORIES = listOf(
+        "game", "audio", "video", "image", "social", "news", "maps", "productivity", "accessibility",
+    )
+
+    /** The category the app declares (`ApplicationInfo.category`), as the API names it. Fini reads it
+     *  next to the app's name when it sorts a new app. */
+    fun storeCategoryName(category: Int, legacyGame: Boolean): String? =
+        STORE_CATEGORIES.getOrNull(category) ?: if (legacyGame) "game" else null
+
+    @Suppress("DEPRECATION")
+    fun storeCategory(info: ApplicationInfo?): String? = info?.let {
+        storeCategoryName(it.category, it.flags and ApplicationInfo.FLAG_IS_GAME != 0)
+    }
 
     fun fingerprint(entries: List<PackageStamp>): String =
         entries.sortedBy { it.packageName }.joinToString("\n") { "${it.packageName}\t${it.lastUpdateTime}" }
@@ -89,6 +106,7 @@ object InstalledAppsUpload {
         for (app in apps.take(MAX_APPS)) {
             val obj = JSONObject().put("package_name", app.packageName).put("app_name", app.appName)
             if (app.alwaysAllowed) obj.put("always_allowed", true)
+            app.storeCategory?.let { obj.put("store_category", it) }
             val hash = app.iconSha256
             if (!hash.isNullOrEmpty()) {
                 obj.put("icon_sha256", hash)

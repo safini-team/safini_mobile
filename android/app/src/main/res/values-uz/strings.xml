@@ -51,6 +51,8 @@
     <string name="block_pool_scrolling_body">Bugungi lenta vaqting tugadi. Boshqa ilovalar ishlaydi, lentalar ertaga uygʻonadi.</string>
     <string name="block_pool_title">%1$s ertagacha dam oladi</string>
     <string name="block_pool_body">Bunday ilovalar uchun bugungi vaqt tugadi. Boshqa ilovalar ishlaydi.</string>
+    <string name="block_pool_new_apps_title">Yangi ilova %1$s dam oladi</string>
+    <string name="block_pool_new_apps_body">Ota-onang saralamaguncha yangi ilovalarga kuniga ozgina umumiy vaqt beriladi. Bugungisi tugadi. Boshqa ilovalar ishlaydi.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d daqiqa ochildi</item>
         <item quantity="other">%d daqiqa ochildi</item>

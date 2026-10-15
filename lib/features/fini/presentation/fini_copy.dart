@@ -43,6 +43,33 @@ String _app(FiniProposal p, [S? s]) {
   return intent != null && s != null ? goalTitle(s, intent) : '';
 }
 
+/// The categories a parent can put a new app in, in card order.
+const finiAppCategories = [
+  'games',
+  'social',
+  'short_video',
+  'video',
+  'education',
+  'other',
+];
+
+String finiAppCategoryName(S s, String? category) => switch (category) {
+  'games' => s.finiAppCategoryGames,
+  'social' => s.finiAppCategorySocial,
+  'short_video' => s.finiAppCategoryShortVideo,
+  'video' => s.finiAppCategoryVideo,
+  'education' => s.finiAppCategoryEducation,
+  _ => s.finiAppCategoryOther,
+};
+
+/// The minutes "Allow ... a day" gives a new app, and New apps share.
+const finiNewAppMinutes = 15;
+
+/// "Not a game" for a game; "Not Social" for the rest.
+String finiNotThisLabel(S s, String? category) => category == 'games'
+    ? s.finiNotAGame
+    : s.finiNotInCategory(finiAppCategoryName(s, category));
+
 /// Why, in the parent's own language. A plan change carries its numbers in
 /// `evidence.plan`, so it is said here rather than by the server's English
 /// `reason`; anything else shows the reason as sent.
@@ -54,6 +81,14 @@ String finiReasonLine(S s, FiniProposal p) {
         .where((intent) => intent.name == ask['intent'])
         .firstOrNull;
     if (intent != null) return s.finiAskReason(goalTitle(s, intent));
+  }
+  if (p.isAppSort) {
+    if (p.cantSort) return s.finiAppCantSort(formatHm(s, finiNewAppMinutes));
+    final limit = (p.payload['limit_minutes'] as num?)?.toInt();
+    if (p.payload['by'] == 'parent' || limit == null) return '';
+    return limit == 0
+        ? s.finiAppSortedBlocked
+        : s.finiAppSortedShares(formatHm(s, limit));
   }
   // A task Fini approved on app minutes (SAF-276).
   final usage = p.evidence['usage'];
@@ -107,6 +142,15 @@ String finiActivityTitle(S s, FiniProposal p, {required String childName}) {
       return s.finiDidGoal;
     case 'child_message':
       return s.finiDidMessage(childName);
+    case 'app_sort':
+      final category = finiAppCategoryName(s, p.appCategory);
+      if (p.payload['by'] == 'parent') {
+        final minutes = (p.payload['minutes'] as num?)?.toInt();
+        return minutes != null
+            ? s.finiDidAllowApp(p.appName, formatHm(s, minutes))
+            : s.finiDidMoveApp(p.appName, category);
+      }
+      return s.finiDidSortApp(p.appName, category);
   }
   return s.finiAskGeneric;
 }
@@ -134,6 +178,10 @@ String finiCardTitle(
       return finiActivityTitle(s, p, childName: childName);
     case 'task_review':
       return s.finiAskApprove;
+    case 'app_sort':
+      return p.cantSort
+          ? s.finiAskSortApp(p.appName)
+          : s.finiAskSortedApp(p.appName, finiAppCategoryName(s, p.appCategory));
   }
   return s.finiAskGeneric;
 }

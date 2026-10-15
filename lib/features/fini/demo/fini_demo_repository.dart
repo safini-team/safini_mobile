@@ -174,6 +174,40 @@ class FiniDemoRepository implements FiniRepository {
           },
           createdAt: at(17, 42),
         ),
+      if (state == FiniDemoState.newApps) ...[
+        FiniProposal(
+          id: '$childId-sort-card',
+          childId: childId,
+          kind: 'app_sort',
+          status: FiniProposalStatus.pending,
+          reason: "Fini can't tell what Zorbit is. Where does it go?",
+          payload: const {
+            'package_name': 'com.xyz.zorbit',
+            'app_name': 'Zorbit',
+            'category': null,
+            'guess': 'other',
+            'cant_sort': true,
+          },
+          createdAt: _now.subtract(const Duration(minutes: 12)),
+        ),
+        FiniProposal(
+          id: '$childId-sorted',
+          childId: childId,
+          kind: 'app_sort',
+          status: FiniProposalStatus.applied,
+          decidedBy: 'fini',
+          reason: 'Fini added Stumble Guys to games (blocked).',
+          payload: {
+            'package_name': 'com.kitkagames.fallbuddies',
+            'app_name': 'Stumble Guys',
+            'category': 'games',
+            'goal_id': '$childId-games',
+            'intent': 'games',
+            'limit_minutes': 0,
+          },
+          createdAt: _now.subtract(const Duration(minutes: 40)),
+        ),
+      ],
     ];
   }
 
@@ -350,6 +384,43 @@ class FiniDemoRepository implements FiniRepository {
       return jumped;
     }
     throw StateError('No goal $goalId');
+  }
+
+  @override
+  Future<FiniProposal> placeApp(
+    String childId,
+    String packageName, {
+    String? category,
+    int? minutes,
+  }) async {
+    _seed(childId);
+    final list = _proposals[childId]!;
+    list.removeWhere(
+      (p) =>
+          p.isAppSort &&
+          p.appPackage == packageName &&
+          p.status == FiniProposalStatus.pending,
+    );
+    final old = list.where((p) => p.appPackage == packageName).firstOrNull;
+    final placed = FiniProposal(
+      id: 'demo-place-${list.length}',
+      childId: childId,
+      kind: 'app_sort',
+      status: FiniProposalStatus.accepted,
+      reason: '',
+      decidedBy: 'parent',
+      canUndo: true,
+      createdAt: DateTime.now(),
+      payload: {
+        'package_name': packageName,
+        'app_name': old?.appName ?? packageName,
+        'category': category ?? old?.appCategory ?? 'games',
+        'minutes': minutes,
+        'by': 'parent',
+      },
+    );
+    list.insert(0, placed);
+    return placed;
   }
 
   @override

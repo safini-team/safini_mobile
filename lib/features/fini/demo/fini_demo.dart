@@ -19,6 +19,7 @@ enum FiniDemoState {
   runningPlan,
   pendingTimeRequest,
   trialExpired,
+  newApps,
 }
 
 /// Pure so the release gate is testable: tests always run in debug mode.

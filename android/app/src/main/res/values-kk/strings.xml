@@ -51,6 +51,8 @@
     <string name="block_pool_scrolling_body">Бүгінгі лента уақытың бітті. Басқа қолданбалар жұмыс істейді, лента ертең оянады.</string>
     <string name="block_pool_title">%1$s ертеңге дейін демалады</string>
     <string name="block_pool_body">Мұндай қолданбалардың бүгінгі уақыты бітті. Басқа қолданбалар жұмыс істейді.</string>
+    <string name="block_pool_new_apps_title">Жаңа қолданба %1$s демалады</string>
+    <string name="block_pool_new_apps_body">Ата-анаң сұрыптағанша жаңа қолданбаларға күніне аздап ортақ уақыт беріледі. Бүгінгісі бітті. Басқа қолданбалар жұмыс істейді.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d минут ашылды</item>
         <item quantity="other">%d минут ашылды</item>

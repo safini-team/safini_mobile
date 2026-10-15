@@ -29,6 +29,10 @@ class InstalledApp {
   /// it knows its default dialer and SMS app.
   final bool alwaysAllowed;
 
+  /// The category the app declares on Android (`game`, `social`...), only
+  /// known on the phone. Fini reads it when it sorts a new app.
+  final String? storeCategory;
+
   /// The slug a parent's rule on this app goes under, as the API names it.
   /// Every app on the phone has one, not only the catalog's.
   final String? appSlug;
@@ -41,6 +45,7 @@ class InstalledApp {
     this.iconUrl,
     this.appSlug,
     this.alwaysAllowed = false,
+    this.storeCategory,
   });
 
   factory InstalledApp.fromJson(Map<String, dynamic> json) {
@@ -67,6 +72,7 @@ class InstalledApp {
     'package_name': packageName,
     'app_name': appName,
     if (alwaysAllowed) 'always_allowed': true,
+    'store_category': ?storeCategory,
     if (iconSha256 != null) 'icon_sha256': iconSha256,
     if (withIcon && iconPng != null) 'icon_png': base64Encode(iconPng!),
   };
