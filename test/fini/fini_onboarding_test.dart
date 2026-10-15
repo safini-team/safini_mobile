@@ -134,6 +134,7 @@ void main() {
           'target': {'intent': 'bedtime'},
           'window_start': '21:00:00',
           'window_end': '06:30:00',
+          'window_days': 127,
           'pace': 'gentle',
         },
         {

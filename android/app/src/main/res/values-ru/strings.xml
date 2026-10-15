@@ -59,6 +59,14 @@
     <string name="block_pool_body">Время на такие приложения на сегодня закончилось. Другие приложения работают.</string>
     <string name="block_pool_new_apps_title">Новое приложение %1$s отдыхает</string>
     <string name="block_pool_new_apps_body">У новых приложений немного общего времени в день, пока родитель их не разберёт. На сегодня оно закончилось. Другие приложения работают.</string>
+    <string name="block_window_bedtime_title">Экраны отдыхают до %1$s</string>
+    <string name="block_window_bedtime_body">Пора спать. Звонки и сообщения работают.</string>
+    <string name="block_window_school_title">Уроки до %1$s</string>
+    <string name="block_window_school_body">Во время уроков приложения отдыхают. Звонки и сообщения работают.</string>
+    <string name="block_window_dinner_title">Ужин до %1$s</string>
+    <string name="block_window_dinner_body">Пока семья ужинает, экраны отдыхают. Звонки и сообщения работают.</string>
+    <string name="block_window_title">Экраны отдыхают до %1$s</string>
+    <string name="block_window_body">Звонки и сообщения работают.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">Открыта %d минута</item>
         <item quantity="few">Открыто %d минуты</item>

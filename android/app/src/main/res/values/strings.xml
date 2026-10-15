@@ -54,6 +54,14 @@
     <string name="block_pool_body">Today’s time for apps like this is used up. Other apps still work.</string>
     <string name="block_pool_new_apps_title">New app %1$s is resting</string>
     <string name="block_pool_new_apps_body">New apps share a little time each day until your parent sorts them. Today’s is used up. Other apps still work.</string>
+    <string name="block_window_bedtime_title">Screens rest until %1$s</string>
+    <string name="block_window_bedtime_body">It’s bedtime. Phone and messages still work.</string>
+    <string name="block_window_school_title">School time until %1$s</string>
+    <string name="block_window_school_body">Apps rest during school hours. Phone and messages still work.</string>
+    <string name="block_window_dinner_title">Dinner time until %1$s</string>
+    <string name="block_window_dinner_body">Screens rest while the family eats. Phone and messages still work.</string>
+    <string name="block_window_title">Screens rest until %1$s</string>
+    <string name="block_window_body">Phone and messages still work.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d minute, unlocked</item>
         <item quantity="other">%d minutes, unlocked</item>

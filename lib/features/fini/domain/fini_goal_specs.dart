@@ -12,6 +12,7 @@ class GoalIntentSpec {
     this.minutesPerDay,
     this.windowStart,
     this.windowEnd,
+    this.windowDays = allWeekdays,
     this.comingSoon = false,
   });
 
@@ -21,6 +22,7 @@ class GoalIntentSpec {
   final int? minutesPerDay;
   final FiniTime? windowStart;
   final FiniTime? windowEnd;
+  final int windowDays;
 
   /// Shown dimmed with "soon"; cannot be added yet.
   final bool comingSoon;
@@ -45,6 +47,7 @@ class GoalIntentSpec {
     if (hasWindow) ...{
       'window_start': (start ?? windowStart)!.toJson(),
       'window_end': (end ?? windowEnd)!.toJson(),
+      'window_days': windowDays,
     },
     'pace': pace.name,
   };
@@ -85,6 +88,7 @@ const goalIntentSpecs = <GoalIntentSpec>[
     kind: 'schedule_window',
     windowStart: FiniTime(8, 0),
     windowEnd: FiniTime(14, 0),
+    windowDays: schoolDays,
   ),
   GoalIntentSpec(
     intent: GoalIntent.dinner,

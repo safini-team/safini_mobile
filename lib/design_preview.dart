@@ -23,6 +23,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/features/fini/demo/fini_demo.dart';
 import 'package:safini/features/fini/demo/fini_demo_repository.dart';
 import 'package:safini/features/fini/kid/kid_ask_card.dart';
+import 'package:safini/features/fini/kid/kid_window_card.dart';
+import 'package:safini/features/fini/presentation/screens/fini_goal_screen.dart'
+    show FiniGoalScreen;
 import 'package:safini/features/fini/presentation/cubit/fini_cubit.dart';
 import 'package:safini/features/fini/presentation/screens/fini_home_screen.dart'
     show FiniNeedsYouCard, FiniNewAppCard;
@@ -289,6 +292,25 @@ class _GalleryState extends State<_Gallery> {
         onSelectLane: (_) {},
         onOpenTask: (_) {},
         onNewTask: () {},
+      ),
+    ),
+    _Entry(
+      'Fini · bedtime goal',
+      AppColors.bgParent,
+      (context) => const _FiniGoalPreview(),
+    ),
+    _Entry(
+      'Kid · bedtime',
+      AppColors.bgChild,
+      (context) => ListView(
+        padding: const EdgeInsets.fromLTRB(16, 70, 16, 0),
+        children: const [
+          KidWindowCard(window: KidWindow(intent: 'bedtime', until: '07:00')),
+          SizedBox(height: 12),
+          KidWindowCard(window: KidWindow(intent: 'school', until: '14:00')),
+          SizedBox(height: 12),
+          KidWindowCard(window: KidWindow(intent: 'dinner', until: '20:00')),
+        ],
       ),
     ),
     _Entry(
@@ -760,5 +782,36 @@ class _FiniNewAppsPreviewState extends State<_FiniNewAppsPreview> {
         ],
       ),
     ),
+  );
+}
+
+
+/// The bedtime goal as the parent edits it: from, until and the days.
+class _FiniGoalPreview extends StatefulWidget {
+  const _FiniGoalPreview();
+
+  @override
+  State<_FiniGoalPreview> createState() => _FiniGoalPreviewState();
+}
+
+class _FiniGoalPreviewState extends State<_FiniGoalPreview> {
+  final _cubit = FiniCubit(FiniDemoRepository(FiniDemoState.runningPlan));
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit.load('amir');
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: _cubit,
+    child: const FiniGoalScreen(goalId: 'amir-bedtime', childName: 'Amir'),
   );
 }

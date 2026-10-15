@@ -1135,5 +1135,10 @@
   "finiAskSortedApp": "{app} «{category}» тобуна кошулсунбу?",
   "finiAllowApp": "Күнүнө {time} уруксат",
   "finiNotAGame": "Бул оюн эмес",
-  "finiNotInCategory": "«{category}» эмес"
+  "finiNotInCategory": "«{category}» эмес",
+  "goalWindowDays": "Күндөр",
+  "kidWindowBedtime": "Экрандар {time} чейин эс алат",
+  "kidWindowSchool": "Сабак {time} чейин",
+  "kidWindowDinner": "Кечки тамак {time} чейин",
+  "kidWindowSub": "Ага чейин тиркемелер эс алат. Чалуу жана билдирүүлөр иштейт."
 }

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -161,6 +162,8 @@ class FiniGoalScreen extends StatelessWidget {
                         'window_start': start.toJson(),
                         'window_end': end.toJson(),
                       }),
+                      onDays: (days) =>
+                          _save(context, goal, {'window_days': days}),
                     )
                   else
                     DsCard(
@@ -399,10 +402,15 @@ class _StepBars extends StatelessWidget {
 }
 
 class _WindowCard extends StatelessWidget {
-  const _WindowCard({required this.goal, required this.onChange});
+  const _WindowCard({
+    required this.goal,
+    required this.onChange,
+    required this.onDays,
+  });
 
   final FiniGoal goal;
   final void Function(FiniTime start, FiniTime end) onChange;
+  final ValueChanged<int> onDays;
 
   Future<FiniTime?> _pick(BuildContext context, FiniTime current) async {
     final picked = await showTimePicker(
@@ -434,6 +442,35 @@ class _WindowCard extends StatelessWidget {
             final picked = await _pick(context, end);
             if (picked != null) onChange(start, picked);
           },
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(s.goalWindowDays, style: AppText.rowTitle),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (var day = 0; day < 7; day++)
+                    DsCategoryChip(
+                      key: ValueKey('goal-day-$day'),
+                      label: DateFormat.E(
+                        Localizations.localeOf(context).toString(),
+                      ).format(DateTime(2026, 10, 19 + day)),
+                      selected: goal.windowDays & (1 << day) != 0,
+                      onTap: () {
+                        final days = goal.windowDays ^ (1 << day);
+                        // A window needs at least one day.
+                        if (days != 0) onDays(days);
+                      },
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );

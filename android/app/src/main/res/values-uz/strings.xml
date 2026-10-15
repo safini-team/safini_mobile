@@ -53,6 +53,14 @@
     <string name="block_pool_body">Bunday ilovalar uchun bugungi vaqt tugadi. Boshqa ilovalar ishlaydi.</string>
     <string name="block_pool_new_apps_title">Yangi ilova %1$s dam oladi</string>
     <string name="block_pool_new_apps_body">Ota-onang saralamaguncha yangi ilovalarga kuniga ozgina umumiy vaqt beriladi. Bugungisi tugadi. Boshqa ilovalar ishlaydi.</string>
+    <string name="block_window_bedtime_title">Ekranlar %1$sgacha dam oladi</string>
+    <string name="block_window_bedtime_body">Uxlash vaqti. Qoʻngʻiroq va xabarlar ishlaydi.</string>
+    <string name="block_window_school_title">Darslar %1$sgacha</string>
+    <string name="block_window_school_body">Dars vaqtida ilovalar dam oladi. Qoʻngʻiroq va xabarlar ishlaydi.</string>
+    <string name="block_window_dinner_title">Kechki ovqat %1$sgacha</string>
+    <string name="block_window_dinner_body">Oila ovqatlanayotganda ekranlar dam oladi. Qoʻngʻiroq va xabarlar ishlaydi.</string>
+    <string name="block_window_title">Ekranlar %1$sgacha dam oladi</string>
+    <string name="block_window_body">Qoʻngʻiroq va xabarlar ishlaydi.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d daqiqa ochildi</item>
         <item quantity="other">%d daqiqa ochildi</item>

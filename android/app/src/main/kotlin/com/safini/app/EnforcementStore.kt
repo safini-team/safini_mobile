@@ -5,6 +5,8 @@ import android.content.res.Resources
 import org.json.JSONObject
 import org.json.JSONArray
 import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 
 /** Non-secret budgets live in device-protected storage so boot can resume offline. */
@@ -134,6 +136,45 @@ class EnforcementStore(context: Context) : FrontApp, InstalledAppsStore {
     private fun tightestPool(pkg: String, date: String, sameDay: Boolean): Pair<JSONObject, Long>? =
         poolsOf(pkg).map { it to poolRemaining(it, date, sameDay) }.minByOrNull { it.second }
 
+    /** The time windows the parent set (SAF-277), from the last snapshot. */
+    fun windows(): List<TimeWindows.Window> = snapshot.optJSONArray("windows")?.let { list ->
+        (0 until list.length()).mapNotNull { index ->
+            runCatching {
+                val w = list.getJSONObject(index)
+                TimeWindows.Window(w.optString("intent"), LocalTime.parse(w.getString("start")),
+                    LocalTime.parse(w.getString("end")), w.optInt("days", 127))
+            }.getOrNull()
+        }
+    } ?: emptyList()
+
+    /** The window on at [now] and when it ends, in the family's time zone. */
+    fun windowNow(now: Long): Pair<TimeWindows.Window, ZonedDateTime>? =
+        TimeWindows.active(windows(), Instant.ofEpochMilli(now).atZone(zone()))
+
+    /** The block screen while a window is on: every app rests until it ends. */
+    fun windowFacts(pkg: String, now: Long): BlockFacts? {
+        val (window, end) = windowNow(now) ?: return null
+        return BlockFacts(
+            slug = "",
+            appName = label(pkg),
+            paused = false,
+            dayCap = false,
+            canUnlock = false,
+            cost = 0,
+            minutes = 0,
+            balance = snapshot.optInt("balance"),
+            allowanceMinutes = 0,
+            resetInMinutes = (end.toInstant().toEpochMilli()-now+59_999)/60_000,
+            remainingSeconds = 0,
+            pool = "window_" + window.intent.ifBlank { "other" },
+            until = end.toLocalTime().toString(),
+        )
+    }
+
+    private fun label(pkg: String) = runCatching {
+        appContext.packageManager.getApplicationLabel(appContext.packageManager.getApplicationInfo(pkg, 0)).toString()
+    }.getOrDefault(pkg)
+
     fun remaining(pkg: String, now: Long): Long? {
         val date = day(now)
         val sameDay = date == snapshot.optString("usage_date")
@@ -148,6 +189,7 @@ class EnforcementStore(context: Context) : FrontApp, InstalledAppsStore {
 
     /** What the block screen tells the child about [pkg]: why it is closed and what coins can still do. */
     fun blockFacts(pkg: String, now: Long): BlockFacts? {
+        windowFacts(pkg, now)?.let { return it }
         val date = day(now)
         val sameDay = date == snapshot.optString("usage_date")
         val tightest = tightestPool(pkg, date, sameDay)

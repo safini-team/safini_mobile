@@ -62,6 +62,8 @@ data class BlockFacts(
     val tasks: List<BlockTask> = emptyList(),
     /** The Fini pool that ran out (`games`, `scrolling`), or null when the app's own limit did. */
     val pool: String? = null,
+    /** While a time window is on (`pool` is `window_bedtime`...): when screens come back, HH:mm. */
+    val until: String? = null,
 ) {
     val screen: BlockScreen get() = when {
         paused -> BlockScreen.PAUSED
@@ -431,7 +433,12 @@ class BlockOverlay(private val context: Context, private val host: Host) {
                 "games" -> res.getString(R.string.block_pool_games_title) to res.getString(R.string.block_pool_games_body)
                 "scrolling" -> res.getString(R.string.block_pool_scrolling_title) to res.getString(R.string.block_pool_scrolling_body)
                 "new_apps" -> res.getString(R.string.block_pool_new_apps_title, f.appName) to res.getString(R.string.block_pool_new_apps_body)
-                else -> res.getString(R.string.block_pool_title, f.appName) to res.getString(R.string.block_pool_body)
+                "window_bedtime" -> res.getString(R.string.block_window_bedtime_title, f.until) to res.getString(R.string.block_window_bedtime_body)
+                "window_school" -> res.getString(R.string.block_window_school_title, f.until) to res.getString(R.string.block_window_school_body)
+                "window_dinner" -> res.getString(R.string.block_window_dinner_title, f.until) to res.getString(R.string.block_window_dinner_body)
+                "window_other" -> res.getString(R.string.block_window_title, f.until) to res.getString(R.string.block_window_body)
+                else -> if (f.until != null) res.getString(R.string.block_window_title, f.until) to res.getString(R.string.block_window_body)
+                    else res.getString(R.string.block_pool_title, f.appName) to res.getString(R.string.block_pool_body)
             }
             BlockScreen.NEED_COINS -> (f.cost-f.balance).let { res.getQuantityString(R.plurals.block_need_title, it, it) } to
                 res.getString(R.string.block_need_body)

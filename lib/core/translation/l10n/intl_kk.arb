@@ -1135,5 +1135,10 @@
   "finiAskSortedApp": "{app} «{category}» тобына қосылсын ба?",
   "finiAllowApp": "Күніне {time} рұқсат",
   "finiNotAGame": "Бұл ойын емес",
-  "finiNotInCategory": "«{category}» емес"
+  "finiNotInCategory": "«{category}» емес",
+  "goalWindowDays": "Күндер",
+  "kidWindowBedtime": "Экрандар {time} дейін демалады",
+  "kidWindowSchool": "Сабақ {time} дейін",
+  "kidWindowDinner": "Кешкі ас {time} дейін",
+  "kidWindowSub": "Оған дейін қолданбалар демалады. Қоңырау мен хабарламалар жұмыс істейді."
 }
