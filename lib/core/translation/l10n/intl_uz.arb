@@ -1169,5 +1169,7 @@
   "kidWindowBedtime": "Ekranlar {time}gacha dam oladi",
   "kidWindowSchool": "Darslar {time}gacha",
   "kidWindowDinner": "Kechki ovqat {time}gacha",
-  "kidWindowSub": "Shu vaqtgacha ilovalar dam oladi. Qoʻngʻiroq va xabarlar ishlaydi."
+  "kidWindowSub": "Shu vaqtgacha ilovalar dam oladi. Qoʻngʻiroq va xabarlar ishlaydi.",
+  "finiReportTitle": "{child}: hafta",
+  "finiReportOverline": "Haftalik hisobot"
 }

@@ -1140,5 +1140,7 @@
   "kidWindowBedtime": "Экрандар {time} дейін демалады",
   "kidWindowSchool": "Сабақ {time} дейін",
   "kidWindowDinner": "Кешкі ас {time} дейін",
-  "kidWindowSub": "Оған дейін қолданбалар демалады. Қоңырау мен хабарламалар жұмыс істейді."
+  "kidWindowSub": "Оған дейін қолданбалар демалады. Қоңырау мен хабарламалар жұмыс істейді.",
+  "finiReportTitle": "{child}: апта",
+  "finiReportOverline": "Апталық есеп"
 }

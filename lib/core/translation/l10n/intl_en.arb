@@ -1315,5 +1315,7 @@
   "kidWindowBedtime": "Screens rest until {time}",
   "kidWindowSchool": "School time until {time}",
   "kidWindowDinner": "Dinner time until {time}",
-  "kidWindowSub": "Apps rest until then. Phone and messages still work."
+  "kidWindowSub": "Apps rest until then. Phone and messages still work.",
+  "finiReportTitle": "{child}'s week",
+  "finiReportOverline": "Sunday report"
 }

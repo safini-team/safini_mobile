@@ -15,7 +15,15 @@ class FiniState {
     this.pending = const [],
     this.activity = const [],
     this.trial = const FiniTrial(),
+    this.reports = const [],
   });
+
+  /// Fini's Sunday reports, newest first (SAF-278).
+  final List<FiniReport> reports;
+
+  /// This week's report for the home card, or null.
+  FiniReport? latestReport(DateTime now) =>
+      reports.where((report) => report.isCurrent(now)).firstOrNull;
 
   final String? childId;
   final FiniStatus status;
@@ -49,6 +57,7 @@ class FiniState {
     List<FiniProposal>? pending,
     List<FiniProposal>? activity,
     FiniTrial? trial,
+    List<FiniReport>? reports,
   }) => FiniState(
     childId: childId,
     status: status ?? this.status,
@@ -57,6 +66,7 @@ class FiniState {
     pending: pending ?? this.pending,
     activity: activity ?? this.activity,
     trial: trial ?? this.trial,
+    reports: reports ?? this.reports,
   );
 }
 
@@ -145,6 +155,7 @@ class FiniCubit extends Cubit<FiniState> {
       _repo.pending(childId),
       _repo.activity(childId),
       _trialOrLast(),
+      _reportsOrNone(childId),
     ]);
     return FiniState(
       childId: childId,
@@ -154,7 +165,17 @@ class FiniCubit extends Cubit<FiniState> {
       pending: results[2] as List<FiniProposal>,
       activity: results[3] as List<FiniProposal>,
       trial: results[4] as FiniTrial,
+      reports: results[5] as List<FiniReport>,
     );
+  }
+
+  /// An older API has no reports: the tab works without the card.
+  Future<List<FiniReport>> _reportsOrNone(String childId) async {
+    try {
+      return await _repo.reports(childId);
+    } catch (_) {
+      return const [];
+    }
   }
 
   /// A trial the server cannot say keeps the last one: the tab still works,

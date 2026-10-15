@@ -23,6 +23,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/features/fini/demo/fini_demo.dart';
 import 'package:safini/features/fini/demo/fini_demo_repository.dart';
 import 'package:safini/features/fini/kid/kid_ask_card.dart';
+import 'package:safini/features/fini/presentation/widgets/report_card.dart';
 import 'package:safini/features/fini/kid/kid_window_card.dart';
 import 'package:safini/features/fini/presentation/screens/fini_goal_screen.dart'
     show FiniGoalScreen;
@@ -312,6 +313,37 @@ class _GalleryState extends State<_Gallery> {
           KidWindowCard(window: KidWindow(intent: 'dinner', until: '20:00')),
         ],
       ),
+    ),
+    _Entry(
+      'Fini · Sunday report',
+      AppColors.bgParent,
+      (context) {
+        final ru = Localizations.localeOf(context).languageCode == 'ru';
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(16, 70, 16, 0),
+          children: [
+            FiniReportCard(
+              childName: ru ? 'Амир' : 'Amir',
+              report: FiniReport(
+                id: 'r',
+                weekStart: DateTime(2026, 10, 12),
+                weekEnd: DateTime(2026, 10, 18),
+                bullets: ru
+                    ? const [
+                        'Лимит на игры соблюдён 6 дней из 7.',
+                        'Игры за день: 84 минуты вместо 121 неделей раньше.',
+                        'С понедельника лимит на игры: 74 минуты в день.',
+                      ]
+                    : const [
+                        'Your child kept game time within the daily limit on 6 of 7 days.',
+                        'Daily game time dropped from 121 to 84 minutes, a clear step down.',
+                        'On Monday, the daily game limit moves to 74 minutes.',
+                      ],
+              ),
+            ),
+          ],
+        );
+      },
     ),
     _Entry(
       'Fini · new apps',
