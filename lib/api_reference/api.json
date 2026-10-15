@@ -8495,7 +8495,7 @@
           "fini"
         ],
         "summary": "List Fini Goals",
-        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The goals a parent set for a child, which Fini works towards.\n\n**Frontend note:** Archived goals are left out.",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The goals a parent set for a child, which Fini works towards.\n\n**Frontend note:** Archived goals are left out. Budget goals carry `plan` (SAF-274): `phase` is `waiting_for_phone` (nothing paired), `watching` (the first 3 days, `watched_days` of `watch_days`), `stepping` or `at_target`; `steps` are the weekly limits from today's to the goal, empty when the plan does not step (iPhone, or `now` pace); `next_step_on` is the next Monday. Other goals have `plan: null`.",
         "operationId": "list_fini_goals_v1_children__child_id__fini_goals_get",
         "security": [
           {
@@ -8528,19 +8528,45 @@
                     {
                       "id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
                       "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
-                      "kind": "app_cap",
+                      "kind": "category_budget",
                       "target": {
-                        "app_slugs": [
-                          "roblox"
+                        "intent": "games",
+                        "categories": [
+                          "games"
                         ]
                       },
                       "minutes_per_day": 45,
-                      "weekend_minutes": 60,
                       "start_minutes": 120,
                       "pace": "steady",
                       "status": "active",
+                      "current_minutes": 90,
+                      "planned_on": "2026-10-20",
                       "created_at": "2026-10-14T09:00:00Z",
-                      "updated_at": "2026-10-14T09:00:00Z"
+                      "updated_at": "2026-10-14T09:00:00Z",
+                      "plan": {
+                        "platform": "android",
+                        "phase": "stepping",
+                        "steps_down": true,
+                        "current_minutes": 90,
+                        "start_minutes": 120,
+                        "watch_days": 3,
+                        "watched_days": 3,
+                        "steps": [
+                          90,
+                          68,
+                          51,
+                          45
+                        ],
+                        "start_steps": [
+                          120,
+                          90,
+                          68,
+                          51,
+                          45
+                        ],
+                        "next_step_on": "2026-10-26",
+                        "app_count": 4
+                      }
                     }
                   ]
                 }
@@ -8656,6 +8682,8 @@
                   "start_minutes": 120,
                   "pace": "steady",
                   "status": "active",
+                  "current_minutes": 90,
+                  "planned_on": "2026-10-20",
                   "created_at": "2026-10-14T09:00:00Z",
                   "updated_at": "2026-10-14T09:00:00Z"
                 }
@@ -8911,6 +8939,8 @@
                   "start_minutes": 120,
                   "pace": "steady",
                   "status": "active",
+                  "current_minutes": 90,
+                  "planned_on": "2026-10-20",
                   "created_at": "2026-10-14T09:00:00Z",
                   "updated_at": "2026-10-14T09:00:00Z"
                 }
@@ -9005,6 +9035,269 @@
         "responses": {
           "204": {
             "description": "Successful Response"
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fini/goals/{goal_id}/jump": {
+      "post": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Jump Fini Goal To Target",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** A parent skips the rest of a budget goal's step-down plan: the pool goes to the goal's minutes today (SAF-274).\n\n**Frontend note:** Budget goals only (409 otherwise). A goal already at its target is returned unchanged. The change shows in Activity as the parent's and can be undone for 24 hours. Returns the goal with its `plan`.",
+        "operationId": "jump_fini_goal_v1_fini_goals__goal_id__jump_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "goal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Goal Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The goal at its target.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Jump Fini Goal V1 Fini Goals  Goal Id  Jump Post"
+                },
+                "example": {
+                  "id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "kind": "category_budget",
+                  "target": {
+                    "intent": "games",
+                    "categories": [
+                      "games"
+                    ]
+                  },
+                  "minutes_per_day": 45,
+                  "start_minutes": 120,
+                  "pace": "steady",
+                  "status": "active",
+                  "current_minutes": 90,
+                  "planned_on": "2026-10-20",
+                  "created_at": "2026-10-14T09:00:00Z",
+                  "updated_at": "2026-10-14T09:00:00Z",
+                  "plan": {
+                    "platform": "android",
+                    "phase": "stepping",
+                    "steps_down": true,
+                    "current_minutes": 90,
+                    "start_minutes": 120,
+                    "watch_days": 3,
+                    "watched_days": 3,
+                    "steps": [
+                      90,
+                      68,
+                      51,
+                      45
+                    ],
+                    "start_steps": [
+                      120,
+                      90,
+                      68,
+                      51,
+                      45
+                    ],
+                    "next_step_on": "2026-10-26",
+                    "app_count": 4
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/fini/pools": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "List Fini Pools",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** Budget goals as shared pools: one daily limit over every app of a category on the child's phone, with today's minutes (SAF-274).\n\n**Frontend note:** Android children only have apps here; an iPhone gives no package list. A goal still in its first watch days has no limit yet and is not listed. `apps` are the installed apps in the pool, a new one joins the day it is classified.",
+        "operationId": "list_fini_pools_v1_children__child_id__fini_pools_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The child's pools.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Fini Pools V1 Children  Child Id  Fini Pools Get"
+                },
+                "example": {
+                  "pools": [
+                    {
+                      "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                      "intent": "games",
+                      "categories": [
+                        "games"
+                      ],
+                      "limit_minutes": 90,
+                      "goal_minutes": 45,
+                      "used_minutes": 52,
+                      "package_names": [
+                        "com.roblox.client",
+                        "com.supercell.brawlstars"
+                      ],
+                      "apps": [
+                        {
+                          "package_name": "com.roblox.client",
+                          "app_name": "Roblox",
+                          "used_minutes": 40
+                        },
+                        {
+                          "package_name": "com.supercell.brawlstars",
+                          "app_name": "Brawl Stars",
+                          "used_minutes": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
           },
           "503": {
             "description": "Auth verification or database configuration is not available.",
