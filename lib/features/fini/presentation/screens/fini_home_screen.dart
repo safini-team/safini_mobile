@@ -70,7 +70,13 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
         kids.firstOrNull;
   }
 
-  void _ensureLoaded(BuildContext context, ChildSummaryModel child) {
+  /// Runs after the frame, outside build: everything it needs from a watched
+  /// cubit comes in as [kids], since watching here throws.
+  void _ensureLoaded(
+    BuildContext context,
+    ChildSummaryModel child,
+    List<ChildSummaryModel> kids,
+  ) {
     if (_loadedFor == child.id) return;
     final first = _loadedFor == null;
     _loadedFor = child.id;
@@ -81,7 +87,6 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
       fini.load(child.id);
       return;
     }
-    final kids = _kids(context);
     fini.load(child.id).then((_) {
       fini.prefetch([
         for (final kid in kids)
@@ -107,7 +112,7 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
     final trial = context.watch<FiniCubit>().state.trial;
     if (child != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _ensureLoaded(this.context, child);
+        if (mounted) _ensureLoaded(this.context, child, kids);
       });
     }
 
