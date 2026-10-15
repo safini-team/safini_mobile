@@ -9722,6 +9722,91 @@ class S {
   String get finiNotToday {
     return Intl.message('Not today', name: 'finiNotToday', desc: '', args: []);
   }
+
+  /// `Let Fini check`
+  String get taskFiniCheck {
+    return Intl.message(
+      'Let Fini check',
+      name: 'taskFiniCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini reads the task with today's app time and the photo, if there is one, and approves only when it's clear. You can undo it for 24 h.`
+  String get taskFiniCheckSub {
+    return Intl.message(
+      'Fini reads the task with today\'s app time and the photo, if there is one, and approves only when it\'s clear. You can undo it for 24 h.',
+      name: 'taskFiniCheckSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approved by Fini`
+  String get taskFiniApproved {
+    return Intl.message(
+      'Approved by Fini',
+      name: 'taskFiniApproved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Undo`
+  String get taskFiniUndo {
+    return Intl.message('Undo', name: 'taskFiniUndo', desc: '', args: []);
+  }
+
+  /// `Fini: {app}, {used} of {needed} today`
+  String taskFiniSawApp(Object app, Object used, Object needed) {
+    return Intl.message(
+      'Fini: $app, $used of $needed today',
+      name: 'taskFiniSawApp',
+      desc: '',
+      args: [app, used, needed],
+    );
+  }
+
+  /// `Fini: {note}`
+  String taskFiniSawPhoto(Object note) {
+    return Intl.message(
+      'Fini: $note',
+      name: 'taskFiniSawPhoto',
+      desc: '',
+      args: [note],
+    );
+  }
+
+  /// `{app}: {used} today, the task asked for {needed}.`
+  String finiUsageProof(Object app, Object used, Object needed) {
+    return Intl.message(
+      '$app: $used today, the task asked for $needed.',
+      name: 'finiUsageProof',
+      desc: '',
+      args: [app, used, needed],
+    );
+  }
+
+  /// `Fini is checking`
+  String get taskFiniCheckingTask {
+    return Intl.message(
+      'Fini is checking',
+      name: 'taskFiniCheckingTask',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini: no app time or photo to check today`
+  String get taskFiniNoSignals {
+    return Intl.message(
+      'Fini: no app time or photo to check today',
+      name: 'taskFiniNoSignals',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

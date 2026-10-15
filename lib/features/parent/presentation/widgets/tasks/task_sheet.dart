@@ -18,6 +18,8 @@ import 'package:safini/features/parent/presentation/cubit/parent_tasks_cubit.dar
 import 'package:safini/features/parent/presentation/cubit/parent_tasks_state.dart';
 import 'package:safini/features/parent/presentation/widgets/tasks/task_voice_recorder.dart';
 import 'package:safini/core/utils/task_category.dart';
+import 'dart:convert';
+import 'package:safini/features/fini/presentation/widgets/fini_check_panel.dart';
 
 enum _NewTaskChoice { custom }
 
@@ -40,8 +42,11 @@ TaskUpdateRequestDto taskEditRequest(
   required int recurrenceDays,
   required String emoji,
   required bool photoProof,
+  Map<String, dynamic>? finiCheck,
 }) {
   final originalEmoji = original.metadata?['emoji'];
+  final originalCheck = original.metadata?['fini_check'];
+  final checkChanged = jsonEncode(finiCheck) != jsonEncode(originalCheck);
   final nextDescription = description ?? '';
   final originalDescription = original.description ?? '';
   return TaskUpdateRequestDto(
@@ -61,11 +66,21 @@ TaskUpdateRequestDto taskEditRequest(
     recurrenceDays: recurrence == 'weekly' ? recurrenceDays : null,
     // The server replaces metadata whole, so keep what else it holds - the
     // idea a task came from, for one.
-    metadata: emoji != originalEmoji
-        ? {...?original.metadata, 'emoji': emoji}
+    metadata: emoji != originalEmoji || checkChanged
+        ? withFiniCheck({...?original.metadata, 'emoji': emoji}, finiCheck)
         : null,
   );
 }
+
+/// [metadata] with `fini_check` set to [check], or without it when null.
+Map<String, dynamic> withFiniCheck(
+  Map<String, dynamic> metadata,
+  Map<String, dynamic>? check,
+) => {
+  for (final entry in metadata.entries)
+    if (entry.key != 'fini_check') entry.key: entry.value,
+  'fini_check': ?check,
+};
 
 /// Lets the parent choose a localized template or start with a blank task.
 /// Nothing is saved until the following editor is submitted.
@@ -223,6 +238,9 @@ class _TaskSheetState extends State<TaskSheet> {
   String? _recurrenceError;
   int _coins = 15;
   bool _photoProof = true;
+
+  /// "Let Fini check" (SAF-276).
+  FiniCheck _finiCheck = const FiniCheck();
   TaskVoiceSave _voiceSave = TaskVoiceSave.unchanged;
   bool _voiceBusy = false;
 
@@ -263,6 +281,7 @@ class _TaskSheetState extends State<TaskSheet> {
       _recurrenceDays = task.recurrenceDays ?? 0;
       final emoji = task.metadata?['emoji'];
       if (emoji is String && emoji.trim().isNotEmpty) _emoji = emoji.trim();
+      _finiCheck = FiniCheck.fromJson(task.metadata?['fini_check']);
     } else if (widget.idea case final idea?) {
       _coins = idea.coins;
       _photoProof = idea.photoProof;
@@ -356,10 +375,10 @@ class _TaskSheetState extends State<TaskSheet> {
           recurrence: _recurrence,
           recurrenceDays: _recurrenceDays,
         ),
-        metadata: {
+        metadata: withFiniCheck({
           'emoji': _emoji,
           if (widget.idea case final idea?) TaskIdea.metadataKey: idea.key,
-        },
+        }, _finiCheck.toJson()),
       );
       final targetIds = _targetChildId == null
           ? _children.map((child) => child.id).toList()
@@ -382,6 +401,7 @@ class _TaskSheetState extends State<TaskSheet> {
       recurrenceDays: _recurrenceDays,
       emoji: _emoji,
       photoProof: _photoProof,
+      finiCheck: _finiCheck.toJson(),
     );
 
     if (request.isEmpty && !_voiceSave.hasWork) {
@@ -538,6 +558,11 @@ class _TaskSheetState extends State<TaskSheet> {
                 onCoins: (value) =>
                     setState(() => _coins = value.clamp(5, 100000)),
                 onPhotoProof: (value) => setState(() => _photoProof = value),
+              ),
+              const SizedBox(height: 14),
+              FiniCheckPanel(
+                check: _finiCheck,
+                onChanged: (check) => setState(() => _finiCheck = check),
               ),
               const SizedBox(height: 14),
               TaskVoiceRecorderPanel(

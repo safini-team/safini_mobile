@@ -85,6 +85,7 @@ const Set<String> _sameAsEnglishByDesign = {
   'goalGamesSub', // app names
   'goalScrollingSub', // app names
   'obAndroid', // platform names
+  'taskFiniSawPhoto', // "Fini: {note}": a name and the note
   'obIphone',
 };
 

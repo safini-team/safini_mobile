@@ -1283,5 +1283,14 @@
   "kidAskGrantedFini": "Yes: +{minutes}. Your tasks are done.",
   "kidAskDeclined": "Not today. Your time comes back tomorrow.",
   "finiAskReason": "{goal}: today's time is up.",
-  "finiNotToday": "Not today"
+  "finiNotToday": "Not today",
+  "taskFiniCheck": "Let Fini check",
+  "taskFiniCheckSub": "Fini reads the task with today's app time and the photo, if there is one, and approves only when it's clear. You can undo it for 24 h.",
+  "taskFiniApproved": "Approved by Fini",
+  "taskFiniUndo": "Undo",
+  "taskFiniSawApp": "Fini: {app}, {used} of {needed} today",
+  "taskFiniSawPhoto": "Fini: {note}",
+  "finiUsageProof": "{app}: {used} today, the task asked for {needed}.",
+  "taskFiniCheckingTask": "Fini is checking",
+  "taskFiniNoSignals": "Fini: no app time or photo to check today"
 }

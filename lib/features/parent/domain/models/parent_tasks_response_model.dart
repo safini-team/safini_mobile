@@ -214,6 +214,9 @@ class ParentTaskInstanceModel {
   final String? reviewedByUserId;
   final ReviewedByParentModel? reviewedByParent;
 
+  /// What Fini saw when it checked the proof (SAF-276), or null.
+  final FiniTaskResult? finiResult;
+
   const ParentTaskInstanceModel({
     required this.id,
     required this.status,
@@ -243,7 +246,18 @@ class ParentTaskInstanceModel {
     this.reviewedAt,
     this.reviewedByUserId,
     this.reviewedByParent,
+    this.finiResult,
   });
+
+  /// Approved by Fini, not a parent, and not undone.
+  bool get approvedByFini =>
+      status == 'approved' && (finiResult?.approved ?? false);
+
+  /// "Let Fini check" is on for this task: an app with minutes, or a photo.
+  Map<String, dynamic>? get finiCheck {
+    final check = metadata?['fini_check'];
+    return check is Map ? check.cast<String, dynamic>() : null;
+  }
 
   ParentTaskInstanceModel copyWith({String? submissionImageUrl}) {
     return ParentTaskInstanceModel(
@@ -275,12 +289,17 @@ class ParentTaskInstanceModel {
       reviewedAt: reviewedAt,
       reviewedByUserId: reviewedByUserId,
       reviewedByParent: reviewedByParent,
+      finiResult: finiResult,
     );
   }
 
   factory ParentTaskInstanceModel.fromJson(Map<String, dynamic> json) {
     final rawMetadata = json['metadata'];
+    final rawFini = json['fini_result'];
     return ParentTaskInstanceModel(
+      finiResult: rawFini is Map
+          ? FiniTaskResult.fromJson(rawFini.cast<String, dynamic>())
+          : null,
       id: _stringValue(json, ['id', 'instance_id', 'task_instance_id']),
       status: _stringValue(json, ['status']),
       title: _nullableStringValue(json, [
@@ -486,4 +505,53 @@ Map<String, dynamic>? _extractObject(
     }
   }
   return null;
+}
+
+
+/// What Fini saw on a task's proof (SAF-276): app minutes or a photo.
+class FiniTaskResult {
+  const FiniTaskResult({
+    required this.kind,
+    this.approved = false,
+    this.undone = false,
+    this.state,
+    this.appName,
+    this.usedMinutes,
+    this.neededMinutes,
+    this.note,
+    this.proposalId,
+    this.undoUntil,
+  });
+
+  /// `usage` or `photo`.
+  final String kind;
+  final bool approved;
+  final bool undone;
+
+  /// Photos: `checking`, `approved`, `parent` or `unread`.
+  final String? state;
+  final String? appName;
+  final int? usedMinutes;
+  final int? neededMinutes;
+
+  /// Photos: the model's one line for the parent.
+  final String? note;
+  final String? proposalId;
+  final DateTime? undoUntil;
+
+  bool canUndo(DateTime now) =>
+      approved && proposalId != null && (undoUntil?.isAfter(now) ?? false);
+
+  factory FiniTaskResult.fromJson(Map<String, dynamic> json) => FiniTaskResult(
+    kind: (json['kind'] ?? 'usage').toString(),
+    approved: json['approved'] == true,
+    undone: json['undone'] == true,
+    state: json['state'] as String?,
+    appName: json['app_name'] as String?,
+    usedMinutes: (json['used_minutes'] as num?)?.toInt(),
+    neededMinutes: (json['needed_minutes'] as num?)?.toInt(),
+    note: json['note'] as String?,
+    proposalId: json['proposal_id'] as String?,
+    undoUntil: DateTime.tryParse(json['undo_until']?.toString() ?? ''),
+  );
 }

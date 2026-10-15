@@ -202,6 +202,67 @@ class SampleData {
     ],
   );
 
+  /// "Let Fini check" on the Tasks list (SAF-276): one approved by Fini with
+  /// Undo, one Fini handed back with what it saw, a photo it is looking at.
+  static ParentTasksData parentTasksFini(S s) => ParentTasksData(
+    scopeLine: s.taskScopeLine(s.scopeEveryone, s.taskCount(3)),
+    chips: [
+      TaskScopeChip(key: 'all', label: s.scopeEveryone, hasAvatar: false),
+      const TaskScopeChip(
+        key: 'amir',
+        label: 'Amir',
+        color: Color(0xFF1A5C4A),
+        avatar: _amirAvatar,
+      ),
+    ],
+    selectedScope: 'all',
+    laneCounts: const {TaskLane.review: 2, TaskLane.active: 0, TaskLane.done: 1},
+    lane: TaskLane.review,
+    emptyTitle: s.emptyNoActiveTasks,
+    emptyBody: s.emptyActiveBody,
+    groups: [
+      TaskGroupData(
+        name: 'Amir',
+        color: const Color(0xFF1A5C4A),
+        avatar: _amirAvatar,
+        summary: s.taskGroupSummary(s.taskCount(3), s.coinCountShort(55)),
+        rows: [
+          TaskRowData(
+            id: 'f1',
+            title: 'Duolingo lesson',
+            meta: 'Learn',
+            emoji: '🦉',
+            lane: TaskLane.done,
+            coins: 20,
+            childName: 'Amir',
+            fini: s.taskFiniApproved,
+            onUndo: () {},
+          ),
+          TaskRowData(
+            id: 'f2',
+            title: 'Read in English, 15 min',
+            meta: 'Learn',
+            emoji: '📚',
+            lane: TaskLane.review,
+            coins: 20,
+            childName: 'Amir',
+            fini: s.taskFiniCheckingTask,
+          ),
+          TaskRowData(
+            id: 'f3',
+            title: 'Make the bed',
+            meta: 'Home',
+            emoji: '🛏️',
+            lane: TaskLane.review,
+            coins: 15,
+            childName: 'Amir',
+            fini: s.taskFiniNoSignals,
+          ),
+        ],
+      ),
+    ],
+  );
+
   /// A family's first visit: no tasks yet, so every task idea is on offer.
   static ParentTasksData parentTasksFirstRun(S s) => ParentTasksData(
     scopeLine: s.taskScopeLine(s.scopeEveryone, s.taskCount(0)),

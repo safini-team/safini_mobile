@@ -1108,5 +1108,14 @@
   "kidAskGrantedFini": "Иә: +{minutes}. Тапсырмалар орындалды.",
   "kidAskDeclined": "Бүгін емес. Уақытың ертең оралады.",
   "finiAskReason": "{goal}: бүгінгі уақыт бітті.",
-  "finiNotToday": "Бүгін емес"
+  "finiNotToday": "Бүгін емес",
+  "taskFiniCheck": "Fini тексерсін",
+  "taskFiniCheckSub": "Fini тапсырманы бүгінгі қолданбалардағы уақытпен және суретпен салыстырып, анық болғанда ғана мақұлдайды. 24 сағат ішінде қайтаруға болады.",
+  "taskFiniApproved": "Fini мақұлдады",
+  "taskFiniUndo": "Қайтару",
+  "taskFiniSawApp": "Fini: {app}, бүгін {needed} ішінен {used}",
+  "taskFiniSawPhoto": "Fini: {note}",
+  "finiUsageProof": "{app}: бүгін {used}, тапсырма {needed} сұраған.",
+  "taskFiniCheckingTask": "Fini тексеріп жатыр",
+  "taskFiniNoSignals": "Fini: бүгін тексеретін қолданба уақыты да, сурет те жоқ"
 }
