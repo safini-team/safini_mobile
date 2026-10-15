@@ -160,6 +160,9 @@ class ChildRemoteDataSource {
       if (note != null && note.trim().isNotEmpty) body['note'] = note.trim();
       if (imageObjectKey != null && imageObjectKey.isNotEmpty) {
         body['submission_image_object_key'] = imageObjectKey;
+        // The app only takes proof photos with its own camera, never from
+        // the gallery; Fini checks only these (SAF-276).
+        body['payload'] = {'proof_source': 'camera'};
       }
       await _dio.post<dynamic>(path, data: body);
     } on DioException catch (e) {

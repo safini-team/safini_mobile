@@ -55,6 +55,19 @@ String finiReasonLine(S s, FiniProposal p) {
         .firstOrNull;
     if (intent != null) return s.finiAskReason(goalTitle(s, intent));
   }
+  // A task Fini approved on app minutes (SAF-276).
+  final usage = p.evidence['usage'];
+  if (p.kind == 'task_review' && usage is Map) {
+    final used = (usage['used_minutes'] as num?)?.toInt();
+    final needed = (usage['needed_minutes'] as num?)?.toInt();
+    if (used != null && needed != null) {
+      return s.finiUsageProof(
+        (usage['app_name'] ?? '').toString(),
+        formatHm(s, used),
+        formatHm(s, needed),
+      );
+    }
+  }
   final plan = _plan(p);
   if (plan == null) return p.reason;
   String hm(String key) => formatHm(s, (plan[key] as num?)?.toInt() ?? 0);

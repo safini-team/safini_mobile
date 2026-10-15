@@ -1,3 +1,6 @@
+import 'package:safini/features/fini/data/fini_repository.dart';
+import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
+    show formatHm;
 import 'package:safini/features/parent/presentation/widgets/family/oldest_first.dart';
 import 'dart:async';
 
@@ -318,6 +321,11 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
       lane: laneOf(task),
       coins: task.rewardCoins ?? 0,
       childName: childNameOf(task),
+      fini: finiTaskLine(s, task),
+      onUndo: task.finiResult?.canUndo(DateTime.now()) == true &&
+              task.approvedByFini
+          ? () => _undoFini(task)
+          : null,
     );
 
     String summaryOf(List<TaskRowData> rows) => s.taskGroupSummary(
@@ -450,6 +458,21 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
 
   /// "Home · Today", not "home · 2026-08-23". The row used to print the raw
   /// category slug and an ISO date, untranslated, in all three languages.
+  /// Takes back Fini's approval: the coins come back, the task waits for a
+  /// parent again. Refused when the coins are already spent.
+  Future<void> _undoFini(ParentTaskInstanceModel task) async {
+    final s = S.of(context);
+    final proposalId = task.finiResult?.proposalId;
+    if (proposalId == null) return;
+    try {
+      await getIt<FiniRepository>().decide(proposalId, FiniDecision.undo);
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, s.networkError);
+      return;
+    }
+    if (mounted) unawaited(_reload());
+  }
+
   String _metaFor(BuildContext context, S s, ParentTaskInstanceModel task) {
     final parts = <String>[
       taskCategoryLabel(s, task.category),
@@ -459,6 +482,27 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
     ].where((part) => part.isNotEmpty).toList();
     return parts.join(' · ');
   }
+}
+
+/// Fini's line on a task row (SAF-276), or null when Fini had no part in it.
+String? finiTaskLine(S s, ParentTaskInstanceModel task) {
+  final result = task.finiResult;
+  if (result == null || result.undone) return null;
+  if (task.approvedByFini) return s.taskFiniApproved;
+  if (task.status != 'submitted' && task.status != 'pending_approval') {
+    return null;
+  }
+  if (result.kind == 'photo') {
+    if (result.state == 'checking') return s.taskFiniChecking;
+    final note = result.note?.trim();
+    return note == null || note.isEmpty ? null : s.taskFiniSawPhoto(note);
+  }
+  if (result.usedMinutes == null || result.neededMinutes == null) return null;
+  return s.taskFiniSawApp(
+    result.appName ?? '',
+    formatHm(s, result.usedMinutes!),
+    formatHm(s, result.neededMinutes!),
+  );
 }
 
 /// Pulls the underlying loaded snapshot out of any task state.

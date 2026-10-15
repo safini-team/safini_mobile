@@ -136,280 +136,288 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m50(count) =>
       "${Intl.plural(count, one: 'Пробный период · остался ${count} день', few: 'Пробный период · осталось ${count} дня', many: 'Пробный период · осталось ${count} дней', other: 'Пробный период · осталось ${count} дней')}";
 
-  static String m51(count) =>
+  static String m51(app, used, needed) =>
+      "${app}: ${used} сегодня, задание просило ${needed}.";
+
+  static String m52(count) =>
       "${Intl.plural(count, one: '${count} приз', few: '${count} приза', many: '${count} призов', other: '${count} призов')}";
 
-  static String m52(name) => "Удалить ${name}?";
+  static String m53(name) => "Удалить ${name}?";
 
-  static String m53(count) =>
+  static String m54(count) =>
       "${Intl.plural(count, one: '${count} задание сегодня', few: '${count} задания сегодня', many: '${count} заданий сегодня', other: '${count} заданий сегодня')}";
 
-  static String m54(done, total) => "${done} из ${total}";
+  static String m55(done, total) => "${done} из ${total}";
 
-  static String m55(target) => "Сразу ${target}";
+  static String m56(target) => "Сразу ${target}";
 
-  static String m56(time) => "${time} в день";
+  static String m57(time) => "${time} в день";
 
-  static String m57(target) => "Цель достигнута: ${target} в день. Держу так.";
-
-  static String m58(target) =>
-      "На iPhone я не вижу время в приложениях, поэтому цель действует сразу: ${target} в день, без шагов.";
+  static String m58(target) => "Цель достигнута: ${target} в день. Держу так.";
 
   static String m59(target) =>
+      "На iPhone я не вижу время в приложениях, поэтому цель действует сразу: ${target} в день, без шагов.";
+
+  static String m60(target) =>
       "С завтрашнего дня ${target}. В первые дни возможны споры.";
 
-  static String m60(current, next, weeks) =>
+  static String m61(current, next, weeks) =>
       "Сегодня лимит ${current}. В следующий понедельник ${next}, цель через ${weeks} нед.";
 
-  static String m61(start, target, weeks) =>
+  static String m62(start, target, weeks) =>
       "Сейчас около ${start} в день. Небольшой шаг каждый понедельник, ${target} через ${weeks} нед.";
 
-  static String m62(name) =>
+  static String m63(name) =>
       "Начну наблюдать, когда подключится телефон: ${name}.";
 
-  static String m63(seen, total, name) =>
+  static String m64(seen, total, name) =>
       "Наблюдаю: день ${seen} из ${total}. Потом план начнётся с того, сколько ${name} тратит на самом деле.";
 
-  static String m64(from, to) => "Без экранов ${from}-${to}";
+  static String m65(from, to) => "Без экранов ${from}-${to}";
 
-  static String m65(n) => "нед ${n}";
+  static String m66(n) => "нед ${n}";
 
-  static String m66(from, to) => "${from}-${to}";
+  static String m67(from, to) => "${from}-${to}";
 
-  static String m67(name) => "Ограничить ${name}?";
+  static String m68(name) => "Ограничить ${name}?";
 
-  static String m68(name) => "${name} заблокировано";
+  static String m69(name) => "${name} заблокировано";
 
-  static String m69(count) => "Всего приложений: ${count}";
-
-  static String m70(name) =>
-      "Когда ${name} откроет Safini на своём телефоне, установленные приложения появятся здесь.";
+  static String m70(count) => "Всего приложений: ${count}";
 
   static String m71(name) =>
+      "Когда ${name} откроет Safini на своём телефоне, установленные приложения появятся здесь.";
+
+  static String m72(name) =>
       "Apple не показывает Safini список приложений на iPhone, которым пользуется ${name}, поэтому выбрать лимиты на этом экране пока нельзя.";
 
-  static String m72(date) => "Синхронизировано: ${date}";
+  static String m73(date) => "Синхронизировано: ${date}";
 
-  static String m73(name) => "Все приложения на телефоне ${name}";
+  static String m74(name) => "Все приложения на телефоне ${name}";
 
-  static String m74(apps) => "${apps} · на сегодня всё";
+  static String m75(apps) => "${apps} · на сегодня всё";
 
-  static String m75(minutes) => "Попросить у родителя ${minutes}";
+  static String m76(minutes) => "Попросить у родителя ${minutes}";
 
-  static String m76(parent, minutes) => "${parent}: да, +${minutes}";
+  static String m77(parent, minutes) => "${parent}: да, +${minutes}";
 
-  static String m77(minutes) => "Да: +${minutes}. Задания сделаны.";
+  static String m78(minutes) => "Да: +${minutes}. Задания сделаны.";
 
-  static String m78(limit) => "По семейному плану на игры ${limit} в день.";
+  static String m79(limit) => "По семейному плану на игры ${limit} в день.";
 
-  static String m79(limit) => "По семейному плану ${limit} в день.";
+  static String m80(limit) => "По семейному плану ${limit} в день.";
 
-  static String m80(limit) => "По семейному плану на ленты ${limit} в день.";
+  static String m81(limit) => "По семейному плану на ленты ${limit} в день.";
 
-  static String m81(time) => "+${time} за монеты";
+  static String m82(time) => "+${time} за монеты";
 
-  static String m82(name, time) => "${name}: осталось ${time} на сегодня";
+  static String m83(name, time) => "${name}: осталось ${time} на сегодня";
 
-  static String m83(time) => "Снова можно в ${time}";
+  static String m84(time) => "Снова можно в ${time}";
 
-  static String m84(time) => "${time} в день";
+  static String m85(time) => "${time} в день";
 
-  static String m85(time) => "Сегодня осталось ${time}";
+  static String m86(time) => "Сегодня осталось ${time}";
 
-  static String m86(step, total) => "${step} из ${total}";
+  static String m87(step, total) => "${step} из ${total}";
 
-  static String m87(name, time) => "${name} использовал ${time} сегодня";
+  static String m88(name, time) => "${name} использовал ${time} сегодня";
 
-  static String m88(name) => "Приложения ${name}";
+  static String m89(name) => "Приложения ${name}";
 
-  static String m89(level) => "Герой ${level} уровня";
+  static String m90(level) => "Герой ${level} уровня";
 
-  static String m90(level) => "Уровень ${level}";
+  static String m91(level) => "Уровень ${level}";
 
-  static String m91(name) => "Телефон ${name} · сегодня";
+  static String m92(name) => "Телефон ${name} · сегодня";
 
-  static String m92(count) =>
+  static String m93(count) =>
       "${Intl.plural(count, one: '${count} минута', few: '${count} минуты', many: '${count} минут', other: '${count} минут')}";
 
-  static String m93(minutes) => "${minutes} м осталось";
+  static String m94(minutes) => "${minutes} м осталось";
 
-  static String m94(minutes) => "Осталось ${minutes} м сегодня";
+  static String m95(minutes) => "Осталось ${minutes} м сегодня";
 
-  static String m95(minutes) =>
+  static String m96(minutes) =>
       "${Intl.plural(minutes, one: 'Осталась ${minutes} минута', few: 'Осталось ${minutes} минуты', many: 'Осталось ${minutes} минут', other: 'Осталось ${minutes} минут')}";
 
-  static String m96(count) =>
+  static String m97(count) =>
       "${Intl.plural(count, one: 'Нужна ещё ${count} монета', few: 'Нужно ещё ${count} монеты', many: 'Нужно ещё ${count} монет', other: 'Нужно ещё ${count} монет')}";
 
-  static String m97(app) => "Больше всего - в ${app}";
+  static String m98(app) => "Больше всего - в ${app}";
 
-  static String m98(count) =>
+  static String m99(count) =>
       "${Intl.plural(count, one: '${count} день подряд', few: '${count} дня подряд', many: '${count} дней подряд', other: '${count} дней подряд')}";
 
-  static String m99(name) => "Что вы хотите изменить для ${name}?";
+  static String m100(name) => "Что вы хотите изменить для ${name}?";
 
-  static String m100(from, to) => "С ${from} до ${to} приложения закрыты.";
+  static String m101(from, to) => "С ${from} до ${to} приложения закрыты.";
 
-  static String m101(name) =>
+  static String m102(name) =>
       "Когда телефон ${name} подключится, я изучу обычный день. Пока ничего не меняется.";
 
-  static String m102(age) =>
+  static String m103(age) =>
       "Не уверены? Это наши рекомендации для возраста ${age}. Их можно изменить в любой момент.";
 
-  static String m103(day) => "День ${day}";
+  static String m104(day) => "День ${day}";
 
-  static String m104(name) =>
+  static String m105(name) =>
       "К чему вы хотите прийти. Fini приведёт ${name} к этому шаг за шагом.";
 
-  static String m105(total) => "из ${total}";
+  static String m106(total) => "из ${total}";
 
-  static String m106(name, coins) => "${name} · выплачено ${coins}";
+  static String m107(name, coins) => "${name} · выплачено ${coins}";
 
-  static String m107(name) => "Установите Safini на телефон ${name}";
+  static String m108(name) => "Установите Safini на телефон ${name}";
 
-  static String m108(percent) => "${percent}% до следующего уровня";
+  static String m109(percent) => "${percent}% до следующего уровня";
 
-  static String m109(name) => "Телефон подключён! ${name} на связи.";
+  static String m110(name) => "Телефон подключён! ${name} на связи.";
 
-  static String m110(to) => "Цель действует сразу: ${to} в день.";
+  static String m111(to) => "Цель действует сразу: ${to} в день.";
 
-  static String m111(from, to) =>
+  static String m112(from, to) =>
       "На прошлой неделе ${from} заканчивались каждый день. Ослабить до ${to} на неделю?";
 
-  static String m112(to) =>
+  static String m113(to) =>
       "На прошлой неделе лимит ни разу не закончился. Перейти сразу на ${to} в день?";
 
-  static String m113(to) => "Сразу перешли к цели: ${to} в день.";
+  static String m114(to) => "Сразу перешли к цели: ${to} в день.";
 
-  static String m114(to) => "План начался с ${to} в день после наблюдения.";
+  static String m115(to) => "План начался с ${to} в день после наблюдения.";
 
-  static String m115(from, to, target) =>
+  static String m116(from, to, target) =>
       "Шаг понедельника: с ${from} до ${to} в день, цель ${target}.";
 
-  static String m116(used, limit) => "${used} из ${limit} сегодня";
+  static String m117(used, limit) => "${used} из ${limit} сегодня";
 
-  static String m117(limit) => "${limit} на сегодня израсходовано";
+  static String m118(limit) => "${limit} на сегодня израсходовано";
 
-  static String m118(coins) =>
+  static String m119(coins) =>
       "Отложено: ${coins}. Отметьте «Вручено», когда отдадите.";
 
-  static String m119(name, prize) => "${name} просит: ${prize}";
+  static String m120(name, prize) => "${name} просит: ${prize}";
 
-  static String m120(name) =>
+  static String m121(name) =>
       "Когда ${name} просит подарок, монеты откладываются. Отметьте «Вручено», когда отдадите, или откажите - монеты вернутся.";
 
-  static String m121(name) => "${name} просит этот подарок";
+  static String m122(name) => "${name} просит этот подарок";
 
-  static String m122(name) =>
+  static String m123(name) =>
       "Настоящие подарки, на которые ${name} может копить монеты. Вручаете вы.";
 
-  static String m123(name) => "Подарки: ${name}";
+  static String m124(name) => "Подарки: ${name}";
 
-  static String m124(date) => "Активен до ${date}";
+  static String m125(date) => "Активен до ${date}";
 
-  static String m125(price) => "${price} в месяц";
+  static String m126(price) => "${price} в месяц";
 
-  static String m126(price) => "${price} в год";
+  static String m127(price) => "${price} в год";
 
-  static String m127(date) => "Продлится ${date}";
+  static String m128(date) => "Продлится ${date}";
 
-  static String m128(percent) => "Выгода ${percent}%";
-
-  static String m129(count) =>
-      "${Intl.plural(count, one: '${count} день бесплатно', few: '${count} дня бесплатно', many: '${count} дней бесплатно', other: '${count} дня бесплатно')}";
+  static String m129(percent) => "Выгода ${percent}%";
 
   static String m130(count) =>
+      "${Intl.plural(count, one: '${count} день бесплатно', few: '${count} дня бесплатно', many: '${count} дней бесплатно', other: '${count} дня бесплатно')}";
+
+  static String m131(count) =>
       "${Intl.plural(count, one: '${count} месяц бесплатно', few: '${count} месяца бесплатно', many: '${count} месяцев бесплатно', other: '${count} месяца бесплатно')}";
 
-  static String m131(trial, price) => "${trial}, затем ${price}";
+  static String m132(trial, price) => "${trial}, затем ${price}";
 
-  static String m132(date) => "Бесплатный период до ${date}";
-
-  static String m133(count) =>
-      "${Intl.plural(count, one: '${count} неделя бесплатно', few: '${count} недели бесплатно', many: '${count} недель бесплатно', other: '${count} недели бесплатно')}";
+  static String m133(date) => "Бесплатный период до ${date}";
 
   static String m134(count) =>
+      "${Intl.plural(count, one: '${count} неделя бесплатно', few: '${count} недели бесплатно', many: '${count} недель бесплатно', other: '${count} недели бесплатно')}";
+
+  static String m135(count) =>
       "${Intl.plural(count, one: '${count} год бесплатно', few: '${count} года бесплатно', many: '${count} лет бесплатно', other: '${count} года бесплатно')}";
 
-  static String m135(name) =>
+  static String m136(name) =>
       "Введите его на новом телефоне ${name} в разделе «Я ребёнок». Монеты, задания и история перейдут туда, а на старом телефоне лимиты перестанут работать.";
 
-  static String m136(cost, time) =>
+  static String m137(cost, time) =>
       "Ребёнок может потратить ${cost} монет, чтобы открыть ${time} сверх дневного лимита.";
 
-  static String m137(minutes) => "осталось ${minutes}м";
+  static String m138(minutes) => "осталось ${minutes}м";
 
-  static String m138(name) =>
+  static String m139(name) =>
       "Это навсегда удалит аккаунт ребёнка «${name}» и все связанные данные: задания, монеты и настройки приложений. Отменить это нельзя.";
 
-  static String m139(name) => "Удалить аккаунт ребёнка «${name}»?";
+  static String m140(name) => "Удалить аккаунт ребёнка «${name}»?";
 
-  static String m140(name) => "Аккаунт ребёнка «${name}» навсегда удалён.";
+  static String m141(name) => "Аккаунт ребёнка «${name}» навсегда удалён.";
 
-  static String m141(name) => "Сохранить для ${name}";
+  static String m142(name) => "Сохранить для ${name}";
 
-  static String m142(name) => "Сохранено для ${name}";
+  static String m143(name) => "Сохранено для ${name}";
 
-  static String m143(count) => "Показать все приложения (${count})";
+  static String m144(count) => "Показать все приложения (${count})";
 
-  static String m144(code) => "Код ${code} · лимиты отключатся";
+  static String m145(code) => "Код ${code} · лимиты отключатся";
 
-  static String m145(name) => "${name} хочет выйти";
-
-  static String m146(count) =>
-      "${Intl.plural(count, one: 'Неверный код. Осталась ${count} попытка.', few: 'Неверный код. Осталось ${count} попытки.', many: 'Неверный код. Осталось ${count} попыток.', other: 'Неверный код. Осталось ${count} попыток.')}";
+  static String m146(name) => "${name} хочет выйти";
 
   static String m147(count) =>
+      "${Intl.plural(count, one: 'Неверный код. Осталась ${count} попытка.', few: 'Неверный код. Осталось ${count} попытки.', many: 'Неверный код. Осталось ${count} попыток.', other: 'Неверный код. Осталось ${count} попыток.')}";
+
+  static String m148(count) =>
       "${Intl.plural(count, one: '${count} задание', few: '${count} задания', many: '${count} заданий', other: '${count} заданий')}";
 
-  static String m148(tasks, coins) => "${tasks} · ${coins}";
+  static String m149(app, used, needed) =>
+      "Fini: ${app}, ${used} из ${needed} сегодня";
 
-  static String m149(scope, tasks) => "${scope} · ${tasks}";
+  static String m150(note) => "Fini: ${note}";
 
-  static String m150(tasks, coins) => "${tasks} осталось - ${coins} на кону";
+  static String m151(tasks, coins) => "${tasks} · ${coins}";
 
-  static String m151(time) => "${time} осталось";
+  static String m152(scope, tasks) => "${scope} · ${tasks}";
 
-  static String m152(time) => "${time} использовано";
+  static String m153(tasks, coins) => "${tasks} осталось - ${coins} на кону";
 
-  static String m153(count) => "ещё ${count}";
+  static String m154(time) => "${time} осталось";
 
-  static String m154(step, total) => "${step} из ${total}";
+  static String m155(time) => "${time} использовано";
 
-  static String m155(name) =>
+  static String m156(count) => "ещё ${count}";
+
+  static String m157(step, total) => "${step} из ${total}";
+
+  static String m158(name) =>
       "Введите его на телефоне ${name} в разделе «Я ребёнок».";
 
-  static String m156(used, limit) => "${used} исп. / ${limit} лимит";
+  static String m159(used, limit) => "${used} исп. / ${limit} лимит";
 
-  static String m157(used) => "${used} · без лимита";
+  static String m160(used) => "${used} · без лимита";
 
-  static String m158(used, limit) => "${used} из ${limit}";
+  static String m161(used, limit) => "${used} из ${limit}";
 
-  static String m159(used, limit) => "${used} из ${limit} · превышен";
+  static String m162(used, limit) => "${used} из ${limit} · превышен";
 
-  static String m160(time) => "${time} сегодня";
+  static String m163(time) => "${time} сегодня";
 
-  static String m161(seconds) => "Осталось ${seconds} с";
+  static String m164(seconds) => "Осталось ${seconds} с";
 
-  static String m162(count) =>
+  static String m165(count) =>
       "${Intl.plural(count, one: '${count} ожидает', few: '${count} ожидают', many: '${count} ожидают', other: '${count} ожидают')}";
 
-  static String m163(name) => "Ждём телефон ${name}…";
+  static String m166(name) => "Ждём телефон ${name}…";
 
-  static String m164(name) =>
+  static String m167(name) =>
       "Назначьте цену, и это появится в магазине: ${name}.";
 
-  static String m165(name, prize) => "${name} мечтает: ${prize}";
+  static String m168(name, prize) => "${name} мечтает: ${prize}";
 
-  static String m166(name, coins) => "${name} · ${coins}";
+  static String m169(name, coins) => "${name} · ${coins}";
 
-  static String m167(age) =>
+  static String m170(age) =>
       "${Intl.plural(age, one: '${age} год', few: '${age} года', many: '${age} лет', other: '${age} лет')}";
 
-  static String m168(count) =>
+  static String m171(count) =>
       "${Intl.plural(count, one: 'Нужна ещё ${count} монета.', few: 'Нужно ещё ${count} монеты.', many: 'Нужно ещё ${count} монет.', other: 'Нужно ещё ${count} монет.')}";
 
-  static String m169(name) => "${name} (вы)";
+  static String m172(name) => "${name} (вы)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1010,6 +1018,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "finiThingsToday": m49,
     "finiTrialPill": m50,
     "finiUndo": MessageLookupByLibrary.simpleMessage("Отменить"),
+    "finiUsageProof": m51,
     "finiWhatItCanDo": MessageLookupByLibrary.simpleMessage("Что умеет Fini"),
     "finiWhatItLookedAt": MessageLookupByLibrary.simpleMessage(
       "На что смотрел Fini",
@@ -1069,18 +1078,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "friendsInvalid": MessageLookupByLibrary.simpleMessage("Введи все 6 цифр."),
     "friendsNotFound": MessageLookupByLibrary.simpleMessage("Такого ID нет."),
-    "friendsPrizes": m51,
+    "friendsPrizes": m52,
     "friendsRemove": MessageLookupByLibrary.simpleMessage("Удалить"),
     "friendsRemoveBody": MessageLookupByLibrary.simpleMessage(
       "Их можно добавить снова по ID.",
     ),
-    "friendsRemoveTitle": m52,
+    "friendsRemoveTitle": m53,
     "friendsRowSubtitle": MessageLookupByLibrary.simpleMessage(
       "Смотри, как дела у друзей",
     ),
     "friendsSortLevel": MessageLookupByLibrary.simpleMessage("По уровню"),
     "friendsSortRecent": MessageLookupByLibrary.simpleMessage("Недавние"),
-    "friendsTasksToday": m53,
+    "friendsTasksToday": m54,
     "friendsYourId": MessageLookupByLibrary.simpleMessage("Твой ID Safini"),
     "friendsYourIdHint": MessageLookupByLibrary.simpleMessage(
       "Друг вводит его, чтобы добавить тебя.",
@@ -1094,7 +1103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "genericErrorRetry": MessageLookupByLibrary.simpleMessage(
       "Что-то пошло не так. Попробуйте ещё раз.",
     ),
-    "gettingStartedCount": m54,
+    "gettingStartedCount": m55,
     "gettingStartedHide": MessageLookupByLibrary.simpleMessage("Скрыть"),
     "gettingStartedTitle": MessageLookupByLibrary.simpleMessage("Первые шаги"),
     "goToMyFamily": MessageLookupByLibrary.simpleMessage("К моей семье"),
@@ -1120,7 +1129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalJumpNote": MessageLookupByLibrary.simpleMessage(
       "Пропускает оставшиеся шаги. В первые дни возможны споры.",
     ),
-    "goalJumpNow": m55,
+    "goalJumpNow": m56,
     "goalLearning": MessageLookupByLibrary.simpleMessage("Учёба не считается"),
     "goalLearningDetail": MessageLookupByLibrary.simpleMessage(
       "Учебные приложения не считаются в лимит.",
@@ -1128,18 +1137,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalLearningSub": MessageLookupByLibrary.simpleMessage(
       "Duolingo не считается",
     ),
-    "goalMinutesADay": m56,
+    "goalMinutesADay": m57,
     "goalNoMoreThan": MessageLookupByLibrary.simpleMessage("Не больше"),
-    "goalPlanAtTarget": m57,
-    "goalPlanIphone": m58,
-    "goalPlanNow": m59,
-    "goalPlanStepping": m60,
-    "goalPlanText": m61,
-    "goalPlanWaitingPhone": m62,
+    "goalPlanAtTarget": m58,
+    "goalPlanIphone": m59,
+    "goalPlanNow": m60,
+    "goalPlanStepping": m61,
+    "goalPlanText": m62,
+    "goalPlanWaitingPhone": m63,
     "goalPlanWatching": MessageLookupByLibrary.simpleMessage(
       "Сначала 3 дня наблюдаю, потом планирую шаги.",
     ),
-    "goalPlanWatchingDays": m63,
+    "goalPlanWatchingDays": m64,
     "goalPoolNote": MessageLookupByLibrary.simpleMessage(
       "Fini добавляет сюда приложения по мере знакомства с ними.",
     ),
@@ -1148,7 +1157,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Уже заданные лимиты останутся.",
     ),
     "goalSchool": MessageLookupByLibrary.simpleMessage("Школьные часы"),
-    "goalScreensOff": m64,
+    "goalScreensOff": m65,
     "goalScrolling": MessageLookupByLibrary.simpleMessage("Меньше ленты"),
     "goalScrollingSub": MessageLookupByLibrary.simpleMessage(
       "TikTok, Shorts, Reels",
@@ -1159,7 +1168,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalVideoSub": MessageLookupByLibrary.simpleMessage(
       "YouTube, без Shorts · скоро",
     ),
-    "goalWeekN": m65,
+    "goalWeekN": m66,
     "goalWeekNow": MessageLookupByLibrary.simpleMessage("сейчас"),
     "goalWeekendExtra": MessageLookupByLibrary.simpleMessage(
       "Больше в выходные",
@@ -1167,7 +1176,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalWeekendExtraSub": MessageLookupByLibrary.simpleMessage(
       "+30 мин в субботу и воскресенье",
     ),
-    "goalWindow": m66,
+    "goalWindow": m67,
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Добрый день 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Добрый вечер 👋"),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Доброе утро 👋"),
@@ -1189,7 +1198,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsAddBody": MessageLookupByLibrary.simpleMessage(
       "Добавьте его в лимиты этого телефона. Дневной лимит можно настроить дальше.",
     ),
-    "installedAppsAddTitle": m67,
+    "installedAppsAddTitle": m68,
     "installedAppsAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Всегда разрешено",
     ),
@@ -1199,17 +1208,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsBlockCompletely": MessageLookupByLibrary.simpleMessage(
       "Полностью заблокировать",
     ),
-    "installedAppsBlockedSnack": m68,
-    "installedAppsCount": m69,
-    "installedAppsEmptyBody": m70,
+    "installedAppsBlockedSnack": m69,
+    "installedAppsCount": m70,
+    "installedAppsEmptyBody": m71,
     "installedAppsEmptyTitle": MessageLookupByLibrary.simpleMessage(
       "Приложения ещё не синхронизированы",
     ),
-    "installedAppsIosBody": m71,
+    "installedAppsIosBody": m72,
     "installedAppsIosTitle": MessageLookupByLibrary.simpleMessage(
       "Приложения iPhone здесь не показываются",
     ),
-    "installedAppsLastSynced": m72,
+    "installedAppsLastSynced": m73,
     "installedAppsLimited": MessageLookupByLibrary.simpleMessage("Есть лимит"),
     "installedAppsNoMatch": MessageLookupByLibrary.simpleMessage(
       "По вашему запросу приложений не найдено.",
@@ -1223,7 +1232,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsSetLimit": MessageLookupByLibrary.simpleMessage(
       "Задать дневной лимит",
     ),
-    "installedAppsSubtitle": m73,
+    "installedAppsSubtitle": m74,
     "installedAppsTapHint": MessageLookupByLibrary.simpleMessage(
       "Нажмите на знакомое приложение, чтобы задать лимит или заблокировать.",
     ),
@@ -1329,22 +1338,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "Родитель выключил это приложение",
     ),
     "kidAppTimesUp": MessageLookupByLibrary.simpleMessage("Время вышло"),
-    "kidAskAppsUp": m74,
-    "kidAskButton": m75,
+    "kidAskAppsUp": m75,
+    "kidAskButton": m76,
     "kidAskDeclined": MessageLookupByLibrary.simpleMessage(
       "Не сегодня. Время вернётся завтра.",
     ),
-    "kidAskGrantedBy": m76,
-    "kidAskGrantedFini": m77,
+    "kidAskGrantedBy": m77,
+    "kidAskGrantedFini": m78,
     "kidAskOnceADay": MessageLookupByLibrary.simpleMessage(
       "Просить можно раз в день.",
     ),
     "kidAskPending": MessageLookupByLibrary.simpleMessage(
       "Просьба отправлена! Родитель скоро ответит.",
     ),
-    "kidAskPlanGames": m78,
-    "kidAskPlanOther": m79,
-    "kidAskPlanScrolling": m80,
+    "kidAskPlanGames": m79,
+    "kidAskPlanOther": m80,
+    "kidAskPlanScrolling": m81,
     "kidAskTitleGames": MessageLookupByLibrary.simpleMessage(
       "Хочешь ещё поиграть?",
     ),
@@ -1354,7 +1363,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidAskTitleScrolling": MessageLookupByLibrary.simpleMessage(
       "Хочешь ещё посмотреть ленту?",
     ),
-    "kidBonusFromCoins": m81,
+    "kidBonusFromCoins": m82,
     "kidBudgetShared": MessageLookupByLibrary.simpleMessage(
       "Общее для приложений, которые настроил родитель",
     ),
@@ -1368,7 +1377,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidGetMoreInStore": MessageLookupByLibrary.simpleMessage(
       "Ещё время можно купить в Магазине",
     ),
-    "kidHasLeftToday": m82,
+    "kidHasLeftToday": m83,
     "kidHelloGo": MessageLookupByLibrary.simpleMessage("Поехали"),
     "kidHelloParent": MessageLookupByLibrary.simpleMessage(
       "Родители видят, какими приложениями ты пользуешься",
@@ -1380,9 +1389,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Выполняй задания и получай монеты",
     ),
     "kidHelloTitle": MessageLookupByLibrary.simpleMessage("Привет! Я Фини."),
-    "kidScreenTimeBackAt": m83,
-    "kidScreenTimeDaily": m84,
-    "kidScreenTimeLeft": m85,
+    "kidScreenTimeBackAt": m84,
+    "kidScreenTimeDaily": m85,
+    "kidScreenTimeLeft": m86,
     "kidScreenTimeUp": MessageLookupByLibrary.simpleMessage(
       "На сегодня время закончилось",
     ),
@@ -1398,12 +1407,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidSetupHintList": MessageLookupByLibrary.simpleMessage(
       "Найдите Safini в списке и включите.",
     ),
-    "kidSetupStepOf": m86,
+    "kidSetupStepOf": m87,
     "kidSubtitle": MessageLookupByLibrary.simpleMessage(
       "Зарабатывай монеты и играй",
     ),
-    "kidUsedToday": m87,
-    "kidsApps": m88,
+    "kidUsedToday": m88,
+    "kidsApps": m89,
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Дети зарабатывают Монеты Времени, чтобы разблокировать минуты для этих приложений.",
     ),
@@ -1414,9 +1423,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "lastSevenDays": MessageLookupByLibrary.simpleMessage("Последние 7 дней"),
     "lessons": MessageLookupByLibrary.simpleMessage("Уроки"),
     "lessonsChangeText": MessageLookupByLibrary.simpleMessage("+1 сегодня"),
-    "levelHero": m89,
+    "levelHero": m90,
     "levelShort": MessageLookupByLibrary.simpleMessage("Уровень"),
-    "levelValue": m90,
+    "levelValue": m91,
     "limitThisApp": MessageLookupByLibrary.simpleMessage(
       "Ограничить приложение",
     ),
@@ -1449,7 +1458,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "limitsSetupError": MessageLookupByLibrary.simpleMessage(
       "Не удалось подключить лимиты. Проверьте интернет и повторите.",
     ),
-    "limitsSubtitle": m91,
+    "limitsSubtitle": m92,
     "limitsUsageAccess": MessageLookupByLibrary.simpleMessage(
       "Доступ к статистике",
     ),
@@ -1481,24 +1490,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "micPermissionDenied": MessageLookupByLibrary.simpleMessage(
       "Микрофон выключен. Включите его в Настройках, чтобы записать голосовую инструкцию.",
     ),
-    "minuteCount": m92,
+    "minuteCount": m93,
     "minutes": MessageLookupByLibrary.simpleMessage("Минуты"),
-    "minutesLeftShort": m93,
-    "minutesLeftToday": m94,
+    "minutesLeftShort": m94,
+    "minutesLeftToday": m95,
     "minutesPerPurchase": MessageLookupByLibrary.simpleMessage(
       "Минут за покупку",
     ),
-    "minutesRemainingLong": m95,
+    "minutesRemainingLong": m96,
     "mon": MessageLookupByLibrary.simpleMessage("ПН"),
     "monitor": MessageLookupByLibrary.simpleMessage("Мониторинг"),
-    "moreCoinsNeeded": m96,
-    "mostOfItIn": m97,
+    "moreCoinsNeeded": m97,
+    "mostOfItIn": m98,
     "myAvatar": MessageLookupByLibrary.simpleMessage("Мой аватар"),
     "myFamily": MessageLookupByLibrary.simpleMessage("Моя семья"),
     "myProfile": MessageLookupByLibrary.simpleMessage("Мой профиль"),
     "myQuests": MessageLookupByLibrary.simpleMessage("Мои квесты"),
     "myUsageToday": MessageLookupByLibrary.simpleMessage("Моё время сегодня"),
-    "nDayStreak": m98,
+    "nDayStreak": m99,
     "name": MessageLookupByLibrary.simpleMessage("Имя"),
     "nameHintExample": MessageLookupByLibrary.simpleMessage("Амир"),
     "nameYourFamily": MessageLookupByLibrary.simpleMessage(
@@ -1607,7 +1616,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "obGoalsSub": MessageLookupByLibrary.simpleMessage(
       "Выберите сколько угодно.",
     ),
-    "obGoalsTitle": m99,
+    "obGoalsTitle": m100,
     "obHiWho": MessageLookupByLibrary.simpleMessage(
       "Привет, я Fini! Кому помогаем?",
     ),
@@ -1630,14 +1639,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "obPlanMondayTitle": MessageLookupByLibrary.simpleMessage(
       "Каждый понедельник: маленький шаг",
     ),
-    "obPlanNightBody": m100,
+    "obPlanNightBody": m101,
     "obPlanNightTitle": MessageLookupByLibrary.simpleMessage(
       "Каждый вечер: экраны выключены",
     ),
     "obPlanTitle": MessageLookupByLibrary.simpleMessage(
       "Вот мой план. Без резких запретов, значит меньше ссор.",
     ),
-    "obPlanWatchBody": m101,
+    "obPlanWatchBody": m102,
     "obPlanWatchTitle": MessageLookupByLibrary.simpleMessage(
       "Первые 3 дня: я наблюдаю",
     ),
@@ -1647,9 +1656,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "obStartTrial": MessageLookupByLibrary.simpleMessage(
       "Начать 14 дней бесплатно",
     ),
-    "obSuggested": m102,
+    "obSuggested": m103,
     "obTheirPhone": MessageLookupByLibrary.simpleMessage("Телефон ребёнка"),
-    "obTrialDay": m103,
+    "obTrialDay": m104,
     "obTrialDay12Body": MessageLookupByLibrary.simpleMessage(
       "Напомним до конца пробного периода",
     ),
@@ -1666,11 +1675,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "obTrialTodayBody": MessageLookupByLibrary.simpleMessage(
       "Все возможности Fini для всех детей",
     ),
-    "obTuneSub": m104,
+    "obTuneSub": m105,
     "obTuneTitle": MessageLookupByLibrary.simpleMessage(
       "Задайте нужные лимиты",
     ),
-    "ofTotal": m105,
+    "ofTotal": m106,
     "offMeansAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Выключено - доступно всегда",
     ),
@@ -1688,12 +1697,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "paceGentle": MessageLookupByLibrary.simpleMessage("Мягко"),
     "paceNow": MessageLookupByLibrary.simpleMessage("Сразу"),
     "paceSteady": MessageLookupByLibrary.simpleMessage("Ровно"),
-    "paidCoinsTo": m106,
+    "paidCoinsTo": m107,
     "paidOutNice": MessageLookupByLibrary.simpleMessage("Оплачено. Отлично."),
     "pairStepAllow": MessageLookupByLibrary.simpleMessage(
       "Разрешите доступ к экранному времени",
     ),
-    "pairStepInstall": m107,
+    "pairStepInstall": m108,
     "pairStepTap": MessageLookupByLibrary.simpleMessage(
       "Нажмите «Я ребёнок» и введите код",
     ),
@@ -1723,11 +1732,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordRequired": MessageLookupByLibrary.simpleMessage("Введите пароль"),
     "pauseVoice": MessageLookupByLibrary.simpleMessage("Пауза"),
     "pendingApproval": MessageLookupByLibrary.simpleMessage("Ожидают проверки"),
-    "percentToNextLevel": m108,
+    "percentToNextLevel": m109,
     "phoneConnectedBody": MessageLookupByLibrary.simpleMessage(
       "Теперь задания и лимиты работают на нём.",
     ),
-    "phoneConnectedTitle": m109,
+    "phoneConnectedTitle": m110,
     "photoProofAsked": MessageLookupByLibrary.simpleMessage(
       "Запрошено фото-подтверждение",
     ),
@@ -1743,15 +1752,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "pillCheck": MessageLookupByLibrary.simpleMessage("Проверить"),
     "pillPaid": MessageLookupByLibrary.simpleMessage("Оплачено"),
     "pillWaiting": MessageLookupByLibrary.simpleMessage("Ждёт"),
-    "planLineAtTarget": m110,
-    "planLineEase": m111,
-    "planLineJump": m112,
-    "planLineJumped": m113,
-    "planLineStart": m114,
-    "planLineStep": m115,
+    "planLineAtTarget": m111,
+    "planLineEase": m112,
+    "planLineJump": m113,
+    "planLineJumped": m114,
+    "planLineStart": m115,
+    "planLineStep": m116,
     "playVoice": MessageLookupByLibrary.simpleMessage("Слушать"),
-    "poolUsedOf": m116,
-    "poolUsedUp": m117,
+    "poolUsedOf": m117,
+    "poolUsedUp": m118,
     "priceLabel": MessageLookupByLibrary.simpleMessage("Цена"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
       "Политика конфиденциальности",
@@ -1762,15 +1771,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "privacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
       "Как Safini обрабатывает данные семьи",
     ),
-    "prizeAskReviewBody": m118,
-    "prizeAskReviewTitle": m119,
+    "prizeAskReviewBody": m119,
+    "prizeAskReviewTitle": m120,
     "prizeAsked": MessageLookupByLibrary.simpleMessage(
       "Готово! Родитель увидит просьбу.",
     ),
     "prizeBlurb": MessageLookupByLibrary.simpleMessage(
       "Подарок вручит родитель. До этого монеты отложены.",
     ),
-    "prizeHoldExplainer": m120,
+    "prizeHoldExplainer": m121,
     "prizeIdeaBackpack": MessageLookupByLibrary.simpleMessage("Новый рюкзак"),
     "prizeIdeaBike": MessageLookupByLibrary.simpleMessage("Новый велосипед"),
     "prizeIdeaBook": MessageLookupByLibrary.simpleMessage("Новая книга"),
@@ -1794,17 +1803,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "prizeWaitingBody": MessageLookupByLibrary.simpleMessage(
       "Родитель увидит. Монеты отложены, пока он не ответит.",
     ),
-    "prizeWaitingForYou": m121,
-    "prizesBody": m122,
+    "prizeWaitingForYou": m122,
+    "prizesBody": m123,
     "prizesFootnote": MessageLookupByLibrary.simpleMessage(
       "Настоящие подарки от родителя. Копи, проси - и родитель вручит.",
     ),
-    "prizesFor": m123,
+    "prizesFor": m124,
     "prizesTab": MessageLookupByLibrary.simpleMessage("Подарки"),
     "proActiveTitle": MessageLookupByLibrary.simpleMessage(
       "У вашей семьи Safini Pro",
     ),
-    "proActiveUntil": m124,
+    "proActiveUntil": m125,
     "proBuyOnWeb": MessageLookupByLibrary.simpleMessage("Подключить Pro"),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Покупка не прошла. Попробуйте ещё раз.",
@@ -1853,14 +1862,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "proPending": MessageLookupByLibrary.simpleMessage(
       "Ждём подтверждения. Pro включится сразу после него.",
     ),
-    "proPerMonth": m125,
-    "proPerYear": m126,
-    "proRenewsOn": m127,
+    "proPerMonth": m126,
+    "proPerYear": m127,
+    "proRenewsOn": m128,
     "proRestore": MessageLookupByLibrary.simpleMessage("Восстановить покупки"),
     "proRestored": MessageLookupByLibrary.simpleMessage(
       "Safini Pro восстановлен.",
     ),
-    "proSave": m128,
+    "proSave": m129,
     "proSettingsFree": MessageLookupByLibrary.simpleMessage("Бесплатный план"),
     "proStartTrial": MessageLookupByLibrary.simpleMessage(
       "Начать бесплатный период",
@@ -1871,12 +1880,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "proSubscribe": MessageLookupByLibrary.simpleMessage("Оформить подписку"),
     "proTerms": MessageLookupByLibrary.simpleMessage("Условия использования"),
     "proTitle": MessageLookupByLibrary.simpleMessage("Safini Pro"),
-    "proTrialDays": m129,
-    "proTrialMonths": m130,
-    "proTrialThen": m131,
-    "proTrialUntil": m132,
-    "proTrialWeeks": m133,
-    "proTrialYears": m134,
+    "proTrialDays": m130,
+    "proTrialMonths": m131,
+    "proTrialThen": m132,
+    "proTrialUntil": m133,
+    "proTrialWeeks": m134,
+    "proTrialYears": m135,
     "proWebFailed": MessageLookupByLibrary.simpleMessage(
       "Не удалось открыть safini.fun. Попробуйте ещё раз.",
     ),
@@ -1927,7 +1936,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
       "Код повторной связи · 24 часа",
     ),
-    "reconnectMovesProfile": m135,
+    "reconnectMovesProfile": m136,
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Связать заново по коду",
     ),
@@ -1935,19 +1944,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Записать голосовую инструкцию",
     ),
     "recordingVoice": MessageLookupByLibrary.simpleMessage("Запись"),
-    "redeemExplainer": m136,
+    "redeemExplainer": m137,
     "redoNoteHint": MessageLookupByLibrary.simpleMessage(
       "Что исправить? Необязательно.",
     ),
     "reject": MessageLookupByLibrary.simpleMessage("Отклонить"),
     "remaining": MessageLookupByLibrary.simpleMessage("Осталось"),
-    "remainingTime": m137,
+    "remainingTime": m138,
     "removeChild": MessageLookupByLibrary.simpleMessage(
       "Удалить аккаунт ребёнка",
     ),
-    "removeChildConfirmBody": m138,
-    "removeChildConfirmTitle": m139,
-    "removeChildDeletedSuccess": m140,
+    "removeChildConfirmBody": m139,
+    "removeChildConfirmTitle": m140,
+    "removeChildDeletedSuccess": m141,
     "removeChildError": MessageLookupByLibrary.simpleMessage(
       "Не удалось удалить аккаунт ребёнка. Попробуйте снова.",
     ),
@@ -2012,9 +2021,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "sat": MessageLookupByLibrary.simpleMessage("СБ"),
     "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Сохранить изменения"),
-    "saveForName": m141,
+    "saveForName": m142,
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Сохранить вид!"),
-    "savedForName": m142,
+    "savedForName": m143,
     "scopeEveryone": MessageLookupByLibrary.simpleMessage("Все"),
     "screenTime": MessageLookupByLibrary.simpleMessage("Экранное время"),
     "screenTimeCap": MessageLookupByLibrary.simpleMessage(
@@ -2052,7 +2061,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "setupStepPrize": MessageLookupByLibrary.simpleMessage("Добавить подарок"),
     "setupStepTask": MessageLookupByLibrary.simpleMessage("Создать задание"),
     "setupYourFamily": MessageLookupByLibrary.simpleMessage("Настройте семью"),
-    "showAllAppsCount": m143,
+    "showAllAppsCount": m144,
     "showFewerApps": MessageLookupByLibrary.simpleMessage("Свернуть"),
     "signInAction": MessageLookupByLibrary.simpleMessage("Войти"),
     "signInError": MessageLookupByLibrary.simpleMessage(
@@ -2077,13 +2086,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Запрос больше не действует. Попроси ещё раз, если всё ещё нужно выйти.",
     ),
     "signoutKeep": MessageLookupByLibrary.simpleMessage("Не выходить"),
-    "signoutReviewMeta": m144,
-    "signoutReviewTitle": m145,
+    "signoutReviewMeta": m145,
+    "signoutReviewTitle": m146,
     "signoutTypeCode": MessageLookupByLibrary.simpleMessage(
       "Или введи код, который назовёт родитель",
     ),
     "signoutWaiting": MessageLookupByLibrary.simpleMessage("Ждём ответа…"),
-    "signoutWrongCode": m146,
+    "signoutWrongCode": m147,
     "spendYourTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Потратьте свои монеты времени",
     ),
@@ -2136,7 +2145,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Освой доску"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Урок шахмат"),
-    "taskCount": m147,
+    "taskCount": m148,
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage(
       "Задание создано!",
     ),
@@ -2151,7 +2160,33 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пройти Duolingo",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Задание"),
-    "taskGroupSummary": m148,
+    "taskFiniApp": MessageLookupByLibrary.simpleMessage("Приложение"),
+    "taskFiniApproved": MessageLookupByLibrary.simpleMessage("Одобрено Fini"),
+    "taskFiniCheck": MessageLookupByLibrary.simpleMessage(
+      "Пусть Fini проверит",
+    ),
+    "taskFiniCheckSub": MessageLookupByLibrary.simpleMessage(
+      "Fini одобрит, если доказательство есть. Отменить можно в течение 24 ч.",
+    ),
+    "taskFiniChecking": MessageLookupByLibrary.simpleMessage(
+      "Fini смотрит фото",
+    ),
+    "taskFiniMinutes": MessageLookupByLibrary.simpleMessage(
+      "Время в приложении",
+    ),
+    "taskFiniNoApps": MessageLookupByLibrary.simpleMessage(
+      "Приложения появятся, когда подключится телефон ребёнка.",
+    ),
+    "taskFiniPhotoHint": MessageLookupByLibrary.simpleMessage(
+      "Fini посмотрит фото и одобрит только понятное. Включите «Проверять фото» в правилах Fini.",
+    ),
+    "taskFiniPickApp": MessageLookupByLibrary.simpleMessage(
+      "Выберите приложение",
+    ),
+    "taskFiniSawApp": m149,
+    "taskFiniSawPhoto": m150,
+    "taskFiniUndo": MessageLookupByLibrary.simpleMessage("Отменить"),
+    "taskGroupSummary": m151,
     "taskIdeaBrushTeethDetails": MessageLookupByLibrary.simpleMessage(
       "Почисти зубы две минуты после сна и пришли фото.",
     ),
@@ -2260,7 +2295,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskRoomSub": MessageLookupByLibrary.simpleMessage("Ежедневное дело"),
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Убраться в комнате"),
-    "taskScopeLine": m149,
+    "taskScopeLine": m152,
     "taskStepsSub": MessageLookupByLibrary.simpleMessage("Больше движения!"),
     "taskStepsTitle": MessageLookupByLibrary.simpleMessage(
       "Пройти 5,000 шагов",
@@ -2277,7 +2312,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tasksAndRewards": MessageLookupByLibrary.simpleMessage(
       "Задания и награды",
     ),
-    "tasksLeftCoinsOnTable": m150,
+    "tasksLeftCoinsOnTable": m153,
     "theirNote": MessageLookupByLibrary.simpleMessage("Его заметка"),
     "theyInstallSafini": MessageLookupByLibrary.simpleMessage(
       "Пусть установят Safini, войдут и введут этот код.",
@@ -2285,8 +2320,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "thisWeek": MessageLookupByLibrary.simpleMessage("На этой неделе"),
     "thu": MessageLookupByLibrary.simpleMessage("ЧТ"),
     "timeCoins": MessageLookupByLibrary.simpleMessage("Монеты времени"),
-    "timeLeft": m151,
-    "timeUsed": m152,
+    "timeLeft": m154,
+    "timeUsed": m155,
     "tip1": MessageLookupByLibrary.simpleMessage(
       "Ставьте значимые задачи, которые учат ответственности",
     ),
@@ -2300,7 +2335,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Настраивайте стоимость монет в зависимости от усилий",
     ),
     "tipsForParents": MessageLookupByLibrary.simpleMessage("Советы родителям"),
-    "toGo": m153,
+    "toGo": m156,
     "todayOffline": MessageLookupByLibrary.simpleMessage("Нет связи"),
     "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
       "Задания появятся, когда будет интернет. Потяни вниз, чтобы обновить.",
@@ -2361,7 +2396,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ваша главная страница",
     ),
     "tourSkip": MessageLookupByLibrary.simpleMessage("Пропустить"),
-    "tourStep": m154,
+    "tourStep": m157,
     "tryAgain": MessageLookupByLibrary.simpleMessage("Повторить"),
     "tue": MessageLookupByLibrary.simpleMessage("ВТ"),
     "typeCodeFromOtherParent": MessageLookupByLibrary.simpleMessage(
@@ -2370,7 +2405,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "typeCodeFromParent": MessageLookupByLibrary.simpleMessage(
       "Введите код от родителя",
     ),
-    "typeItOnPhone": m155,
+    "typeItOnPhone": m158,
     "unitHour": MessageLookupByLibrary.simpleMessage("ч"),
     "unitMinute": MessageLookupByLibrary.simpleMessage("м"),
     "unlockExtraTime": MessageLookupByLibrary.simpleMessage(
@@ -2392,11 +2427,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateSoftTitle": MessageLookupByLibrary.simpleMessage(
       "Доступно обновление",
     ),
-    "usedLimit": m156,
-    "usedNoLimit": m157,
-    "usedOfLimit": m158,
-    "usedOfLimitOver": m159,
-    "usedTodayShort": m160,
+    "usedLimit": m159,
+    "usedNoLimit": m160,
+    "usedOfLimit": m161,
+    "usedOfLimitOver": m162,
+    "usedTodayShort": m163,
     "uzbek": MessageLookupByLibrary.simpleMessage("Узбекский"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("Войти как ребенок"),
     "viewPhoto": MessageLookupByLibrary.simpleMessage("Открыть фото"),
@@ -2409,12 +2444,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voicePlaybackFailed": MessageLookupByLibrary.simpleMessage(
       "Не удалось воспроизвести голосовую заметку.",
     ),
-    "voiceSecondsLeft": m161,
-    "waitingCount": m162,
+    "voiceSecondsLeft": m164,
+    "waitingCount": m165,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Ждём проверки родителя",
     ),
-    "waitingForPhone": m163,
+    "waitingForPhone": m166,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Надеть"),
     "wed": MessageLookupByLibrary.simpleMessage("СР"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Пт"),
@@ -2438,8 +2473,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "wishLabel": MessageLookupByLibrary.simpleMessage("Желание"),
     "wishNameHint": MessageLookupByLibrary.simpleMessage("Футбольный мяч"),
     "wishPriceLabel": MessageLookupByLibrary.simpleMessage("Цена"),
-    "wishReviewBody": m164,
-    "wishReviewTitle": m165,
+    "wishReviewBody": m167,
+    "wishReviewTitle": m168,
     "wishSent": MessageLookupByLibrary.simpleMessage(
       "Желание отправлено. Родитель увидит его.",
     ),
@@ -2450,10 +2485,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "О чём ты мечтаешь?",
     ),
     "wornLabel": MessageLookupByLibrary.simpleMessage("Надето"),
-    "worthCoins": m166,
-    "yearsOld": m167,
-    "youNeedMoreCoins": m168,
-    "youSuffix": m169,
+    "worthCoins": m169,
+    "yearsOld": m170,
+    "youNeedMoreCoins": m171,
+    "youSuffix": m172,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Ваш аккаунт"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Твой аватар"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("ВАШИ ДЕТИ"),

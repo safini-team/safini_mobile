@@ -9722,6 +9722,126 @@ class S {
   String get finiNotToday {
     return Intl.message('Not today', name: 'finiNotToday', desc: '', args: []);
   }
+
+  /// `Let Fini check`
+  String get taskFiniCheck {
+    return Intl.message(
+      'Let Fini check',
+      name: 'taskFiniCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini approves when the proof is there. You can undo it for 24 h.`
+  String get taskFiniCheckSub {
+    return Intl.message(
+      'Fini approves when the proof is there. You can undo it for 24 h.',
+      name: 'taskFiniCheckSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App`
+  String get taskFiniApp {
+    return Intl.message('App', name: 'taskFiniApp', desc: '', args: []);
+  }
+
+  /// `Pick an app`
+  String get taskFiniPickApp {
+    return Intl.message(
+      'Pick an app',
+      name: 'taskFiniPickApp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time in the app`
+  String get taskFiniMinutes {
+    return Intl.message(
+      'Time in the app',
+      name: 'taskFiniMinutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fini looks at the photo and approves only a clear one. Turn on "Check photo proof" in Fini's rules.`
+  String get taskFiniPhotoHint {
+    return Intl.message(
+      'Fini looks at the photo and approves only a clear one. Turn on "Check photo proof" in Fini\'s rules.',
+      name: 'taskFiniPhotoHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apps show up once your child's phone is connected.`
+  String get taskFiniNoApps {
+    return Intl.message(
+      'Apps show up once your child\'s phone is connected.',
+      name: 'taskFiniNoApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approved by Fini`
+  String get taskFiniApproved {
+    return Intl.message(
+      'Approved by Fini',
+      name: 'taskFiniApproved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Undo`
+  String get taskFiniUndo {
+    return Intl.message('Undo', name: 'taskFiniUndo', desc: '', args: []);
+  }
+
+  /// `Fini: {app}, {used} of {needed} today`
+  String taskFiniSawApp(Object app, Object used, Object needed) {
+    return Intl.message(
+      'Fini: $app, $used of $needed today',
+      name: 'taskFiniSawApp',
+      desc: '',
+      args: [app, used, needed],
+    );
+  }
+
+  /// `Fini: {note}`
+  String taskFiniSawPhoto(Object note) {
+    return Intl.message(
+      'Fini: $note',
+      name: 'taskFiniSawPhoto',
+      desc: '',
+      args: [note],
+    );
+  }
+
+  /// `Fini is looking at the photo`
+  String get taskFiniChecking {
+    return Intl.message(
+      'Fini is looking at the photo',
+      name: 'taskFiniChecking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{app}: {used} today, the task asked for {needed}.`
+  String finiUsageProof(Object app, Object used, Object needed) {
+    return Intl.message(
+      '$app: $used today, the task asked for $needed.',
+      name: 'finiUsageProof',
+      desc: '',
+      args: [app, used, needed],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

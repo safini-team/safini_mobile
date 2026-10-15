@@ -1137,5 +1137,18 @@
   "kidAskGrantedFini": "Ha: +{minutes}. Vazifalar bajarilgan.",
   "kidAskDeclined": "Bugun emas. Vaqting ertaga qaytadi.",
   "finiAskReason": "{goal}: bugungi vaqt tugadi.",
-  "finiNotToday": "Bugun emas"
+  "finiNotToday": "Bugun emas",
+  "taskFiniCheck": "Fini tekshirsin",
+  "taskFiniCheckSub": "Isbot boʻlsa, Fini tasdiqlaydi. 24 soat ichida bekor qilish mumkin.",
+  "taskFiniApp": "Ilova",
+  "taskFiniPickApp": "Ilovani tanlang",
+  "taskFiniMinutes": "Ilovadagi vaqt",
+  "taskFiniPhotoHint": "Fini rasmni koʻradi va faqat aniq rasmni tasdiqlaydi. Fini qoidalarida «Foto dalilni tekshirish»ni yoqing.",
+  "taskFiniNoApps": "Farzandingiz telefoni ulanganda ilovalar chiqadi.",
+  "taskFiniApproved": "Fini tasdiqladi",
+  "taskFiniUndo": "Bekor qilish",
+  "taskFiniSawApp": "Fini: {app}, bugun {needed} dan {used}",
+  "taskFiniSawPhoto": "Fini: {note}",
+  "taskFiniChecking": "Fini rasmni koʻryapti",
+  "finiUsageProof": "{app}: bugun {used}, vazifa {needed} soʻragan."
 }

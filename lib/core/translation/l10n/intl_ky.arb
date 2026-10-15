@@ -1108,5 +1108,18 @@
   "kidAskGrantedFini": "Ооба: +{minutes}. Тапшырмалар аткарылды.",
   "kidAskDeclined": "Бүгүн эмес. Убактың эртең кайтат.",
   "finiAskReason": "{goal}: бүгүнкү убакыт бүттү.",
-  "finiNotToday": "Бүгүн эмес"
+  "finiNotToday": "Бүгүн эмес",
+  "taskFiniCheck": "Fini текшерсин",
+  "taskFiniCheckSub": "Далил болсо, Fini бекитет. 24 саат ичинде жокко чыгарса болот.",
+  "taskFiniApp": "Тиркеме",
+  "taskFiniPickApp": "Тиркеме тандаңыз",
+  "taskFiniMinutes": "Тиркемедеги убакыт",
+  "taskFiniPhotoHint": "Fini сүрөттү карап, так сүрөттү гана бекитет. Fini эрежелеринен «Сүрөт далилин текшерүү» дегенди күйгүзүңүз.",
+  "taskFiniNoApps": "Баланын телефону туташканда тиркемелер чыгат.",
+  "taskFiniApproved": "Fini бекитти",
+  "taskFiniUndo": "Жокко чыгаруу",
+  "taskFiniSawApp": "Fini: {app}, бүгүн {needed} ичинен {used}",
+  "taskFiniSawPhoto": "Fini: {note}",
+  "taskFiniChecking": "Fini сүрөттү карап жатат",
+  "finiUsageProof": "{app}: бүгүн {used}, тапшырма {needed} сураган."
 }

@@ -25,7 +25,16 @@ class TaskRowData {
     required this.lane,
     required this.coins,
     required this.childName,
+    this.fini,
+    this.onUndo,
   });
+
+  /// What Fini did or saw on this task (SAF-276): "Approved by Fini" or
+  /// "Fini: Duolingo, 4 m of 10 m today".
+  final String? fini;
+
+  /// Undo Fini's approval, while its 24 hours last and the coins are unspent.
+  final VoidCallback? onUndo;
 
   final String id;
   final String title;
@@ -448,6 +457,37 @@ class _TaskRow extends StatelessWidget {
                   if (row.meta.isNotEmpty) ...[
                     const SizedBox(height: 3),
                     Text(row.meta, style: AppText.metaSm),
+                  ],
+                  if (row.fini != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            row.fini!,
+                            key: ValueKey('task-fini-${row.id}'),
+                            style: AppText.metaSm.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        if (row.onUndo != null) ...[
+                          const SizedBox(width: 8),
+                          Pressable(
+                            key: ValueKey('task-fini-undo-${row.id}'),
+                            onTap: row.onUndo!,
+                            child: Text(
+                              S.of(context).taskFiniUndo,
+                              style: AppText.metaSm.copyWith(
+                                color: AppColors.primary,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ],
               ),
