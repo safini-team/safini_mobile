@@ -237,6 +237,9 @@ void main() {
           childId: _child,
         ),
         'fini_trial_ending': const PushTarget(PushDestination.parentFini),
+        'fini_time_request': const PushTarget(PushDestination.parentFini),
+        'fini_time_granted': const PushTarget(PushDestination.childToday),
+        'fini_time_declined': const PushTarget(PushDestination.childToday),
         'task_approved': const PushTarget(PushDestination.childToday),
         'streak_reminder': const PushTarget(PushDestination.childToday),
         'task_rejected': const PushTarget(
@@ -289,7 +292,9 @@ void main() {
           PushType.streakReminder ||
           PushType.prizeAdded ||
           PushType.prizeGiven ||
-          PushType.prizeDeclined => false,
+          PushType.prizeDeclined ||
+          PushType.finiTimeGranted ||
+          PushType.finiTimeDeclined => false,
           _ => true,
         };
         expect(target.isParent, forParent, reason: type.wire);

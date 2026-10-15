@@ -25,7 +25,10 @@ enum PushType {
   prizeDeclined('prize_declined'),
   signoutRequested('signout_requested'),
   setupReminder('setup_reminder'),
-  finiTrialEnding('fini_trial_ending');
+  finiTrialEnding('fini_trial_ending'),
+  finiTimeRequest('fini_time_request'),
+  finiTimeGranted('fini_time_granted'),
+  finiTimeDeclined('fini_time_declined');
 
   const PushType(this.wire);
 
@@ -134,9 +137,12 @@ class PushEvent {
       PushDestination.parentFamily,
       childId: childId,
     ),
-    PushType.finiTrialEnding => const PushTarget(PushDestination.parentFini),
+    PushType.finiTrialEnding ||
+    PushType.finiTimeRequest => const PushTarget(PushDestination.parentFini),
     PushType.taskApproved ||
-    PushType.streakReminder => const PushTarget(PushDestination.childToday),
+    PushType.streakReminder ||
+    PushType.finiTimeGranted ||
+    PushType.finiTimeDeclined => const PushTarget(PushDestination.childToday),
     PushType.taskRejected || PushType.tasksAssigned => PushTarget(
       PushDestination.childTasks,
       taskId: taskId,

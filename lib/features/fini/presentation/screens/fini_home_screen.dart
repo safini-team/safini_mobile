@@ -451,7 +451,9 @@ class _NeedsYouCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: DsInlineButton.quiet(
-                    label: s.finiNotNow,
+                    label: proposal.kind == 'time_grant'
+                        ? s.finiNotToday
+                        : s.finiNotNow,
                     onTap: () => _decide(context, FiniDecision.dismiss),
                   ),
                 ),

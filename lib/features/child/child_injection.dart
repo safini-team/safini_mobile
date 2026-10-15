@@ -2,6 +2,7 @@ import 'package:safini/features/child/presentation/cubit/child_time_cubit.dart';
 import 'package:safini/features/child/presentation/cubit/ios_screen_time_cubit.dart';
 import 'package:safini/features/models/data/services/device_usage_service.dart';
 import 'package:dio/dio.dart';
+import 'package:safini/features/fini/kid/kid_fini.dart';
 import 'package:get_it/get_it.dart';
 import 'package:safini/features/child/data/datasources/child_remote_datasource.dart';
 import 'package:safini/features/child/data/repositories/child_repository_impl.dart';
@@ -90,6 +91,7 @@ void registerChildDependencies(GetIt sl) {
       sl<DeviceUsageService>(),
       sl<ChildAppRulesService>(),
       sl<safini_profile.ProfileController>(),
+      fini: KidFiniApiService(sl<Dio>()),
     ),
   );
   sl.registerFactory<QuestCubit>(

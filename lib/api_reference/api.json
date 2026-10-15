@@ -9352,6 +9352,235 @@
         }
       }
     },
+    "/v1/children/{child_id}/fini/kid": {
+      "get": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Get Fini Kid View",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** What the child sees of Fini (SAF-275): today's budgets with the minutes left, and their one ask of the day for more time.\n\n**Frontend note:** The child or a parent. `pools[].time_up` is true once the budget is spent; `limit_minutes` already includes minutes granted today. `ask` is null before the child asks; then `state` is `pending`, `granted` or `declined`, and `parent_name` names who said it (null when Fini answered). `can_ask` is false once they asked today.",
+        "operationId": "get_fini_kid_view_v1_children__child_id__fini_kid_get",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The child's budgets and ask.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Fini Kid View V1 Children  Child Id  Fini Kid Get"
+                },
+                "example": {
+                  "usage_date": "2026-10-15",
+                  "pools": [
+                    {
+                      "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                      "intent": "games",
+                      "limit_minutes": 90,
+                      "plan_minutes": 90,
+                      "granted_minutes": 0,
+                      "used_minutes": 90,
+                      "time_up": true,
+                      "apps": [
+                        {
+                          "package_name": "com.roblox.client",
+                          "app_name": "Roblox"
+                        }
+                      ]
+                    }
+                  ],
+                  "can_ask": true,
+                  "ask_minutes": 15
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/children/{child_id}/fini/ask": {
+      "post": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Ask A Parent For More Time",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The child asks for 15 more minutes when a Fini budget runs out (SAF-275). Fini gives it alone only if the parent switched on extra time, it fits the envelope, it is the first today and today's tasks are done; otherwise the parents get a card and a push. The child hears the answer by push.\n\n**Frontend note:** Once a day per child: a second ask the same day is 409. Returns the ask (`state` `granted` right away when Fini gave it, else `pending`).",
+        "operationId": "ask_fini_for_time_v1_children__child_id__fini_ask_post",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskForTimeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The ask.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Ask Fini For Time V1 Children  Child Id  Fini Ask Post"
+                },
+                "example": {
+                  "id": "9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+                  "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "state": "pending",
+                  "minutes": 15,
+                  "asked_at": "2026-10-15T15:20:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/children/{child_id}/fini/proposals": {
       "get": {
         "tags": [
@@ -11147,6 +11376,25 @@
         "title": "ApproveRequest",
         "example": {
           "coin_cost": 400
+        }
+      },
+      "AskForTimeRequest": {
+        "properties": {
+          "goal_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Goal Id",
+            "description": "The budget that ran out."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "goal_id"
+        ],
+        "title": "AskForTimeRequest",
+        "example": {
+          "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b"
         }
       },
       "AvatarItemRedemptionRequest": {

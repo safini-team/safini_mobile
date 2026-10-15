@@ -107,6 +107,8 @@ class ChildHomeScreen extends StatelessWidget {
                 PushType.taskRejected,
                 PushType.tasksAssigned,
                 PushType.streakReminder,
+                PushType.finiTimeGranted,
+                PushType.finiTimeDeclined,
               },
               onPush: (_) => _refresh(context),
               child: const _ChildTodayScreen(),
@@ -186,7 +188,16 @@ class _ChildTodayScreen extends StatelessWidget {
                 time.usage?.usageAvailable ??
                 true,
             loadFailed: quests.loadFailed,
+            fini: time.fini,
+            askingForTime: time.asking,
           ),
+          onAskForTime: (pool) async {
+            final error = await context.read<ChildTimeCubit>().askForTime(
+              pool.goalId,
+            );
+            if (!context.mounted || error == null) return;
+            AppSnackBar.error(context, error.isEmpty ? s.networkError : error);
+          },
           onOpenStore: () => context.read<ChildHomeCubit>().selectTab(2),
           onOpenGifts: () => _openGifts(context, store),
           onOpenGift: (gift) {

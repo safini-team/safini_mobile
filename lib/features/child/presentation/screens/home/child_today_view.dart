@@ -9,6 +9,8 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
 import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
 import 'package:safini/features/child/presentation/widgets/kid_usage_section.dart';
+import 'package:safini/features/fini/kid/kid_ask_card.dart';
+import 'package:safini/features/fini/kid/kid_fini.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
 
@@ -106,6 +108,8 @@ class ChildTodayData {
     this.usageMinutes = 0,
     this.budget,
     this.usageAvailable = true,
+    this.fini = const KidFini(),
+    this.askingForTime = false,
     this.loadFailed = false,
   });
 
@@ -164,7 +168,12 @@ class ChildTodayData {
   /// Today's tasks could not be fetched, so an empty list proves nothing.
   final bool loadFailed;
 
-  bool get hasUsage => budget != null || usageApps.isNotEmpty;
+  /// Fini's budgets and the child's ask for more time (SAF-275).
+  final KidFini fini;
+  final bool askingForTime;
+
+  bool get hasUsage =>
+      budget != null || usageApps.isNotEmpty || fini.showCard;
 
   double get ringProgress =>
       questsTotal <= 0 ? 0 : (questsDone / questsTotal).clamp(0.0, 1.0);
@@ -212,7 +221,11 @@ class ChildTodayView extends StatelessWidget {
     this.onOpenGift,
     this.onOpenGifts,
     this.onRefresh,
+    this.onAskForTime,
   });
+
+  /// "Ask a parent for 15 min" on a spent Fini budget.
+  final ValueChanged<KidPool>? onAskForTime;
 
   final ChildTodayData data;
   final VoidCallback onOpenStore;
@@ -366,6 +379,22 @@ class ChildTodayView extends StatelessWidget {
               ),
             ),
           ),
+          if (data.fini.showCard && onAskForTime != null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.gutter,
+                  14,
+                  AppSpacing.gutter,
+                  0,
+                ),
+                child: KidAskCard(
+                  fini: data.fini,
+                  asking: data.askingForTime,
+                  onAsk: onAskForTime!,
+                ),
+              ),
+            ),
         ],
         if (data.teaser != null) ...[
           SliverToBoxAdapter(

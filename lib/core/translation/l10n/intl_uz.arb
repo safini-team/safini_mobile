@@ -1122,5 +1122,20 @@
   "planLineJump": "Oʻtgan hafta limit bir marta ham tugamadi. Hoziroq kuniga {to} ga oʻtamizmi?",
   "planLineEase": "Oʻtgan hafta {from} har kuni tugadi. Bir haftaga {to} gacha yumshatamizmi?",
   "planLineJumped": "Darhol maqsadga oʻtildi: kuniga {to}.",
-  "planLineAtTarget": "Maqsad darhol amal qiladi: kuniga {to}."
+  "planLineAtTarget": "Maqsad darhol amal qiladi: kuniga {to}.",
+  "kidAskTitleGames": "Yana oʻynashni xohlaysanmi?",
+  "kidAskTitleScrolling": "Yana lenta koʻrishni xohlaysanmi?",
+  "kidAskTitleOther": "Yana vaqt xohlaysanmi?",
+  "kidAskPlanGames": "Oilaviy reja boʻyicha oʻyinlarga kuniga {limit}.",
+  "kidAskPlanScrolling": "Oilaviy reja boʻyicha lentalarga kuniga {limit}.",
+  "kidAskPlanOther": "Oilaviy reja boʻyicha kuniga {limit}.",
+  "kidAskAppsUp": "{apps} · bugunga tamom",
+  "kidAskButton": "Ota-onadan {minutes} soʻrash",
+  "kidAskOnceADay": "Kuniga bir marta soʻrash mumkin.",
+  "kidAskPending": "Soʻraldi! Ota-ona tez orada javob beradi.",
+  "kidAskGrantedBy": "{parent}: ha, +{minutes}",
+  "kidAskGrantedFini": "Ha: +{minutes}. Vazifalar bajarilgan.",
+  "kidAskDeclined": "Bugun emas. Vaqting ertaga qaytadi.",
+  "finiAskReason": "{goal}: bugungi vaqt tugadi.",
+  "finiNotToday": "Bugun emas"
 }
