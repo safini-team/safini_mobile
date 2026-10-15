@@ -159,7 +159,7 @@ class _Entry extends StatelessWidget {
                 ),
                 if (item.reason.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(item.reason, style: AppText.meta),
+                  Text(finiReasonLine(s, item), style: AppText.meta),
                 ],
                 if (result != null) ...[
                   const SizedBox(height: 4),

@@ -13,6 +13,9 @@ class BlockFactsTest {
     @Test fun parentPauseBeatsEverything() =
         assertEquals(BlockScreen.PAUSED, roblox.copy(paused = true, dayCap = true, balance = 0).screen)
     @Test fun overallCapBeatsCoins() = assertEquals(BlockScreen.DAY_CAP, roblox.copy(dayCap = true).screen)
+    @Test fun aSpentPoolBeatsCoins() = assertEquals(BlockScreen.POOL_CAP, roblox.copy(pool = "games").screen)
+    @Test fun aParentPauseBeatsAPool() =
+        assertEquals(BlockScreen.PAUSED, roblox.copy(pool = "games", paused = true).screen)
     @Test fun noCoinUnlockIsNeverShortOfCoins() =
         assertEquals(BlockScreen.OUT_OF_TIME, roblox.copy(canUnlock = false, balance = 0).screen)
 }

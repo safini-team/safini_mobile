@@ -60,10 +60,13 @@ data class BlockFacts(
     val remainingSeconds: Long?,
     /** Today's tasks the child can still do, best paid first. */
     val tasks: List<BlockTask> = emptyList(),
+    /** The Fini pool that ran out (`games`, `scrolling`), or null when the app's own limit did. */
+    val pool: String? = null,
 ) {
     val screen: BlockScreen get() = when {
         paused -> BlockScreen.PAUSED
         dayCap -> BlockScreen.DAY_CAP
+        pool != null -> BlockScreen.POOL_CAP
         canUnlock && balance < cost -> BlockScreen.NEED_COINS
         else -> BlockScreen.OUT_OF_TIME
     }
@@ -82,7 +85,7 @@ data class BlockFacts(
 data class BlockTask(val title: String, val category: String, val coins: Int)
 
 /** The base takeovers. Confirming, unlocking and a failed purchase are steps on top of OUT_OF_TIME. */
-enum class BlockScreen { PAUSED, DAY_CAP, OUT_OF_TIME, NEED_COINS }
+enum class BlockScreen { PAUSED, DAY_CAP, POOL_CAP, OUT_OF_TIME, NEED_COINS }
 
 // Pine & Sand, mirrored from lib/core/theme/app_colors.dart. Change a colour there first.
 private val PINE_DEEP = 0xFF103B2F.toInt()
@@ -306,7 +309,7 @@ class BlockOverlay(private val context: Context, private val host: Host) {
         padTop.clear(); padBottom.clear()
         confirm = null; backIn = null; busyLabel = null; meterFill = null
         val unlocked = step is Step.Unlocked
-        val night = step == Step.Base && f.screen == BlockScreen.DAY_CAP
+        val night = step == Step.Base && (f.screen == BlockScreen.DAY_CAP || f.screen == BlockScreen.POOL_CAP)
         val ground = when { unlocked -> PINE; night -> INK; else -> PINE_DEEP }
         if (celebrate && animations()) ValueAnimator.ofArgb(PINE_DEEP, ground).apply {
             duration = 320
@@ -358,7 +361,7 @@ class BlockOverlay(private val context: Context, private val host: Host) {
         is Step.Failed -> R.drawable.mascot_unimpressed
         else -> when (f.screen) {
             BlockScreen.PAUSED -> R.drawable.mascot_stop
-            BlockScreen.DAY_CAP -> R.drawable.mascot_relaxed
+            BlockScreen.DAY_CAP, BlockScreen.POOL_CAP -> R.drawable.mascot_relaxed
             BlockScreen.NEED_COINS -> R.drawable.mascot_encouraging
             BlockScreen.OUT_OF_TIME -> R.drawable.mascot_firm
         }
@@ -411,7 +414,7 @@ class BlockOverlay(private val context: Context, private val host: Host) {
                     f.balance.toFloat()/f.cost, COIN) to 22
                 if (f.allowanceMinutes > 0) parts += backInPill(f, night) to 20
             }
-            f.screen == BlockScreen.DAY_CAP -> parts += backInPill(f, night) to 22
+            f.screen == BlockScreen.DAY_CAP || f.screen == BlockScreen.POOL_CAP -> parts += backInPill(f, night) to 22
         }
         return parts
     }
@@ -424,6 +427,11 @@ class BlockOverlay(private val context: Context, private val host: Host) {
         else -> when (f.screen) {
             BlockScreen.PAUSED -> res.getString(R.string.block_paused_title, f.appName) to res.getString(R.string.block_paused_body)
             BlockScreen.DAY_CAP -> res.getString(R.string.block_day_title) to res.getString(R.string.block_day_body)
+            BlockScreen.POOL_CAP -> when (f.pool) {
+                "games" -> res.getString(R.string.block_pool_games_title) to res.getString(R.string.block_pool_games_body)
+                "scrolling" -> res.getString(R.string.block_pool_scrolling_title) to res.getString(R.string.block_pool_scrolling_body)
+                else -> res.getString(R.string.block_pool_title, f.appName) to res.getString(R.string.block_pool_body)
+            }
             BlockScreen.NEED_COINS -> (f.cost-f.balance).let { res.getQuantityString(R.plurals.block_need_title, it, it) } to
                 res.getString(R.string.block_need_body)
             BlockScreen.OUT_OF_TIME -> res.getString(R.string.block_resting_title, f.appName) to res.getString(when {
@@ -445,7 +453,7 @@ class BlockOverlay(private val context: Context, private val host: Host) {
                 primary(res.getString(R.string.block_try_again), busyTarget = true) { buy() } to 0,
                 secondary(res.getString(R.string.block_open_safini)) { leave(safini()) } to 10,
                 label(res.getString(R.string.block_failed_hint), 13f, TEXT_TERTIARY).leading(1.45f) to 12)
-            f.screen == BlockScreen.DAY_CAP -> nightFooter(f)
+            f.screen == BlockScreen.DAY_CAP || f.screen == BlockScreen.POOL_CAP -> nightFooter(f)
             f.screen == BlockScreen.OUT_OF_TIME && f.canUnlock -> sheet(
                 unlockButton(f) to 0,
                 (f.tasks.firstOrNull()?.let { taskRow(it, res.getString(R.string.block_task_instead)) } ?: earnRow()) to 10,

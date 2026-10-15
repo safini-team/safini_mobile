@@ -1,5 +1,7 @@
 import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/features/fini/domain/fini_models.dart';
+import 'package:safini/features/fini/presentation/widgets/goal_visuals.dart'
+    show goalTitle;
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
 
@@ -26,8 +28,38 @@ String finiStatusLine(
   return s.finiStatusOnTrack(childName);
 }
 
-String _app(FiniProposal p) =>
-    (p.payload['app_name'] ?? p.payload['app_slug'] ?? '').toString();
+Map<String, dynamic>? _plan(FiniProposal p) {
+  final plan = p.evidence['plan'];
+  return plan is Map ? plan.cast<String, dynamic>() : null;
+}
+
+/// The app a rule change is about, or the goal's name for a pool (SAF-274).
+String _app(FiniProposal p, [S? s]) {
+  final named = p.payload['app_name'] ?? p.payload['app_slug'];
+  if (named != null) return named.toString();
+  final intent = GoalIntent.values
+      .where((intent) => intent.name == _plan(p)?['intent'])
+      .firstOrNull;
+  return intent != null && s != null ? goalTitle(s, intent) : '';
+}
+
+/// Why, in the parent's own language. A plan change carries its numbers in
+/// `evidence.plan`, so it is said here rather than by the server's English
+/// `reason`; anything else shows the reason as sent.
+String finiReasonLine(S s, FiniProposal p) {
+  final plan = _plan(p);
+  if (plan == null) return p.reason;
+  String hm(String key) => formatHm(s, (plan[key] as num?)?.toInt() ?? 0);
+  return switch ((plan['action'], plan['why'])) {
+    ('start', 'at_target') => s.planLineAtTarget(hm('to')),
+    ('start', _) => s.planLineStart(hm('to')),
+    ('step', _) => s.planLineStep(hm('from'), hm('to'), hm('target')),
+    ('jump', 'parent') => s.planLineJumped(hm('to')),
+    ('jump', _) => s.planLineJump(hm('to')),
+    ('ease', _) => s.planLineEase(hm('from'), hm('to')),
+    _ => p.reason,
+  };
+}
 
 int _minutes(FiniProposal p, String key) =>
     (p.payload[key] as num?)?.toInt() ?? 0;
@@ -39,7 +71,7 @@ String finiActivityTitle(S s, FiniProposal p, {required String childName}) {
       if (p.payload['is_blocked'] == true) return s.finiDidBlock(_app(p));
       if (p.payload['is_blocked'] == false) return s.finiDidUnblock(_app(p));
       return s.finiDidLimit(
-        _app(p),
+        _app(p, s),
         formatHm(s, _minutes(p, 'daily_limit_minutes')),
       );
     case 'task_review':
@@ -72,9 +104,11 @@ String finiCardTitle(
       final limit = p.payload['daily_limit_minutes'];
       if (limit is num) {
         final time = formatHm(s, limit.toInt());
-        return currentLimit != null && limit > currentLimit
-            ? s.finiAskRaiseLimit(_app(p), time)
-            : s.finiAskLimit(_app(p), time);
+        final current =
+            currentLimit ?? (_plan(p)?['from'] as num?)?.toInt();
+        return current != null && limit > current
+            ? s.finiAskRaiseLimit(_app(p, s), time)
+            : s.finiAskLimit(_app(p, s), time);
       }
       return finiActivityTitle(s, p, childName: childName);
     case 'task_review':

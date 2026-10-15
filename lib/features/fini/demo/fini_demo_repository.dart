@@ -19,6 +19,15 @@ class FiniDemoRepository implements FiniRepository {
 
   bool get _running => state != FiniDemoState.androidChildWithUsage;
 
+  DateTime _nextMonday() {
+    final today = DateTime(_now.year, _now.month, _now.day);
+    return today.add(
+      Duration(
+        days: (8 - today.weekday) % 7 == 0 ? 7 : (8 - today.weekday) % 7,
+      ),
+    );
+  }
+
   void _seed(String childId) {
     if (_goals.containsKey(childId)) return;
     _settings[childId] = _running
@@ -39,7 +48,19 @@ class FiniDemoRepository implements FiniRepository {
               minutesPerDay: 45,
               weekendMinutes: 75,
               startMinutes: 130,
+              currentMinutes: 98,
               pace: FiniPace.steady,
+              plan: FiniPlan(
+                phase: FiniPlanPhase.stepping,
+                platform: 'android',
+                stepsDown: true,
+                currentMinutes: 98,
+                startMinutes: 130,
+                watchedDays: 3,
+                steps: const [98, 74, 56, 45],
+                nextStepOn: _nextMonday(),
+                appCount: 3,
+              ),
             ),
             FiniGoal(
               id: '$childId-scrolling',
@@ -48,7 +69,13 @@ class FiniDemoRepository implements FiniRepository {
               intent: GoalIntent.scrolling,
               categories: const ['social', 'short_video'],
               minutesPerDay: 60,
-              startMinutes: 95,
+              plan: const FiniPlan(
+                phase: FiniPlanPhase.watching,
+                platform: 'android',
+                stepsDown: true,
+                watchedDays: 2,
+                appCount: 2,
+              ),
             ),
             FiniGoal(
               id: '$childId-homework',
@@ -108,11 +135,16 @@ class FiniDemoRepository implements FiniRepository {
           kind: 'rule_change',
           status: FiniProposalStatus.applied,
           decidedBy: 'fini',
-          reason: 'Next step of the Games plan.',
-          payload: const {
-            'app_slug': 'roblox',
-            'app_name': 'Roblox',
-            'daily_limit_minutes': 100,
+          reason: 'Monday step: 130 -> 98 min a day, on the way to 45 min.',
+          payload: {'goal_id': '$childId-games', 'daily_limit_minutes': 98},
+          evidence: const {
+            'plan': {
+              'action': 'step',
+              'intent': 'games',
+              'from': 130,
+              'to': 98,
+              'target': 45,
+            },
           },
           createdAt: at(9, 40).subtract(const Duration(days: 2)),
         ),
@@ -271,5 +303,70 @@ class FiniDemoRepository implements FiniRepository {
       total: byChild.values.fold(0, (sum, count) => sum + count),
       byChild: byChild,
     );
+  }
+
+  @override
+  Future<FiniGoal> jumpToTarget(String goalId) async {
+    for (final goals in _goals.values) {
+      final index = goals.indexWhere((goal) => goal.id == goalId);
+      if (index == -1) continue;
+      final goal = goals[index];
+      final jumped = FiniGoal(
+        id: goal.id,
+        childId: goal.childId,
+        kind: goal.kind,
+        intent: goal.intent,
+        categories: goal.categories,
+        minutesPerDay: goal.minutesPerDay,
+        weekendMinutes: goal.weekendMinutes,
+        startMinutes: goal.startMinutes,
+        currentMinutes: goal.minutesPerDay,
+        pace: goal.pace,
+        plan: FiniPlan(
+          phase: FiniPlanPhase.atTarget,
+          platform: goal.plan?.platform,
+          stepsDown: goal.plan?.stepsDown ?? false,
+          currentMinutes: goal.minutesPerDay,
+          startMinutes: goal.startMinutes,
+          appCount: goal.plan?.appCount ?? 0,
+        ),
+      );
+      goals[index] = jumped;
+      return jumped;
+    }
+    throw StateError('No goal $goalId');
+  }
+
+  @override
+  Future<List<FiniPool>> pools(String childId) async {
+    _seed(childId);
+    return [
+      for (final goal in _goals[childId]!)
+        if (goal.currentMinutes != null)
+          FiniPool(
+            goalId: goal.id,
+            intent: goal.intent,
+            limitMinutes: goal.currentMinutes!,
+            goalMinutes: goal.minutesPerDay,
+            usedMinutes: 52,
+            apps: const [
+              FiniPoolApp(
+                packageName: 'com.roblox.client',
+                name: 'Roblox',
+                usedMinutes: 32,
+              ),
+              FiniPoolApp(
+                packageName: 'com.supercell.brawlstars',
+                name: 'Brawl Stars',
+                usedMinutes: 14,
+              ),
+              FiniPoolApp(
+                packageName: 'com.mojang.minecraftpe',
+                name: 'Minecraft',
+                usedMinutes: 6,
+              ),
+            ],
+          ),
+    ];
   }
 }

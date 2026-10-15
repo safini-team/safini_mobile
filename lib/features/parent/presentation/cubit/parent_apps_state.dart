@@ -1,3 +1,4 @@
+import 'package:safini/features/fini/domain/fini_models.dart';
 import 'package:safini/features/parent/domain/models/screen_time_model.dart';
 
 abstract class ParentAppsState {
@@ -18,9 +19,13 @@ class ParentAppsLoaded extends ParentAppsState {
   /// Canonical shared budget. Null cap means off; app limits remain independent.
   final ScreenTimeModel screenTime;
 
+  /// Fini's budget goals as shared pools (SAF-274); empty without any.
+  final List<FiniPool> pools;
+
   const ParentAppsLoaded({
     required this.appLimits,
     this.screenTime = ScreenTimeModel.none,
+    this.pools = const [],
   });
 }
 

@@ -444,7 +444,7 @@ class _NeedsYouCard extends StatelessWidget {
             ),
             if (proposal.reason.isNotEmpty) ...[
               const SizedBox(height: 4),
-              Text(proposal.reason, style: AppText.meta),
+              Text(finiReasonLine(s, proposal), style: AppText.meta),
             ],
             const SizedBox(height: 12),
             Row(

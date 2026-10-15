@@ -1,0 +1,667 @@
+{
+ "steps": [
+  {
+   "start": 120,
+   "target": 45,
+   "pace": "gentle",
+   "steps": [
+    120,
+    102,
+    87,
+    74,
+    63,
+    54,
+    46,
+    45
+   ]
+  },
+  {
+   "start": 120,
+   "target": 45,
+   "pace": "steady",
+   "steps": [
+    120,
+    90,
+    68,
+    51,
+    45
+   ]
+  },
+  {
+   "start": 120,
+   "target": 45,
+   "pace": "now",
+   "steps": [
+    120,
+    45
+   ]
+  },
+  {
+   "start": 90,
+   "target": 60,
+   "pace": "gentle",
+   "steps": [
+    90,
+    77,
+    65,
+    60
+   ]
+  },
+  {
+   "start": 90,
+   "target": 60,
+   "pace": "steady",
+   "steps": [
+    90,
+    68,
+    60
+   ]
+  },
+  {
+   "start": 90,
+   "target": 60,
+   "pace": "now",
+   "steps": [
+    90,
+    60
+   ]
+  },
+  {
+   "start": 300,
+   "target": 30,
+   "pace": "gentle",
+   "steps": [
+    300,
+    255,
+    217,
+    184,
+    156,
+    133,
+    113,
+    96,
+    82,
+    70,
+    60,
+    51,
+    43,
+    37,
+    31,
+    30
+   ]
+  },
+  {
+   "start": 300,
+   "target": 30,
+   "pace": "steady",
+   "steps": [
+    300,
+    225,
+    169,
+    127,
+    95,
+    71,
+    53,
+    40,
+    30
+   ]
+  },
+  {
+   "start": 300,
+   "target": 30,
+   "pace": "now",
+   "steps": [
+    300,
+    30
+   ]
+  },
+  {
+   "start": 50,
+   "target": 45,
+   "pace": "gentle",
+   "steps": [
+    50,
+    45
+   ]
+  },
+  {
+   "start": 50,
+   "target": 45,
+   "pace": "steady",
+   "steps": [
+    50,
+    45
+   ]
+  },
+  {
+   "start": 50,
+   "target": 45,
+   "pace": "now",
+   "steps": [
+    50,
+    45
+   ]
+  },
+  {
+   "start": 45,
+   "target": 45,
+   "pace": "gentle",
+   "steps": [
+    45
+   ]
+  },
+  {
+   "start": 45,
+   "target": 45,
+   "pace": "steady",
+   "steps": [
+    45
+   ]
+  },
+  {
+   "start": 45,
+   "target": 45,
+   "pace": "now",
+   "steps": [
+    45
+   ]
+  },
+  {
+   "start": 30,
+   "target": 60,
+   "pace": "gentle",
+   "steps": [
+    30
+   ]
+  },
+  {
+   "start": 30,
+   "target": 60,
+   "pace": "steady",
+   "steps": [
+    30
+   ]
+  },
+  {
+   "start": 30,
+   "target": 60,
+   "pace": "now",
+   "steps": [
+    30
+   ]
+  },
+  {
+   "start": 7,
+   "target": 5,
+   "pace": "gentle",
+   "steps": [
+    7,
+    6,
+    5
+   ]
+  },
+  {
+   "start": 7,
+   "target": 5,
+   "pace": "steady",
+   "steps": [
+    7,
+    5
+   ]
+  },
+  {
+   "start": 7,
+   "target": 5,
+   "pace": "now",
+   "steps": [
+    7,
+    5
+   ]
+  },
+  {
+   "start": 1000,
+   "target": 15,
+   "pace": "gentle",
+   "steps": [
+    1000,
+    850,
+    723,
+    615,
+    523,
+    445,
+    378,
+    321,
+    273,
+    232,
+    197,
+    167,
+    142,
+    121,
+    103,
+    88,
+    75,
+    64,
+    54,
+    46,
+    39,
+    33,
+    28,
+    24,
+    20,
+    17,
+    15
+   ]
+  },
+  {
+   "start": 1000,
+   "target": 15,
+   "pace": "steady",
+   "steps": [
+    1000,
+    750,
+    563,
+    422,
+    317,
+    238,
+    179,
+    134,
+    101,
+    76,
+    57,
+    43,
+    32,
+    24,
+    18,
+    15
+   ]
+  },
+  {
+   "start": 1000,
+   "target": 15,
+   "pace": "now",
+   "steps": [
+    1000,
+    15
+   ]
+  },
+  {
+   "start": 65,
+   "target": 60,
+   "pace": "gentle",
+   "steps": [
+    65,
+    60
+   ]
+  },
+  {
+   "start": 65,
+   "target": 60,
+   "pace": "steady",
+   "steps": [
+    65,
+    60
+   ]
+  },
+  {
+   "start": 65,
+   "target": 60,
+   "pace": "now",
+   "steps": [
+    65,
+    60
+   ]
+  },
+  {
+   "start": 25,
+   "target": 20,
+   "pace": "gentle",
+   "steps": [
+    25,
+    21,
+    20
+   ]
+  },
+  {
+   "start": 25,
+   "target": 20,
+   "pace": "steady",
+   "steps": [
+    25,
+    20
+   ]
+  },
+  {
+   "start": 25,
+   "target": 20,
+   "pace": "now",
+   "steps": [
+    25,
+    20
+   ]
+  }
+ ],
+ "days": [
+  {
+   "name": "watching",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": null,
+    "usage": [
+     120,
+     130
+    ],
+    "is_monday": true,
+    "days_since_step": null,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "none",
+    "minutes": null
+   }
+  },
+  {
+   "name": "watch ends at what it saw",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": null,
+    "usage": [
+     120,
+     130,
+     125
+    ],
+    "is_monday": true,
+    "days_since_step": null,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "start",
+    "minutes": 125
+   }
+  },
+  {
+   "name": "watch below the goal starts at the goal",
+   "input": {
+    "target": 60,
+    "pace": "steady",
+    "current": null,
+    "usage": [
+     20,
+     30,
+     25
+    ],
+    "is_monday": true,
+    "days_since_step": null,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "start",
+    "minutes": 60
+   }
+  },
+  {
+   "name": "right away starts at the goal",
+   "input": {
+    "target": 45,
+    "pace": "now",
+    "current": null,
+    "usage": [],
+    "is_monday": true,
+    "days_since_step": null,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "start",
+    "minutes": 45
+   }
+  },
+  {
+   "name": "iPhone starts at the goal",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": null,
+    "usage": [],
+    "is_monday": true,
+    "days_since_step": null,
+    "steps_down": false
+   },
+   "action": {
+    "kind": "start",
+    "minutes": 45
+   }
+  },
+  {
+   "name": "iPhone never steps",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 45,
+    "usage": [],
+    "is_monday": true,
+    "days_since_step": null,
+    "steps_down": false
+   },
+   "action": {
+    "kind": "none",
+    "minutes": null
+   }
+  },
+  {
+   "name": "not a Monday",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 120,
+    "usage": [
+     100,
+     100,
+     100,
+     100,
+     100,
+     100,
+     100
+    ],
+    "is_monday": false,
+    "days_since_step": 8,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "none",
+    "minutes": null
+   }
+  },
+  {
+   "name": "Monday step",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 120,
+    "usage": [
+     100,
+     90,
+     110,
+     120,
+     80,
+     95,
+     100
+    ],
+    "is_monday": true,
+    "days_since_step": 7,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "step",
+    "minutes": 90
+   }
+  },
+  {
+   "name": "step too soon",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 120,
+    "usage": [
+     100,
+     100,
+     100,
+     100,
+     100,
+     100,
+     100
+    ],
+    "is_monday": true,
+    "days_since_step": 3,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "none",
+    "minutes": null
+   }
+  },
+  {
+   "name": "hold after 4 misses",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 90,
+    "usage": [
+     90,
+     90,
+     90,
+     90,
+     60,
+     60,
+     60
+    ],
+    "is_monday": true,
+    "days_since_step": 7,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "hold",
+    "minutes": 90
+   }
+  },
+  {
+   "name": "3 misses still steps",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 90,
+    "usage": [
+     90,
+     90,
+     90,
+     60,
+     60,
+     60,
+     60
+    ],
+    "is_monday": true,
+    "days_since_step": 7,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "step",
+    "minutes": 68
+   }
+  },
+  {
+   "name": "hits every day asks to ease",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 90,
+    "usage": [
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90
+    ],
+    "is_monday": true,
+    "days_since_step": 7,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "ease",
+    "minutes": 120
+   }
+  },
+  {
+   "name": "never binds jumps",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 120,
+    "usage": [
+     40,
+     50,
+     30,
+     60,
+     50,
+     40,
+     55
+    ],
+    "is_monday": true,
+    "days_since_step": 7,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "jump",
+    "minutes": 60
+   }
+  },
+  {
+   "name": "at the goal",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 45,
+    "usage": [
+     45,
+     45,
+     45,
+     45,
+     45,
+     45,
+     45
+    ],
+    "is_monday": true,
+    "days_since_step": 7,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "none",
+    "minutes": null
+   }
+  },
+  {
+   "name": "last step lands on the goal",
+   "input": {
+    "target": 45,
+    "pace": "steady",
+    "current": 55,
+    "usage": [
+     50,
+     50,
+     50,
+     50,
+     50,
+     50,
+     50
+    ],
+    "is_monday": true,
+    "days_since_step": 10,
+    "steps_down": true
+   },
+   "action": {
+    "kind": "step",
+    "minutes": 45
+   }
+  }
+ ]
+}

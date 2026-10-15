@@ -1205,5 +1205,22 @@
   "finiPausedTitle": "Fini отдыхает. Ваши правила работают.",
   "finiPausedBody": "Бесплатный период закончился. Все лимиты остаются как есть.",
   "finiKeepWithPro": "Продолжить с Fini Pro",
-  "proFeatureFini": "Fini ведёт ваш план шаг за шагом"
+  "proFeatureFini": "Fini ведёт ваш план шаг за шагом",
+  "goalPlanWatchingDays": "Наблюдаю: день {seen} из {total}. Потом план начнётся с того, сколько {name} тратит на самом деле.",
+  "goalPlanWaitingPhone": "Начну наблюдать, когда подключится телефон: {name}.",
+  "goalPlanStepping": "Сегодня лимит {current}. В следующий понедельник {next}, цель через {weeks} нед.",
+  "goalPlanAtTarget": "Цель достигнута: {target} в день. Держу так.",
+  "goalPlanIphone": "На iPhone я не вижу время в приложениях, поэтому цель действует сразу: {target} в день, без шагов.",
+  "goalJumpNow": "Сразу {target}",
+  "goalJumpNote": "Пропускает оставшиеся шаги. В первые дни возможны споры.",
+  "limitsPools": "Бюджеты Fini",
+  "limitsPoolsNote": "Один общий лимит на все приложения группы. Новая игра попадает сюда в тот же день, как Fini её увидит.",
+  "poolUsedOf": "{used} из {limit} сегодня",
+  "poolUsedUp": "{limit} на сегодня израсходовано",
+  "planLineStart": "План начался с {to} в день после наблюдения.",
+  "planLineStep": "Шаг понедельника: с {from} до {to} в день, цель {target}.",
+  "planLineJump": "На прошлой неделе лимит ни разу не закончился. Перейти сразу на {to} в день?",
+  "planLineEase": "На прошлой неделе {from} заканчивались каждый день. Ослабить до {to} на неделю?",
+  "planLineJumped": "Сразу перешли к цели: {to} в день.",
+  "planLineAtTarget": "Цель действует сразу: {to} в день."
 }

@@ -54,6 +54,13 @@ class FiniGoalScreen extends StatelessWidget {
     AppSnackBar.error(context, error.isEmpty ? s.networkError : error);
   }
 
+  Future<void> _jump(BuildContext context, FiniGoal goal) async {
+    final s = S.of(context);
+    final error = await context.read<FiniCubit>().jumpToTarget(goal);
+    if (!context.mounted || error == null) return;
+    AppSnackBar.error(context, error.isEmpty ? s.networkError : error);
+  }
+
   Future<void> _remove(BuildContext context, FiniGoal goal) async {
     final s = S.of(context);
     final navigator = Navigator.of(context);
@@ -126,6 +133,7 @@ class FiniGoalScreen extends StatelessWidget {
                       childName: childName,
                       onPace: (pace) =>
                           _save(context, goal, {'pace': pace.name}),
+                      onJump: () => _jump(context, goal),
                     ),
                     const SizedBox(height: 14),
                     DsGroup(
@@ -225,51 +233,100 @@ class _PlanCard extends StatelessWidget {
     required this.goal,
     required this.childName,
     required this.onPace,
+    required this.onJump,
   });
 
   final FiniGoal goal;
   final String childName;
   final ValueChanged<FiniPace> onPace;
+  final VoidCallback onJump;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     final target = goal.targetMinutes ?? 0;
-    final start = goal.startMinutes;
-    final steps = start == null
-        ? null
-        : formatPlanSteps(start, target, goal.pace);
+    final plan = goal.plan;
+    final List<int>? steps;
     final String text;
-    if (steps == null) {
-      text = s.goalPlanWatching;
-    } else if (goal.pace == FiniPace.now) {
-      text = s.goalPlanNow(formatHm(s, target));
+    var canJump = false;
+    if (plan == null) {
+      // An API without plans: the steps the onboarding promised.
+      final start = goal.startMinutes;
+      steps = start == null ? null : formatPlanSteps(start, target, goal.pace);
+      if (steps == null) {
+        text = s.goalPlanWatching;
+      } else if (goal.pace == FiniPace.now) {
+        text = s.goalPlanNow(formatHm(s, target));
+      } else {
+        text = s.goalPlanText(
+          formatHm(s, start!),
+          formatHm(s, target),
+          steps.length - 1,
+        );
+      }
+    } else if (plan.isIphone) {
+      steps = null;
+      text = s.goalPlanIphone(formatHm(s, target));
     } else {
-      text = s.goalPlanText(
-        formatHm(s, start!),
-        formatHm(s, target),
-        steps.length - 1,
-      );
+      switch (plan.phase) {
+        case FiniPlanPhase.waitingForPhone:
+          steps = null;
+          text = s.goalPlanWaitingPhone(childName);
+        case FiniPlanPhase.watching:
+          steps = null;
+          text = s.goalPlanWatchingDays(
+            plan.watchedDays + 1 > plan.watchDays
+                ? plan.watchDays
+                : plan.watchedDays + 1,
+            plan.watchDays,
+            childName,
+          );
+        case FiniPlanPhase.atTarget:
+          steps = null;
+          text = s.goalPlanAtTarget(formatHm(s, target));
+        case FiniPlanPhase.stepping:
+          steps = plan.steps.length > 1 ? plan.steps : null;
+          canJump = true;
+          text = steps == null
+              ? s.goalPlanAtTarget(formatHm(s, target))
+              : s.goalPlanStepping(
+                  formatHm(s, steps.first),
+                  formatHm(s, steps[1]),
+                  plan.weeksLeft,
+                );
+      }
     }
     return DsCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          DsSegmentedControl(
-            labels: [s.paceGentle, s.paceSteady, s.paceNow],
-            selectedIndex: FiniPace.values.indexOf(goal.pace),
-            onChanged: (index) => onPace(FiniPace.values[index]),
-          ),
+          // An iPhone never steps, so how fast means nothing there.
+          if (plan == null || !plan.isIphone)
+            DsSegmentedControl(
+              labels: [s.paceGentle, s.paceSteady, s.paceNow],
+              selectedIndex: FiniPace.values.indexOf(goal.pace),
+              onChanged: (index) => onPace(FiniPace.values[index]),
+            ),
           if (steps != null && steps.length > 1) ...[
             const SizedBox(height: 16),
             _StepBars(steps: steps),
           ],
-          const SizedBox(height: 14),
+          if (plan == null || !plan.isIphone) const SizedBox(height: 14),
           Text(
             text,
             key: const ValueKey('goal-plan-text'),
             style: AppText.meta,
           ),
+          if (canJump) ...[
+            const SizedBox(height: 14),
+            DsPrimaryButton.secondary(
+              key: const ValueKey('goal-jump'),
+              label: s.goalJumpNow(formatHm(s, target)),
+              onTap: onJump,
+            ),
+            const SizedBox(height: 6),
+            Text(s.goalJumpNote, style: AppText.metaSm),
+          ],
         ],
       ),
     );

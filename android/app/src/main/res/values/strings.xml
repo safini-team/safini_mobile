@@ -46,6 +46,12 @@
     <string name="block_paused_body">A parent paused this app, so coins can’t open it. Ask them to switch it back on.</string>
     <string name="block_day_title">That’s all for today</string>
     <string name="block_day_body">You’ve used all your screen time. Everything wakes up again tomorrow.</string>
+    <string name="block_pool_games_title">Games are done for today</string>
+    <string name="block_pool_games_body">You’ve played all of today’s game time. Other apps still work, and games wake up tomorrow.</string>
+    <string name="block_pool_scrolling_title">Scrolling is done for today</string>
+    <string name="block_pool_scrolling_body">You’ve used today’s scrolling time. Other apps still work, and feeds wake up tomorrow.</string>
+    <string name="block_pool_title">%1$s is resting until tomorrow</string>
+    <string name="block_pool_body">Today’s time for apps like this is used up. Other apps still work.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d minute, unlocked</item>
         <item quantity="other">%d minutes, unlocked</item>

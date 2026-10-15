@@ -72,6 +72,12 @@ class ApiConst {
       '/v1/children/$childId/fini/settings';
   static String finiGoals(String childId) => '/v1/children/$childId/fini/goals';
   static String finiGoal(String goalId) => '/v1/fini/goals/$goalId';
+
+  /// The parent skips the rest of a budget goal's plan (SAF-274).
+  static String finiGoalJump(String goalId) => '/v1/fini/goals/$goalId/jump';
+
+  /// Budget goals as shared pools, with today's minutes (SAF-274).
+  static String finiPools(String childId) => '/v1/children/$childId/fini/pools';
   static String finiProposals(String childId) =>
       '/v1/children/$childId/fini/proposals';
   static String finiActivity(String childId) =>

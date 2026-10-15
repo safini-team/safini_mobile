@@ -1105,5 +1105,22 @@
   "finiPausedTitle": "Fini dam olmoqda. Qoidalaringiz ishlayapti.",
   "finiPausedBody": "Bepul sinov tugadi. Barcha cheklovlar o‘z holicha qoladi.",
   "finiKeepWithPro": "Fini Pro bilan davom etish",
-  "proFeatureFini": "Fini rejangizni qadamma-qadam olib boradi"
+  "proFeatureFini": "Fini rejangizni qadamma-qadam olib boradi",
+  "goalPlanWatchingDays": "Kuzatyapman: {total} kundan {seen}-kun. Keyin reja {name} haqiqatda qancha ishlatishidan boshlanadi.",
+  "goalPlanWaitingPhone": "{name} telefoni ulanganda kuzatishni boshlayman.",
+  "goalPlanStepping": "Bugungi limit {current}. Keyingi dushanba {next}, maqsad {weeks} haftadan keyin.",
+  "goalPlanAtTarget": "Maqsadga yetildi: kuniga {target}. Shunday ushlab turaman.",
+  "goalPlanIphone": "iPhoneʼda ilovalar vaqtini koʻra olmayman, shuning uchun maqsad darhol amal qiladi: kuniga {target}, bosqichlarsiz.",
+  "goalJumpNow": "Hoziroq {target}",
+  "goalJumpNote": "Qolgan bosqichlarni oʻtkazib yuboradi. Dastlabki kunlarda norozilik boʻlishi mumkin.",
+  "limitsPools": "Fini byudjetlari",
+  "limitsPoolsNote": "Guruhdagi barcha ilovalar uchun bitta umumiy limit. Yangi oʻyin Fini uni koʻrgan kuni qoʻshiladi.",
+  "poolUsedOf": "Bugun {limit} dan {used}",
+  "poolUsedUp": "Bugungi {limit} tugadi",
+  "planLineStart": "Kuzatuvdan keyin reja kuniga {to} dan boshlandi.",
+  "planLineStep": "Dushanba bosqichi: kuniga {from} dan {to} gacha, maqsad {target}.",
+  "planLineJump": "Oʻtgan hafta limit bir marta ham tugamadi. Hoziroq kuniga {to} ga oʻtamizmi?",
+  "planLineEase": "Oʻtgan hafta {from} har kuni tugadi. Bir haftaga {to} gacha yumshatamizmi?",
+  "planLineJumped": "Darhol maqsadga oʻtildi: kuniga {to}.",
+  "planLineAtTarget": "Maqsad darhol amal qiladi: kuniga {to}."
 }

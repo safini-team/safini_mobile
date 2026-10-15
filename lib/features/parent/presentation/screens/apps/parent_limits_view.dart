@@ -9,6 +9,8 @@ import 'package:safini/core/translation/generated/l10n.dart';
 import 'package:safini/core/utils/child_avatar_look.dart';
 import 'package:safini/features/parent/presentation/widgets/apps/overall_budget_card.dart';
 import 'package:safini/core/utils/widgets/ds/ds.dart';
+import 'package:safini/features/fini/domain/fini_models.dart';
+import 'package:safini/features/fini/presentation/widgets/goal_visuals.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
 
@@ -98,9 +100,13 @@ class ParentLimitsData {
     this.usedMinutes = 0,
     this.remainingMinutes,
     this.nextResetAt,
+    this.pools = const [],
   });
 
   final List<LimitsKid> kids;
+
+  /// Fini's budget goals as shared pools (SAF-274).
+  final List<FiniPool> pools;
   final String? selectedKidId;
   final String kidName;
   final List<LimitsApp> apps;
@@ -239,6 +245,27 @@ class ParentLimitsView extends StatelessWidget {
             ),
           ),
 
+          if (data.pools.isNotEmpty) ...[
+            SliverToBoxAdapter(child: DsOverline(s.limitsPools, top: 28)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.gutter,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    DsGroup(
+                      children: [
+                        for (final pool in data.pools) _PoolRow(pool: pool),
+                      ],
+                    ),
+                    DsFootnote(s.limitsPoolsNote),
+                  ],
+                ),
+              ),
+            ),
+          ],
           SliverToBoxAdapter(child: DsOverline(s.apps, top: 28)),
           SliverToBoxAdapter(
             child: Padding(
@@ -265,6 +292,72 @@ class ParentLimitsView extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// One Fini budget: the shared limit, today's minutes, and the apps in it.
+class _PoolRow extends StatelessWidget {
+  const _PoolRow({required this.pool});
+
+  final FiniPool pool;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final used = formatHm(s, pool.usedMinutes);
+    final limit = formatHm(s, pool.limitMinutes);
+    final share = pool.limitMinutes <= 0
+        ? 1.0
+        : (pool.usedMinutes / pool.limitMinutes).clamp(0.0, 1.0);
+    return Padding(
+      key: ValueKey('pool-${pool.intent.name}'),
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GoalIcon(intent: pool.intent),
+          const SizedBox(width: 13),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(goalTitle(s, pool.intent), style: AppText.rowTitleStrong),
+                const SizedBox(height: 2),
+                Text(
+                  pool.isSpent
+                      ? s.poolUsedUp(limit)
+                      : s.poolUsedOf(used, limit),
+                  style: AppText.metaSm.copyWith(
+                    color: pool.isSpent
+                        ? AppColors.dangerDeep
+                        : AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(3),
+                  child: LinearProgressIndicator(
+                    value: share,
+                    minHeight: 6,
+                    backgroundColor: AppColors.fill,
+                    color: pool.isSpent ? AppColors.dangerDeep : AppColors.primary,
+                  ),
+                ),
+                if (pool.apps.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    pool.apps.map((app) => app.name).join(', '),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.metaSm,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
