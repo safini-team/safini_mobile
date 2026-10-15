@@ -87,6 +87,9 @@ class AppBlockService {
             packageName: a['packageName'].toString(),
             appName: a['appName'].toString(),
             alwaysAllowed: a['alwaysAllowed'] == true,
+            storeCategory: a['storeCategory'] is String
+                ? a['storeCategory'] as String
+                : null,
             iconPng: a['iconPng'] is Uint8List
                 ? a['iconPng'] as Uint8List
                 : null,

@@ -9807,6 +9807,176 @@ class S {
       args: [],
     );
   }
+
+  /// `Games`
+  String get finiAppCategoryGames {
+    return Intl.message(
+      'Games',
+      name: 'finiAppCategoryGames',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Social`
+  String get finiAppCategorySocial {
+    return Intl.message(
+      'Social',
+      name: 'finiAppCategorySocial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Short videos`
+  String get finiAppCategoryShortVideo {
+    return Intl.message(
+      'Short videos',
+      name: 'finiAppCategoryShortVideo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Video`
+  String get finiAppCategoryVideo {
+    return Intl.message(
+      'Video',
+      name: 'finiAppCategoryVideo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learning`
+  String get finiAppCategoryEducation {
+    return Intl.message(
+      'Learning',
+      name: 'finiAppCategoryEducation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No limit`
+  String get finiAppCategoryOther {
+    return Intl.message(
+      'No limit',
+      name: 'finiAppCategoryOther',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New app`
+  String get finiNewApp {
+    return Intl.message('New app', name: 'finiNewApp', desc: '', args: []);
+  }
+
+  /// `Added {app} to {category}`
+  String finiDidSortApp(Object app, Object category) {
+    return Intl.message(
+      'Added $app to $category',
+      name: 'finiDidSortApp',
+      desc: '',
+      args: [app, category],
+    );
+  }
+
+  /// `{app}: {time} a day of its own`
+  String finiDidAllowApp(Object app, Object time) {
+    return Intl.message(
+      '$app: $time a day of its own',
+      name: 'finiDidAllowApp',
+      desc: '',
+      args: [app, time],
+    );
+  }
+
+  /// `Moved {app} to {category}`
+  String finiDidMoveApp(Object app, Object category) {
+    return Intl.message(
+      'Moved $app to $category',
+      name: 'finiDidMoveApp',
+      desc: '',
+      args: [app, category],
+    );
+  }
+
+  /// `That time is blocked for now, so the app is too.`
+  String get finiAppSortedBlocked {
+    return Intl.message(
+      'That time is blocked for now, so the app is too.',
+      name: 'finiAppSortedBlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `It shares the {time} a day.`
+  String finiAppSortedShares(Object time) {
+    return Intl.message(
+      'It shares the $time a day.',
+      name: 'finiAppSortedShares',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `New app: {app}. Where does it go?`
+  String finiAskSortApp(Object app) {
+    return Intl.message(
+      'New app: $app. Where does it go?',
+      name: 'finiAskSortApp',
+      desc: '',
+      args: [app],
+    );
+  }
+
+  /// `Fini can't tell what it is. Until you pick, new apps share {time} a day.`
+  String finiAppCantSort(Object time) {
+    return Intl.message(
+      'Fini can\'t tell what it is. Until you pick, new apps share $time a day.',
+      name: 'finiAppCantSort',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Put {app} with {category}?`
+  String finiAskSortedApp(Object app, Object category) {
+    return Intl.message(
+      'Put $app with $category?',
+      name: 'finiAskSortedApp',
+      desc: '',
+      args: [app, category],
+    );
+  }
+
+  /// `Allow {time} a day`
+  String finiAllowApp(Object time) {
+    return Intl.message(
+      'Allow $time a day',
+      name: 'finiAllowApp',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Not a game`
+  String get finiNotAGame {
+    return Intl.message('Not a game', name: 'finiNotAGame', desc: '', args: []);
+  }
+
+  /// `Not {category}`
+  String finiNotInCategory(Object category) {
+    return Intl.message(
+      'Not $category',
+      name: 'finiNotInCategory',
+      desc: '',
+      args: [category],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

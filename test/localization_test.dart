@@ -86,6 +86,7 @@ const Set<String> _sameAsEnglishByDesign = {
   'goalScrollingSub', // app names
   'obAndroid', // platform names
   'taskFiniSawPhoto', // "Fini: {note}": a name and the note
+  'finiAppCategoryVideo', // "Video" is the same word in Uzbek
   'obIphone',
 };
 

@@ -52,6 +52,8 @@
     <string name="block_pool_scrolling_body">You’ve used today’s scrolling time. Other apps still work, and feeds wake up tomorrow.</string>
     <string name="block_pool_title">%1$s is resting until tomorrow</string>
     <string name="block_pool_body">Today’s time for apps like this is used up. Other apps still work.</string>
+    <string name="block_pool_new_apps_title">New app %1$s is resting</string>
+    <string name="block_pool_new_apps_body">New apps share a little time each day until your parent sorts them. Today’s is used up. Other apps still work.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d minute, unlocked</item>
         <item quantity="other">%d minutes, unlocked</item>

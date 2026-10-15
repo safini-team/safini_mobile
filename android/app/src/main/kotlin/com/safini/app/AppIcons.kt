@@ -37,6 +37,7 @@ object AppIcons {
                     "packageName" to info.activityInfo.packageName,
                     "appName" to info.loadLabel(pm).toString(),
                     "alwaysAllowed" to (info.activityInfo.packageName in alwaysAllowed),
+                    "storeCategory" to InstalledAppsUpload.storeCategory(info.activityInfo.applicationInfo),
                     "iconPng" to png,
                     "iconSha256" to png?.let(::sha256),
                 )

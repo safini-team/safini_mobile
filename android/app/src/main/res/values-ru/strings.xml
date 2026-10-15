@@ -57,6 +57,8 @@
     <string name="block_pool_scrolling_body">Время на ленты на сегодня закончилось. Другие приложения работают, а ленты проснутся завтра.</string>
     <string name="block_pool_title">%1$s отдыхает до завтра</string>
     <string name="block_pool_body">Время на такие приложения на сегодня закончилось. Другие приложения работают.</string>
+    <string name="block_pool_new_apps_title">Новое приложение %1$s отдыхает</string>
+    <string name="block_pool_new_apps_body">У новых приложений немного общего времени в день, пока родитель их не разберёт. На сегодня оно закончилось. Другие приложения работают.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">Открыта %d минута</item>
         <item quantity="few">Открыто %d минуты</item>

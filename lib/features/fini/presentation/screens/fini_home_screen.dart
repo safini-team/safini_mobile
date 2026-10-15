@@ -16,6 +16,7 @@ import 'package:safini/features/fini/onboarding/fini_onboarding_page.dart';
 import 'package:safini/features/fini/presentation/cubit/fini_cubit.dart';
 import 'package:safini/features/fini/presentation/cubit/fini_inbox_cubit.dart';
 import 'package:safini/features/fini/presentation/fini_copy.dart';
+import 'package:safini/features/fini/presentation/widgets/new_app_actions.dart';
 import 'package:safini/features/fini/presentation/screens/fini_activity_screen.dart';
 import 'package:safini/features/fini/presentation/screens/fini_add_goal_sheet.dart';
 import 'package:safini/features/fini/presentation/screens/fini_goal_screen.dart';
@@ -241,6 +242,10 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
         SliverToBoxAdapter(
           child: _NeedsYouCard(proposal: card, childName: child.nickname),
         ),
+      for (final sorted in openAppSorts(state.activity, DateTime.now()))
+        SliverToBoxAdapter(
+          child: _NewAppCard(proposal: sorted, childName: child.nickname),
+        ),
       SliverToBoxAdapter(child: DsOverline(s.finiGoalsHeader, top: 24)),
       SliverToBoxAdapter(
         child: Padding(
@@ -442,11 +447,16 @@ class _NeedsYouCard extends StatelessWidget {
               finiCardTitle(s, proposal, childName: childName),
               style: AppText.rowTitleLg,
             ),
-            if (proposal.reason.isNotEmpty) ...[
+            if (finiReasonLine(s, proposal).isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(finiReasonLine(s, proposal), style: AppText.meta),
             ],
             const SizedBox(height: 12),
+            if (proposal.isAppSort && proposal.cantSort)
+              SortAppChips(proposal: proposal)
+            else if (proposal.isAppSort)
+              ConfirmSortActions(proposal: proposal)
+            else
             Row(
               children: [
                 Expanded(
@@ -466,6 +476,48 @@ class _NeedsYouCard extends StatelessWidget {
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A new app Fini put under a capped goal, until the parent answers.
+class _NewAppCard extends StatelessWidget {
+  const _NewAppCard({required this.proposal, required this.childName});
+
+  final FiniProposal proposal;
+  final String childName;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final reason = finiReasonLine(s, proposal);
+    return Padding(
+      key: ValueKey('fini-new-app-${proposal.appPackage}'),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.gutter,
+        12,
+        AppSpacing.gutter,
+        0,
+      ),
+      child: DsCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DsOverlineText(s.finiNewApp),
+            const SizedBox(height: 8),
+            Text(
+              finiActivityTitle(s, proposal, childName: childName),
+              style: AppText.rowTitleLg,
+            ),
+            if (reason.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(reason, style: AppText.meta),
+            ],
+            const SizedBox(height: 12),
+            NewAppActions(proposal: proposal),
           ],
         ),
       ),

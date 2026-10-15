@@ -227,6 +227,27 @@ class FiniCubit extends Cubit<FiniState> {
         onInboxChanged?.call();
       });
 
+  /// "Allow 15 min a day", "Not a game", or a category from the card.
+  Future<String?> placeApp(
+    FiniProposal proposal, {
+    String? category,
+    int? minutes,
+  }) => _write(() async {
+    final childId = state.childId!;
+    await _repo.placeApp(
+      childId,
+      proposal.appPackage,
+      category: category,
+      minutes: minutes,
+    );
+    final results = await Future.wait([
+      _repo.pending(childId),
+      _repo.activity(childId),
+    ]);
+    emit(state.copyWith(pending: results[0], activity: results[1]));
+    onInboxChanged?.call();
+  });
+
   Future<String?> _write(Future<void> Function() run) async {
     if (state.childId == null) return '';
     try {

@@ -76,6 +76,11 @@ class ApiConst {
   /// The parent skips the rest of a budget goal's plan (SAF-274).
   static String finiGoalJump(String goalId) => '/v1/fini/goals/$goalId/jump';
 
+  /// The parent sorts one new app on one child's phone: another category
+  /// ("not a game") and/or its own minutes a day ("allow 15 min a day").
+  static String finiApp(String childId, String packageName) =>
+      '/v1/children/$childId/fini/apps/${Uri.encodeComponent(packageName)}';
+
   /// Budget goals as shared pools, with today's minutes (SAF-274).
   static String finiPools(String childId) => '/v1/children/$childId/fini/pools';
 

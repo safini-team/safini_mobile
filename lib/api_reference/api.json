@@ -9464,6 +9464,143 @@
         }
       }
     },
+    "/v1/children/{child_id}/fini/apps/{package_name}": {
+      "put": {
+        "tags": [
+          "fini"
+        ],
+        "summary": "Sort A New App",
+        "description": "**Auth:** Required. Use the Supabase access token via `Authorization: Bearer <access_token>`.\n\n**Business requirement:** The parent answers Fini about one app on one child's phone: \"not a game\" (`category: other`), \"allow 15 min a day\" (`minutes: 15`) or a category picked on the \"new app, sort it?\" card. Another family's phone is not affected.\n\n**Frontend note:** Answers the waiting `app_sort` card for the app if there is one, otherwise logs a new `app_sort` entry; either way it is `accepted` with a 24 h Undo through `/fini/proposals/{id}/undo`. `minutes` alone keeps Fini's category and applies while that category is capped. 404 when the app is not on the phone, 409 when nobody knows its category yet and only `minutes` was sent.",
+        "operationId": "place_fini_app_v1_children__child_id__fini_apps__package_name__put",
+        "security": [
+          {
+            "SupabaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "child_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Child Id"
+            }
+          },
+          {
+            "name": "package_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Package Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppPlaceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Activity entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Place Fini App V1 Children  Child Id  Fini Apps  Package Name  Put"
+                },
+                "example": {
+                  "id": "9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+                  "child_id": "4c3d73d7-b950-47ee-bc20-5a237d37f4a0",
+                  "goal_id": "6a1f0c2e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+                  "kind": "rule_change",
+                  "payload": {
+                    "app_slug": "roblox",
+                    "daily_limit_minutes": 90
+                  },
+                  "reason": "Roblox averaged 112 min last week; next step of the plan.",
+                  "evidence": {
+                    "avg_minutes_7d": 112
+                  },
+                  "status": "pending",
+                  "policy_reason": "suggest_only",
+                  "can_undo": false,
+                  "created_at": "2026-10-14T09:00:00Z"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Auth verification or database configuration is not available.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Supabase auth is not configured. Set SUPABASE_URL or SUPABASE_JWT_ISSUER."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, or invalid Supabase bearer token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Invalid or expired token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The authenticated user does not have access to the requested child or resource.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "You do not have access to this child."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested child, task, app rule, or conversation was not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task was not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The action conflicts with current business state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Task has already been completed."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/children/{child_id}/fini/ask": {
       "post": {
         "tags": [
@@ -11124,6 +11261,50 @@
           "public_id": "120045"
         }
       },
+      "AppPlaceRequest": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "games",
+                  "social",
+                  "short_video",
+                  "video",
+                  "education",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "Where the app goes on this child's phone. `other` is never limited."
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1440.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes",
+            "description": "The app's own minutes a day, outside its category's pool."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AppPlaceRequest",
+        "example": {
+          "minutes": 15
+        }
+      },
       "AppRuleUpdateRequest": {
         "properties": {
           "is_blocked": {
@@ -12132,6 +12313,29 @@
             "title": "Always Allowed",
             "description": "True for the phone's default dialer, default SMS app and system Settings. Those stay always allowed: a parent cannot limit or block them.",
             "default": false
+          },
+          "store_category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "game",
+                  "audio",
+                  "video",
+                  "image",
+                  "social",
+                  "news",
+                  "maps",
+                  "productivity",
+                  "accessibility"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Category",
+            "description": "The category the app declares on Android (`ApplicationInfo.category`), lowercase. Leave it out when the app declares none. Fini reads it next to the app's name when it sorts a new app."
           },
           "icon_sha256": {
             "anyOf": [

@@ -27,6 +27,8 @@ enum PushType {
   setupReminder('setup_reminder'),
   finiTrialEnding('fini_trial_ending'),
   finiTimeRequest('fini_time_request'),
+  finiAppSorted('fini_app_sorted'),
+  finiAppSort('fini_app_sort'),
   finiTimeGranted('fini_time_granted'),
   finiTimeDeclined('fini_time_declined');
 
@@ -138,7 +140,9 @@ class PushEvent {
       childId: childId,
     ),
     PushType.finiTrialEnding ||
-    PushType.finiTimeRequest => const PushTarget(PushDestination.parentFini),
+    PushType.finiTimeRequest ||
+    PushType.finiAppSorted ||
+    PushType.finiAppSort => const PushTarget(PushDestination.parentFini),
     PushType.taskApproved ||
     PushType.streakReminder ||
     PushType.finiTimeGranted ||

@@ -238,6 +238,8 @@ void main() {
         ),
         'fini_trial_ending': const PushTarget(PushDestination.parentFini),
         'fini_time_request': const PushTarget(PushDestination.parentFini),
+        'fini_app_sorted': const PushTarget(PushDestination.parentFini),
+        'fini_app_sort': const PushTarget(PushDestination.parentFini),
         'fini_time_granted': const PushTarget(PushDestination.childToday),
         'fini_time_declined': const PushTarget(PushDestination.childToday),
         'task_approved': const PushTarget(PushDestination.childToday),

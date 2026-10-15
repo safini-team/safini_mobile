@@ -175,6 +175,15 @@ class InstalledAppsUploadTest {
         assertEquals(emptySet<String>(), attaches.first())
         assertEquals(setOf("aa"), attaches.last())
     }
+
+    @Test fun theDeclaredCategoryGoesUpAsTheApiNamesIt() {
+        assertEquals("game", InstalledAppsUpload.storeCategoryName(0, legacyGame = false))
+        assertEquals("productivity", InstalledAppsUpload.storeCategoryName(7, legacyGame = false))
+        // Undeclared: only the old "is a game" flag still says something.
+        assertEquals("game", InstalledAppsUpload.storeCategoryName(-1, legacyGame = true))
+        assertEquals(null, InstalledAppsUpload.storeCategoryName(-1, legacyGame = false))
+        assertEquals(null, InstalledAppsUpload.storeCategoryName(42, legacyGame = false))
+    }
 }
 
 class AppClientHeadersTest {
