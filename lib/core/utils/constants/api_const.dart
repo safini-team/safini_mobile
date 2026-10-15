@@ -78,6 +78,10 @@ class ApiConst {
 
   /// Budget goals as shared pools, with today's minutes (SAF-274).
   static String finiPools(String childId) => '/v1/children/$childId/fini/pools';
+
+  /// The child's own view of Fini and their ask for more time (SAF-275).
+  static String finiKid(String childId) => '/v1/children/$childId/fini/kid';
+  static String finiAsk(String childId) => '/v1/children/$childId/fini/ask';
   static String finiProposals(String childId) =>
       '/v1/children/$childId/fini/proposals';
   static String finiActivity(String childId) =>

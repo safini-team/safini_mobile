@@ -18,6 +18,10 @@ import 'package:safini/core/utils/widgets/ds/ds.dart';
 import 'package:safini/design_preview_data.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
+import 'package:safini/features/fini/domain/fini_models.dart';
+import 'package:safini/features/fini/kid/kid_ask_card.dart';
+import 'package:safini/features/fini/kid/kid_fini.dart';
+import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
 import 'package:safini/features/child/presentation/screens/store/child_store_view.dart';
 import 'package:safini/features/child/presentation/screens/tasks/child_tasks_view.dart';
@@ -39,6 +43,11 @@ import 'package:safini/features/subscription/pro_store.dart';
 
 void main() => runApp(const DesignPreviewApp());
 
+/// `--dart-define=PREVIEW=<entry label>` opens that one entry full screen,
+/// with no gallery chrome, in `PREVIEW_LOCALE`: for unattended screenshots.
+const _only = String.fromEnvironment('PREVIEW');
+const _onlyLocale = String.fromEnvironment('PREVIEW_LOCALE', defaultValue: 'en');
+
 class DesignPreviewApp extends StatefulWidget {
   const DesignPreviewApp({super.key});
 
@@ -47,7 +56,7 @@ class DesignPreviewApp extends StatefulWidget {
 }
 
 class _DesignPreviewAppState extends State<DesignPreviewApp> {
-  Locale _locale = const Locale('en');
+  Locale _locale = const Locale(_onlyLocale);
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +72,19 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
-      home: _Gallery(
+      home: _only.isNotEmpty
+          ? Builder(
+              builder: (context) {
+                final entry = _GalleryState._entries.firstWhere(
+                  (entry) => entry.label == _only,
+                );
+                return Scaffold(
+                  backgroundColor: entry.background,
+                  body: entry.builder(context),
+                );
+              },
+            )
+          : _Gallery(
         locale: _locale,
         onCycleLocale: () => setState(() {
           const order = ['ru', 'en', 'ky', 'uz', 'kk'];
@@ -71,6 +92,57 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
               order[(order.indexOf(_locale.languageCode) + 1) % order.length];
           _locale = Locale(next);
         }),
+      ),
+    );
+  }
+}
+
+/// The kid's "Ask a parent for 15 min" card in each state (SAF-275).
+class _KidAskPreview extends StatelessWidget {
+  const _KidAskPreview();
+
+  static const _games = KidPool(
+    goalId: 'g',
+    intent: GoalIntent.games,
+    limitMinutes: 100,
+    planMinutes: 100,
+    usedMinutes: 100,
+    timeUp: true,
+    apps: ['Roblox', 'Brawl Stars', 'Minecraft'],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    KidFini answered(KidAskState state, [String? parent]) => KidFini(
+      pools: const [_games],
+      ask: KidAsk(id: 'a', goalId: 'g', state: state, parentName: parent),
+    );
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.gutter,
+          8,
+          AppSpacing.gutter,
+          32,
+        ),
+        children: [
+          DsSectionHeader(title: s.myUsageToday, top: 8),
+          for (final fini in [
+            const KidFini(pools: [_games], canAsk: true),
+            answered(KidAskState.pending),
+            answered(
+              KidAskState.granted,
+              Localizations.localeOf(context).languageCode == 'ru'
+                  ? 'Мама'
+                  : 'Mom',
+            ),
+            answered(KidAskState.declined),
+          ]) ...[
+            KidAskCard(fini: fini, onAsk: (_) {}),
+            const SizedBox(height: 12),
+          ],
+        ],
       ),
     );
   }
@@ -207,6 +279,11 @@ class _GalleryState extends State<_Gallery> {
         onOpenQuest: (_) {},
         onSendQuest: (_) {},
       ),
+    ),
+    _Entry(
+      'Kid · ask for time',
+      AppColors.bgChild,
+      (context) => const _KidAskPreview(),
     ),
     _Entry(
       'Kid Tasks',

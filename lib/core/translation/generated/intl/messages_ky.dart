@@ -91,313 +91,329 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m30(app, time) => "${app} күнүнө ${time} чейин көтөрөйүнбү?";
 
-  static String m31(app) => "${app} бөгөттөлдү";
+  static String m31(goal) => "${goal}: бүгүнкү убакыт бүттү.";
 
-  static String m32(minutes) => "${minutes} мүн кошумча берилди";
+  static String m32(app) => "${app} бөгөттөлдү";
 
-  static String m33(app, time) => "${app}: күнүнө ${time}";
+  static String m33(minutes) => "${minutes} мүн кошумча берилди";
 
-  static String m34(name) => "${name} үчүн кат жөнөтүлдү";
+  static String m34(app, time) => "${app}: күнүнө ${time}";
 
-  static String m35(app) => "${app} бөгөттөн чыгарылды";
+  static String m35(name) => "${name} үчүн кат жөнөтүлдү";
 
-  static String m36(minutes) => "${minutes} мүн берүү";
+  static String m36(app) => "${app} бөгөттөн чыгарылды";
 
-  static String m37(name) => "Эми телефонду туташтыралы. ${name} күтүп жатат!";
+  static String m37(minutes) => "${minutes} мүн берүү";
 
-  static String m38(name) =>
+  static String m38(name) => "Эми телефонду туташтыралы. ${name} күтүп жатат!";
+
+  static String m39(name) =>
       "${name} телефону туташкандан кийин Fini иштей баштайт.";
 
-  static String m39(name) => "${name} үчүн Fini\'ни тындыруу";
+  static String m40(name) => "${name} үчүн Fini\'ни тындыруу";
 
-  static String m40(name) => "${name} үчүн Fini\'ни кайра күйгүзүү";
+  static String m41(name) => "${name} үчүн Fini\'ни кайра күйгүзүү";
 
-  static String m41(minutes) => "Күнүнө бир жолу ${minutes} мүнөткө чейин";
-
-  static String m42(name) =>
-      "${name} үчүн максат тандаңыз, калганын мен жасайм.";
+  static String m42(minutes) => "Күнүнө бир жолу ${minutes} мүнөткө чейин";
 
   static String m43(name) =>
-      "${name} менен иштеп жатам. Кийинки кадам дүйшөмбүдө.";
+      "${name} үчүн максат тандаңыз, калганын мен жасайм.";
 
   static String m44(name) =>
+      "${name} менен иштеп жатам. Кийинки кадам дүйшөмбүдө.";
+
+  static String m45(name) =>
       "${name} үчүн тыныгуудамын. Бардык эрежелер ошол бойдон калат.";
 
-  static String m45(count) =>
+  static String m46(count) =>
       "${Intl.plural(count, other: '${count} иш чечимиңизди күтүп жатат.')}";
 
-  static String m46(name) =>
+  static String m47(name) =>
       "${name} үчүн өзгөртүүлөрдү сунуштайм, сиз чечесиз.";
 
-  static String m47(on, total) => "${total} ичинен ${on} күйүк";
-
-  static String m48(count) =>
-      "${Intl.plural(count, zero: 'Бүгүн азырынча эч нерсе', other: 'Бүгүн ${count} иш')}";
+  static String m48(on, total) => "${total} ичинен ${on} күйүк";
 
   static String m49(count) =>
-      "${Intl.plural(count, one: 'Акысыз сыноо · ${count} күн калды', other: 'Акысыз сыноо · ${count} күн калды')}";
+      "${Intl.plural(count, zero: 'Бүгүн азырынча эч нерсе', other: 'Бүгүн ${count} иш')}";
 
   static String m50(count) =>
+      "${Intl.plural(count, one: 'Акысыз сыноо · ${count} күн калды', other: 'Акысыз сыноо · ${count} күн калды')}";
+
+  static String m51(count) =>
       "${Intl.plural(count, one: '1 сыйлык', other: '${count} сыйлык')}";
 
-  static String m51(name) => "${name} өчүрүлсүнбү?";
+  static String m52(name) => "${name} өчүрүлсүнбү?";
 
-  static String m52(count) =>
+  static String m53(count) =>
       "${Intl.plural(count, one: 'Бүгүн 1 тапшырма', other: 'Бүгүн ${count} тапшырма')}";
 
-  static String m53(done, total) => "${total} ичинен ${done}";
+  static String m54(done, total) => "${total} ичинен ${done}";
 
-  static String m54(target) => "Азыр эле ${target}";
+  static String m55(target) => "Азыр эле ${target}";
 
-  static String m55(time) => "күнүнө ${time}";
-
-  static String m56(target) =>
-      "Максатка жеттик: күнүнө ${target}. Ушундай кармайм.";
+  static String m56(time) => "күнүнө ${time}";
 
   static String m57(target) =>
-      "iPhone\'до тиркемелердеги убакытты көрө албайм, ошондуктан максат дароо иштейт: күнүнө ${target}, кадамсыз.";
+      "Максатка жеттик: күнүнө ${target}. Ушундай кармайм.";
 
   static String m58(target) =>
+      "iPhone\'до тиркемелердеги убакытты көрө албайм, ошондуктан максат дароо иштейт: күнүнө ${target}, кадамсыз.";
+
+  static String m59(target) =>
       "Эртеңден баштап ${target}. Алгачкы күндөрү нааразылык болушу мүмкүн.";
 
-  static String m59(current, next, weeks) =>
+  static String m60(current, next, weeks) =>
       "Бүгүнкү лимит ${current}. Кийинки дүйшөмбүдө ${next}, максат ${weeks} аптадан кийин.";
 
-  static String m60(start, target, weeks) =>
+  static String m61(start, target, weeks) =>
       "Азыр күнүнө болжол менен ${start}. Ар дүйшөмбү кичине кадам, ${weeks} жумада ${target}.";
 
-  static String m61(name) => "${name}: телефон туташканда байкай баштайм.";
+  static String m62(name) => "${name}: телефон туташканда байкай баштайм.";
 
-  static String m62(seen, total, name) =>
+  static String m63(seen, total, name) =>
       "Байкап жатам: ${total} күндөн ${seen}-күн. Анан план ${name} чындап канча колдонгонунан башталат.";
 
-  static String m63(from, to) => "Экрансыз ${from}-${to}";
+  static String m64(from, to) => "Экрансыз ${from}-${to}";
 
-  static String m64(n) => "${n}-ж";
+  static String m65(n) => "${n}-ж";
 
-  static String m65(from, to) => "${from}-${to}";
+  static String m66(from, to) => "${from}-${to}";
 
-  static String m66(name) => "${name} чектелсинби?";
+  static String m67(name) => "${name} чектелсинби?";
 
-  static String m67(name) => "${name} бөгөттөлдү";
+  static String m68(name) => "${name} бөгөттөлдү";
 
-  static String m68(count) =>
+  static String m69(count) =>
       "${Intl.plural(count, zero: 'Колдонмо жок', one: '1 колдонмо', other: '${count} колдонмо')}";
 
-  static String m69(name) =>
+  static String m70(name) =>
       "${name} телефонунда Safini\'ни ачканда, орнотулган колдонмолор ушул жерде көрүнөт.";
 
-  static String m70(name) =>
+  static String m71(name) =>
       "Apple ${name} колдонгон iPhone\'догу колдонмолордун тизмесин Safini\'ге окутпайт, ошондуктан лимиттерди азырынча бул экрандан тандоого болбойт.";
 
-  static String m71(date) => "Акыркы шайкештирүү: ${date}";
+  static String m72(date) => "Акыркы шайкештирүү: ${date}";
 
-  static String m72(name) => "${name}: телефондогу бардык колдонмолор";
+  static String m73(name) => "${name}: телефондогу бардык колдонмолор";
 
-  static String m73(time) => "+${time} монета үчүн";
+  static String m74(apps) => "${apps} · бүгүнкүгө бүттү";
 
-  static String m74(name, time) => "${name}: бүгүнгө ${time} калды";
+  static String m75(minutes) => "Ата-энеден ${minutes} суроо";
 
-  static String m75(time) => "Кайра ${time} ачылат";
+  static String m76(parent, minutes) => "${parent}: ооба, +${minutes}";
 
-  static String m76(time) => "Күнүнө ${time}";
+  static String m77(minutes) => "Ооба: +${minutes}. Тапшырмалар аткарылды.";
 
-  static String m77(time) => "Бүгүн ${time} калды";
+  static String m78(limit) => "Үй-бүлөлүк план боюнча оюнга күнүнө ${limit}.";
 
-  static String m78(step, total) => "${total} ичинен ${step}";
+  static String m79(limit) => "Үй-бүлөлүк план боюнча күнүнө ${limit}.";
 
-  static String m79(name, time) => "${name} бүгүн ${time} колдонду";
+  static String m80(limit) => "Үй-бүлөлүк план боюнча лентага күнүнө ${limit}.";
 
-  static String m80(name) => "${name}: колдонмолор";
+  static String m81(time) => "+${time} монета үчүн";
 
-  static String m81(level) => "${level}-деңгээлдеги баатыр";
+  static String m82(name, time) => "${name}: бүгүнгө ${time} калды";
 
-  static String m82(level) => "${level}-деңгээл";
+  static String m83(time) => "Кайра ${time} ачылат";
 
-  static String m83(name) => "${name}: телефон · бүгүн";
+  static String m84(time) => "Күнүнө ${time}";
 
-  static String m84(count) =>
+  static String m85(time) => "Бүгүн ${time} калды";
+
+  static String m86(step, total) => "${total} ичинен ${step}";
+
+  static String m87(name, time) => "${name} бүгүн ${time} колдонду";
+
+  static String m88(name) => "${name}: колдонмолор";
+
+  static String m89(level) => "${level}-деңгээлдеги баатыр";
+
+  static String m90(level) => "${level}-деңгээл";
+
+  static String m91(name) => "${name}: телефон · бүгүн";
+
+  static String m92(count) =>
       "${Intl.plural(count, one: '${count} мүнөт', other: '${count} мүнөт')}";
 
-  static String m85(minutes) => "${minutes} мүн калды";
+  static String m93(minutes) => "${minutes} мүн калды";
 
-  static String m86(minutes) => "Бүгүн ${minutes} мүн калды";
+  static String m94(minutes) => "Бүгүн ${minutes} мүн калды";
 
-  static String m87(minutes) =>
+  static String m95(minutes) =>
       "${Intl.plural(minutes, one: '1 мүнөт калды', other: '${minutes} мүнөт калды')}";
 
-  static String m88(count) =>
+  static String m96(count) =>
       "${Intl.plural(count, one: 'Дагы 1 монета керек', other: 'Дагы ${count} монета керек')}";
 
-  static String m89(app) => "Көбү ${app} ичинде";
+  static String m97(app) => "Көбү ${app} ичинде";
 
-  static String m90(count) =>
+  static String m98(count) =>
       "${Intl.plural(count, one: '1 күн катары менен', other: '${count} күн катары менен')}";
 
-  static String m91(name) => "${name} үчүн эмнени өзгөрткүңүз келет?";
+  static String m99(name) => "${name} үчүн эмнени өзгөрткүңүз келет?";
 
-  static String m92(from, to) =>
+  static String m100(from, to) =>
       "${from} баштап ${to} чейин колдонмолор жабык.";
 
-  static String m93(name) =>
+  static String m101(name) =>
       "${name} телефону туташканда, кадимки күндү үйрөнөм. Азырынча эч нерсе өзгөрбөйт.";
 
-  static String m94(age) =>
+  static String m102(age) =>
       "Ишенбей жатасызбы? Бул ${age} жаш үчүн биздин сунуштар. Аларды каалаган убакта өзгөртсө болот.";
 
-  static String m95(day) => "${day}-күн";
+  static String m103(day) => "${day}-күн";
 
-  static String m96(name) =>
+  static String m104(name) =>
       "Кайда жеткиңиз келет. Fini ${name} баланы кадам сайын ошого жеткирет.";
 
-  static String m97(total) => "${total} ичинен";
+  static String m105(total) => "${total} ичинен";
 
-  static String m98(name, coins) => "${name} · ${coins} төлөндү";
+  static String m106(name, coins) => "${name} · ${coins} төлөндү";
 
-  static String m99(name) => "Safini\'ни ${name} телефонуна орнотуңуз";
+  static String m107(name) => "Safini\'ни ${name} телефонуна орнотуңуз";
 
-  static String m100(percent) => "Кийинки деңгээлге ${percent}%";
+  static String m108(percent) => "Кийинки деңгээлге ${percent}%";
 
-  static String m101(name) => "Телефон туташты! ${name} байланышта.";
+  static String m109(name) => "Телефон туташты! ${name} байланышта.";
 
-  static String m102(to) => "Максат дароо иштейт: күнүнө ${to}.";
+  static String m110(to) => "Максат дароо иштейт: күнүнө ${to}.";
 
-  static String m103(from, to) =>
+  static String m111(from, to) =>
       "Өткөн жумада ${from} күн сайын бүттү. Бир жумага ${to} чейин жеңилдетебизби?";
 
-  static String m104(to) =>
+  static String m112(to) =>
       "Өткөн жумада лимит бир да жолу бүткөн жок. Азыр эле күнүнө ${to} кылалыбы?";
 
-  static String m105(to) => "Дароо максатка өттүк: күнүнө ${to}.";
+  static String m113(to) => "Дароо максатка өттүк: күнүнө ${to}.";
 
-  static String m106(to) => "Байкоодон кийин план күнүнө ${to} менен башталды.";
+  static String m114(to) => "Байкоодон кийин план күнүнө ${to} менен башталды.";
 
-  static String m107(from, to, target) =>
+  static String m115(from, to, target) =>
       "Дүйшөмбү кадамы: күнүнө ${from} ден ${to} чейин, максат ${target}.";
 
-  static String m108(used, limit) => "Бүгүн ${limit} ичинен ${used}";
+  static String m116(used, limit) => "Бүгүн ${limit} ичинен ${used}";
 
-  static String m109(limit) => "Бүгүнкү ${limit} бүттү";
+  static String m117(limit) => "Бүгүнкү ${limit} бүттү";
 
-  static String m110(coins) =>
+  static String m118(coins) =>
       "Кармалды: ${coins}. Тапшырганда «Тапшырылды» деп белгилеңиз.";
 
-  static String m111(name, prize) => "${name} сурап жатат: ${prize}";
+  static String m119(name, prize) => "${name} сурап жатат: ${prize}";
 
-  static String m112(name) =>
+  static String m120(name) =>
       "${name} белек сураганда, анын монеталары кармалып турат. Тапшырганда «Тапшырылды» деп белгилеңиз же баш тартыңыз - монеталар кайтып келет.";
 
-  static String m113(name) => "${name} бул белекти сурап жатат";
+  static String m121(name) => "${name} бул белекти сурап жатат";
 
-  static String m114(name) =>
+  static String m122(name) =>
       "${name} монета топтой турган чыныгы белектер. Аларды сиз тапшырасыз.";
 
-  static String m115(name) => "Белектер: ${name}";
+  static String m123(name) => "Белектер: ${name}";
 
-  static String m116(date) => "${date} чейин активдүү";
+  static String m124(date) => "${date} чейин активдүү";
 
-  static String m117(price) => "айына ${price}";
+  static String m125(price) => "айына ${price}";
 
-  static String m118(price) => "жылына ${price}";
+  static String m126(price) => "жылына ${price}";
 
-  static String m119(date) => "${date} узартылат";
+  static String m127(date) => "${date} узартылат";
 
-  static String m120(percent) => "${percent}% үнөмдөө";
+  static String m128(percent) => "${percent}% үнөмдөө";
 
-  static String m121(count) =>
+  static String m129(count) =>
       "${Intl.plural(count, other: '${count} күн акысыз')}";
 
-  static String m122(count) =>
+  static String m130(count) =>
       "${Intl.plural(count, other: '${count} ай акысыз')}";
 
-  static String m123(trial, price) => "${trial}, андан кийин ${price}";
+  static String m131(trial, price) => "${trial}, андан кийин ${price}";
 
-  static String m124(date) => "Акысыз мезгил ${date} чейин";
+  static String m132(date) => "Акысыз мезгил ${date} чейин";
 
-  static String m125(count) =>
+  static String m133(count) =>
       "${Intl.plural(count, other: '${count} жума акысыз')}";
 
-  static String m126(count) =>
+  static String m134(count) =>
       "${Intl.plural(count, other: '${count} жыл акысыз')}";
 
-  static String m127(name) =>
+  static String m135(name) =>
       "Аны ${name} жаңы телефонунда «Мен баламын» бөлүмүнө жазыңыз. Монеталар, тапшырмалар жана тарых ошол жакка өтөт, ал эми эски телефондо лимиттер иштебей калат.";
 
-  static String m128(cost, time) =>
+  static String m136(cost, time) =>
       "Бала күнүмдүк лимиттен тышкары ${time} ачуу үчүн ${cost} монета сарптай алат.";
 
-  static String m129(minutes) => "${minutes} мүн калды";
+  static String m137(minutes) => "${minutes} мүн калды";
 
-  static String m130(name) =>
+  static String m138(name) =>
       "Бул «${name}» баланын аккаунтун жана ага байланышкан бардык маалыматты, анын ичинде тапшырмаларды, монеталарды жана колдонмо жөндөөлөрүн биротоло өчүрөт. Муну кайтарууга болбойт.";
 
-  static String m131(name) => "«${name}» аккаунтун өчүрөсүзбү?";
+  static String m139(name) => "«${name}» аккаунтун өчүрөсүзбү?";
 
-  static String m132(name) => "«${name}» аккаунту биротоло өчүрүлдү.";
+  static String m140(name) => "«${name}» аккаунту биротоло өчүрүлдү.";
 
-  static String m133(name) => "${name} үчүн сактоо";
+  static String m141(name) => "${name} үчүн сактоо";
 
-  static String m134(name) => "${name} үчүн сакталды";
+  static String m142(name) => "${name} үчүн сакталды";
 
-  static String m135(count) => "Бардык ${count} колдонмону көрсөтүү";
+  static String m143(count) => "Бардык ${count} колдонмону көрсөтүү";
 
-  static String m136(code) => "Код ${code} · колдонмо лимиттери өчөт";
+  static String m144(code) => "Код ${code} · колдонмо лимиттери өчөт";
 
-  static String m137(name) => "${name} чыккысы келет";
+  static String m145(name) => "${name} чыккысы келет";
 
-  static String m138(count) =>
+  static String m146(count) =>
       "${Intl.plural(count, one: 'Код туура эмес. 1 аракет калды.', other: 'Код туура эмес. ${count} аракет калды.')}";
 
-  static String m139(count) =>
+  static String m147(count) =>
       "${Intl.plural(count, one: '1 тапшырма', other: '${count} тапшырма')}";
 
-  static String m140(tasks, coins) => "${tasks} · ${coins}";
+  static String m148(tasks, coins) => "${tasks} · ${coins}";
 
-  static String m141(scope, tasks) => "${scope} · ${tasks}";
+  static String m149(scope, tasks) => "${scope} · ${tasks}";
 
-  static String m142(tasks, coins) => "${tasks} калды - ${coins} күтүп турат";
+  static String m150(tasks, coins) => "${tasks} калды - ${coins} күтүп турат";
 
-  static String m143(time) => "${time} калды";
+  static String m151(time) => "${time} калды";
 
-  static String m144(time) => "${time} колдонулду";
+  static String m152(time) => "${time} колдонулду";
 
-  static String m145(count) => "дагы ${count}";
+  static String m153(count) => "дагы ${count}";
 
-  static String m146(step, total) => "${total} ичинен ${step}";
+  static String m154(step, total) => "${total} ичинен ${step}";
 
-  static String m147(name) =>
+  static String m155(name) =>
       "Аны ${name} телефонунда «Мен баламын» бөлүмүнө жазыңыз.";
 
-  static String m148(used, limit) => "${used} колдонулду / ${limit} лимит";
+  static String m156(used, limit) => "${used} колдонулду / ${limit} лимит";
 
-  static String m149(used) => "${used} · лимитсиз";
+  static String m157(used) => "${used} · лимитсиз";
 
-  static String m150(used, limit) => "${used} / ${limit}";
+  static String m158(used, limit) => "${used} / ${limit}";
 
-  static String m151(used, limit) => "${used} / ${limit} · ашып кетти";
+  static String m159(used, limit) => "${used} / ${limit} · ашып кетти";
 
-  static String m152(time) => "бүгүн ${time}";
+  static String m160(time) => "бүгүн ${time}";
 
-  static String m153(seconds) => "${seconds} сек калды";
+  static String m161(seconds) => "${seconds} сек калды";
 
-  static String m154(count) =>
+  static String m162(count) =>
       "${Intl.plural(count, one: '1 күтүүдө', other: '${count} күтүүдө')}";
 
-  static String m155(name) => "${name} телефонун күтүүдөбүз…";
+  static String m163(name) => "${name} телефонун күтүүдөбүз…";
 
-  static String m156(name) => "Баасын коюңуз, ал дүкөнгө түшөт: ${name}.";
+  static String m164(name) => "Баасын коюңуз, ал дүкөнгө түшөт: ${name}.";
 
-  static String m157(name, prize) => "${name} кыялданат: ${prize}";
+  static String m165(name, prize) => "${name} кыялданат: ${prize}";
 
-  static String m158(name, coins) => "${name} · ${coins}";
+  static String m166(name, coins) => "${name} · ${coins}";
 
-  static String m159(age) =>
+  static String m167(age) =>
       "${Intl.plural(age, one: '1 жашта', other: '${age} жашта')}";
 
-  static String m160(count) =>
+  static String m168(count) =>
       "${Intl.plural(count, one: 'Дагы 1 монета керек.', other: 'Дагы ${count} монета керек.')}";
 
-  static String m161(name) => "${name} (сиз)";
+  static String m169(name) => "${name} (сиз)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -904,6 +920,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Каалаган лимитти көтөрүү",
     ),
     "finiAskRaiseLimit": m30,
+    "finiAskReason": m31,
     "finiAskReject": MessageLookupByLibrary.simpleMessage(
       "Тапшырмадан баш тартуу",
     ),
@@ -915,20 +932,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "finiDidApprove": MessageLookupByLibrary.simpleMessage(
       "Тапшырма макулдалды",
     ),
-    "finiDidBlock": m31,
+    "finiDidBlock": m32,
     "finiDidGoal": MessageLookupByLibrary.simpleMessage("Максат даярдалды"),
-    "finiDidGrant": m32,
-    "finiDidLimit": m33,
-    "finiDidMessage": m34,
+    "finiDidGrant": m33,
+    "finiDidLimit": m34,
+    "finiDidMessage": m35,
     "finiDidReject": MessageLookupByLibrary.simpleMessage(
       "Тапшырма кайтарылды",
     ),
     "finiDidTasks": MessageLookupByLibrary.simpleMessage(
       "Жаңы тапшырмалар сунушталды",
     ),
-    "finiDidUnblock": m35,
+    "finiDidUnblock": m36,
     "finiDone": MessageLookupByLibrary.simpleMessage("Даяр"),
-    "finiGive": m36,
+    "finiGive": m37,
     "finiGoalsHeader": MessageLookupByLibrary.simpleMessage("Максаттар"),
     "finiIosNote": MessageLookupByLibrary.simpleMessage(
       "Лимиттер иштейт; этап менен пландар азырынча Android’де гана.",
@@ -949,7 +966,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "finiNextLimit": MessageLookupByLibrary.simpleMessage(
       "Күнүнө канча экран убактысы жетиштүү?",
     ),
-    "finiNextPhone": m37,
+    "finiNextPhone": m38,
     "finiNextPrize": MessageLookupByLibrary.simpleMessage(
       "Монета топтоого арзый турган белек кошуңуз.",
     ),
@@ -959,10 +976,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "finiNoChild": MessageLookupByLibrary.simpleMessage(
       "Fini менен таанышуу үчүн балаңызды кошуңуз.",
     ),
-    "finiNotConnected": m38,
+    "finiNotConnected": m39,
     "finiNotNow": MessageLookupByLibrary.simpleMessage("Азыр эмес"),
+    "finiNotToday": MessageLookupByLibrary.simpleMessage("Бүгүн эмес"),
     "finiOnItsOwn": MessageLookupByLibrary.simpleMessage("Өзү"),
-    "finiPauseFor": m39,
+    "finiPauseFor": m40,
     "finiPauseNote": MessageLookupByLibrary.simpleMessage(
       "Тыныгуу бардык эрежелерди ошол бойдон калтырат.",
     ),
@@ -986,7 +1004,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Уруксат жок, аткарылган жок",
     ),
     "finiResultUndone": MessageLookupByLibrary.simpleMessage("Жокко чыгарылды"),
-    "finiResumeFor": m40,
+    "finiResumeFor": m41,
     "finiRuleLower": MessageLookupByLibrary.simpleMessage(
       "План боюнча лимиттерди азайтуу",
     ),
@@ -1008,21 +1026,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "finiRuleTime": MessageLookupByLibrary.simpleMessage(
       "Кошумча убакыт берүү",
     ),
-    "finiRuleTimeSub": m41,
+    "finiRuleTimeSub": m42,
     "finiRuleUsage": MessageLookupByLibrary.simpleMessage(
       "Колдонмо далили менен тапшырмаларды макулдоо",
     ),
     "finiRuleUsageSub": MessageLookupByLibrary.simpleMessage(
       "Duolingo 10 мүн бүттүбү? Төлөндү. 24 саат жокко чыгарса болот",
     ),
-    "finiStatusNoGoals": m42,
-    "finiStatusOnTrack": m43,
-    "finiStatusPaused": m44,
-    "finiStatusPending": m45,
-    "finiStatusSuggest": m46,
-    "finiSwitchesOn": m47,
-    "finiThingsToday": m48,
-    "finiTrialPill": m49,
+    "finiStatusNoGoals": m43,
+    "finiStatusOnTrack": m44,
+    "finiStatusPaused": m45,
+    "finiStatusPending": m46,
+    "finiStatusSuggest": m47,
+    "finiSwitchesOn": m48,
+    "finiThingsToday": m49,
+    "finiTrialPill": m50,
     "finiUndo": MessageLookupByLibrary.simpleMessage("Жокко чыгаруу"),
     "finiWhatItCanDo": MessageLookupByLibrary.simpleMessage(
       "Fini эмне кыла алат",
@@ -1089,18 +1107,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Бардык 6 санды жаз.",
     ),
     "friendsNotFound": MessageLookupByLibrary.simpleMessage("Мындай ID жок."),
-    "friendsPrizes": m50,
+    "friendsPrizes": m51,
     "friendsRemove": MessageLookupByLibrary.simpleMessage("Өчүрүү"),
     "friendsRemoveBody": MessageLookupByLibrary.simpleMessage(
       "Аны ID менен кайра кошо аласың.",
     ),
-    "friendsRemoveTitle": m51,
+    "friendsRemoveTitle": m52,
     "friendsRowSubtitle": MessageLookupByLibrary.simpleMessage(
       "Досторуңдун иштери кандай экенин көр",
     ),
     "friendsSortLevel": MessageLookupByLibrary.simpleMessage("Деңгээл боюнча"),
     "friendsSortRecent": MessageLookupByLibrary.simpleMessage("Акыркылар"),
-    "friendsTasksToday": m52,
+    "friendsTasksToday": m53,
     "friendsYourId": MessageLookupByLibrary.simpleMessage(
       "Сенин Safini ID\'иң",
     ),
@@ -1118,7 +1136,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "genericErrorRetry": MessageLookupByLibrary.simpleMessage(
       "Бир нерсе туура эмес болду. Кайра аракет кылыңыз.",
     ),
-    "gettingStartedCount": m53,
+    "gettingStartedCount": m54,
     "gettingStartedHide": MessageLookupByLibrary.simpleMessage("Жашыруу"),
     "gettingStartedTitle": MessageLookupByLibrary.simpleMessage(
       "Алгачкы кадамдар",
@@ -1148,7 +1166,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalJumpNote": MessageLookupByLibrary.simpleMessage(
       "Калган кадамдарды өткөрүп жиберет. Алгачкы күндөрү нааразылык болушу мүмкүн.",
     ),
-    "goalJumpNow": m54,
+    "goalJumpNow": m55,
     "goalLearning": MessageLookupByLibrary.simpleMessage(
       "Окуу колдонмолору эсептелбейт",
     ),
@@ -1158,18 +1176,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalLearningSub": MessageLookupByLibrary.simpleMessage(
       "Duolingo эсептелбейт",
     ),
-    "goalMinutesADay": m55,
+    "goalMinutesADay": m56,
     "goalNoMoreThan": MessageLookupByLibrary.simpleMessage("Эң көп"),
-    "goalPlanAtTarget": m56,
-    "goalPlanIphone": m57,
-    "goalPlanNow": m58,
-    "goalPlanStepping": m59,
-    "goalPlanText": m60,
-    "goalPlanWaitingPhone": m61,
+    "goalPlanAtTarget": m57,
+    "goalPlanIphone": m58,
+    "goalPlanNow": m59,
+    "goalPlanStepping": m60,
+    "goalPlanText": m61,
+    "goalPlanWaitingPhone": m62,
     "goalPlanWatching": MessageLookupByLibrary.simpleMessage(
       "Адегенде 3 күн байкайм, анан кадамдарды пландайм.",
     ),
-    "goalPlanWatchingDays": m62,
+    "goalPlanWatchingDays": m63,
     "goalPoolNote": MessageLookupByLibrary.simpleMessage(
       "Fini колдонмолорду тааныган сайын бул максатка кошот.",
     ),
@@ -1178,7 +1196,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Коюлган лимиттер ошол бойдон калат.",
     ),
     "goalSchool": MessageLookupByLibrary.simpleMessage("Мектеп сааттары"),
-    "goalScreensOff": m63,
+    "goalScreensOff": m64,
     "goalScrolling": MessageLookupByLibrary.simpleMessage("Азыраак лента"),
     "goalScrollingSub": MessageLookupByLibrary.simpleMessage(
       "TikTok, Shorts, Reels",
@@ -1189,7 +1207,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalVideoSub": MessageLookupByLibrary.simpleMessage(
       "YouTube, Shorts эмес · жакында",
     ),
-    "goalWeekN": m64,
+    "goalWeekN": m65,
     "goalWeekNow": MessageLookupByLibrary.simpleMessage("азыр"),
     "goalWeekendExtra": MessageLookupByLibrary.simpleMessage(
       "Дем алыш күндөрү көбүрөөк",
@@ -1197,7 +1215,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goalWeekendExtraSub": MessageLookupByLibrary.simpleMessage(
       "Ишемби жана жекшемби +30 мүн",
     ),
-    "goalWindow": m65,
+    "goalWindow": m66,
     "goodAfternoon": MessageLookupByLibrary.simpleMessage("Кутман күн 👋"),
     "goodEvening": MessageLookupByLibrary.simpleMessage("Кутман кеч 👋"),
     "goodMorning": MessageLookupByLibrary.simpleMessage("Кутман таң 👋"),
@@ -1221,7 +1239,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsAddBody": MessageLookupByLibrary.simpleMessage(
       "Аны бул телефондун лимиттерине кошуңуз. Күнүмдүк лимитти кийин тууралай аласыз.",
     ),
-    "installedAppsAddTitle": m66,
+    "installedAppsAddTitle": m67,
     "installedAppsAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Ар дайым уруксат",
     ),
@@ -1231,17 +1249,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsBlockCompletely": MessageLookupByLibrary.simpleMessage(
       "Толугу менен бөгөттөө",
     ),
-    "installedAppsBlockedSnack": m67,
-    "installedAppsCount": m68,
-    "installedAppsEmptyBody": m69,
+    "installedAppsBlockedSnack": m68,
+    "installedAppsCount": m69,
+    "installedAppsEmptyBody": m70,
     "installedAppsEmptyTitle": MessageLookupByLibrary.simpleMessage(
       "Колдонмолор азырынча шайкештирилген жок",
     ),
-    "installedAppsIosBody": m70,
+    "installedAppsIosBody": m71,
     "installedAppsIosTitle": MessageLookupByLibrary.simpleMessage(
       "iPhone колдонмолору бул жерде көрсөтүлбөйт",
     ),
-    "installedAppsLastSynced": m71,
+    "installedAppsLastSynced": m72,
     "installedAppsLimited": MessageLookupByLibrary.simpleMessage("Лимит бар"),
     "installedAppsNoMatch": MessageLookupByLibrary.simpleMessage(
       "Сурооңуз боюнча колдонмо табылган жок.",
@@ -1255,7 +1273,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "installedAppsSetLimit": MessageLookupByLibrary.simpleMessage(
       "Күнүмдүк лимит коюу",
     ),
-    "installedAppsSubtitle": m72,
+    "installedAppsSubtitle": m73,
     "installedAppsTapHint": MessageLookupByLibrary.simpleMessage(
       "Лимит коюу же бөгөттөө үчүн тааныш колдонмону басыңыз.",
     ),
@@ -1361,7 +1379,32 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ата-энең бул колдонмону өчүрдү",
     ),
     "kidAppTimesUp": MessageLookupByLibrary.simpleMessage("Убакыт бүттү"),
-    "kidBonusFromCoins": m73,
+    "kidAskAppsUp": m74,
+    "kidAskButton": m75,
+    "kidAskDeclined": MessageLookupByLibrary.simpleMessage(
+      "Бүгүн эмес. Убактың эртең кайтат.",
+    ),
+    "kidAskGrantedBy": m76,
+    "kidAskGrantedFini": m77,
+    "kidAskOnceADay": MessageLookupByLibrary.simpleMessage(
+      "Күнүнө бир жолу сураса болот.",
+    ),
+    "kidAskPending": MessageLookupByLibrary.simpleMessage(
+      "Суралды! Ата-эне жакында жооп берет.",
+    ),
+    "kidAskPlanGames": m78,
+    "kidAskPlanOther": m79,
+    "kidAskPlanScrolling": m80,
+    "kidAskTitleGames": MessageLookupByLibrary.simpleMessage(
+      "Дагы ойногуң келеби?",
+    ),
+    "kidAskTitleOther": MessageLookupByLibrary.simpleMessage(
+      "Дагы убакыт керекпи?",
+    ),
+    "kidAskTitleScrolling": MessageLookupByLibrary.simpleMessage(
+      "Дагы лента көргүң келеби?",
+    ),
+    "kidBonusFromCoins": m81,
     "kidBudgetShared": MessageLookupByLibrary.simpleMessage(
       "Ата-энең жөндөгөн колдонмолор үчүн жалпы",
     ),
@@ -1375,7 +1418,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidGetMoreInStore": MessageLookupByLibrary.simpleMessage(
       "Кошумча убакытты Дүкөндөн сатып ал",
     ),
-    "kidHasLeftToday": m74,
+    "kidHasLeftToday": m82,
     "kidHelloGo": MessageLookupByLibrary.simpleMessage("Баштадык"),
     "kidHelloParent": MessageLookupByLibrary.simpleMessage(
       "Ата-энең кайсы колдонмолорду колдонорыңды көрөт",
@@ -1389,9 +1432,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidHelloTitle": MessageLookupByLibrary.simpleMessage(
       "Салам! Мен Финимин.",
     ),
-    "kidScreenTimeBackAt": m75,
-    "kidScreenTimeDaily": m76,
-    "kidScreenTimeLeft": m77,
+    "kidScreenTimeBackAt": m83,
+    "kidScreenTimeDaily": m84,
+    "kidScreenTimeLeft": m85,
     "kidScreenTimeUp": MessageLookupByLibrary.simpleMessage(
       "Бүгүнгө убакыт бүттү",
     ),
@@ -1407,10 +1450,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "kidSetupHintList": MessageLookupByLibrary.simpleMessage(
       "Тизмеден Safini\'ни таап, күйгүзүңүз.",
     ),
-    "kidSetupStepOf": m78,
+    "kidSetupStepOf": m86,
     "kidSubtitle": MessageLookupByLibrary.simpleMessage("Монета топтоп, ойно"),
-    "kidUsedToday": m79,
-    "kidsApps": m80,
+    "kidUsedToday": m87,
+    "kidsApps": m88,
     "kidsEarnTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Балдар бул колдонмолордо кошумча мүнөт ачуу үчүн Убакыт монеталарын топтошот.",
     ),
@@ -1421,9 +1464,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "lastSevenDays": MessageLookupByLibrary.simpleMessage("Акыркы 7 күн"),
     "lessons": MessageLookupByLibrary.simpleMessage("Сабактар"),
     "lessonsChangeText": MessageLookupByLibrary.simpleMessage("Бүгүн +1"),
-    "levelHero": m81,
+    "levelHero": m89,
     "levelShort": MessageLookupByLibrary.simpleMessage("Деңгээл"),
-    "levelValue": m82,
+    "levelValue": m90,
     "limitThisApp": MessageLookupByLibrary.simpleMessage("Колдонмону чектөө"),
     "limitsBattery": MessageLookupByLibrary.simpleMessage("Батарея жөндөөлөрү"),
     "limitsBatteryHint": MessageLookupByLibrary.simpleMessage(
@@ -1452,7 +1495,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "limitsSetupError": MessageLookupByLibrary.simpleMessage(
       "Колдонмо лимиттерин туташтыруу мүмкүн болгон жок. Интернетти текшерип, кайталаңыз.",
     ),
-    "limitsSubtitle": m83,
+    "limitsSubtitle": m91,
     "limitsUsageAccess": MessageLookupByLibrary.simpleMessage(
       "Колдонуу статистикасына уруксат",
     ),
@@ -1486,24 +1529,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "micPermissionDenied": MessageLookupByLibrary.simpleMessage(
       "Микрофон өчүк. Үн нускамасын жаздыруу үчүн аны Жөндөөлөрдөн күйгүзүңүз.",
     ),
-    "minuteCount": m84,
+    "minuteCount": m92,
     "minutes": MessageLookupByLibrary.simpleMessage("Мүнөттөр"),
-    "minutesLeftShort": m85,
-    "minutesLeftToday": m86,
+    "minutesLeftShort": m93,
+    "minutesLeftToday": m94,
     "minutesPerPurchase": MessageLookupByLibrary.simpleMessage(
       "Бир сатып алууга мүнөт",
     ),
-    "minutesRemainingLong": m87,
+    "minutesRemainingLong": m95,
     "mon": MessageLookupByLibrary.simpleMessage("ДШ"),
     "monitor": MessageLookupByLibrary.simpleMessage("Мониторинг"),
-    "moreCoinsNeeded": m88,
-    "mostOfItIn": m89,
+    "moreCoinsNeeded": m96,
+    "mostOfItIn": m97,
     "myAvatar": MessageLookupByLibrary.simpleMessage("Менин аватарым"),
     "myFamily": MessageLookupByLibrary.simpleMessage("Менин үй-бүлөм"),
     "myProfile": MessageLookupByLibrary.simpleMessage("Менин профилим"),
     "myQuests": MessageLookupByLibrary.simpleMessage("Менин тапшырмаларым"),
     "myUsageToday": MessageLookupByLibrary.simpleMessage("Бүгүнкү убактым"),
-    "nDayStreak": m90,
+    "nDayStreak": m98,
     "name": MessageLookupByLibrary.simpleMessage("Аты"),
     "nameHintExample": MessageLookupByLibrary.simpleMessage("Амир"),
     "nameYourFamily": MessageLookupByLibrary.simpleMessage(
@@ -1616,7 +1659,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "obGoalsSub": MessageLookupByLibrary.simpleMessage(
       "Канча болсо да тандаңыз.",
     ),
-    "obGoalsTitle": m91,
+    "obGoalsTitle": m99,
     "obHiWho": MessageLookupByLibrary.simpleMessage(
       "Салам, мен Fini! Кимге жардам беребиз?",
     ),
@@ -1639,14 +1682,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "obPlanMondayTitle": MessageLookupByLibrary.simpleMessage(
       "Ар дүйшөмбү: кичинекей кадам",
     ),
-    "obPlanNightBody": m92,
+    "obPlanNightBody": m100,
     "obPlanNightTitle": MessageLookupByLibrary.simpleMessage(
       "Ар түнү: экрандар өчүк",
     ),
     "obPlanTitle": MessageLookupByLibrary.simpleMessage(
       "Мына менин планым. Капыстан тыюулар жок, демек урушуу азыраак.",
     ),
-    "obPlanWatchBody": m93,
+    "obPlanWatchBody": m101,
     "obPlanWatchTitle": MessageLookupByLibrary.simpleMessage(
       "Алгачкы 3 күн: мен байкайм",
     ),
@@ -1656,9 +1699,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "obStartTrial": MessageLookupByLibrary.simpleMessage(
       "14 күн акысыз баштоо",
     ),
-    "obSuggested": m94,
+    "obSuggested": m102,
     "obTheirPhone": MessageLookupByLibrary.simpleMessage("Баланын телефону"),
-    "obTrialDay": m95,
+    "obTrialDay": m103,
     "obTrialDay12Body": MessageLookupByLibrary.simpleMessage(
       "Сыноо мөөнөтү бүтөөрдөн мурун эскертебиз",
     ),
@@ -1675,11 +1718,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "obTrialTodayBody": MessageLookupByLibrary.simpleMessage(
       "Бардык балдар үчүн Fini’нин бардык мүмкүнчүлүктөрү",
     ),
-    "obTuneSub": m96,
+    "obTuneSub": m104,
     "obTuneTitle": MessageLookupByLibrary.simpleMessage(
       "Керектүү лимиттерди коюңуз",
     ),
-    "ofTotal": m97,
+    "ofTotal": m105,
     "offMeansAlwaysAllowed": MessageLookupByLibrary.simpleMessage(
       "Өчүк болсо - ар дайым ачык",
     ),
@@ -1697,12 +1740,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "paceGentle": MessageLookupByLibrary.simpleMessage("Жумшак"),
     "paceNow": MessageLookupByLibrary.simpleMessage("Дароо"),
     "paceSteady": MessageLookupByLibrary.simpleMessage("Бир калыпта"),
-    "paidCoinsTo": m98,
+    "paidCoinsTo": m106,
     "paidOutNice": MessageLookupByLibrary.simpleMessage("Төлөндү. Азаматсың."),
     "pairStepAllow": MessageLookupByLibrary.simpleMessage(
       "Суралганда экран убактысына уруксат бериңиз",
     ),
-    "pairStepInstall": m99,
+    "pairStepInstall": m107,
     "pairStepTap": MessageLookupByLibrary.simpleMessage(
       "«Мен баламын» баскычын басып, кодду жазыңыз",
     ),
@@ -1738,11 +1781,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "pendingApproval": MessageLookupByLibrary.simpleMessage(
       "Текшерүүнү күтүүдө",
     ),
-    "percentToNextLevel": m100,
+    "percentToNextLevel": m108,
     "phoneConnectedBody": MessageLookupByLibrary.simpleMessage(
       "Эми тапшырмалар жана лимиттер анда иштейт.",
     ),
-    "phoneConnectedTitle": m101,
+    "phoneConnectedTitle": m109,
     "photoProofAsked": MessageLookupByLibrary.simpleMessage(
       "Сүрөт менен далил суралган",
     ),
@@ -1758,15 +1801,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "pillCheck": MessageLookupByLibrary.simpleMessage("Текшерүү"),
     "pillPaid": MessageLookupByLibrary.simpleMessage("Төлөндү"),
     "pillWaiting": MessageLookupByLibrary.simpleMessage("Күтүүдө"),
-    "planLineAtTarget": m102,
-    "planLineEase": m103,
-    "planLineJump": m104,
-    "planLineJumped": m105,
-    "planLineStart": m106,
-    "planLineStep": m107,
+    "planLineAtTarget": m110,
+    "planLineEase": m111,
+    "planLineJump": m112,
+    "planLineJumped": m113,
+    "planLineStart": m114,
+    "planLineStep": m115,
     "playVoice": MessageLookupByLibrary.simpleMessage("Угуу"),
-    "poolUsedOf": m108,
-    "poolUsedUp": m109,
+    "poolUsedOf": m116,
+    "poolUsedUp": m117,
     "priceLabel": MessageLookupByLibrary.simpleMessage("Баасы"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Купуялык саясаты"),
     "privacyPolicyOpenFailed": MessageLookupByLibrary.simpleMessage(
@@ -1775,15 +1818,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "privacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
       "Safini үй-бүлө маалыматтарын кантип иштетет",
     ),
-    "prizeAskReviewBody": m110,
-    "prizeAskReviewTitle": m111,
+    "prizeAskReviewBody": m118,
+    "prizeAskReviewTitle": m119,
     "prizeAsked": MessageLookupByLibrary.simpleMessage(
       "Даяр! Ата-энең сураныңды көрөт.",
     ),
     "prizeBlurb": MessageLookupByLibrary.simpleMessage(
       "Белекти ата-энең тапшырат. Ага чейин монеталарың кармалып турат.",
     ),
-    "prizeHoldExplainer": m112,
+    "prizeHoldExplainer": m120,
     "prizeIdeaBackpack": MessageLookupByLibrary.simpleMessage("Жаңы рюкзак"),
     "prizeIdeaBike": MessageLookupByLibrary.simpleMessage("Жаңы велосипед"),
     "prizeIdeaBook": MessageLookupByLibrary.simpleMessage("Жаңы китеп"),
@@ -1807,17 +1850,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "prizeWaitingBody": MessageLookupByLibrary.simpleMessage(
       "Ата-энең көрөт. Ал жооп бергенче монеталарың кармалып турат.",
     ),
-    "prizeWaitingForYou": m113,
-    "prizesBody": m114,
+    "prizeWaitingForYou": m121,
+    "prizesBody": m122,
     "prizesFootnote": MessageLookupByLibrary.simpleMessage(
       "Ата-энеңден чыныгы белектер. Топто, сура - ата-энең тапшырат.",
     ),
-    "prizesFor": m115,
+    "prizesFor": m123,
     "prizesTab": MessageLookupByLibrary.simpleMessage("Белектер"),
     "proActiveTitle": MessageLookupByLibrary.simpleMessage(
       "Үй-бүлөңүздө Safini Pro бар",
     ),
-    "proActiveUntil": m116,
+    "proActiveUntil": m124,
     "proBuyOnWeb": MessageLookupByLibrary.simpleMessage("Pro\'ну кошуу"),
     "proFailed": MessageLookupByLibrary.simpleMessage(
       "Сатып алуу ишке ашкан жок. Кайра аракет кылыңыз.",
@@ -1866,16 +1909,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "proPending": MessageLookupByLibrary.simpleMessage(
       "Ырастоо күтүлүүдө. Ырасталгандан кийин Pro күйгүзүлөт.",
     ),
-    "proPerMonth": m117,
-    "proPerYear": m118,
-    "proRenewsOn": m119,
+    "proPerMonth": m125,
+    "proPerYear": m126,
+    "proRenewsOn": m127,
     "proRestore": MessageLookupByLibrary.simpleMessage(
       "Сатып алууларды калыбына келтирүү",
     ),
     "proRestored": MessageLookupByLibrary.simpleMessage(
       "Safini Pro калыбына келтирилди.",
     ),
-    "proSave": m120,
+    "proSave": m128,
     "proSettingsFree": MessageLookupByLibrary.simpleMessage("Акысыз план"),
     "proStartTrial": MessageLookupByLibrary.simpleMessage(
       "Акысыз мезгилди баштоо",
@@ -1886,12 +1929,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "proSubscribe": MessageLookupByLibrary.simpleMessage("Жазылуу"),
     "proTerms": MessageLookupByLibrary.simpleMessage("Колдонуу шарттары"),
     "proTitle": MessageLookupByLibrary.simpleMessage("Safini Pro"),
-    "proTrialDays": m121,
-    "proTrialMonths": m122,
-    "proTrialThen": m123,
-    "proTrialUntil": m124,
-    "proTrialWeeks": m125,
-    "proTrialYears": m126,
+    "proTrialDays": m129,
+    "proTrialMonths": m130,
+    "proTrialThen": m131,
+    "proTrialUntil": m132,
+    "proTrialWeeks": m133,
+    "proTrialYears": m134,
     "proWebFailed": MessageLookupByLibrary.simpleMessage(
       "safini.fun ачылган жок. Кайра аракет кылыңыз.",
     ),
@@ -1948,7 +1991,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reconnectCodeValid": MessageLookupByLibrary.simpleMessage(
       "Кайра байланыштыруу коду · 24 саат жарактуу",
     ),
-    "reconnectMovesProfile": m127,
+    "reconnectMovesProfile": m135,
     "reconnectWithCode": MessageLookupByLibrary.simpleMessage(
       "Код менен кайра байланыштыруу",
     ),
@@ -1956,19 +1999,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Үн менен нускама жаздыруу",
     ),
     "recordingVoice": MessageLookupByLibrary.simpleMessage("Жазылууда"),
-    "redeemExplainer": m128,
+    "redeemExplainer": m136,
     "redoNoteHint": MessageLookupByLibrary.simpleMessage(
       "Эмнени оңдоо керек? Милдеттүү эмес.",
     ),
     "reject": MessageLookupByLibrary.simpleMessage("Четке кагуу"),
     "remaining": MessageLookupByLibrary.simpleMessage("Калды"),
-    "remainingTime": m129,
+    "remainingTime": m137,
     "removeChild": MessageLookupByLibrary.simpleMessage(
       "Баланын аккаунтун өчүрүү",
     ),
-    "removeChildConfirmBody": m130,
-    "removeChildConfirmTitle": m131,
-    "removeChildDeletedSuccess": m132,
+    "removeChildConfirmBody": m138,
+    "removeChildConfirmTitle": m139,
+    "removeChildDeletedSuccess": m140,
     "removeChildError": MessageLookupByLibrary.simpleMessage(
       "Баланын аккаунтун өчүрүү мүмкүн болгон жок. Кайра аракет кылыңыз.",
     ),
@@ -2035,9 +2078,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "sat": MessageLookupByLibrary.simpleMessage("ИШ"),
     "save": MessageLookupByLibrary.simpleMessage("Сактоо"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Өзгөртүүлөрдү сактоо"),
-    "saveForName": m133,
+    "saveForName": m141,
     "saveMyLook": MessageLookupByLibrary.simpleMessage("Көрүнүштү сактоо!"),
-    "savedForName": m134,
+    "savedForName": m142,
     "scopeEveryone": MessageLookupByLibrary.simpleMessage("Баары"),
     "screenTime": MessageLookupByLibrary.simpleMessage("Экран убактысы"),
     "screenTimeCap": MessageLookupByLibrary.simpleMessage(
@@ -2075,7 +2118,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "setupYourFamily": MessageLookupByLibrary.simpleMessage(
       "Үй-бүлөңүздү түзүңүз",
     ),
-    "showAllAppsCount": m135,
+    "showAllAppsCount": m143,
     "showFewerApps": MessageLookupByLibrary.simpleMessage("Жыйноо"),
     "signInAction": MessageLookupByLibrary.simpleMessage("Кирүү"),
     "signInError": MessageLookupByLibrary.simpleMessage(
@@ -2100,15 +2143,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Бул суроонун мөөнөтү бүттү. Дагы эле чыгуу керек болсо, кайра сура.",
     ),
     "signoutKeep": MessageLookupByLibrary.simpleMessage("Чыгарбоо"),
-    "signoutReviewMeta": m136,
-    "signoutReviewTitle": m137,
+    "signoutReviewMeta": m144,
+    "signoutReviewTitle": m145,
     "signoutTypeCode": MessageLookupByLibrary.simpleMessage(
       "Же ата-энең айткан кодду жаз",
     ),
     "signoutWaiting": MessageLookupByLibrary.simpleMessage(
       "Жоопту күтүүдөбүз…",
     ),
-    "signoutWrongCode": m138,
+    "signoutWrongCode": m146,
     "spendYourTimeCoins": MessageLookupByLibrary.simpleMessage(
       "Убакыт монеталарыңды сарпта",
     ),
@@ -2157,7 +2200,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskChessSub": MessageLookupByLibrary.simpleMessage("Тактаны өздөштүр"),
     "taskChessTitle": MessageLookupByLibrary.simpleMessage("Шахмат сабагы"),
-    "taskCount": m139,
+    "taskCount": m147,
     "taskCreatedMessage": MessageLookupByLibrary.simpleMessage(
       "Тапшырма түзүлдү!",
     ),
@@ -2174,7 +2217,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Duolingo сабагын бүтүр",
     ),
     "taskFieldLabel": MessageLookupByLibrary.simpleMessage("Тапшырма"),
-    "taskGroupSummary": m140,
+    "taskGroupSummary": m148,
     "taskIdeaBrushTeethDetails": MessageLookupByLibrary.simpleMessage(
       "Ойгонгондон кийин эки мүнөт тишиңди жууп, сүрөтүн жөнөт.",
     ),
@@ -2287,7 +2330,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "taskRoomSub": MessageLookupByLibrary.simpleMessage("Күнүмдүк иш"),
     "taskRoomTitle": MessageLookupByLibrary.simpleMessage("Бөлмөңдү жыйна"),
-    "taskScopeLine": m141,
+    "taskScopeLine": m149,
     "taskStepsSub": MessageLookupByLibrary.simpleMessage("Көбүрөөк кыймылда!"),
     "taskStepsTitle": MessageLookupByLibrary.simpleMessage(
       "5 000 кадам баскыла",
@@ -2304,7 +2347,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tasksAndRewards": MessageLookupByLibrary.simpleMessage(
       "Тапшырмалар жана сыйлыктар",
     ),
-    "tasksLeftCoinsOnTable": m142,
+    "tasksLeftCoinsOnTable": m150,
     "theirNote": MessageLookupByLibrary.simpleMessage("Анын белгиси"),
     "theyInstallSafini": MessageLookupByLibrary.simpleMessage(
       "Алар Safini\'ни орнотуп, кирип, ушул кодду жазышат.",
@@ -2312,8 +2355,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "thisWeek": MessageLookupByLibrary.simpleMessage("Ушул жумада"),
     "thu": MessageLookupByLibrary.simpleMessage("БШ"),
     "timeCoins": MessageLookupByLibrary.simpleMessage("Убакыт монеталары"),
-    "timeLeft": m143,
-    "timeUsed": m144,
+    "timeLeft": m151,
+    "timeUsed": m152,
     "tip1": MessageLookupByLibrary.simpleMessage(
       "Жоопкерчиликке үйрөткөн маанилүү тапшырмаларды бериңиз",
     ),
@@ -2329,7 +2372,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tipsForParents": MessageLookupByLibrary.simpleMessage(
       "Ата-энелерге кеңештер",
     ),
-    "toGo": m145,
+    "toGo": m153,
     "todayOffline": MessageLookupByLibrary.simpleMessage("Байланыш жок"),
     "todayOfflineBody": MessageLookupByLibrary.simpleMessage(
       "Интернет болгондо тапшырмалар чыгат. Жаңыртуу үчүн ылдый тарт.",
@@ -2394,7 +2437,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Башкы бетиңиз",
     ),
     "tourSkip": MessageLookupByLibrary.simpleMessage("Өткөрүп жиберүү"),
-    "tourStep": m146,
+    "tourStep": m154,
     "tryAgain": MessageLookupByLibrary.simpleMessage("Кайталоо"),
     "tue": MessageLookupByLibrary.simpleMessage("ШШ"),
     "typeCodeFromOtherParent": MessageLookupByLibrary.simpleMessage(
@@ -2403,7 +2446,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "typeCodeFromParent": MessageLookupByLibrary.simpleMessage(
       "Ата-энеңден алган кодду жаз",
     ),
-    "typeItOnPhone": m147,
+    "typeItOnPhone": m155,
     "unitHour": MessageLookupByLibrary.simpleMessage("с"),
     "unitMinute": MessageLookupByLibrary.simpleMessage("мүн"),
     "unlockExtraTime": MessageLookupByLibrary.simpleMessage(
@@ -2423,11 +2466,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Жаңы версия чыкты.",
     ),
     "updateSoftTitle": MessageLookupByLibrary.simpleMessage("Жаңыртуу бар"),
-    "usedLimit": m148,
-    "usedNoLimit": m149,
-    "usedOfLimit": m150,
-    "usedOfLimitOver": m151,
-    "usedTodayShort": m152,
+    "usedLimit": m156,
+    "usedNoLimit": m157,
+    "usedOfLimit": m158,
+    "usedOfLimitOver": m159,
+    "usedTodayShort": m160,
     "uzbek": MessageLookupByLibrary.simpleMessage("Өзбекче"),
     "viewAsKid": MessageLookupByLibrary.simpleMessage("Бала катары кирүү"),
     "viewPhoto": MessageLookupByLibrary.simpleMessage("Сүрөттү ачуу"),
@@ -2440,12 +2483,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voicePlaybackFailed": MessageLookupByLibrary.simpleMessage(
       "Үн жазуусун ойнотуу мүмкүн болгон жок.",
     ),
-    "voiceSecondsLeft": m153,
-    "waitingCount": m154,
+    "voiceSecondsLeft": m161,
+    "waitingCount": m162,
     "waitingForParentCheck": MessageLookupByLibrary.simpleMessage(
       "Ата-энеңдин текшерүүсүн күтүүдөбүз",
     ),
-    "waitingForPhone": m155,
+    "waitingForPhone": m163,
     "wearLabel": MessageLookupByLibrary.simpleMessage("Кийүү"),
     "wed": MessageLookupByLibrary.simpleMessage("ШР"),
     "weekdayFri": MessageLookupByLibrary.simpleMessage("Жм"),
@@ -2469,8 +2512,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "wishLabel": MessageLookupByLibrary.simpleMessage("Тилек"),
     "wishNameHint": MessageLookupByLibrary.simpleMessage("Футбол тобу"),
     "wishPriceLabel": MessageLookupByLibrary.simpleMessage("Баасы"),
-    "wishReviewBody": m156,
-    "wishReviewTitle": m157,
+    "wishReviewBody": m164,
+    "wishReviewTitle": m165,
     "wishSent": MessageLookupByLibrary.simpleMessage(
       "Тилек жөнөтүлдү. Ата-энең аны көрөт.",
     ),
@@ -2481,10 +2524,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Эмнени кыялданасың?",
     ),
     "wornLabel": MessageLookupByLibrary.simpleMessage("Кийилген"),
-    "worthCoins": m158,
-    "yearsOld": m159,
-    "youNeedMoreCoins": m160,
-    "youSuffix": m161,
+    "worthCoins": m166,
+    "yearsOld": m167,
+    "youNeedMoreCoins": m168,
+    "youSuffix": m169,
     "yourAccount": MessageLookupByLibrary.simpleMessage("Сиздин аккаунт"),
     "yourAvatar": MessageLookupByLibrary.simpleMessage("Сенин аватарың"),
     "yourChildren": MessageLookupByLibrary.simpleMessage("СИЗДИН БАЛДАРЫҢЫЗ"),

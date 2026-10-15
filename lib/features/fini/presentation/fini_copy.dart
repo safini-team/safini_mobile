@@ -47,6 +47,14 @@ String _app(FiniProposal p, [S? s]) {
 /// `evidence.plan`, so it is said here rather than by the server's English
 /// `reason`; anything else shows the reason as sent.
 String finiReasonLine(S s, FiniProposal p) {
+  // The kid's ask for more time (SAF-275): which budget ran out.
+  final ask = p.evidence['ask'];
+  if (p.kind == 'time_grant' && ask is Map) {
+    final intent = GoalIntent.values
+        .where((intent) => intent.name == ask['intent'])
+        .firstOrNull;
+    if (intent != null) return s.finiAskReason(goalTitle(s, intent));
+  }
   final plan = _plan(p);
   if (plan == null) return p.reason;
   String hm(String key) => formatHm(s, (plan[key] as num?)?.toInt() ?? 0);

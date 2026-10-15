@@ -1093,5 +1093,20 @@
   "planLineJump": "Өткөн жумада лимит бир да жолу бүткөн жок. Азыр эле күнүнө {to} кылалыбы?",
   "planLineEase": "Өткөн жумада {from} күн сайын бүттү. Бир жумага {to} чейин жеңилдетебизби?",
   "planLineJumped": "Дароо максатка өттүк: күнүнө {to}.",
-  "planLineAtTarget": "Максат дароо иштейт: күнүнө {to}."
+  "planLineAtTarget": "Максат дароо иштейт: күнүнө {to}.",
+  "kidAskTitleGames": "Дагы ойногуң келеби?",
+  "kidAskTitleScrolling": "Дагы лента көргүң келеби?",
+  "kidAskTitleOther": "Дагы убакыт керекпи?",
+  "kidAskPlanGames": "Үй-бүлөлүк план боюнча оюнга күнүнө {limit}.",
+  "kidAskPlanScrolling": "Үй-бүлөлүк план боюнча лентага күнүнө {limit}.",
+  "kidAskPlanOther": "Үй-бүлөлүк план боюнча күнүнө {limit}.",
+  "kidAskAppsUp": "{apps} · бүгүнкүгө бүттү",
+  "kidAskButton": "Ата-энеден {minutes} суроо",
+  "kidAskOnceADay": "Күнүнө бир жолу сураса болот.",
+  "kidAskPending": "Суралды! Ата-эне жакында жооп берет.",
+  "kidAskGrantedBy": "{parent}: ооба, +{minutes}",
+  "kidAskGrantedFini": "Ооба: +{minutes}. Тапшырмалар аткарылды.",
+  "kidAskDeclined": "Бүгүн эмес. Убактың эртең кайтат.",
+  "finiAskReason": "{goal}: бүгүнкү убакыт бүттү.",
+  "finiNotToday": "Бүгүн эмес"
 }

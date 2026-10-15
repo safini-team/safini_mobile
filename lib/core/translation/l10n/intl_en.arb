@@ -1268,5 +1268,20 @@
   "planLineJump": "The limit never ran out last week. Go to {to} a day now?",
   "planLineEase": "{from} ran out every day last week. Ease off to {to} for a week?",
   "planLineJumped": "Jumped to the goal: {to} a day.",
-  "planLineAtTarget": "The goal applies as set: {to} a day."
+  "planLineAtTarget": "The goal applies as set: {to} a day.",
+  "kidAskTitleGames": "Want more game time?",
+  "kidAskTitleScrolling": "Want more scrolling time?",
+  "kidAskTitleOther": "Want more time?",
+  "kidAskPlanGames": "Your family's plan is {limit} of games a day.",
+  "kidAskPlanScrolling": "Your family's plan is {limit} of scrolling a day.",
+  "kidAskPlanOther": "Your family's plan is {limit} a day.",
+  "kidAskAppsUp": "{apps} · time's up for today",
+  "kidAskButton": "Ask a parent for {minutes}",
+  "kidAskOnceADay": "You can ask once a day.",
+  "kidAskPending": "Asked! A parent will answer soon.",
+  "kidAskGrantedBy": "{parent} said yes: +{minutes}",
+  "kidAskGrantedFini": "Yes: +{minutes}. Your tasks are done.",
+  "kidAskDeclined": "Not today. Your time comes back tomorrow.",
+  "finiAskReason": "{goal}: today's time is up.",
+  "finiNotToday": "Not today"
 }

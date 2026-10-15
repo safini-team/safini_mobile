@@ -155,8 +155,16 @@ class FiniDemoRepository implements FiniRepository {
           childId: childId,
           kind: 'time_grant',
           status: FiniProposalStatus.pending,
-          reason: 'Already had 15 extra today. Homework is done.',
-          payload: const {'minutes': 15},
+          reason: 'Amir asked for 15 more minutes.',
+          payload: {
+            'goal_id': '$childId-games',
+            'intent': 'games',
+            'minutes': 15,
+            'tasks_done': false,
+          },
+          evidence: const {
+            'ask': {'intent': 'games', 'minutes': 15},
+          },
           createdAt: at(17, 42),
         ),
     ];

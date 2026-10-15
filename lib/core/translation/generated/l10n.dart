@@ -9577,6 +9577,151 @@ class S {
       args: [to],
     );
   }
+
+  /// `Want more game time?`
+  String get kidAskTitleGames {
+    return Intl.message(
+      'Want more game time?',
+      name: 'kidAskTitleGames',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Want more scrolling time?`
+  String get kidAskTitleScrolling {
+    return Intl.message(
+      'Want more scrolling time?',
+      name: 'kidAskTitleScrolling',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Want more time?`
+  String get kidAskTitleOther {
+    return Intl.message(
+      'Want more time?',
+      name: 'kidAskTitleOther',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your family's plan is {limit} of games a day.`
+  String kidAskPlanGames(Object limit) {
+    return Intl.message(
+      'Your family\'s plan is $limit of games a day.',
+      name: 'kidAskPlanGames',
+      desc: '',
+      args: [limit],
+    );
+  }
+
+  /// `Your family's plan is {limit} of scrolling a day.`
+  String kidAskPlanScrolling(Object limit) {
+    return Intl.message(
+      'Your family\'s plan is $limit of scrolling a day.',
+      name: 'kidAskPlanScrolling',
+      desc: '',
+      args: [limit],
+    );
+  }
+
+  /// `Your family's plan is {limit} a day.`
+  String kidAskPlanOther(Object limit) {
+    return Intl.message(
+      'Your family\'s plan is $limit a day.',
+      name: 'kidAskPlanOther',
+      desc: '',
+      args: [limit],
+    );
+  }
+
+  /// `{apps} · time's up for today`
+  String kidAskAppsUp(Object apps) {
+    return Intl.message(
+      '$apps · time\'s up for today',
+      name: 'kidAskAppsUp',
+      desc: '',
+      args: [apps],
+    );
+  }
+
+  /// `Ask a parent for {minutes}`
+  String kidAskButton(Object minutes) {
+    return Intl.message(
+      'Ask a parent for $minutes',
+      name: 'kidAskButton',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `You can ask once a day.`
+  String get kidAskOnceADay {
+    return Intl.message(
+      'You can ask once a day.',
+      name: 'kidAskOnceADay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Asked! A parent will answer soon.`
+  String get kidAskPending {
+    return Intl.message(
+      'Asked! A parent will answer soon.',
+      name: 'kidAskPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{parent} said yes: +{minutes}`
+  String kidAskGrantedBy(Object parent, Object minutes) {
+    return Intl.message(
+      '$parent said yes: +$minutes',
+      name: 'kidAskGrantedBy',
+      desc: '',
+      args: [parent, minutes],
+    );
+  }
+
+  /// `Yes: +{minutes}. Your tasks are done.`
+  String kidAskGrantedFini(Object minutes) {
+    return Intl.message(
+      'Yes: +$minutes. Your tasks are done.',
+      name: 'kidAskGrantedFini',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Not today. Your time comes back tomorrow.`
+  String get kidAskDeclined {
+    return Intl.message(
+      'Not today. Your time comes back tomorrow.',
+      name: 'kidAskDeclined',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{goal}: today's time is up.`
+  String finiAskReason(Object goal) {
+    return Intl.message(
+      '$goal: today\'s time is up.',
+      name: 'finiAskReason',
+      desc: '',
+      args: [goal],
+    );
+  }
+
+  /// `Not today`
+  String get finiNotToday {
+    return Intl.message('Not today', name: 'finiNotToday', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1222,5 +1222,20 @@
   "planLineJump": "На прошлой неделе лимит ни разу не закончился. Перейти сразу на {to} в день?",
   "planLineEase": "На прошлой неделе {from} заканчивались каждый день. Ослабить до {to} на неделю?",
   "planLineJumped": "Сразу перешли к цели: {to} в день.",
-  "planLineAtTarget": "Цель действует сразу: {to} в день."
+  "planLineAtTarget": "Цель действует сразу: {to} в день.",
+  "kidAskTitleGames": "Хочешь ещё поиграть?",
+  "kidAskTitleScrolling": "Хочешь ещё посмотреть ленту?",
+  "kidAskTitleOther": "Хочешь ещё времени?",
+  "kidAskPlanGames": "По семейному плану на игры {limit} в день.",
+  "kidAskPlanScrolling": "По семейному плану на ленты {limit} в день.",
+  "kidAskPlanOther": "По семейному плану {limit} в день.",
+  "kidAskAppsUp": "{apps} · на сегодня всё",
+  "kidAskButton": "Попросить у родителя {minutes}",
+  "kidAskOnceADay": "Просить можно раз в день.",
+  "kidAskPending": "Просьба отправлена! Родитель скоро ответит.",
+  "kidAskGrantedBy": "{parent}: да, +{minutes}",
+  "kidAskGrantedFini": "Да: +{minutes}. Задания сделаны.",
+  "kidAskDeclined": "Не сегодня. Время вернётся завтра.",
+  "finiAskReason": "{goal}: время на сегодня закончилось.",
+  "finiNotToday": "Не сегодня"
 }
