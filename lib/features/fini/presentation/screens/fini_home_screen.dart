@@ -240,11 +240,11 @@ class _FiniHomeScreenState extends State<FiniHomeScreen> {
       ),
       if (card != null)
         SliverToBoxAdapter(
-          child: _NeedsYouCard(proposal: card, childName: child.nickname),
+          child: FiniNeedsYouCard(proposal: card, childName: child.nickname),
         ),
       for (final sorted in openAppSorts(state.activity, DateTime.now()))
         SliverToBoxAdapter(
-          child: _NewAppCard(proposal: sorted, childName: child.nickname),
+          child: FiniNewAppCard(proposal: sorted, childName: child.nickname),
         ),
       SliverToBoxAdapter(child: DsOverline(s.finiGoalsHeader, top: 24)),
       SliverToBoxAdapter(
@@ -396,8 +396,8 @@ class _StatusCard extends StatelessWidget {
   }
 }
 
-class _NeedsYouCard extends StatelessWidget {
-  const _NeedsYouCard({required this.proposal, required this.childName});
+class FiniNeedsYouCard extends StatelessWidget {
+  const FiniNeedsYouCard({super.key, required this.proposal, required this.childName});
 
   final FiniProposal proposal;
   final String childName;
@@ -484,8 +484,8 @@ class _NeedsYouCard extends StatelessWidget {
 }
 
 /// A new app Fini put under a capped goal, until the parent answers.
-class _NewAppCard extends StatelessWidget {
-  const _NewAppCard({required this.proposal, required this.childName});
+class FiniNewAppCard extends StatelessWidget {
+  const FiniNewAppCard({super.key, required this.proposal, required this.childName});
 
   final FiniProposal proposal;
   final String childName;

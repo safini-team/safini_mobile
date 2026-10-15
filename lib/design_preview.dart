@@ -19,7 +19,15 @@ import 'package:safini/design_preview_data.dart';
 import 'package:safini/features/child/presentation/cubit/app_block_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
 import 'package:safini/features/fini/domain/fini_models.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safini/features/fini/demo/fini_demo.dart';
+import 'package:safini/features/fini/demo/fini_demo_repository.dart';
 import 'package:safini/features/fini/kid/kid_ask_card.dart';
+import 'package:safini/features/fini/presentation/cubit/fini_cubit.dart';
+import 'package:safini/features/fini/presentation/screens/fini_home_screen.dart'
+    show FiniNeedsYouCard, FiniNewAppCard;
+import 'package:safini/features/fini/presentation/widgets/new_app_actions.dart'
+    show openAppSorts;
 import 'package:safini/features/fini/presentation/widgets/fini_check_panel.dart';
 import 'package:safini/features/fini/kid/kid_fini.dart';
 import 'package:safini/core/theme/app_spacing.dart';
@@ -282,6 +290,11 @@ class _GalleryState extends State<_Gallery> {
         onOpenTask: (_) {},
         onNewTask: () {},
       ),
+    ),
+    _Entry(
+      'Fini · new apps',
+      AppColors.bgParent,
+      (context) => const _FiniNewAppsPreview(),
     ),
     _Entry(
       'Task sheet · Fini check',
@@ -706,5 +719,46 @@ class _PreviewPro {
       ),
     ),
     store: _PreviewStore(),
+  );
+}
+
+
+/// The Fini home's new-app cards: "sort it?" and "Fini added ... to Games".
+class _FiniNewAppsPreview extends StatefulWidget {
+  const _FiniNewAppsPreview();
+
+  @override
+  State<_FiniNewAppsPreview> createState() => _FiniNewAppsPreviewState();
+}
+
+class _FiniNewAppsPreviewState extends State<_FiniNewAppsPreview> {
+  final _cubit = FiniCubit(FiniDemoRepository(FiniDemoState.newApps));
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit.load('amir');
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: _cubit,
+    child: BlocBuilder<FiniCubit, FiniState>(
+      builder: (context, state) => ListView(
+        padding: const EdgeInsets.only(top: 60),
+        children: [
+          for (final card in state.pending)
+            FiniNeedsYouCard(proposal: card, childName: 'Amir'),
+          for (final sorted in openAppSorts(state.activity, DateTime.now()))
+            FiniNewAppCard(proposal: sorted, childName: 'Amir'),
+        ],
+      ),
+    ),
   );
 }
