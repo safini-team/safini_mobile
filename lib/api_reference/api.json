@@ -8537,6 +8537,7 @@
                       },
                       "minutes_per_day": 45,
                       "start_minutes": 120,
+                      "window_days": 127,
                       "pace": "steady",
                       "status": "active",
                       "current_minutes": 90,
@@ -8680,6 +8681,7 @@
                   "minutes_per_day": 45,
                   "weekend_minutes": 60,
                   "start_minutes": 120,
+                  "window_days": 127,
                   "pace": "steady",
                   "status": "active",
                   "current_minutes": 90,
@@ -8937,6 +8939,7 @@
                   "minutes_per_day": 45,
                   "weekend_minutes": 60,
                   "start_minutes": 120,
+                  "window_days": 127,
                   "pace": "steady",
                   "status": "active",
                   "current_minutes": 90,
@@ -9135,6 +9138,7 @@
                   },
                   "minutes_per_day": 45,
                   "start_minutes": 120,
+                  "window_days": 127,
                   "pace": "steady",
                   "status": "active",
                   "current_minutes": 90,
@@ -12024,6 +12028,20 @@
             ],
             "title": "Window End"
           },
+          "window_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 127.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window Days",
+            "description": "Windows only: the days it starts on, Mon=1, Tue=2, Wed=4 ... Sun=64. All days when left out; school hours send 31 (Mon to Fri)."
+          },
           "pace": {
             "type": "string",
             "enum": [
@@ -12237,6 +12255,20 @@
               }
             ],
             "title": "Window End"
+          },
+          "window_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 127.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window Days",
+            "description": "Windows only: the days it starts on, Mon=1, Tue=2, Wed=4 ... Sun=64. All days when left out; school hours send 31 (Mon to Fri)."
           },
           "pace": {
             "anyOf": [

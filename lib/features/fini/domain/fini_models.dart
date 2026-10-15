@@ -143,6 +143,7 @@ class FiniGoal {
     this.startMinutes,
     this.windowStart,
     this.windowEnd,
+    this.windowDays = allWeekdays,
     this.pace = FiniPace.gentle,
     this.status = 'active',
     this.currentMinutes,
@@ -167,6 +168,9 @@ class FiniGoal {
   final int? startMinutes;
   final FiniTime? windowStart;
   final FiniTime? windowEnd;
+
+  /// The days a window starts on: Mon=1, Tue=2, Wed=4 ... Sun=64 (SAF-277).
+  final int windowDays;
   final FiniPace pace;
   final String status;
 
@@ -199,6 +203,7 @@ class FiniGoal {
       startMinutes: (json['start_minutes'] as num?)?.toInt(),
       windowStart: FiniTime.parse(json['window_start']),
       windowEnd: FiniTime.parse(json['window_end']),
+      windowDays: (json['window_days'] as num?)?.toInt() ?? allWeekdays,
       pace: FiniPace.values.firstWhere(
         (pace) => pace.name == json['pace'],
         orElse: () => FiniPace.gentle,
@@ -463,3 +468,9 @@ class FiniInbox {
     },
   );
 }
+
+/// Every day of the week as a `window_days` mask.
+const allWeekdays = 127;
+
+/// Monday to Friday, school's default.
+const schoolDays = 31;

@@ -53,6 +53,14 @@
     <string name="block_pool_body">Мындай тиркемелердин бүгүнкү убактысы бүттү. Башка тиркемелер иштейт.</string>
     <string name="block_pool_new_apps_title">Жаңы тиркеме %1$s эс алат</string>
     <string name="block_pool_new_apps_body">Ата-энең иреттегенге чейин жаңы тиркемелерге күнүнө бир аз жалпы убакыт берилет. Бүгүнкүсү бүттү. Башка тиркемелер иштейт.</string>
+    <string name="block_window_bedtime_title">Экрандар %1$s чейин эс алат</string>
+    <string name="block_window_bedtime_body">Уктай турган убак. Чалуу жана билдирүүлөр иштейт.</string>
+    <string name="block_window_school_title">Сабак %1$s чейин</string>
+    <string name="block_window_school_body">Сабак учурунда тиркемелер эс алат. Чалуу жана билдирүүлөр иштейт.</string>
+    <string name="block_window_dinner_title">Кечки тамак %1$s чейин</string>
+    <string name="block_window_dinner_body">Үй-бүлө тамактанып жатканда экрандар эс алат. Чалуу жана билдирүүлөр иштейт.</string>
+    <string name="block_window_title">Экрандар %1$s чейин эс алат</string>
+    <string name="block_window_body">Чалуу жана билдирүүлөр иштейт.</string>
     <plurals name="block_unlocked_title">
         <item quantity="one">%d мүнөт ачылды</item>
         <item quantity="other">%d мүнөт ачылды</item>

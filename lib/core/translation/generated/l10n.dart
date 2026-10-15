@@ -9977,6 +9977,51 @@ class S {
       args: [category],
     );
   }
+
+  /// `Days`
+  String get goalWindowDays {
+    return Intl.message('Days', name: 'goalWindowDays', desc: '', args: []);
+  }
+
+  /// `Screens rest until {time}`
+  String kidWindowBedtime(Object time) {
+    return Intl.message(
+      'Screens rest until $time',
+      name: 'kidWindowBedtime',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `School time until {time}`
+  String kidWindowSchool(Object time) {
+    return Intl.message(
+      'School time until $time',
+      name: 'kidWindowSchool',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Dinner time until {time}`
+  String kidWindowDinner(Object time) {
+    return Intl.message(
+      'Dinner time until $time',
+      name: 'kidWindowDinner',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Apps rest until then. Phone and messages still work.`
+  String get kidWindowSub {
+    return Intl.message(
+      'Apps rest until then. Phone and messages still work.',
+      name: 'kidWindowSub',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

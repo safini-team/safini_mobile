@@ -1,0 +1,24 @@
+{
+  "windows": {
+    "bedtime": {"start": "22:00", "end": "07:00", "days": 127},
+    "friday_bedtime": {"start": "22:00", "end": "07:00", "days": 16},
+    "school": {"start": "08:00", "end": "14:00", "days": 31},
+    "dinner": {"start": "19:00", "end": "20:00", "days": 127},
+    "evening": {"start": "19:30", "end": "21:00", "days": 127}
+  },
+  "cases": [
+    {"name": "a minute before bedtime", "on": ["bedtime"], "at": "2026-10-15T21:59", "until": null},
+    {"name": "the start minute is in", "on": ["bedtime"], "at": "2026-10-15T22:00", "until": "07:00"},
+    {"name": "overnight, next morning", "on": ["bedtime"], "at": "2026-10-16T06:59", "until": "07:00"},
+    {"name": "the end minute is out", "on": ["bedtime"], "at": "2026-10-16T07:00", "until": null},
+    {"name": "Friday night", "on": ["friday_bedtime"], "at": "2026-10-16T23:00", "until": "07:00"},
+    {"name": "Saturday morning belongs to Friday", "on": ["friday_bedtime"], "at": "2026-10-17T06:00", "until": "07:00"},
+    {"name": "Saturday night is not Friday", "on": ["friday_bedtime"], "at": "2026-10-17T23:00", "until": null},
+    {"name": "Thursday night is not Friday", "on": ["friday_bedtime"], "at": "2026-10-15T23:00", "until": null},
+    {"name": "school on a Monday", "on": ["school"], "at": "2026-10-19T10:00", "until": "14:00"},
+    {"name": "no school on Saturday", "on": ["school"], "at": "2026-10-17T10:00", "until": null},
+    {"name": "school is out at 14:00", "on": ["school"], "at": "2026-10-19T14:00", "until": null},
+    {"name": "overlap: the later end wins", "on": ["dinner", "evening"], "at": "2026-10-15T19:45", "until": "21:00"},
+    {"name": "dinner alone", "on": ["dinner", "evening"], "at": "2026-10-15T19:10", "until": "20:00"}
+  ]
+}

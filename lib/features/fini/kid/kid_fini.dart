@@ -10,7 +10,11 @@ class KidFini {
     this.ask,
     this.canAsk = false,
     this.askMinutes = 15,
+    this.window,
   });
+
+  /// Bedtime, school or dinner on now (SAF-277), or null.
+  final KidWindow? window;
 
   final List<KidPool> pools;
   final KidAsk? ask;
@@ -26,7 +30,13 @@ class KidFini {
   bool get showCard => focus != null;
 
   KidFini asked(KidAsk ask) =>
-      KidFini(pools: pools, ask: ask, canAsk: false, askMinutes: askMinutes);
+      KidFini(
+        pools: pools,
+        ask: ask,
+        canAsk: false,
+        askMinutes: askMinutes,
+        window: window,
+      );
 
   factory KidFini.fromJson(Map<String, dynamic> json) => KidFini(
     pools: [
@@ -38,6 +48,22 @@ class KidFini {
         : null,
     canAsk: json['can_ask'] == true,
     askMinutes: (json['ask_minutes'] as num?)?.toInt() ?? 15,
+    window: json['window'] is Map
+        ? KidWindow.fromJson((json['window'] as Map).cast<String, dynamic>())
+        : null,
+  );
+}
+
+/// A time window on now: what it is and when screens come back ("07:00").
+class KidWindow {
+  const KidWindow({required this.intent, required this.until});
+
+  final String? intent;
+  final String until;
+
+  factory KidWindow.fromJson(Map<String, dynamic> json) => KidWindow(
+    intent: json['intent'] as String?,
+    until: (json['until'] ?? '').toString(),
   );
 }
 

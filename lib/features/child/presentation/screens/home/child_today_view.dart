@@ -10,6 +10,7 @@ import 'package:safini/features/child/presentation/widgets/child_avatar.dart';
 import 'package:safini/features/child/presentation/widgets/safini_avatar.dart';
 import 'package:safini/features/child/presentation/widgets/kid_usage_section.dart';
 import 'package:safini/features/fini/kid/kid_ask_card.dart';
+import 'package:safini/features/fini/kid/kid_window_card.dart';
 import 'package:safini/features/fini/kid/kid_fini.dart';
 import 'package:safini/features/parent/presentation/screens/monitor/parent_today_view.dart'
     show formatHm;
@@ -379,6 +380,18 @@ class ChildTodayView extends StatelessWidget {
               ),
             ),
           ),
+          if (data.fini.window != null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.gutter,
+                  14,
+                  AppSpacing.gutter,
+                  0,
+                ),
+                child: KidWindowCard(window: data.fini.window!),
+              ),
+            ),
           if (data.fini.showCard && onAskForTime != null)
             SliverToBoxAdapter(
               child: Padding(

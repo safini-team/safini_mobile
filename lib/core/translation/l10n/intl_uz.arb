@@ -1164,5 +1164,10 @@
   "finiAskSortedApp": "{app}ni «{category}»ga qoʻshaylikmi?",
   "finiAllowApp": "Kuniga {time} ruxsat",
   "finiNotAGame": "Bu oʻyin emas",
-  "finiNotInCategory": "«{category}» emas"
+  "finiNotInCategory": "«{category}» emas",
+  "goalWindowDays": "Kunlar",
+  "kidWindowBedtime": "Ekranlar {time}gacha dam oladi",
+  "kidWindowSchool": "Darslar {time}gacha",
+  "kidWindowDinner": "Kechki ovqat {time}gacha",
+  "kidWindowSub": "Shu vaqtgacha ilovalar dam oladi. Qoʻngʻiroq va xabarlar ishlaydi."
 }

@@ -177,7 +177,9 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
             !getSystemService(KeyguardManager::class.java).isKeyguardLocked
         val pkg = store.foreground
         val frontLimitable = pkg != null && pkg != packageName && !AlwaysAllowed.contains(this, pkg)
-        val blocked = frontLimitable && store.remaining(pkg, now) == 0L
+        // A time window (bedtime, school, dinner) rests every app the child opens.
+        val blocked = frontLimitable && (store.remaining(pkg, now) == 0L ||
+            (countsAsApp(pkg) && store.windowNow(now) != null))
         val floating = if (frontLimitable && !blocked) floatingBlocked(now) else null
         val target = if (blocked) pkg else floating
         if (interactive && Settings.canDrawOverlays(this) && target != null) showOverlay(target, now)
@@ -189,7 +191,8 @@ class AppBlockForegroundService : Service(), BlockOverlay.Host {
     private fun floatingBlocked(now: Long): String? =
         tracker.visible.lastOrNull {
             it != packageName && it != store.foreground &&
-                store.limited(it) && store.remaining(it, now) == 0L
+                ((store.limited(it) && store.remaining(it, now) == 0L) ||
+                    (countsAsApp(it) && store.windowNow(now) != null))
         }
 
     private val launchable = HashMap<String, Boolean>()

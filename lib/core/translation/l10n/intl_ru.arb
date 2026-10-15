@@ -1264,5 +1264,10 @@
   "finiAskSortedApp": "Отнести {app} к «{category}»?",
   "finiAllowApp": "Разрешить {time} в день",
   "finiNotAGame": "Это не игра",
-  "finiNotInCategory": "Не «{category}»"
+  "finiNotInCategory": "Не «{category}»",
+  "goalWindowDays": "Дни",
+  "kidWindowBedtime": "Экраны отдыхают до {time}",
+  "kidWindowSchool": "Уроки до {time}",
+  "kidWindowDinner": "Ужин до {time}",
+  "kidWindowSub": "До этого времени приложения отдыхают. Звонки и сообщения работают."
 }

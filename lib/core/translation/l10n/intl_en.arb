@@ -1310,5 +1310,10 @@
   "finiAskSortedApp": "Put {app} with {category}?",
   "finiAllowApp": "Allow {time} a day",
   "finiNotAGame": "Not a game",
-  "finiNotInCategory": "Not {category}"
+  "finiNotInCategory": "Not {category}",
+  "goalWindowDays": "Days",
+  "kidWindowBedtime": "Screens rest until {time}",
+  "kidWindowSchool": "School time until {time}",
+  "kidWindowDinner": "Dinner time until {time}",
+  "kidWindowSub": "Apps rest until then. Phone and messages still work."
 }
