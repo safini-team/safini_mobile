@@ -20,6 +20,7 @@ import 'package:safini/features/child/presentation/cubit/app_block_state.dart';
 import 'package:safini/features/child/presentation/screens/home/child_today_view.dart';
 import 'package:safini/features/fini/domain/fini_models.dart';
 import 'package:safini/features/fini/kid/kid_ask_card.dart';
+import 'package:safini/features/fini/presentation/widgets/fini_check_panel.dart';
 import 'package:safini/features/fini/kid/kid_fini.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/features/child/presentation/screens/profile/child_me_view.dart';
@@ -92,6 +93,53 @@ class _DesignPreviewAppState extends State<DesignPreviewApp> {
               order[(order.indexOf(_locale.languageCode) + 1) % order.length];
           _locale = Locale(next);
         }),
+      ),
+    );
+  }
+}
+
+/// The task sheet's "Let Fini check" panel: an app task, then a photo task.
+class _FiniCheckPreview extends StatelessWidget {
+  const _FiniCheckPreview();
+
+  @override
+  Widget build(BuildContext context) {
+    const check = FiniCheck(
+      on: true,
+      packageName: 'com.duolingo',
+      appName: 'Duolingo',
+      minutes: 10,
+    );
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.gutter,
+          16,
+          AppSpacing.gutter,
+          32,
+        ),
+        children: [
+          FiniCheckPanel(
+            check: check,
+            photo: false,
+            loadApps: () async => const [],
+            onChanged: (_) {},
+          ),
+          const SizedBox(height: 16),
+          FiniCheckPanel(
+            check: check,
+            photo: true,
+            loadApps: () async => const [],
+            onChanged: (_) {},
+          ),
+          const SizedBox(height: 16),
+          FiniCheckPanel(
+            check: const FiniCheck(),
+            photo: false,
+            loadApps: () async => const [],
+            onChanged: (_) {},
+          ),
+        ],
       ),
     );
   }
@@ -246,6 +294,22 @@ class _GalleryState extends State<_Gallery> {
         onOpenTask: (_) {},
         onNewTask: () {},
       ),
+    ),
+    _Entry(
+      'Parent Tasks · Fini',
+      AppColors.bgParent,
+      (context) => ParentTasksView(
+        data: SampleData.parentTasksFini(S.of(context)),
+        onSelectScope: (_) {},
+        onSelectLane: (_) {},
+        onOpenTask: (_) {},
+        onNewTask: () {},
+      ),
+    ),
+    _Entry(
+      'Task sheet · Fini check',
+      AppColors.bgParent,
+      (context) => const _FiniCheckPreview(),
     ),
     _Entry(
       'Parent Limits',
