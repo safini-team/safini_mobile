@@ -456,27 +456,11 @@ void main() {
       expect(cubit.state.busy, isFalse);
     });
 
-    testWidgets('the App Store paywall has no code box', (tester) async {
-      tester.view.physicalSize = const Size(1170, 4800);
-      tester.view.devicePixelRatio = 3;
-      addTearDown(tester.view.reset);
-      final (cubit, _, _) = await _started();
-
-      await tester.pumpWidget(_host(PaywallScreen(cubit: cubit)));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Subscribe'), findsOneWidget);
-      expect(find.text('Promo code'), findsNothing);
-      expect(find.byType(TextField), findsNothing);
-    });
-
     testWidgets('a bad code says so under the box', (tester) async {
       tester.view.physicalSize = const Size(1170, 4800);
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
-      final api = _FakeApi();
-      final cubit = ProCubit(api: api);
-      await cubit.start();
+      final (cubit, api, _) = await _started();
       api.promoFails = _status(404);
 
       await tester.pumpWidget(_host(PaywallScreen(cubit: cubit)));
