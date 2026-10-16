@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_typography.dart';
 import 'package:safini/core/translation/generated/l10n.dart';
@@ -19,10 +21,12 @@ Future<bool> askParentToSignOut(
   required SignoutApi api,
   required String childId,
   Duration poll = const Duration(seconds: 3),
+  Stream<PushEvent>? pushes,
 }) async {
   final allowed = await showDsSheet<bool>(
     context: context,
-    builder: (_) => KidSignoutSheet(api: api, childId: childId, poll: poll),
+    builder: (_) =>
+        KidSignoutSheet(api: api, childId: childId, poll: poll, pushes: pushes),
   );
   return allowed == true;
 }
@@ -35,11 +39,13 @@ class KidSignoutSheet extends StatefulWidget {
     required this.api,
     required this.childId,
     this.poll = const Duration(seconds: 3),
+    this.pushes,
   });
 
   final SignoutApi api;
   final String childId;
   final Duration poll;
+  final Stream<PushEvent>? pushes;
 
   @override
   State<KidSignoutSheet> createState() => _KidSignoutSheetState();
@@ -143,6 +149,15 @@ class _KidSignoutSheetState extends State<KidSignoutSheet> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    return OnPush(
+      events: widget.pushes,
+      types: const {PushType.signoutApproved, PushType.signoutDenied},
+      onPush: (_) => _refresh(),
+      child: _content(s),
+    );
+  }
+
+  Widget _content(S s) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,

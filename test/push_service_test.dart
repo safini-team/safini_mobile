@@ -268,6 +268,23 @@ void main() {
         'prize_added': const PushTarget(PushDestination.childStore),
         'prize_given': const PushTarget(PushDestination.childStore),
         'prize_declined': const PushTarget(PushDestination.childStore),
+        'time_purchased': const PushTarget(
+          PushDestination.parentLimits,
+          childId: _child,
+        ),
+        'task_completed': const PushTarget(
+          PushDestination.parentTasks,
+          childId: _child,
+        ),
+        'app_time_low': const PushTarget(PushDestination.childToday),
+        'screen_time_low': const PushTarget(PushDestination.childToday),
+        'signout_approved': const PushTarget(PushDestination.childToday),
+        'signout_denied': const PushTarget(PushDestination.childToday),
+        'daily_tasks': const PushTarget(
+          PushDestination.childTasks,
+          taskId: _task,
+        ),
+        'friend_added': const PushTarget(PushDestination.childFriends),
       };
       // The set of types is the API's KINDS plus protection alerts.
       expect(PushType.values.map((t) => t.wire).toSet(), {
@@ -297,7 +314,13 @@ void main() {
           PushType.prizeGiven ||
           PushType.prizeDeclined ||
           PushType.finiTimeGranted ||
-          PushType.finiTimeDeclined => false,
+          PushType.finiTimeDeclined ||
+          PushType.appTimeLow ||
+          PushType.screenTimeLow ||
+          PushType.signoutApproved ||
+          PushType.signoutDenied ||
+          PushType.dailyTasks ||
+          PushType.friendAdded => false,
           _ => true,
         };
         expect(target.isParent, forParent, reason: type.wire);

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safini/core/app/locale_cubit.dart';
 import 'package:safini/core/di/injection.dart';
+import 'package:safini/core/notifications/on_push.dart';
+import 'package:safini/core/notifications/push_event.dart';
 import 'package:safini/core/theme/app_colors.dart';
 import 'package:safini/core/theme/app_spacing.dart';
 import 'package:safini/core/theme/app_typography.dart';
@@ -24,7 +26,13 @@ class ChildFriendsScreen extends StatelessWidget {
         locale: locale,
         child: BlocProvider(
           create: (_) => getIt<FriendsCubit>()..load(),
-          child: const _FriendsScreen(),
+          child: Builder(
+            builder: (context) => OnPush(
+              types: const {PushType.friendAdded},
+              onPush: (_) => context.read<FriendsCubit>().load(),
+              child: const _FriendsScreen(),
+            ),
+          ),
         ),
       ),
     );
