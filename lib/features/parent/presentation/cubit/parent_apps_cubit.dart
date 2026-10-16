@@ -34,12 +34,9 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
   List<FiniPool> _pools = const [];
   final _poolsByChild = <String, List<FiniPool>>{};
 
-  ParentAppsCubit(
-    this._familyCubit,
-    this._appUsageRepo, {
-    FiniRepository? fini,
-  }) : _fini = fini,
-       super(const ParentAppsInitial());
+  ParentAppsCubit(this._familyCubit, this._appUsageRepo, {FiniRepository? fini})
+    : _fini = fini,
+      super(const ParentAppsInitial());
 
   /// A pools read that fails keeps what was shown: they are an extra.
   Future<List<FiniPool>> _fetchPools(String childId) async {
@@ -297,24 +294,39 @@ class ParentAppsCubit extends Cubit<ParentAppsState> {
     String appSlug,
     ChildAppUsageModel Function(ChildAppUsageModel) update,
   ) async {
-    if (_childId == null) return 'No child selected.';
+    final childId = _childId;
+    if (childId == null) return 'No child selected.';
     final index = _appUsage.indexWhere((a) => a.appSlug == appSlug);
     if (index == -1) return 'App rule not found.';
 
-    final previous = _appUsage;
-    _appUsage = List.of(_appUsage)..[index] = update(_appUsage[index]);
-    _emitLoaded();
+    final old = _appUsage[index];
+    final rule = update(old);
+    _putRule(childId, rule);
 
-    final result = await _appUsageRepo.updateAppRule(
-      _childId!,
-      _appUsage[index],
-    );
+    final result = await _appUsageRepo.updateAppRule(childId, rule);
     return result.fold((failure) {
-      // Revert on failure.
-      _appUsage = previous;
-      _emitLoaded();
+      _putRule(childId, old);
       return _errorFor(failure);
     }, (_) => null);
+  }
+
+  /// [rule] replaces the row with its slug in [childId]'s cached copy, and on
+  /// screen while that child is shown. The limit sheet opens on that row and
+  /// saves the whole rule, so a stale copy would put old values back.
+  void _putRule(String childId, ChildAppUsageModel rule) {
+    List<ChildAppUsageModel> replaced(List<ChildAppUsageModel> apps) => [
+      for (final app in apps) app.appSlug == rule.appSlug ? rule : app,
+    ];
+    final cached = _byChild[childId];
+    if (cached != null) {
+      _byChild[childId] = ChildAppUsageSnapshot(
+        apps: replaced(cached.apps),
+        screenTime: cached.screenTime,
+      );
+    }
+    if (childId != _childId) return;
+    _appUsage = replaced(_appUsage);
+    _emitLoaded();
   }
 
   /// Empty for a free-plan limit: the Safini Pro sheet already said why, so
