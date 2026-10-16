@@ -31,7 +31,15 @@ enum PushType {
   finiAppSort('fini_app_sort'),
   finiReport('fini_report'),
   finiTimeGranted('fini_time_granted'),
-  finiTimeDeclined('fini_time_declined');
+  finiTimeDeclined('fini_time_declined'),
+  appTimeLow('app_time_low'),
+  screenTimeLow('screen_time_low'),
+  timePurchased('time_purchased'),
+  taskCompleted('task_completed'),
+  signoutApproved('signout_approved'),
+  signoutDenied('signout_denied'),
+  dailyTasks('daily_tasks'),
+  friendAdded('friend_added');
 
   const PushType(this.wire);
 
@@ -54,7 +62,8 @@ enum PushDestination {
   parentFamily,
   childToday,
   childTasks,
-  childStore;
+  childStore,
+  childFriends;
 
   bool get isParent => index <= parentFamily.index;
 }
@@ -117,7 +126,8 @@ class PushEvent {
   PushTarget get target => switch (type) {
     PushType.protectionAlert ||
     PushType.appLimitReached ||
-    PushType.screenTimeReached => PushTarget(
+    PushType.screenTimeReached ||
+    PushType.timePurchased => PushTarget(
       PushDestination.parentLimits,
       childId: childId,
     ),
@@ -125,6 +135,10 @@ class PushEvent {
       PushDestination.parentTasks,
       childId: childId,
       taskId: taskId,
+    ),
+    PushType.taskCompleted => PushTarget(
+      PushDestination.parentTasks,
+      childId: childId,
     ),
     PushType.weeklyDigest ||
     PushType.prizeRequested ||
@@ -148,13 +162,16 @@ class PushEvent {
     PushType.taskApproved ||
     PushType.streakReminder ||
     PushType.finiTimeGranted ||
-    PushType.finiTimeDeclined => const PushTarget(PushDestination.childToday),
-    PushType.taskRejected || PushType.tasksAssigned => PushTarget(
-      PushDestination.childTasks,
-      taskId: taskId,
-    ),
+    PushType.finiTimeDeclined ||
+    PushType.appTimeLow ||
+    PushType.screenTimeLow ||
+    PushType.signoutApproved ||
+    PushType.signoutDenied => const PushTarget(PushDestination.childToday),
+    PushType.taskRejected || PushType.tasksAssigned || PushType.dailyTasks =>
+      PushTarget(PushDestination.childTasks, taskId: taskId),
     PushType.prizeAdded ||
     PushType.prizeGiven ||
     PushType.prizeDeclined => const PushTarget(PushDestination.childStore),
+    PushType.friendAdded => const PushTarget(PushDestination.childFriends),
   };
 }

@@ -45,6 +45,7 @@ class ChildMainScreen extends StatelessWidget {
     PushDestination.childToday => 0,
     PushDestination.childTasks => 1,
     PushDestination.childStore => 2,
+    PushDestination.childFriends => 3,
     _ => null,
   };
 
@@ -187,6 +188,7 @@ class _ChildPushBridgeState extends State<_ChildPushBridge>
     consumedHere: const {
       PushDestination.childToday,
       PushDestination.childStore,
+      PushDestination.childFriends,
     },
   );
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -51,7 +52,12 @@ class _Api extends Fake implements SignoutApi {
   }
 }
 
-Future<bool?> _run(WidgetTester tester, _Api api) async {
+Future<bool?> _run(
+  WidgetTester tester,
+  _Api api, {
+  Duration poll = const Duration(milliseconds: 100),
+  Stream<PushEvent>? pushes,
+}) async {
   bool? result;
   await tester.pumpWidget(
     MaterialApp(
@@ -65,7 +71,8 @@ Future<bool?> _run(WidgetTester tester, _Api api) async {
               context,
               api: api,
               childId: 'aziz',
-              poll: const Duration(milliseconds: 100),
+              poll: poll,
+              pushes: pushes,
             ),
             child: const Text('log out'),
           ),
@@ -105,6 +112,53 @@ void main() {
       await tester.tap(find.text('Done'));
       await tester.pumpAndSettle();
       expect(find.text('Ask a parent to sign out'), findsNothing);
+    });
+
+    testWidgets('the answer push re-reads the request without the poll', (
+      tester,
+    ) async {
+      final pushes = StreamController<PushEvent>.broadcast();
+      final api = _Api(answers: ['approved']);
+      await _run(
+        tester,
+        api,
+        poll: const Duration(hours: 1),
+        pushes: pushes.stream,
+      );
+      pushes.add(const PushEvent(PushType.signoutApproved));
+      await tester.pumpAndSettle();
+      expect(find.text('Ask a parent to sign out'), findsNothing);
+      expect(api.reads, 1);
+      await pushes.close();
+    });
+
+    testWidgets('a no by push shows straight away', (tester) async {
+      final pushes = StreamController<PushEvent>.broadcast();
+      await _run(
+        tester,
+        _Api(answers: ['denied']),
+        poll: const Duration(hours: 1),
+        pushes: pushes.stream,
+      );
+      pushes.add(const PushEvent(PushType.signoutDenied));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('said no'), findsOneWidget);
+      await pushes.close();
+    });
+
+    test('the answer pushes open the child app', () {
+      for (final type in ['signout_approved', 'signout_denied']) {
+        final event = PushEvent.fromData({
+          'type': type,
+          'child_id': 'aziz',
+          'signout_id': 'r1',
+        });
+        expect(
+          event?.target,
+          const PushTarget(PushDestination.childToday),
+          reason: type,
+        );
+      }
     });
 
     testWidgets('a wrong code says so, the right one lets them out', (

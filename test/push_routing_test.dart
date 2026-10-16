@@ -104,6 +104,57 @@ void main() {
       shell.dispose();
     });
 
+    test('the kinds added in safini-api#95 open their tab', () {
+      int? tab(String wire) {
+        final target = PushEvent.fromData({
+          'type': wire,
+          'child_id': 'c-1',
+          'task_id': 't-1',
+          'signout_id': 'r-1',
+        })!.target;
+        return target.destination.isParent
+            ? ParentMainScreen.tabFor(target.destination)
+            : ChildMainScreen.tabFor(target.destination);
+      }
+
+      expect(
+        {
+          for (final wire in const [
+            'time_purchased',
+            'task_completed',
+            'app_time_low',
+            'screen_time_low',
+            'signout_approved',
+            'signout_denied',
+            'daily_tasks',
+            'friend_added',
+          ])
+            wire: tab(wire),
+        },
+        {
+          'time_purchased': 2,
+          'task_completed': 1,
+          'app_time_low': 0,
+          'screen_time_low': 0,
+          'signout_approved': 0,
+          'signout_denied': 0,
+          'daily_tasks': 1,
+          'friend_added': 3,
+        },
+      );
+    });
+
+    test('a friend push leaves nothing pending on the Friends tab', () {
+      links.open(const PushTarget(PushDestination.childFriends));
+      final child = PushShell(
+        tabFor: ChildMainScreen.tabFor,
+        selectTab: (_) {},
+        consumedHere: const {PushDestination.childFriends},
+      );
+      expect(child.initialTab(-1), 3);
+      expect(links.hasPending, isFalse);
+    });
+
     test('every destination has exactly one home', () {
       for (final destination in PushDestination.values) {
         final parentTab = ParentMainScreen.tabFor(destination);

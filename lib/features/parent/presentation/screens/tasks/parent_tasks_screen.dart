@@ -131,7 +131,7 @@ class _ParentTasksScreenState extends State<ParentTasksScreen> {
         onResume: () => unawaited(_reload()),
         // The tab badge and the list move the moment a child sends a task.
         child: OnPush(
-          types: const {PushType.taskSubmitted},
+          types: const {PushType.taskSubmitted, PushType.taskCompleted},
           onPush: (_) => unawaited(_reload()),
           child: _buildContent(context, s),
         ),

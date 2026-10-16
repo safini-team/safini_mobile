@@ -92,6 +92,7 @@ class _ParentAppsScreenState extends State<ParentAppsScreen> {
             PushType.appLimitReached,
             PushType.screenTimeReached,
             PushType.protectionAlert,
+            PushType.timePurchased,
           },
           onPush: (event) {
             if (event.childId == _cubit.childId) _cubit.loadAppLimits();

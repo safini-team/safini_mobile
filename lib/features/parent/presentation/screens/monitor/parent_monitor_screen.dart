@@ -143,6 +143,8 @@ class _ParentMonitorView extends StatelessWidget {
             PushType.screenTimeReached,
             PushType.protectionAlert,
             PushType.childConnected,
+            PushType.timePurchased,
+            PushType.taskCompleted,
           },
           onPush: (_) => context.read<ParentMonitorCubit>().loadMonitorData(),
           child: OnPush(

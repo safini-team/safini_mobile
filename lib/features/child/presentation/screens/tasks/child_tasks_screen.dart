@@ -193,6 +193,7 @@ class _TasksPushTargetState extends State<_TasksPushTarget> {
         PushType.taskApproved,
         PushType.taskRejected,
         PushType.tasksAssigned,
+        PushType.dailyTasks,
       },
       onPush: (_) => context.read<TasksCubit>().loadTasks(),
       child: BlocListener<TasksCubit, TasksState>(
