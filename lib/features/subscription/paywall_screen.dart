@@ -196,12 +196,8 @@ class _PaywallViewState extends State<_PaywallView>
                             onTap: () => openProOnWeb(context),
                           ),
                         ],
-                        // App Review 3.1.1: on iOS Pro unlocks through StoreKit
-                        // only, a code box of our own risks a rejection.
-                        if (!context.read<ProCubit>().canSell) ...[
-                          const SizedBox(height: 22),
-                          const _PromoCode(),
-                        ],
+                        const SizedBox(height: 22),
+                        const _PromoCode(),
                       ],
               ),
             ),
