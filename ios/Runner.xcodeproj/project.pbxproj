@@ -184,7 +184,6 @@
 				5B8300DA8C98D11938C5DE06 /* Pods-RunnerTests.release.xcconfig */,
 				CE264024DA2268A6F02363FE /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -194,7 +193,6 @@
 				597EE795E7E9A73E2433D67C /* ScreenTimePolicy.swift */,
 				F8DC508C2919BEDF04EBADA4 /* ScreenTimePolicyModel.swift */,
 			);
-			name = ScreenTimeShared;
 			path = ScreenTimeShared;
 			sourceTree = "<group>";
 		};
@@ -270,7 +268,6 @@
 			children = (
 				668C35205C69E98CBEF267A9 /* ScreenTimeReport.swift */,
 			);
-			name = ScreenTimeReport;
 			path = ScreenTimeReport;
 			sourceTree = "<group>";
 		};
@@ -287,7 +284,6 @@
 			children = (
 				8C4E6A7D512E2A6B8BB9342E /* ScreenTimeMonitor.swift */,
 			);
-			name = ScreenTimeMonitor;
 			path = ScreenTimeMonitor;
 			sourceTree = "<group>";
 		};
@@ -689,7 +685,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -742,6 +737,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X3B4RJS8GN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.safini.app;
@@ -760,6 +756,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X3B4RJS8GN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.safini.app;
@@ -776,6 +773,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X3B4RJS8GN;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.safini.app;
@@ -900,7 +898,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -957,7 +954,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
